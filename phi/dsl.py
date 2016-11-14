@@ -2,6 +2,7 @@ from utils import identity
 import utils
 import pprint
 from abc import ABCMeta, abstractmethod
+from inspect import isclass
 
 
 ###############################
@@ -99,15 +100,11 @@ class Sequence(Node):
     def __compile__(self, refs):
         f_left, refs = self.left.__compile__(refs)
 
-        if type(f_left) is list:
-            f_left = list_to_fn(f_left)
+        f_left = to_fn(f_left)
 
         f_right, refs = self.right.__compile__(refs)
 
-        if type(f_right) is list:
-            f_right = compose_list(f_right, f_left)
-        else:
-            f_right = utils.compose2(f_right, f_left)
+        f_right = compose(f_right, f_left)
 
         return f_right, refs
 
@@ -215,37 +212,45 @@ def Compile(code, refs):
     ast = parse(code)
     fs, refs = ast.__compile__(refs)
 
-    if type(fs) is list:
-        fs = list_to_fn(fs)
+    fs = to_fn(fs)
 
     return fs, refs
 
-def compose(f, g):
-    return lambda x: f(g(x))
 
-def compose_list(fs, g):
-    return [ compose(f, g) for f in fs ]
+def compose(fs, g):
+    if type(fs) is list:
+        return [ utils.compose2(f, g) for f in fs ]
+    else:
+        return utils.compose2(fs, g)
 
-def list_to_fn(fs):
-    return lambda x: [ f(x) for f in fs ]
+
+def to_fn(fs):
+    if type(fs) is list:
+        return lambda x: [ f(x) for f in fs ]
+    else:
+        return fs
+
+def is_iter_instance(x):
+    return hasattr(x, '__iter__') and not isclass(x)
 
 def parse(code):
     #if type(code) is tuple:
     if isinstance(code, Node):
         return code
+    elif hasattr(code, '__call__') or isclass(code):
+        return Function(code)
     elif type(code) is str:
         return Read(code)
     elif type(code) is set:
         return parse_set(code)
-    elif hasattr(code, '__call__'):
-        return Function(code)
     elif type(code) is tuple:
         return parse_tuple(code)
     elif type(code) is dict:
         return parse_dictionary(code)
-    else:
+    elif is_iter_instance(code): #leave last
         return parse_iterable(code) #its iterable
-        #raise Exception("Element has to be either a tuple for sequential operations, a list for branching, or a function from a builder to a builder, got %s, %s" % (type(code), type(code) is tuple))
+    else:
+        raise Exception("Parse Error: Element not part of the DSL. Got:\n{0} of type {1}".format(code, type(code)))
 
 def parse_set(code):
     if len(code) == 0:
@@ -253,21 +258,10 @@ def parse_set(code):
 
     for ref in code:
         if not isinstance(ref, (str, Ref)):
-            raise Exception("Sets can only contain strings or Refs, get {0}".format(code))
+            raise Exception("Parse Error: Sets can only contain strings or Refs, get {0}".format(code))
 
     writes = tuple([ Write(ref) for ref in code ])
     return parse(writes)
-
-
-    fst = iter(code).next()
-
-    if len(code) == 1:
-        if type(fst) is str or type(fst) is Ref:
-            return Write(fst)
-        else:
-            raise
-    else:
-        raise Exception("Not part of the language: {0}".format(code))
 
 def build_sequence(right, *prevs):
     left = prevs[0] if len(prevs) == 1 else build_sequence(*prevs)
@@ -276,11 +270,11 @@ def build_sequence(right, *prevs):
 def parse_tuple(tuple_code):
     nodes = [ parse(code) for code in tuple_code ]
 
-    if len(nodes) == 1:
-        return nodes[0]
-
     if len(nodes) == 0:
         return Identity
+
+    if len(nodes) == 1:
+        return nodes[0]
 
     nodes.reverse()
 
@@ -293,12 +287,13 @@ def parse_iterable(iterable_code):
     if len(nodes) == 1:
         return nodes[0]
 
-    if len(nodes) == 0:
-        return Identity
-
     return Tree(nodes)
 
 def parse_dictionary(dict_code):
+
+    if len(dict_code) != 1:
+        raise Exception("Parse Error: dict object has to have exactly 1 element. Got {0}".format(dict_code))
+
     scope_obj, body_code = list(dict_code.items())[0]
     body = parse(body_code)
     return Scope(scope_obj, body)

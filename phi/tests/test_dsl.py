@@ -50,3 +50,35 @@ class TestDSL(object):
         f, refs = dsl.Compile(code, {})
 
         assert [20, 2, 3] == f(2)
+
+    def test_class(self):
+
+        code = (
+            str,
+            _ + '0',
+            int
+        )
+
+        f, refs = dsl.Compile(code, {})
+        assert 20 == f(2)
+
+
+        ast = dsl.parse(str)
+        assert type(ast) is dsl.Function
+
+    def test_list(self):
+        code = (
+            [
+                _ + 1
+            ,
+                _ * 2
+            ],
+            [
+                lambda l: map(str, l)
+            ,
+                ()
+            ]
+        )
+
+        f, refs = dsl.Compile(code, {})
+        assert [['4', '6'], [4, 6]] == f(3)
