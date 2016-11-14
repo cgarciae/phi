@@ -1,21 +1,11 @@
 from collections import namedtuple
 import functools, inspect
-from decorator import decorator
 
 def identity(x):
     return x
 
 def compose2(f, g):
     return lambda x: f(g(x))
-
-# Decorators
-@decorator
-def immutable(method, self, *args, **kwargs):
-    """
-    Decorator. Passes a copy of the entity to the method so that the original object remains un touched.
-    Used in methods to get a fluent immatable API.
-    """
-    return method(self.copy(), *args, **kwargs)
 
 
 DefaultArgSpec = namedtuple('DefaultArgSpec', 'has_default default_value')

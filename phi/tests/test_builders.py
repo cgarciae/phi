@@ -72,7 +72,7 @@ class TestBuilder(object):
 
         assert "yyyy" == P(
             A(),
-            M.proxy('something', 4) #registered something
+            M.method('something', 4) #registered something
         )
 
         assert "yy" == P(
@@ -308,4 +308,20 @@ class TestBuilder(object):
             on(y),
             _ * 10,
             'y'
+        )
+
+    def test_list(self):
+
+        assert [['4', '6'], [4, 6]] == P(
+            3,
+            [
+                _ + 1
+            ,
+                _ * 2
+            ],
+            [
+                _2(map, str)
+            ,
+                ()
+            ]
         )
