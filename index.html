@@ -4,8 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>phi API documentation</title>
-    <meta name="description" content="# Tensor Builder
-TensorBuilder is light-weight extensible library that enables you to easily create ..." />
+    <meta name="description" content="# Phi
+TensorBuilder is light-weight extensible library that enables you to easily create complex dee..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1037,14 +1037,16 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#phi.builder">builder</a></li>
+  </ul>
 
-
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
-      <ul>
-        <li class="mono"><a href="builder.m.html">phi.builder</a></li>
-      </ul>
     </li>
+
+
+
     </ul>
   </div>
 
@@ -1057,7 +1059,7 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">phi</span> module</h1>
-  <h1>Tensor Builder</h1>
+  <h1>Phi</h1>
 <p>TensorBuilder is light-weight extensible library that enables you to easily create complex deep neural networks through a functional <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent</a> <a href="https://en.wikipedia.org/wiki/Immutable_object">immutable</a> API based on the Builder Pattern. Tensor Builder also comes with a DSL based on <a href="http://learnyouahaskell.com/functors-applicative-functors-and-monoids">applicatives</a> and function composition that enables you to express more clearly the structure of your network, make changes faster, and reuse code.</p>
 <h3>Goals</h3>
 <ul>
@@ -1116,7 +1118,7 @@ pip install phi==0.1.0</p>
 <span class="n">x</span> <span class="o">=</span> <span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
 
-<span class="p">[</span><span class="n">activation</span><span class="p">,</span> <span class="n">trainer</span><span class="p">]</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span>
+<span class="p">[</span><span class="n">activation</span><span class="p">,</span> <span class="n">trainer</span><span class="p">]</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">_pipe</span><span class="p">(</span>
     <span class="n">x</span><span class="p">,</span>
     <span class="p">[</span>
         <span class="p">{</span> <span class="n">tf</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;/gpu:0&quot;</span><span class="p">):</span>
@@ -1146,9 +1148,15 @@ pip install phi==0.1.0</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi', this);">Show source &equiv;</a></p>
   <div id="source-phi" class="source">
     <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">builder</span> <span class="kn">import</span> <span class="n">Builder</span>
-<span class="kn">from</span> <span class="nn">method_builder</span> <span class="kn">import</span> <span class="n">MethodBuilder</span>
+<span class="kn">from</span> <span class="nn">method_builder</span> <span class="kn">import</span> <span class="n">M</span>
 <span class="kn">from</span> <span class="nn">fn</span> <span class="kn">import</span> <span class="n">_</span>
 <span class="kn">from</span> <span class="nn">shortcuts</span> <span class="kn">import</span> <span class="n">C</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">_0</span><span class="p">,</span> <span class="n">_1</span><span class="p">,</span> <span class="n">_2</span><span class="p">,</span> <span class="n">_3</span><span class="p">,</span> <span class="n">_4</span><span class="p">,</span> <span class="n">_5</span>
+<span class="kn">import</span> <span class="nn">utils</span>
+
+<span class="c1">#patches</span>
+<span class="kn">import</span> <span class="nn">functions_patch</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">()</span>
 
 
 <span class="c1">########################</span>
@@ -1175,16 +1183,18 @@ pip install phi==0.1.0</p>
   </header>
 
   <section id="section-items">
-
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p class="name"><a href="builder.m.html">phi.builder</a></p>
+      <p id="phi.builder" class="name">var <span class="ident">builder</span></p>
       
   
+  <div class="source_cont">
+</div>
 
       </div>
+
+
+
   </section>
 
     </article>
