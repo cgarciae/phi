@@ -2,6 +2,7 @@ from builder import Builder
 from method_builder import M
 from fn import _
 from shortcuts import C, P, val, on, _0, _1, _2, _3, _4, _5
+import utils
 
 builder = Builder()
 
