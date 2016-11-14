@@ -13,14 +13,16 @@ reqs = [str(r.req) for r in parse_requirements("requirements.txt", session=False
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+version = read('phi/version.txt').split("\n")[0]
+
 setup(
     name = "phi",
-    version = read('phi/version.txt'),
+    version = version,
     author = "Cristian Garcia",
     author_email = "cgarcia.e88@gmail.com",
-    description = ("A light wrapper over TensorFlow that enables you to easily create complex deep neural networks using the Builder Pattern through a functional fluent immutable API"),
+    description = ("Phi is a library for fluent functional programming in Python which includes a DSL + facilities to create libraries that integrate with it."),
     license = "MIT",
-    keywords = "tensorflow deep learning neural networks",
+    keywords = ["functional programming", "DSL"],
     url = "https://github.com/cgarciae/phi",
    	packages = [
         'phi',
@@ -30,6 +32,7 @@ setup(
         '': ['LICENCE', 'requirements.txt', 'README.md', 'CHANGELOG.md'],
         'phi': ['version.txt', 'README-template.md']
     },
+    download_url = 'https://github.com/cgarciae/phi/tarball/{0}'.format(version)
     include_package_data = True,
     long_description = read('README.md'),
     install_requires = reqs

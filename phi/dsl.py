@@ -50,18 +50,18 @@ class Function(Node):
     """docstring for Function."""
     def __init__(self, f):
         super(Function, self).__init__()
-        self.f = f
-        self.refs = {}
+        self._f= f
+        self._refs = {}
 
     def __iter__(self):
         yield self
 
     def __compile__(self, refs):
-        refs = dict(refs, **self.refs)
-        return self.f, refs
+        refs = dict(refs, **self._refs)
+        return self._f, refs
 
     def __str__(self):
-        return "Fun({0})".format(self.f)
+        return "Fun({0})".format(self._f)
 
 
 Identity = Function(identity)

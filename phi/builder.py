@@ -39,8 +39,8 @@ class Builder(dsl.Function):
 
     def __init__(self, f=identity, refs={}):
         super(Builder, self).__init__(f)
-        self.f = f
-        self.refs = refs
+        self._f = f
+        self._refs = refs
 
 
     def _unit(self, f, refs, _return_type=None):
@@ -52,9 +52,9 @@ class Builder(dsl.Function):
 
     def __call__(self, x, *code):
         if len(code) == 0:
-            return self.f(x)
+            return self._f(x)
         else:
-            return self._pipe(x, *code)
+            return self.C(*code)(x)
 
     def __rrshift__(self, x):
         return self(x)
@@ -63,14 +63,14 @@ class Builder(dsl.Function):
     def Scope(cls):
         return dsl.Scope.GLOBAL_SCOPE
 
-    def _(self, *code, **kwargs):
+    def C(self, *code, **kwargs):
         _return_type = None
 
         if '_return_type' in kwargs:
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-        g, refs = dsl.Compile(code, self.refs)
+        g, refs = dsl.Compile(code, self._refs)
         h = utils.compose2(g, self)
 
         return self._unit(h, refs, _return_type=_return_type)
@@ -101,7 +101,7 @@ class Builder(dsl.Function):
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-        return self._unit(lambda x: g(*args, **kwargs), self.refs, _return_type=_return_type)
+        return self._unit(lambda x: g(*args, **kwargs), self._refs, _return_type=_return_type)
 
     def _1(self, g, *args, **kwargs):
         """
@@ -129,7 +129,7 @@ class Builder(dsl.Function):
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-        return self._unit(lambda x: g(self(x), *args, **kwargs), self.refs, _return_type=_return_type)
+        return self._unit(lambda x: g(self(x), *args, **kwargs), self._refs, _return_type=_return_type)
 
     def _2(self, g, arg1, *args, **kwargs):
         """
@@ -146,7 +146,7 @@ class Builder(dsl.Function):
             new_args = tuple([arg1, arg2] + list(args))
             return g(*new_args, **kwargs)
 
-        return self._unit(_lambda, self.refs, _return_type=_return_type)
+        return self._unit(_lambda, self._refs, _return_type=_return_type)
 
     def _3(self, g, arg1, arg2, *args, **kwargs):
         """
@@ -163,7 +163,7 @@ class Builder(dsl.Function):
             new_args = tuple([arg1, arg2, arg3] + list(args))
             return g(*new_args, **kwargs)
 
-        return self._unit(_lambda, self.refs, _return_type=_return_type)
+        return self._unit(_lambda, self._refs, _return_type=_return_type)
 
     def _4(self, g, arg1, arg2, arg3, *args, **kwargs):
         """
@@ -179,7 +179,7 @@ class Builder(dsl.Function):
             new_args = tuple([arg1, arg2, arg3, arg4] + list(args))
             return g(*new_args, **kwargs)
 
-        return self._unit(_lambda, self.refs, _return_type=_return_type)
+        return self._unit(_lambda, self._refs, _return_type=_return_type)
 
     def _5(self, g, arg1, arg2, arg3, arg4, *args, **kwargs):
         """
@@ -195,44 +195,31 @@ class Builder(dsl.Function):
             new_args = tuple([arg1, arg2, arg3, arg4, arg5] + list(args))
             return g(*new_args, **kwargs)
 
-        return self._unit(_lambda, self.refs, _return_type=_return_type)
+        return self._unit(_lambda, self._refs, _return_type=_return_type)
 
 
     def val(self, x):
         """
         """
-        return self._1(lambda _: x)
+        return self._1(lambda z: x)
 
     def on(self, ref):
 
         if type(ref) is str:
             ref = dsl.Ref(ref)
 
-        if ref.name not in self.refs:
-            refs = dict(self.refs, **{ref.name: ref})
+        if ref.name not in self._refs:
+            refs = dict(self._refs, **{ref.name: ref})
         else:
-            refs = self.refs
+            refs = self._refs
 
         return self._unit(utils.compose2(ref.set, self), refs)
 
     def ref(self, name):
         return dsl.Ref(name)
 
-    def identity(self, x):
-        return x
-
     @classmethod
-    def _pipe(cls, x, *code, **kwargs):
-        builder = cls._compile(*code, **kwargs)
-        return builder(x)
-
-    @classmethod
-    def _compile(cls, *code, **kwargs):
-        return cls()._(*code, **kwargs)
-
-
-    @classmethod
-    def register_as_method(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=""):
+    def do_register_method(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=""):
         """
         This method enables you to register any function `fn` that takes an Applicative as its first argument as a method of the Builder class.
 
@@ -278,17 +265,17 @@ class Builder(dsl.Function):
         setattr(cls, name, fn)
 
     @classmethod
-    def register_method(self, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=""):
+    def register_method(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=""):
         def register_decorator(fn):
 
-            self.register_as_method(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+            cls.do_register_method(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
 
             return fn
         return register_decorator
 
 
     @classmethod
-    def register_function0(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def register_function_0(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
         """
         This method enables you to register any function `fn` that takes an object as its first argument as a method of the Builder and Applicative class.
 
@@ -317,7 +304,7 @@ class Builder(dsl.Function):
 
         """ + explanation
 
-        cls.register_as_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
 
     @classmethod
     def register_function_1(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
@@ -349,7 +336,7 @@ class Builder(dsl.Function):
 
         """ + explanation
 
-        cls.register_as_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
 
 
     @classmethod
@@ -366,7 +353,7 @@ class Builder(dsl.Function):
             {3}.{0}(x1, x2, *args, **kwargs) <==> builder.{1}(x1, *args, **kwargs)(x2)
         """ + explanation
 
-        cls.register_as_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
 
     @classmethod
     def register_function_3(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
@@ -382,7 +369,7 @@ class Builder(dsl.Function):
             {3}.{0}(x1, x2, x3, *args, **kwargs) <==> builder.{1}(x1, x2, *args, **kwargs)(x3)
         """ + explanation
 
-        cls.register_as_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
 
     @classmethod
     def register_function_4(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
@@ -398,7 +385,7 @@ class Builder(dsl.Function):
             {3}.{0}(x1, x2, x3, x4, *args, **kwargs) <==> builder.{1}(x1, x2, x3, *args, **kwargs)(x4)
         """ + explanation
 
-        cls.register_as_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
 
     @classmethod
     def register_function_5(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
@@ -414,7 +401,7 @@ class Builder(dsl.Function):
             {3}.{0}(x1, x2, x3, x4, x5, *args, **kwargs) <==> builder.{1}(x1, x2, x3, x4, *args, **kwargs)(x5)
         """ + explanation
 
-        cls.register_as_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, _return_type=_return_type)
+        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, _return_type=_return_type)
 
     @classmethod
     def register_1(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):

@@ -10,7 +10,7 @@ def on(ref):
     return Builder().on(ref)
 
 def C(*args, **kwargs):
-    return Builder._compile(*args, **kwargs)
+    return Builder().C(*args, **kwargs)
 
 def _0(*args, **kwargs):
     return Builder()._0(*args, **kwargs)

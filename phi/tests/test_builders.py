@@ -20,8 +20,8 @@ def pow(a, b):
     return a ** b
 
 @Builder.register_method("test.lib")
-def get_function_name(P):
-    return P.f.__name__
+def get_function_name(self):
+    return self._f.__name__
 
 class DummyContext:
     def __init__(self, val):
@@ -40,12 +40,12 @@ class TestBuilder(object):
     def setup_method(self):
         self.x = tf.placeholder(tf.float32, shape=[None, 5])
 
-    def test_underscore_1(self):
+    def test_C_1(self):
         assert P._1(add2)(4) == 6
         assert P._1(add2)._1(mul3)(4) == 18
 
-        assert P._(add2)(4) == 6
-        assert P._(add2)._(mul3)(4) == 18
+        assert P.C(add2)(4) == 6
+        assert P.C(add2, mul3)(4) == 18
 
     def test_methods(self):
         assert 9 == P(
@@ -269,7 +269,7 @@ class TestBuilder(object):
             add2, b.set,
             add2,
             [
-                P.identity,
+                (),
                 a,
                 b
             ]
