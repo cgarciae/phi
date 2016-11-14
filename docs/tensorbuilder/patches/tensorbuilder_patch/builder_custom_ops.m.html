@@ -1,0 +1,1798 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>phi.patches.phi_patch.builder_custom_ops API documentation</title>
+    <meta name="description" content="" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.builders_blacklist">builders_blacklist</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.add_regularization_loss">add_regularization_loss</a></li>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.drop_layer">drop_layer</a></li>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.ensamble_dropout">ensamble_dropout</a></li>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.fully_connected_from_product">fully_connected_from_product</a></li>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.maximize">maximize</a></li>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.minimize">minimize</a></li>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.patch_classes">patch_classes</a></li>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.polynomial_layer">polynomial_layer</a></li>
+    <li class="mono"><a href="#phi.patches.phi_patch.builder_custom_ops.sampled_softmax_loss">sampled_softmax_loss</a></li>
+  </ul>
+
+    </li>
+
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">phi.patches.phi_patch.builder_custom_ops</span> module</h1>
+  
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.framework</span> <span class="kn">import</span> <span class="n">tensor_shape</span>
+
+<span class="n">builders_blacklist</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;sampled_softmax_loss&quot;</span>
+<span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">_polynomial</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">pows</span> <span class="o">=</span> <span class="p">[</span> <span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">tensor</span><span class="p">[:,</span> <span class="n">n</span><span class="p">],</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="p">]</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pows</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">polynomial_layer</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a fully connected layer of size `size` and then applies the activation function</span>
+<span class="sd">    ```</span>
+<span class="sd">    y(i) = z(i)^(i+1)</span>
+<span class="sd">    ```</span>
+<span class="sd">    where `z = w*x + b`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;polynomial_layer&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">builder</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="n">_polynomial</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">maximize</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">drop_layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">keep_prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Computes dropout.</span>
+<span class="sd">  With probability `keep_prob`, outputs the input element scaled up by</span>
+<span class="sd">  `1 / keep_prob`, otherwise outputs `0`.  The scaling is so that the expected</span>
+<span class="sd">  sum is unchanged.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    x: A tensor.</span>
+<span class="sd">    keep_prob: A scalar `Tensor` with the same type as x. The probability</span>
+<span class="sd">      that each element is kept.</span>
+<span class="sd">    noise_shape: A 1-D `Tensor` of type `int32`, representing the</span>
+<span class="sd">      shape for randomly generated keep/drop flags.</span>
+<span class="sd">    seed: A Python integer. Used to create random seeds. See</span>
+<span class="sd">      [`set_random_seed`](../../api_docs/python/constant_op.md#set_random_seed)</span>
+<span class="sd">      for behavior.</span>
+<span class="sd">    name: A name for this operation (optional).</span>
+<span class="sd">  Returns:</span>
+<span class="sd">    A Tensor of the same shape of `x`.</span>
+<span class="sd">  Raises:</span>
+<span class="sd">    ValueError: If `keep_prob` is not in `(0, 1]`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">op_scope</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;drop_layer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">name</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keep_prob</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">keep_prob</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;keep_prob must be a scalar tensor or a float in the &quot;</span>
+                       <span class="s2">&quot;range (0, 1], got </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">keep_prob</span><span class="p">)</span>
+    <span class="n">keep_prob</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">keep_prob</span><span class="p">,</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                                      <span class="n">name</span><span class="o">=</span><span class="s2">&quot;keep_prob&quot;</span><span class="p">)</span>
+    <span class="n">keep_prob</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span><span class="o">.</span><span class="n">assert_is_compatible_with</span><span class="p">(</span><span class="n">tensor_shape</span><span class="o">.</span><span class="n">scalar</span><span class="p">())</span>
+
+    <span class="n">noise_shape</span> <span class="o">=</span> <span class="p">[</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span> <span class="p">]</span>
+    <span class="c1"># uniform [keep_prob, 1.0 + keep_prob)</span>
+    <span class="n">random_tensor</span> <span class="o">=</span> <span class="n">keep_prob</span>
+    <span class="n">random_tensor</span> <span class="o">+=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random_uniform</span><span class="p">(</span>
+        <span class="n">noise_shape</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 0. if [keep_prob, 1.0) and 1. if [1.0, 1.0 + keep_prob)</span>
+    <span class="n">binary_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">random_tensor</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">keep_prob</span><span class="p">)</span> <span class="o">*</span> <span class="n">binary_tensor</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">set_shape</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get_shape</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="k">def</span> <span class="nf">ensamble_dropout</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">keep_prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">op_scope</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">tensors</span><span class="p">(),</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;drop_layer&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tree</span><span class="o">.</span><span class="n">map_each</span><span class="p">(</span><span class="n">drop_layer</span><span class="p">,</span> <span class="n">keep_prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">add_regularization_loss</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s1">&#39;add_regularization_loss&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">reg_losses</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">GraphKeys</span><span class="o">.</span><span class="n">REGULARIZATION_LOSSES</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">reg_losses</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">GraphKeys</span><span class="o">.</span><span class="n">REGULARIZATION_LOSSES</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">):</span>
+        <span class="n">reg_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">([</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">reg_loss</span><span class="p">)</span> <span class="k">for</span> <span class="n">reg_loss</span> <span class="ow">in</span> <span class="n">reg_losses</span> <span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reg_loss_mean_sum&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">reg_loss</span><span class="p">)</span>
+
+
+<span class="kn">from</span> <span class="nn">tensorflow.contrib.framework.python.ops</span> <span class="kn">import</span> <span class="n">add_arg_scope</span>
+<span class="kn">from</span> <span class="nn">tensorflow.contrib.framework.python.ops</span> <span class="kn">import</span> <span class="n">variables</span>
+<span class="kn">from</span> <span class="nn">tensorflow.contrib.layers.python.layers</span> <span class="kn">import</span> <span class="n">initializers</span>
+<span class="kn">from</span> <span class="nn">tensorflow.contrib.layers.python.layers</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.framework</span> <span class="kn">import</span> <span class="n">dtypes</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.framework</span> <span class="kn">import</span> <span class="n">ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">array_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">init_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">math_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">standard_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">variable_scope</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.training</span> <span class="kn">import</span> <span class="n">moving_averages</span>
+
+
+<span class="nd">@add_arg_scope</span>
+<span class="k">def</span> <span class="nf">fully_connected_from_product</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span>
+                    <span class="n">activation_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">normalizer_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">normalizer_params</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">biases_initializer</span><span class="o">=</span><span class="n">init_ops</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">,</span>
+                    <span class="n">biases_regularizer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">reuse</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">variables_collections</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">outputs_collections</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">trainable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">scope</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Adds a fully connected layer.</span>
+<span class="sd">  `fully_connected` creates a variable called `weights`, representing a fully</span>
+<span class="sd">  connected weight matrix, which is multiplied by the `inputs` to produce a</span>
+<span class="sd">  `Tensor` of hidden units. If a `normalizer_fn` is provided (such as</span>
+<span class="sd">  `batch_norm`), it is then applied. Otherwise, if `normalizer_fn` is</span>
+<span class="sd">  None and a `biases_initializer` is provided then a `biases` variable would be</span>
+<span class="sd">  created and added the hidden units. Finally, if `activation_fn` is not `None`,</span>
+<span class="sd">  it is applied to the hidden units as well.</span>
+<span class="sd">  Note: that if `inputs` have a rank greater than 2, then `inputs` is flattened</span>
+<span class="sd">  prior to the initial matrix multiply by `weights`.</span>
+<span class="sd">  Args:</span>
+<span class="sd">    inputs: A tensor of with at least rank 2 and value for the last dimension,</span>
+<span class="sd">      i.e. `[batch_size, depth]`, `[None, None, None, channels]`.</span>
+<span class="sd">    num_outputs: Integer, the number of output units in the layer.</span>
+<span class="sd">    activation_fn: activation function.</span>
+<span class="sd">    normalizer_fn: normalization function to use instead of `biases`. If</span>
+<span class="sd">      `normalize_fn` is provided then `biases_initializer` and</span>
+<span class="sd">      `biases_regularizer` are ignored and `biases` are not created nor added.</span>
+<span class="sd">    normalizer_params: normalization function parameters.</span>
+<span class="sd">    weights_initializer: An initializer for the weights.</span>
+<span class="sd">    weights_regularizer: Optional regularizer for the weights.</span>
+<span class="sd">    biases_initializer: An initializer for the biases. If None skip biases.</span>
+<span class="sd">    biases_regularizer: Optional regularizer for the biases.</span>
+<span class="sd">    reuse: whether or not the layer and its variables should be reused. To be</span>
+<span class="sd">      able to reuse the layer scope must be given.</span>
+<span class="sd">    variables_collections: Optional list of collections for all the variables or</span>
+<span class="sd">      a dictionary containing a different list of collections per variable.</span>
+<span class="sd">    outputs_collections: collection to add the outputs.</span>
+<span class="sd">    trainable: If `True` also add variables to the graph collection</span>
+<span class="sd">      `GraphKeys.TRAINABLE_VARIABLES` (see tf.Variable).</span>
+<span class="sd">    scope: Optional scope for variable_op_scope.</span>
+<span class="sd">  Returns:</span>
+<span class="sd">     the tensor variable representing the result of the series of operations.</span>
+<span class="sd">  Raises:</span>
+<span class="sd">    ValueError: if x has rank less than 2 or if its last dimension is not set.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">with</span> <span class="n">variable_scope</span><span class="o">.</span><span class="n">variable_op_scope</span><span class="p">([</span><span class="n">inputs</span><span class="p">],</span>
+                                        <span class="n">scope</span><span class="p">,</span>
+                                        <span class="s1">&#39;fully_connected_from_product&#39;</span><span class="p">,</span>
+                                        <span class="n">reuse</span><span class="o">=</span><span class="n">reuse</span><span class="p">)</span> <span class="k">as</span> <span class="n">sc</span><span class="p">:</span>
+
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">inputs</span>
+    <span class="n">num_outputs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">dtype</span>
+
+    <span class="k">if</span> <span class="n">normalizer_fn</span><span class="p">:</span>
+      <span class="n">normalizer_params</span> <span class="o">=</span> <span class="n">normalizer_params</span> <span class="ow">or</span> <span class="p">{}</span>
+      <span class="n">outputs</span> <span class="o">=</span> <span class="n">normalizer_fn</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="o">**</span><span class="n">normalizer_params</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">biases_initializer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">biases_collections</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_variable_collections</span><span class="p">(</span>
+            <span class="n">variables_collections</span><span class="p">,</span> <span class="s1">&#39;biases&#39;</span><span class="p">)</span>
+        <span class="n">biases</span> <span class="o">=</span> <span class="n">variables</span><span class="o">.</span><span class="n">model_variable</span><span class="p">(</span><span class="s1">&#39;biases&#39;</span><span class="p">,</span>
+                                          <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">num_outputs</span><span class="p">,],</span>
+                                          <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                                          <span class="n">initializer</span><span class="o">=</span><span class="n">biases_initializer</span><span class="p">,</span>
+                                          <span class="n">regularizer</span><span class="o">=</span><span class="n">biases_regularizer</span><span class="p">,</span>
+                                          <span class="n">collections</span><span class="o">=</span><span class="n">biases_collections</span><span class="p">,</span>
+                                          <span class="n">trainable</span><span class="o">=</span><span class="n">trainable</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">bias_add</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">biases</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">activation_fn</span><span class="p">:</span>
+      <span class="n">outputs</span> <span class="o">=</span> <span class="n">activation_fn</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">collect_named_outputs</span><span class="p">(</span><span class="n">outputs_collections</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span>
+
+
+<span class="nd">@tf.contrib.framework.add_arg_scope</span>
+<span class="k">def</span> <span class="nf">sampled_softmax_loss</span><span class="p">(</span>
+                    <span class="n">inputs</span><span class="p">,</span>
+                    <span class="n">num_outputs</span><span class="p">,</span>
+                    <span class="n">labels</span><span class="p">,</span>
+                    <span class="n">num_sampled</span><span class="p">,</span>
+                    <span class="n">sampled_softmax_loss_args</span><span class="o">=</span><span class="p">{},</span>
+                    <span class="n">activation_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">normalizer_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">normalizer_params</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">weights_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">xavier_initializer</span><span class="p">(),</span>
+                    <span class="n">weights_regularizer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">biases_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">,</span>
+                    <span class="n">biases_regularizer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">reuse</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">variables_collections</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">outputs_collections</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">trainable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">scope</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Adds a fully connected layer.</span>
+<span class="sd">  `fully_connected` creates a variable called `weights`, representing a fully</span>
+<span class="sd">  connected weight matrix, which is multiplied by the `inputs` to produce a</span>
+<span class="sd">  `Tensor` of hidden units. If a `normalizer_fn` is provided (such as</span>
+<span class="sd">  `batch_norm`), it is then applied. Otherwise, if `normalizer_fn` is</span>
+<span class="sd">  None and a `biases_initializer` is provided then a `biases` variable would be</span>
+<span class="sd">  created and added the hidden units. Finally, if `activation_fn` is not `None`,</span>
+<span class="sd">  it is applied to the hidden units as well.</span>
+<span class="sd">  Note: that if `inputs` have a rank greater than 2, then `inputs` is flattened</span>
+<span class="sd">  prior to the initial matrix multiply by `weights`.</span>
+<span class="sd">  Args:</span>
+<span class="sd">    inputs: A tensor of with at least rank 2 and value for the last dimension,</span>
+<span class="sd">      i.e. `[batch_size, depth]`, `[None, None, None, channels]`.</span>
+<span class="sd">    num_outputs: Integer, the number of output units in the layer.</span>
+<span class="sd">    activation_fn: activation function.</span>
+<span class="sd">    normalizer_fn: normalization function to use instead of `biases`. If</span>
+<span class="sd">      `normalize_fn` is provided then `biases_initializer` and</span>
+<span class="sd">      `biases_regularizer` are ignored and `biases` are not created nor added.</span>
+<span class="sd">    normalizer_params: normalization function parameters.</span>
+<span class="sd">    weights_initializer: An initializer for the weights.</span>
+<span class="sd">    weights_regularizer: Optional regularizer for the weights.</span>
+<span class="sd">    biases_initializer: An initializer for the biases. If None skip biases.</span>
+<span class="sd">    biases_regularizer: Optional regularizer for the biases.</span>
+<span class="sd">    reuse: whether or not the layer and its variables should be reused. To be</span>
+<span class="sd">      able to reuse the layer scope must be given.</span>
+<span class="sd">    variables_collections: Optional list of collections for all the variables or</span>
+<span class="sd">      a dictionary containing a different list of collections per variable.</span>
+<span class="sd">    outputs_collections: collection to add the outputs.</span>
+<span class="sd">    trainable: If `True` also add variables to the graph collection</span>
+<span class="sd">      `GraphKeys.TRAINABLE_VARIABLES` (see tf.Variable).</span>
+<span class="sd">    scope: Optional scope for variable_op_scope.</span>
+<span class="sd">  Returns:</span>
+<span class="sd">     the tensor variable representing the result of the series of operations.</span>
+<span class="sd">  Raises:</span>
+<span class="sd">    ValueError: if x has rank less than 2 or if its last dimension is not set.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_outputs</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;num_outputs should be integer, got </span><span class="si">%s</span><span class="s1">.&#39;</span><span class="p">,</span> <span class="n">num_outputs</span><span class="p">)</span>
+  <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_op_scope</span><span class="p">([</span><span class="n">inputs</span><span class="p">],</span>
+                            <span class="n">scope</span><span class="p">,</span>
+                            <span class="s1">&#39;sampled_softmax_loss&#39;</span><span class="p">,</span>
+                            <span class="n">reuse</span><span class="o">=</span><span class="n">reuse</span><span class="p">)</span> <span class="k">as</span> <span class="n">sc</span><span class="p">:</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">base_dtype</span>
+    <span class="n">inputs_shape</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span>
+    <span class="n">num_input_units</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">last_dimension</span><span class="p">(</span><span class="n">inputs_shape</span><span class="p">,</span> <span class="n">min_rank</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">static_shape</span> <span class="o">=</span> <span class="n">inputs_shape</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
+    <span class="n">static_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_outputs</span>
+
+    <span class="n">weights_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">num_input_units</span><span class="p">,</span> <span class="n">num_outputs</span><span class="p">]</span>
+    <span class="n">weights_collections</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">get_variable_collections</span><span class="p">(</span>
+        <span class="n">variables_collections</span><span class="p">,</span> <span class="s1">&#39;weights&#39;</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">framework</span><span class="o">.</span><span class="n">model_variable</span><span class="p">(</span><span class="s1">&#39;weights&#39;</span><span class="p">,</span>
+                                       <span class="n">shape</span><span class="o">=</span><span class="n">weights_shape</span><span class="p">,</span>
+                                       <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                                       <span class="n">initializer</span><span class="o">=</span><span class="n">weights_initializer</span><span class="p">,</span>
+                                       <span class="n">regularizer</span><span class="o">=</span><span class="n">weights_regularizer</span><span class="p">,</span>
+                                       <span class="n">collections</span><span class="o">=</span><span class="n">weights_collections</span><span class="p">,</span>
+                                       <span class="n">trainable</span><span class="o">=</span><span class="n">trainable</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">static_shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="c1"># Reshape inputs</span>
+      <span class="n">inputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_input_units</span><span class="p">])</span>
+
+
+    <span class="n">biases_collections</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">get_variable_collections</span><span class="p">(</span>
+        <span class="n">variables_collections</span><span class="p">,</span> <span class="s1">&#39;biases&#39;</span><span class="p">)</span>
+    <span class="n">biases</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">framework</span><span class="o">.</span><span class="n">model_variable</span><span class="p">(</span><span class="s1">&#39;biases&#39;</span><span class="p">,</span>
+                                      <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">num_outputs</span><span class="p">,],</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                                      <span class="n">initializer</span><span class="o">=</span><span class="n">biases_initializer</span><span class="p">,</span>
+                                      <span class="n">regularizer</span><span class="o">=</span><span class="n">biases_regularizer</span><span class="p">,</span>
+                                      <span class="n">collections</span><span class="o">=</span><span class="n">biases_collections</span><span class="p">,</span>
+                                      <span class="n">trainable</span><span class="o">=</span><span class="n">trainable</span><span class="p">)</span>
+
+
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">sampled_softmax_loss</span><span class="p">(</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">weights</span><span class="p">),</span> <span class="n">biases</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span>
+        <span class="n">labels</span><span class="p">,</span> <span class="n">num_sampled</span><span class="p">,</span> <span class="n">num_outputs</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">sampled_softmax_loss_args</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">collect_named_outputs</span><span class="p">(</span><span class="n">outputs_collections</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">patch_classes</span><span class="p">(</span><span class="n">Builder</span><span class="p">,</span> <span class="n">BuilderTree</span><span class="p">,</span> <span class="n">Applicative</span><span class="p">):</span>
+    <span class="c1">#Builder</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_method</span><span class="p">(</span><span class="n">polynomial_layer</span><span class="p">,</span> <span class="s2">&quot;phi.Builder&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">minimize</span><span class="p">,</span> <span class="s2">&quot;phi.Builder&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">maximize</span><span class="p">,</span> <span class="s2">&quot;phi.Builder&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">drop_layer</span><span class="p">,</span> <span class="s2">&quot;phi.Builder&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">add_regularization_loss</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">fully_connected_from_product</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">sampled_softmax_loss</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">sampled_softmax_loss</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+
+
+    <span class="c1">#Tree</span>
+    <span class="n">BuilderTree</span><span class="o">.</span><span class="n">register_method</span><span class="p">(</span><span class="n">ensamble_dropout</span><span class="p">,</span> <span class="s2">&quot;phi.BuilderTree&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="phi.patches.phi_patch.builder_custom_ops.builders_blacklist" class="name">var <span class="ident">builders_blacklist</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="phi.patches.phi_patch.builder_custom_ops.add_regularization_loss">
+    <p>def <span class="ident">add_regularization_loss</span>(</p><p>tensor, graph=None, scope=&#39;add_regularization_loss&#39;)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops.add_regularization_loss', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops.add_regularization_loss" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_regularization_loss</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s1">&#39;add_regularization_loss&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">reg_losses</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">GraphKeys</span><span class="o">.</span><span class="n">REGULARIZATION_LOSSES</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">reg_losses</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">GraphKeys</span><span class="o">.</span><span class="n">REGULARIZATION_LOSSES</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">):</span>
+        <span class="n">reg_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">([</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">reg_loss</span><span class="p">)</span> <span class="k">for</span> <span class="n">reg_loss</span> <span class="ow">in</span> <span class="n">reg_losses</span> <span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reg_loss_mean_sum&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">reg_loss</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.patches.phi_patch.builder_custom_ops.drop_layer">
+    <p>def <span class="ident">drop_layer</span>(</p><p>x, keep_prob, seed=None, name=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Computes dropout.
+With probability <code>keep_prob</code>, outputs the input element scaled up by
+<code>1 / keep_prob</code>, otherwise outputs <code>0</code>.  The scaling is so that the expected
+sum is unchanged.</p>
+<p>Args:
+  x: A tensor.
+  keep_prob: A scalar <code>Tensor</code> with the same type as x. The probability
+    that each element is kept.
+  noise_shape: A 1-D <code>Tensor</code> of type <code>int32</code>, representing the
+    shape for randomly generated keep/drop flags.
+  seed: A Python integer. Used to create random seeds. See
+    <a href="../../api_docs/python/constant_op.md#set_random_seed"><code>set_random_seed</code></a>
+    for behavior.
+  name: A name for this operation (optional).
+Returns:
+  A Tensor of the same shape of <code>x</code>.
+Raises:
+  ValueError: If <code>keep_prob</code> is not in <code>(0, 1]</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops.drop_layer', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops.drop_layer" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">drop_layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">keep_prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Computes dropout.</span>
+<span class="sd">  With probability `keep_prob`, outputs the input element scaled up by</span>
+<span class="sd">  `1 / keep_prob`, otherwise outputs `0`.  The scaling is so that the expected</span>
+<span class="sd">  sum is unchanged.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    x: A tensor.</span>
+<span class="sd">    keep_prob: A scalar `Tensor` with the same type as x. The probability</span>
+<span class="sd">      that each element is kept.</span>
+<span class="sd">    noise_shape: A 1-D `Tensor` of type `int32`, representing the</span>
+<span class="sd">      shape for randomly generated keep/drop flags.</span>
+<span class="sd">    seed: A Python integer. Used to create random seeds. See</span>
+<span class="sd">      [`set_random_seed`](../../api_docs/python/constant_op.md#set_random_seed)</span>
+<span class="sd">      for behavior.</span>
+<span class="sd">    name: A name for this operation (optional).</span>
+<span class="sd">  Returns:</span>
+<span class="sd">    A Tensor of the same shape of `x`.</span>
+<span class="sd">  Raises:</span>
+<span class="sd">    ValueError: If `keep_prob` is not in `(0, 1]`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">op_scope</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;drop_layer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">name</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keep_prob</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">keep_prob</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;keep_prob must be a scalar tensor or a float in the &quot;</span>
+                       <span class="s2">&quot;range (0, 1], got </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">keep_prob</span><span class="p">)</span>
+    <span class="n">keep_prob</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">keep_prob</span><span class="p">,</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                                      <span class="n">name</span><span class="o">=</span><span class="s2">&quot;keep_prob&quot;</span><span class="p">)</span>
+    <span class="n">keep_prob</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span><span class="o">.</span><span class="n">assert_is_compatible_with</span><span class="p">(</span><span class="n">tensor_shape</span><span class="o">.</span><span class="n">scalar</span><span class="p">())</span>
+
+    <span class="n">noise_shape</span> <span class="o">=</span> <span class="p">[</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span> <span class="p">]</span>
+    <span class="c1"># uniform [keep_prob, 1.0 + keep_prob)</span>
+    <span class="n">random_tensor</span> <span class="o">=</span> <span class="n">keep_prob</span>
+    <span class="n">random_tensor</span> <span class="o">+=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random_uniform</span><span class="p">(</span>
+        <span class="n">noise_shape</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 0. if [keep_prob, 1.0) and 1. if [1.0, 1.0 + keep_prob)</span>
+    <span class="n">binary_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">random_tensor</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">keep_prob</span><span class="p">)</span> <span class="o">*</span> <span class="n">binary_tensor</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">set_shape</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get_shape</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">ret</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.patches.phi_patch.builder_custom_ops.ensamble_dropout">
+    <p>def <span class="ident">ensamble_dropout</span>(</p><p>tree, keep_prob, seed=None, name=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>THIS METHOD IS AUTOMATICALLY GENERATED</p>
+<p><strong>@immutable</strong></p>
+<p>This method the same as <code>phi.BuilderTree.ensamble_dropout</code>.</p>
+<p><strong> Original Documentation for <code>phi.BuilderTree.ensamble_dropout</code></strong></p>
+<div class="codehilite"><pre><span></span>def ensamble_dropout(tree, keep_prob, seed=None, name=None)
+</pre></div>
+
+
+<p>None</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops.ensamble_dropout', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops.ensamble_dropout" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ensamble_dropout</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">keep_prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">op_scope</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">tensors</span><span class="p">(),</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;drop_layer&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tree</span><span class="o">.</span><span class="n">map_each</span><span class="p">(</span><span class="n">drop_layer</span><span class="p">,</span> <span class="n">keep_prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.patches.phi_patch.builder_custom_ops.fully_connected_from_product">
+    <p>def <span class="ident">fully_connected_from_product</span>(</p><p>*args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Adds a fully connected layer.
+<code>fully_connected</code> creates a variable called <code>weights</code>, representing a fully
+connected weight matrix, which is multiplied by the <code>inputs</code> to produce a
+<code>Tensor</code> of hidden units. If a <code>normalizer_fn</code> is provided (such as
+<code>batch_norm</code>), it is then applied. Otherwise, if <code>normalizer_fn</code> is
+None and a <code>biases_initializer</code> is provided then a <code>biases</code> variable would be
+created and added the hidden units. Finally, if <code>activation_fn</code> is not <code>None</code>,
+it is applied to the hidden units as well.
+Note: that if <code>inputs</code> have a rank greater than 2, then <code>inputs</code> is flattened
+prior to the initial matrix multiply by <code>weights</code>.
+Args:
+  inputs: A tensor of with at least rank 2 and value for the last dimension,
+    i.e. <code>[batch_size, depth]</code>, <code>[None, None, None, channels]</code>.
+  num_outputs: Integer, the number of output units in the layer.
+  activation_fn: activation function.
+  normalizer_fn: normalization function to use instead of <code>biases</code>. If
+    <code>normalize_fn</code> is provided then <code>biases_initializer</code> and
+    <code>biases_regularizer</code> are ignored and <code>biases</code> are not created nor added.
+  normalizer_params: normalization function parameters.
+  weights_initializer: An initializer for the weights.
+  weights_regularizer: Optional regularizer for the weights.
+  biases_initializer: An initializer for the biases. If None skip biases.
+  biases_regularizer: Optional regularizer for the biases.
+  reuse: whether or not the layer and its variables should be reused. To be
+    able to reuse the layer scope must be given.
+  variables_collections: Optional list of collections for all the variables or
+    a dictionary containing a different list of collections per variable.
+  outputs_collections: collection to add the outputs.
+  trainable: If <code>True</code> also add variables to the graph collection
+    <code>GraphKeys.TRAINABLE_VARIABLES</code> (see tf.Variable).
+  scope: Optional scope for variable_op_scope.
+Returns:
+   the tensor variable representing the result of the series of operations.
+Raises:
+  ValueError: if x has rank less than 2 or if its last dimension is not set.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops.fully_connected_from_product', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops.fully_connected_from_product" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">func_with_args</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="n">current_scope</span> <span class="o">=</span> <span class="n">_current_arg_scope</span><span class="p">()</span>
+  <span class="n">current_args</span> <span class="o">=</span> <span class="n">kwargs</span>
+  <span class="n">key_func</span> <span class="o">=</span> <span class="n">_key_op</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">key_func</span> <span class="ow">in</span> <span class="n">current_scope</span><span class="p">:</span>
+    <span class="n">current_args</span> <span class="o">=</span> <span class="n">current_scope</span><span class="p">[</span><span class="n">key_func</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">current_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">current_args</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.patches.phi_patch.builder_custom_ops.maximize">
+    <p>def <span class="ident">maximize</span>(</p><p>tensor, optimizer, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops.maximize', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops.maximize" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">maximize</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.patches.phi_patch.builder_custom_ops.minimize">
+    <p>def <span class="ident">minimize</span>(</p><p>tensor, optimizer, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops.minimize', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops.minimize" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.patches.phi_patch.builder_custom_ops.patch_classes">
+    <p>def <span class="ident">patch_classes</span>(</p><p>Builder, BuilderTree, Applicative)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops.patch_classes', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops.patch_classes" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">patch_classes</span><span class="p">(</span><span class="n">Builder</span><span class="p">,</span> <span class="n">BuilderTree</span><span class="p">,</span> <span class="n">Applicative</span><span class="p">):</span>
+    <span class="c1">#Builder</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_method</span><span class="p">(</span><span class="n">polynomial_layer</span><span class="p">,</span> <span class="s2">&quot;phi.Builder&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">minimize</span><span class="p">,</span> <span class="s2">&quot;phi.Builder&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">maximize</span><span class="p">,</span> <span class="s2">&quot;phi.Builder&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">drop_layer</span><span class="p">,</span> <span class="s2">&quot;phi.Builder&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">add_regularization_loss</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">fully_connected_from_product</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">sampled_softmax_loss</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+    <span class="n">Builder</span><span class="o">.</span><span class="n">register_map_method</span><span class="p">(</span><span class="n">sampled_softmax_loss</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+
+
+    <span class="c1">#Tree</span>
+    <span class="n">BuilderTree</span><span class="o">.</span><span class="n">register_method</span><span class="p">(</span><span class="n">ensamble_dropout</span><span class="p">,</span> <span class="s2">&quot;phi.BuilderTree&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.patches.phi_patch.builder_custom_ops.polynomial_layer">
+    <p>def <span class="ident">polynomial_layer</span>(</p><p>builder, size, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>THIS METHOD IS AUTOMATICALLY GENERATED</p>
+<p><strong>@immutable</strong></p>
+<p>This method the same as <code>phi.Builder.polynomial_layer</code>.</p>
+<p><strong> Original Documentation for <code>phi.Builder.polynomial_layer</code></strong></p>
+<div class="codehilite"><pre><span></span>def polynomial_layer(builder, size)
+</pre></div>
+
+
+<p>Creates a fully connected layer of size <code>size</code> and then applies the activation function
+<code>y(i) = z(i)^(i+1)</code>
+where <code>z = w*x + b</code></p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops.polynomial_layer', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops.polynomial_layer" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">polynomial_layer</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a fully connected layer of size `size` and then applies the activation function</span>
+<span class="sd">    ```</span>
+<span class="sd">    y(i) = z(i)^(i+1)</span>
+<span class="sd">    ```</span>
+<span class="sd">    where `z = w*x + b`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;polynomial_layer&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">builder</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="n">_polynomial</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.patches.phi_patch.builder_custom_ops.sampled_softmax_loss">
+    <p>def <span class="ident">sampled_softmax_loss</span>(</p><p>*args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Adds a fully connected layer.
+<code>fully_connected</code> creates a variable called <code>weights</code>, representing a fully
+connected weight matrix, which is multiplied by the <code>inputs</code> to produce a
+<code>Tensor</code> of hidden units. If a <code>normalizer_fn</code> is provided (such as
+<code>batch_norm</code>), it is then applied. Otherwise, if <code>normalizer_fn</code> is
+None and a <code>biases_initializer</code> is provided then a <code>biases</code> variable would be
+created and added the hidden units. Finally, if <code>activation_fn</code> is not <code>None</code>,
+it is applied to the hidden units as well.
+Note: that if <code>inputs</code> have a rank greater than 2, then <code>inputs</code> is flattened
+prior to the initial matrix multiply by <code>weights</code>.
+Args:
+  inputs: A tensor of with at least rank 2 and value for the last dimension,
+    i.e. <code>[batch_size, depth]</code>, <code>[None, None, None, channels]</code>.
+  num_outputs: Integer, the number of output units in the layer.
+  activation_fn: activation function.
+  normalizer_fn: normalization function to use instead of <code>biases</code>. If
+    <code>normalize_fn</code> is provided then <code>biases_initializer</code> and
+    <code>biases_regularizer</code> are ignored and <code>biases</code> are not created nor added.
+  normalizer_params: normalization function parameters.
+  weights_initializer: An initializer for the weights.
+  weights_regularizer: Optional regularizer for the weights.
+  biases_initializer: An initializer for the biases. If None skip biases.
+  biases_regularizer: Optional regularizer for the biases.
+  reuse: whether or not the layer and its variables should be reused. To be
+    able to reuse the layer scope must be given.
+  variables_collections: Optional list of collections for all the variables or
+    a dictionary containing a different list of collections per variable.
+  outputs_collections: collection to add the outputs.
+  trainable: If <code>True</code> also add variables to the graph collection
+    <code>GraphKeys.TRAINABLE_VARIABLES</code> (see tf.Variable).
+  scope: Optional scope for variable_op_scope.
+Returns:
+   the tensor variable representing the result of the series of operations.
+Raises:
+  ValueError: if x has rank less than 2 or if its last dimension is not set.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patches.phi_patch.builder_custom_ops.sampled_softmax_loss', this);">Show source &equiv;</a></p>
+  <div id="source-phi.patches.phi_patch.builder_custom_ops.sampled_softmax_loss" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">func_with_args</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="n">current_scope</span> <span class="o">=</span> <span class="n">_current_arg_scope</span><span class="p">()</span>
+  <span class="n">current_args</span> <span class="o">=</span> <span class="n">kwargs</span>
+  <span class="n">key_func</span> <span class="o">=</span> <span class="n">_key_op</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">key_func</span> <span class="ow">in</span> <span class="n">current_scope</span><span class="p">:</span>
+    <span class="n">current_args</span> <span class="o">=</span> <span class="n">current_scope</span><span class="p">[</span><span class="n">key_func</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">current_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">current_args</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>

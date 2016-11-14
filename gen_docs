@@ -1,0 +1,4 @@
+#! /bin/bash
+cd /phi
+PYTHONPATH= pdoc --html-dir=docs --html phi --only-pypath --overwrite
+python -c "import phi; import os; open('README.md', 'w').write(phi.__doc__); open('guide/README.md', 'w').write(phi.__doc__)"

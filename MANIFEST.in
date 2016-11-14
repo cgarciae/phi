@@ -1,0 +1,7 @@
+include LICENCE
+include requirements.txt
+include README.md
+include CHANGELOG.md
+
+include phi/version.txt
+include phi/README-template.md
