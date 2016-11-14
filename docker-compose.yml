@@ -4,15 +4,8 @@ volumes:
   data:
 
 services:
-  tf:
-    build: .
-    volumes:
-      - ./:/phi
-    ports:
-      - "8885:8888"
-    command: bash -c "python setup.py install && cd /notebooks && /run_jupyter.sh"
 
-  pdoc:
+  docs:
     # update gh-pages => git subtree push --prefix docs/phi origin gh-pages
     build: .
     volumes:

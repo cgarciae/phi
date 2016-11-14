@@ -63,7 +63,7 @@ Next is an example with all the features of TensorBuilder including the DSL, bra
     x = placeholder(tf.float32, shape=[None, 10])
     y = placeholder(tf.float32, shape=[None, 5])
 
-    [activation, trainer] = tb.pipe(
+    [activation, trainer] = tb._pipe(
         x,
         [
             {{ tf.device("/gpu:0"):

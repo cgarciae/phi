@@ -1,4 +1,4 @@
-# Tensor Builder
+# Phi
 TensorBuilder is light-weight extensible library that enables you to easily create complex deep neural networks through a functional [fluent](https://en.wikipedia.org/wiki/Fluent_interface) [immutable](https://en.wikipedia.org/wiki/Immutable_object) API based on the Builder Pattern. Tensor Builder also comes with a DSL based on [applicatives](http://learnyouahaskell.com/functors-applicative-functors-and-monoids) and function composition that enables you to express more clearly the structure of your network, make changes faster, and reuse code.
 
 ### Goals
@@ -64,7 +64,7 @@ Next is an example with all the features of TensorBuilder including the DSL, bra
     x = placeholder(tf.float32, shape=[None, 10])
     y = placeholder(tf.float32, shape=[None, 5])
 
-    [activation, trainer] = tb.pipe(
+    [activation, trainer] = tb._pipe(
         x,
         [
             { tf.device("/gpu:0"):
@@ -89,5 +89,3 @@ Next is an example with all the features of TensorBuilder including the DSL, bra
         ],
         tb.tensors()
     )
-
-

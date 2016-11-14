@@ -50,12 +50,30 @@ class Builder(dsl.Function):
         else:
             return self.__class__(f, refs)
 
-    def __call__(self, x):
-        return self.f(x)
+    def __call__(self, x, *code):
+        if len(code) == 0:
+            return self.f(x)
+        else:
+            return self._pipe(x, *code)
+
+    def __rrshift__(self, x):
+        return self(x)
 
     @classmethod
     def Scope(cls):
         return dsl.Scope.GLOBAL_SCOPE
+
+    def _(self, *code, **kwargs):
+        _return_type = None
+
+        if '_return_type' in kwargs:
+            _return_type = kwargs['_return_type']
+            del kwargs['_return_type']
+
+        g, refs = dsl.Compile(code, self.refs)
+        h = utils.compose2(g, self)
+
+        return self._unit(h, refs, _return_type=_return_type)
 
     def _0(self, g, *args, **kwargs):
         """
@@ -84,18 +102,6 @@ class Builder(dsl.Function):
             del kwargs['_return_type']
 
         return self._unit(lambda x: g(*args, **kwargs), self.refs, _return_type=_return_type)
-
-    def _(self, *code, **kwargs):
-        _return_type = None
-
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-        g, refs = dsl.Compile(code, self.refs)
-        h = utils.compose2(g, self)
-
-        return self._unit(h, refs, _return_type=_return_type)
 
     def _1(self, g, *args, **kwargs):
         """
@@ -197,9 +203,6 @@ class Builder(dsl.Function):
         """
         return self._1(lambda _: x)
 
-    def run(self):
-        return self(None)
-
     def on(self, ref):
 
         if type(ref) is str:
@@ -218,96 +221,13 @@ class Builder(dsl.Function):
     def identity(self, x):
         return x
 
-    def __rrshift__(self, x):
-        return self(x)
-
     @classmethod
-    def pipe(cls, x, *code, **kwargs):
-        """
-        `pipe` takes in a `builder` of type `Builder`, `BuilderTree` or `Object` preferably and an object `code` which must be part of the domain of the DSL, and compiles `code` to a function of type `Builder -> Builder` and applies it to the input `builder`. All \*args after `builder` are taken as a tuple, therefore, it makes it easier to define an initial tuple `()` element to define a sequential operation.
-
-        **Arguments**
-
-        * `builder`: a `Builder`, `BuilderTree` or `Object` preferably.
-        * `*code`: a sequence of elements of the DSL.
-
-        **Return**
-
-        An object with the result of the computation, probable types: `Object | Builder | BuilderTree | list(Object) |  `
-
-        **Examples**
-
-            import tensorflow as tf
-            from phi import tb
-
-            x = placeholder(tf.float32, shape=[None, 10])
-
-            h = tb.pipe(
-                x,
-                [
-                    { tf.device("/gpu:0"):
-                        tb.relu_layer(20)
-                    }
-                ,
-                    { tf.device("/gpu:1"):
-                        tb.sigmoid_layer(20)
-                    }
-                ,
-                    { tf.device("/cpu:0"):
-                        tb.tanh_layer(20)
-                    }
-                ],
-                tb.relu_layer(10)
-                .object()
-            )
-        """
-
-        builder = cls.compile(*code, **kwargs)
-
+    def _pipe(cls, x, *code, **kwargs):
+        builder = cls._compile(*code, **kwargs)
         return builder(x)
 
     @classmethod
-    def compile(cls, *code, **kwargs):
-        """
-        `compile` an object `code` which must be part of the domain of the DSL and returns function. It applies the rules of the DSL to create an actual Python function that does what you intend. Normally you will just use pipe, which not only compiles the DSL it actually performs the computation to a given Object/Builder, however, it you are building and API this might be useful since you can create a function from an AST which can itself be used as an element of another AST since final elements of the DSL are functions.
-
-        **Arguments**
-
-        * `*code`: a sequence of elements of the DSL.
-
-        **Return**
-
-        A function
-
-        **Examples**
-
-            import tensorflow as tf
-            from phi import tb
-
-            x = placeholder(tf.float32, shape=[None, 10])
-
-            f = tb.compile(
-                tb.build, #accept a Object as a parameter and create a builder so you can use the rest of the methods
-                [
-                    { tf.device("/gpu:0"):
-                        tb.relu_layer(20)
-                    }
-                ,
-                    { tf.device("/gpu:1"):
-                        tb.sigmoid_layer(20)
-                    }
-                ,
-                    { tf.device("/cpu:0"):
-                        tb.tanh_layer(20)
-                    }
-                ],
-                tb.relu_layer(10)
-                .object()
-            )
-
-            h = f(x)
-
-        """
+    def _compile(cls, *code, **kwargs):
         return cls()._(*code, **kwargs)
 
 
