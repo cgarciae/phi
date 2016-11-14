@@ -1,4 +1,7 @@
 #! /bin/bash
 cd /phi
+echo "Generating docs"
 PYTHONPATH= pdoc --html-dir=docs --html phi --only-pypath --overwrite
+echo "Making README.md"
 python -c "import phi; import os; open('README.md', 'w').write(phi.__doc__); open('guide/README.md', 'w').write(phi.__doc__)"
+echo "Finished"

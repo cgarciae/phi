@@ -12,7 +12,7 @@ Tensor Builder assumes you have a working `tensorflow` installation. We don't in
 
 #### From pypi
 ```
-pip install phi==0.0.18
+pip install phi==0.1.0
 
 ```
 
@@ -43,7 +43,7 @@ Create neural network with a [5, 10, 3] architecture with a `softmax` output lay
 
 ## Features
 * **Branching**: Enable to easily express complex complex topologies with a fluent API. See [Branching](https://cgarciae.gitbooks.io/phi/content/branching/).
-* **Scoping**: Enable you to express scopes for your tensor graph using methods such as `tf.device` and `tf.variable_scope` with the same fluent API. [Scoping](https://cgarciae.gitbooks.io/phi/content/scoping/).
+* **Scoping**: Enable you to express scopes for your tensor graph val methods such as `tf.device` and `tf.variable_scope` with the same fluent API. [Scoping](https://cgarciae.gitbooks.io/phi/content/scoping/).
 * **DSL**: Use an abbreviated notation with a functional style to make the creation of networks faster, structural changes easier, and reuse code. See [DSL](https://cgarciae.gitbooks.io/phi/content/dsl/).
 * **Patches**: Add functions from other Tensor-based libraries as methods of the Builder class. TensorBuilder gives you a curated patch plus some specific patches from `TensorFlow` and `TFLearn`, but you can build you own to make TensorBuilder what you want it to be. See [Patches](https://cgarciae.gitbooks.io/phi/content/patches/).
 

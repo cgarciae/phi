@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>phi.api API documentation</title>
+    <title>phi.tests.test_dummy API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1038,15 +1038,32 @@ table {
     <ul id="index">
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="api.m.html">phi.api.api</a></li>
-        <li class="mono"><a href="applicative.m.html">phi.api.applicative</a></li>
-        <li class="mono"><a href="builder.m.html">phi.api.builder</a></li>
-        <li class="mono"><a href="builder_tree.m.html">phi.api.builder_tree</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.tests.test_dummy.A">A</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.tests.test_dummy.B">B</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.tests.test_dummy.C">C</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.tests.test_dummy.TestDummy">TestDummy</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.tests.test_dummy.TestDummy.test_global">test_global</a></li>
+  </ul>
+
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1058,18 +1075,29 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">phi.api</span> module</h1>
+  <h1 class="title"><span class="name">phi.tests.test_dummy</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api', this);">Show source &equiv;</a></p>
-  <div id="source-phi.api" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">api</span> <span class="kn">import</span> <span class="n">API</span>
-<span class="kn">import</span> <span class="nn">builder</span>
-<span class="kn">import</span> <span class="nn">builder_tree</span>
-<span class="kn">import</span> <span class="nn">applicative</span>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;builder&quot;</span><span class="p">,</span> <span class="s2">&quot;builder_tree&quot;</span><span class="p">,</span> <span class="s2">&quot;applicative&quot;</span><span class="p">,</span> <span class="s2">&quot;api&quot;</span><span class="p">]</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dummy', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dummy" class="source">
+    <div class="codehilite"><pre><span></span><span class="n">lass</span> <span class="n">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;docstring for A.&quot;&quot;&quot;</span>
+   <span class="n">_S</span> <span class="o">=</span> <span class="bp">None</span>
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">return</span> <span class="n">A</span><span class="o">.</span><span class="n">_S</span>
+<span class="n">lass</span> <span class="n">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;docstring for B.&quot;&quot;&quot;</span>
+<span class="n">lass</span> <span class="n">C</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;docstring for C .&quot;&quot;&quot;</span>
+<span class="n">lass</span> <span class="n">TestDummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;docstring for TestDummy.&quot;&quot;&quot;</span>
+   <span class="k">def</span> <span class="nf">test_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+       <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+       <span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+       <span class="n">A</span><span class="o">.</span><span class="n">_S</span> <span class="o">=</span> <span class="s2">&quot;HOLA&quot;</span>
+       <span class="k">assert</span> <span class="n">b</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">a</span><span class="o">.</span><span class="n">S</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
 </pre></div>
 
   </div>
@@ -1079,32 +1107,192 @@ table {
   <section id="section-items">
 
 
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p class="name"><a href="api.m.html">phi.api.api</a></p>
+      <p id="phi.tests.test_dummy.A" class="name">class <span class="ident">A</span></p>
       
   
+    <div class="desc"><p>docstring for A.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dummy.A', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dummy.A" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for A.&quot;&quot;&quot;</span>
 
+    <span class="n">_S</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">A</span><span class="o">.</span><span class="n">_S</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.tests.test_dummy.A">A</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.tests.test_dummy.A.S" class="name">var <span class="ident">S</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
       </div>
+      </div>
+      
       <div class="item">
-      <p class="name"><a href="applicative.m.html">phi.api.applicative</a></p>
+      <p id="phi.tests.test_dummy.B" class="name">class <span class="ident">B</span></p>
       
   
+    <div class="desc"><p>docstring for B.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dummy.B', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dummy.B" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for B.&quot;&quot;&quot;</span>
+</pre></div>
 
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.tests.test_dummy.B">B</a></li>
+          <li><a href="#phi.tests.test_dummy.A">A</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.tests.test_dummy.B.S" class="name">var <span class="ident">S</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#phi.tests.test_dummy.A">A</a></code>.<code><a href="#phi.tests.test_dummy.A.S">S</a></code>
+    </p>
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
       </div>
+      </div>
+      
       <div class="item">
-      <p class="name"><a href="builder.m.html">phi.api.builder</a></p>
+      <p id="phi.tests.test_dummy.C" class="name">class <span class="ident">C</span></p>
       
   
+    <div class="desc"><p>docstring for C .</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dummy.C', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dummy.C" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for C .&quot;&quot;&quot;</span>
+</pre></div>
 
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.tests.test_dummy.C">C</a></li>
+          <li><a href="#phi.tests.test_dummy.A">A</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.tests.test_dummy.C.S" class="name">var <span class="ident">S</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#phi.tests.test_dummy.A">A</a></code>.<code><a href="#phi.tests.test_dummy.A.S">S</a></code>
+    </p>
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
       </div>
+      </div>
+      
       <div class="item">
-      <p class="name"><a href="builder_tree.m.html">phi.api.builder_tree</a></p>
+      <p id="phi.tests.test_dummy.TestDummy" class="name">class <span class="ident">TestDummy</span></p>
       
   
+    <div class="desc"><p>docstring for TestDummy.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dummy.TestDummy', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dummy.TestDummy" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestDummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for TestDummy.&quot;&quot;&quot;</span>
 
+    <span class="k">def</span> <span class="nf">test_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+
+        <span class="n">A</span><span class="o">.</span><span class="n">_S</span> <span class="o">=</span> <span class="s2">&quot;HOLA&quot;</span>
+
+        <span class="k">assert</span> <span class="n">b</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">a</span><span class="o">.</span><span class="n">S</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.tests.test_dummy.TestDummy">TestDummy</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dummy.TestDummy.test_global">
+    <p>def <span class="ident">test_global</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dummy.TestDummy.test_global', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dummy.TestDummy.test_global" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">_S</span> <span class="o">=</span> <span class="s2">&quot;HOLA&quot;</span>
+    <span class="k">assert</span> <span class="n">b</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">a</span><span class="o">.</span><span class="n">S</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       </div>
+      </div>
+
   </section>
 
     </article>

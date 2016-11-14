@@ -2,8 +2,6 @@ from builder import Builder
 import utils
 import inspect
 
-Builder.M = property(lambda self: MethodBuilder(self.f))
-
 class MethodBuilder(Builder):
     """docstring for MethodBuilder."""
 
@@ -11,6 +9,11 @@ class MethodBuilder(Builder):
         if not hasattr(self, name):
             register_proxy_method(name)
         return self._unit(lambda x: getattr(x, name)(*args, **kwargs), self.refs)
+
+
+Builder.M = property(lambda self: MethodBuilder(self.f))
+M = MethodBuilder()
+
 
 def register_proxy_method(method_name, alias=None):
     def proxy_method(self, *args, **kwargs):

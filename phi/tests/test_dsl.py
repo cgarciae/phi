@@ -1,4 +1,4 @@
-from phi import _, _1, _2, M, Builder
+from phi import dsl, _, _1, _2, M, Builder, val, utils
 
 class TestDSL(object):
     """docstring for TestDSL."""

@@ -3,8 +3,9 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>phi.core.concrete_classes API documentation</title>
-    <meta name="description" content="" />
+    <title>phi API documentation</title>
+    <meta name="description" content="# Tensor Builder
+TensorBuilder is light-weight extensible library that enables you to easily create ..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1037,15 +1038,13 @@ table {
     <h1>Index</h1>
     <ul id="index">
 
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#phi.core.concrete_classes.get">get</a></li>
-  </ul>
 
+
+    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+      <ul>
+        <li class="mono"><a href="builder.m.html">phi.builder</a></li>
+      </ul>
     </li>
-
-
     </ul>
   </div>
 
@@ -1057,31 +1056,118 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">phi.core.concrete_classes</span> module</h1>
+  <h1 class="title"><span class="name">phi</span> module</h1>
+  <h1>Tensor Builder</h1>
+<p>TensorBuilder is light-weight extensible library that enables you to easily create complex deep neural networks through a functional <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent</a> <a href="https://en.wikipedia.org/wiki/Immutable_object">immutable</a> API based on the Builder Pattern. Tensor Builder also comes with a DSL based on <a href="http://learnyouahaskell.com/functors-applicative-functors-and-monoids">applicatives</a> and function composition that enables you to express more clearly the structure of your network, make changes faster, and reuse code.</p>
+<h3>Goals</h3>
+<ul>
+<li>Be a light-wrapper around Tensor-based libraries</li>
+<li>Enable users to easily create complex branched topologies while maintaining a fluent API (see <a href="http://cgarciae.github.io/phi/api/builder.m.html#phi.api.builder.Builder.branch">Builder.branch</a>)</li>
+<li>Let users be expressive and productive through a DSL</li>
+</ul>
+<h2>Installation</h2>
+<p>Tensor Builder assumes you have a working <code>tensorflow</code> installation. We don't include it in the <code>requirements.txt</code> since the installation of tensorflow varies depending on your setup.</p>
+<h4>From pypi</h4>
+<p>```
+pip install phi==0.1.0</p>
+<p>```</p>
+<h4>From github</h4>
+<p>For the latest development version
+<code>pip install git+https://github.com/cgarciae/phi.git@develop</code></p>
+<h2>Getting Started</h2>
+<p>Create neural network with a [5, 10, 3] architecture with a <code>softmax</code> output layer and a <code>tanh</code> hidden layer through a Builder and then get back its tensor:</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">tb</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">keep_prob</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="p">(</span>
+  <span class="n">tb</span>
+  <span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">tanh_layer</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># tanh(x * w + b)</span>
+  <span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">keep_prob</span><span class="p">)</span> <span class="c1"># dropout(x, keep_prob)</span>
+  <span class="o">.</span><span class="n">softmax_layer</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># softmax(x * w + b)</span>
+  <span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<h2>Features</h2>
+<ul>
+<li><strong>Branching</strong>: Enable to easily express complex complex topologies with a fluent API. See <a href="https://cgarciae.gitbooks.io/phi/content/branching/">Branching</a>.</li>
+<li><strong>Scoping</strong>: Enable you to express scopes for your tensor graph val methods such as <code>tf.device</code> and <code>tf.variable_scope</code> with the same fluent API. <a href="https://cgarciae.gitbooks.io/phi/content/scoping/">Scoping</a>.</li>
+<li><strong>DSL</strong>: Use an abbreviated notation with a functional style to make the creation of networks faster, structural changes easier, and reuse code. See <a href="https://cgarciae.gitbooks.io/phi/content/dsl/">DSL</a>.</li>
+<li><strong>Patches</strong>: Add functions from other Tensor-based libraries as methods of the Builder class. TensorBuilder gives you a curated patch plus some specific patches from <code>TensorFlow</code> and <code>TFLearn</code>, but you can build you own to make TensorBuilder what you want it to be. See <a href="https://cgarciae.gitbooks.io/phi/content/patches/">Patches</a>.</li>
+</ul>
+<h2>Documentation</h2>
+<ul>
+<li><a href="http://cgarciae.github.io/phi/api/index.html">Complete API</a>.</li>
+<li><a href="http://cgarciae.github.io/phi/core/index.html">Core API</a>.</li>
+<li><a href="http://cgarciae.github.io/phi/index.html">Complete Documentation</a></li>
+</ul>
+<h2>The Guide</h2>
+<p>Check out <a href="https://cgarciae.gitbooks.io/phi/content/">The Guide</a> to learn to code in TensorBuilder.</p>
+<h2>Full Example</h2>
+<p>Next is an example with all the features of TensorBuilder including the DSL, branching and scoping. It creates a branched computation where each branch is executed on a different device. All branches are then reduced to a single layer, but the computation is the branched again to obtain both the activation function and the trainer.</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">tb</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+
+<span class="p">[</span><span class="n">activation</span><span class="p">,</span> <span class="n">trainer</span><span class="p">]</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">{</span> <span class="n">tf</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;/gpu:0&quot;</span><span class="p">):</span>
+            <span class="n">tb</span><span class="o">.</span><span class="n">relu_layer</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">,</span>
+        <span class="p">{</span> <span class="n">tf</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;/gpu:1&quot;</span><span class="p">):</span>
+            <span class="n">tb</span><span class="o">.</span><span class="n">sigmoid_layer</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">,</span>
+        <span class="p">{</span> <span class="n">tf</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;/cpu:0&quot;</span><span class="p">):</span>
+            <span class="n">tb</span><span class="o">.</span><span class="n">tanh_layer</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="n">tb</span><span class="o">.</span><span class="n">linear_layer</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span>
+    <span class="p">[</span>
+        <span class="n">tb</span><span class="o">.</span><span class="n">softmax</span><span class="p">()</span> <span class="c1"># activation</span>
+    <span class="p">,</span>
+        <span class="n">tb</span>
+        <span class="o">.</span><span class="n">softmax_cross_entropy_with_logits</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="c1"># loss</span>
+        <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">)</span> <span class="c1"># trainer</span>
+    <span class="p">],</span>
+    <span class="n">tb</span><span class="o">.</span><span class="n">tensors</span><span class="p">()</span>
+<span class="p">)</span>
+</pre></div>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.core.concrete_classes', this);">Show source &equiv;</a></p>
-  <div id="source-phi.core.concrete_classes" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">ef</span> <span class="n">get</span><span class="p">(</span><span class="n">BuilderBase</span><span class="p">,</span> <span class="n">BuilderTreeBase</span><span class="p">,</span> <span class="n">ApplicativeBase</span><span class="p">):</span>
-   <span class="k">class</span> <span class="nc">Builder</span><span class="p">(</span><span class="n">BuilderBase</span><span class="p">):</span>
-       <span class="sd">&quot;&quot;&quot;docstring for Builder&quot;&quot;&quot;</span>
-       <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">):</span>
-           <span class="nb">super</span><span class="p">(</span><span class="n">Builder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
-       <span class="k">def</span> <span class="nf">BuilderTree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">builder_iterable</span><span class="p">):</span>
-           <span class="k">return</span> <span class="n">BuilderTree</span><span class="p">(</span><span class="n">builder_iterable</span><span class="p">)</span>
-   <span class="k">class</span> <span class="nc">BuilderTree</span><span class="p">(</span><span class="n">BuilderTreeBase</span><span class="p">):</span>
-       <span class="sd">&quot;&quot;&quot;docstring for BuilderTree&quot;&quot;&quot;</span>
-       <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">builder_iterable</span><span class="p">):</span>
-           <span class="nb">super</span><span class="p">(</span><span class="n">BuilderTree</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">builder_iterable</span><span class="p">)</span>
-       <span class="k">def</span> <span class="nf">Builder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">):</span>
-           <span class="k">return</span> <span class="n">Builder</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
-   <span class="k">class</span> <span class="nc">Applicative</span><span class="p">(</span><span class="n">ApplicativeBase</span><span class="p">):</span>
-       <span class="sd">&quot;&quot;&quot;docstring for Applicative&quot;&quot;&quot;</span>
-       <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
-           <span class="nb">super</span><span class="p">(</span><span class="n">Applicative</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-       <span class="k">def</span> <span class="nf">Builder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">):</span>
-           <span class="k">return</span> <span class="n">Builder</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
-   <span class="k">return</span> <span class="p">(</span><span class="n">Builder</span><span class="p">,</span> <span class="n">BuilderTree</span><span class="p">,</span> <span class="n">Applicative</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi', this);">Show source &equiv;</a></p>
+  <div id="source-phi" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">builder</span> <span class="kn">import</span> <span class="n">Builder</span>
+<span class="kn">from</span> <span class="nn">method_builder</span> <span class="kn">import</span> <span class="n">MethodBuilder</span>
+<span class="kn">from</span> <span class="nn">fn</span> <span class="kn">import</span> <span class="n">_</span>
+<span class="kn">from</span> <span class="nn">shortcuts</span> <span class="kn">import</span> <span class="n">C</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">_0</span><span class="p">,</span> <span class="n">_1</span><span class="p">,</span> <span class="n">_2</span><span class="p">,</span> <span class="n">_3</span><span class="p">,</span> <span class="n">_4</span><span class="p">,</span> <span class="n">_5</span>
+
+
+<span class="c1">########################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">########################</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c1">#pdoc</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tensordata&quot;</span><span class="p">,</span> <span class="s2">&quot;patches&quot;</span><span class="p">,</span> <span class="s2">&quot;builder&quot;</span><span class="p">]</span>
+
+<span class="c1">#set documentation</span>
+<span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="n">fname</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
+<span class="n">raw_docs</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;README-template.md&quot;</span><span class="p">)</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;version.txt&quot;</span><span class="p">)</span>
+<span class="n">module</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">raw_docs</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1090,54 +1176,15 @@ table {
 
   <section id="section-items">
 
-    <h2 class="section-title" id="header-functions">Functions</h2>
+
+
+    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+      <div class="item">
+      <p class="name"><a href="builder.m.html">phi.builder</a></p>
       
-  <div class="item">
-    <div class="name def" id="phi.core.concrete_classes.get">
-    <p>def <span class="ident">get</span>(</p><p>BuilderBase, BuilderTreeBase, ApplicativeBase)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.core.concrete_classes.get', this);">Show source &equiv;</a></p>
-  <div id="source-phi.core.concrete_classes.get" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">BuilderBase</span><span class="p">,</span> <span class="n">BuilderTreeBase</span><span class="p">,</span> <span class="n">ApplicativeBase</span><span class="p">):</span>
-    <span class="k">class</span> <span class="nc">Builder</span><span class="p">(</span><span class="n">BuilderBase</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;docstring for Builder&quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">):</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">Builder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">BuilderTree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">builder_iterable</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">BuilderTree</span><span class="p">(</span><span class="n">builder_iterable</span><span class="p">)</span>
-
-    <span class="k">class</span> <span class="nc">BuilderTree</span><span class="p">(</span><span class="n">BuilderTreeBase</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;docstring for BuilderTree&quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">builder_iterable</span><span class="p">):</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">BuilderTree</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">builder_iterable</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">Builder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">Builder</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
-
-    <span class="k">class</span> <span class="nc">Applicative</span><span class="p">(</span><span class="n">ApplicativeBase</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;docstring for Applicative&quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">Applicative</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">Builder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">Builder</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">(</span><span class="n">Builder</span><span class="p">,</span> <span class="n">BuilderTree</span><span class="p">,</span> <span class="n">Applicative</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
   
 
-
+      </div>
   </section>
 
     </article>

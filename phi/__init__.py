@@ -1,32 +1,25 @@
 from builder import Builder
-from method_builder import MethodBuilder
+from method_builder import M
 from fn import _
+from shortcuts import C, P, val, on, _0, _1, _2, _3, _4, _5
 
-#############################
-## Shortcuts
-#############################
-def val(x):
-    return Builder().val(x)
+builder = Builder()
 
-def on(ref):
-    return Builder().on(ref)
 
-def C(*args, **kwargs):
-    return Builder().compile(*args, **kwargs)
+########################
+# Documentation
+########################
+import os
+import sys
 
-def P(*args, **kwargs):
-    return Builder.pipe(*args, **kwargs)
+#pdoc
+__all__ = ["tensordata", "patches", "builder"]
 
-M = MethodBuilder()
+#set documentation
+def _read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-def _0(*args, **kwargs):
-    return Builder()._0(*args, **kwargs)
-
-def _1(*args, **kwargs):
-    return Builder()._1(*args, **kwargs)
-
-def _2(*args, **kwargs):
-    return Builder()._2(*args, **kwargs)
-
-def _3(*args, **kwargs):
-    return Builder()._3(*args, **kwargs)
+module = sys.modules[__name__]
+raw_docs = _read("README-template.md")
+__version__ = _read("version.txt")
+module.__doc__ = raw_docs.format(__version__)
