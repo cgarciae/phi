@@ -6,7 +6,7 @@ from inspect import isclass
 
 
 ###############################
-# Ref
+# Helpers
 ###############################
 
 NO_VALUE = object()
@@ -32,6 +32,65 @@ class Ref(object):
             self.assigned = True
 
         return x
+
+class Record(dict):
+    """docstring for DictObject."""
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return repr(self.__dict__)
+
+    def __len__(self):
+        return len(self.__dict__)
+
+    def __delitem__(self, key):
+        del self.__dict__[key]
+
+    def clear(self):
+        return self.__dict__.clear()
+
+    def copy(self):
+        return self.__dict__.copy()
+
+    def has_key(self, k):
+        return self.__dict__.has_key(k)
+
+    def pop(self, k, d=None):
+        return self.__dict__.pop(k, d)
+
+    def update(self, *args, **kwargs):
+        return self.__dict__.update(*args, **kwargs)
+
+    def keys(self):
+        return self.__dict__.keys()
+
+    def values(self):
+        return self.__dict__.values()
+
+    def items(self):
+        return self.__dict__.items()
+
+    def pop(self, *args):
+        return self.__dict__.pop(*args)
+
+    def __cmp__(self, dict):
+        return cmp(self.__dict__, dict)
+
+    def __contains__(self, item):
+        return item in self.__dict__
+
+    def __iter__(self):
+        return iter(self.__dict__)
+
+    def __unicode__(self):
+        return unicode(repr(self.__dict__))
 
 ###############################
 # DSL Elements
@@ -111,39 +170,66 @@ class Sequence(Node):
     def __str__(self):
         return "Seq({0}, {1})".format(self.left, self.right)
 
+class Dict(Node):
+    """docstring for Dict."""
+    def __init__(self, dict_code):
+        super(Dict, self).__init__()
+        self.nodes_dict = { key: parse(code) for key, code in dict_code.iteritems() }
 
-class Scope(Node):
+    @classmethod
+    def __parse__(cls, dict_code):
+        return Dict(dict_code)
+
+    def __compile__(self, refs):
+        funs_dict = {}
+        out_refs = refs.copy()
+
+        for key, node in self.nodes_dict.iteritems():
+            fs, next_refs = node.__compile__(refs)
+            f = to_fn(fs)
+
+            out_refs.update(next_refs)
+            funs_dict[key] = f
+
+        def function(x):
+            return Record(**{key: f(x) for key, f in funs_dict.iteritems() })
+
+        return function, out_refs
+
+
+
+class With(Node):
     """docstring for Dict."""
 
     GLOBAL_SCOPE = None
 
-    def __init__(self, scope, body):
-        super(Scope, self).__init__()
-        self.scope = scope
-        self.body = body
+    def __init__(self, scope_code, body_code):
+        super(With, self).__init__()
+        self.scope = parse(scope_code, else_constant=True)
+        self.body = parse(body_code)
 
     def __compile__(self, refs):
         scope_f, refs = self.scope.__compile__(refs)
         body_fs, refs = self.body.__compile__(refs)
 
-        def scope_function(x):
+        def function(x):
             with scope_f(x) as scope:
                 with self.set_scope(scope):
                     return body_fs(x)
 
-        return scope_function, refs
+        return function, refs
 
     def set_scope(self, new_scope):
         self.new_scope = new_scope
-        self.old_scope = Scope.GLOBAL_SCOPE
+        self.old_scope = With.GLOBAL_SCOPE
 
         return self
 
     def __enter__(self):
-        Scope.GLOBAL_SCOPE = self.new_scope
+        With.GLOBAL_SCOPE = self.new_scope
 
     def __exit__(self, *args):
-        Scope.GLOBAL_SCOPE = self.old_scope
+        With.GLOBAL_SCOPE = self.old_scope
 
     def __str__(self):
         return "\{ {0}: {1}\}".format(pprint.pformat(self.scope), pprint.pformat(self.body))
@@ -200,7 +286,18 @@ class Apply(Node):
     def __init__(self):
         super(Write, self).__init__()
 
+def compose(fs, g):
+    if type(fs) is list:
+        return [ utils.compose2(f, g) for f in fs ]
+    else:
+        return utils.compose2(fs, g)
 
+
+def to_fn(fs):
+    if type(fs) is list:
+        return lambda x: [ f(x) for f in fs ]
+    else:
+        return fs
 
 #######################
 ### FUNCTIONS
@@ -215,23 +312,10 @@ def Compile(code, refs):
     return fs, refs
 
 
-def compose(fs, g):
-    if type(fs) is list:
-        return [ utils.compose2(f, g) for f in fs ]
-    else:
-        return utils.compose2(fs, g)
-
-
-def to_fn(fs):
-    if type(fs) is list:
-        return lambda x: [ f(x) for f in fs ]
-    else:
-        return fs
-
 def is_iter_instance(x):
     return hasattr(x, '__iter__') and not isclass(x)
 
-def parse(code):
+def parse(code, else_constant=False):
     #if type(code) is tuple:
     if isinstance(code, Node):
         return code
@@ -244,9 +328,11 @@ def parse(code):
     elif type(code) is tuple:
         return parse_tuple(code)
     elif type(code) is dict:
-        return parse_dictionary(code)
+        return Dict.__parse__(code)
     elif is_iter_instance(code): #leave last
         return parse_iterable(code) #its iterable
+    elif else_constant:
+        return Input(code)
     else:
         raise Exception("Parse Error: Element not part of the DSL. Got:\n{0} of type {1}".format(code, type(code)))
 
@@ -300,4 +386,4 @@ def parse_dictionary(dict_code):
     else:
         scope = parse(scope_code)
 
-    return Scope(scope, body)
+    return With(scope, body)

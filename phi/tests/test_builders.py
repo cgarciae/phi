@@ -1,5 +1,5 @@
 import tensorflow as tf
-from phi import Builder, M, _0, _1, _2, C, P, val, on
+from phi import Builder, Obj, Rec, _0, _1, _2, C, P, val, on, With
 from fn import _
 import math
 # from phi import tb
@@ -50,8 +50,8 @@ class TestBuilder(object):
     def test_methods(self):
         assert 9 == P(
             "hello world !!!",
-            M.split(" ")
-            .filter(M.contains("wor").Not())
+            Obj.split(" ")
+            .filter(Obj.contains("wor").Not())
             .map(len),
             sum,
             _ + 0.5,
@@ -271,13 +271,12 @@ class TestBuilder(object):
 
         z = P(
             self.x,
-            { tf.name_scope('TEST'):
-                (
+            With( tf.name_scope('TEST'),
+            (
                 _ * 2,
                 _ + 4,
                 { y }
-                )
-            },
+            )),
             _ ** 3
         )
 
@@ -328,14 +327,14 @@ class TestBuilder(object):
 
         assert "some random text" == P(
             "some ",
-            { DummyContext("random "):
+            With( DummyContext("random "),
             (
                 lambda s: s + P.Scope(),
-                { DummyContext("text"):
+                With( DummyContext("text"),
                     lambda s: s + P.Scope()
-                }
+                )
             )
-            }
+            )
         )
 
         assert P.Scope() == None
