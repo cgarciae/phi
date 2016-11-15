@@ -60,21 +60,17 @@ class TestBuilder(object):
 
         assert not P(
             [1,2,3],
-            M.contains(5)
+            Obj.contains(5)
         )
 
         class A(object):
             def something(self, x):
                 return "y" * x
 
-        assert "yyyy" == P(
-            A(),
-            M.method('something', 4) #registered something
-        )
 
-        assert "yy" == P(
+        assert "yyy" == P(
             A(),
-            M.something(2) #used something
+            Obj.something(3) #used something
         )
 
     def test_rrshift(self):
@@ -130,7 +126,7 @@ class TestBuilder(object):
 
         assert 9 == P(
             "Hola Cesar",
-            M.split(" ")
+            Obj.split(" ")
             .map(len)
             .sum()
         )

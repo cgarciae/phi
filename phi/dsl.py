@@ -33,7 +33,7 @@ class Ref(object):
 
         return x
 
-class Record(dict):
+class RecordObject(dict):
     """docstring for DictObject."""
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -129,8 +129,17 @@ Identity = Function(identity)
 class Tree(Node):
     """docstring for Tree."""
 
-    def __init__(self, branches):
-        self.branches = list(branches)
+    def __init__(self, iterable_code):
+        self.branches = [ parse(code) for code in iterable_code ]
+
+    @staticmethod
+    def __parse__(iterable_code):
+        iterable_code = list(iterable_code)
+
+        if len(iterable_code) == 1:
+            return parse(iterable_code[0])
+
+        return Tree(iterable_code)
 
     def __compile__(self, refs):
         fs = []
@@ -151,10 +160,29 @@ class Tree(Node):
 
 class Sequence(Node):
     """docstring for Sequence."""
-    def __init__(self, left, right):
+    def __init__(self, left_code, right_code):
         super(Sequence, self).__init__()
-        self.left = left
-        self.right = right
+        self.left = parse(left_code)
+        self.right = parse(right_code)
+
+    @staticmethod
+    def __build__(right, *prevs):
+        left = prevs[0] if len(prevs) == 1 else Sequence.__build__(*prevs)
+        return Sequence(left, right)
+
+    @staticmethod
+    def __parse__(tuple_code):
+        tuple_code = list(tuple_code)
+
+        if len(tuple_code) == 0:
+            return Identity
+
+        if len(tuple_code) == 1:
+            return parse(tuple_code[0])
+
+        tuple_code.reverse()
+
+        return Sequence.__build__(*tuple_code)
 
     def __compile__(self, refs):
         f_left, refs = self.left.__compile__(refs)
@@ -170,15 +198,15 @@ class Sequence(Node):
     def __str__(self):
         return "Seq({0}, {1})".format(self.left, self.right)
 
-class Dict(Node):
-    """docstring for Dict."""
+class Record(Node):
+    """docstring for Record."""
     def __init__(self, dict_code):
-        super(Dict, self).__init__()
+        super(Record, self).__init__()
         self.nodes_dict = { key: parse(code) for key, code in dict_code.iteritems() }
 
-    @classmethod
-    def __parse__(cls, dict_code):
-        return Dict(dict_code)
+    @staticmethod
+    def __parse__(dict_code):
+        return Record(dict_code)
 
     def __compile__(self, refs):
         funs_dict = {}
@@ -192,20 +220,20 @@ class Dict(Node):
             funs_dict[key] = f
 
         def function(x):
-            return Record(**{key: f(x) for key, f in funs_dict.iteritems() })
+            return RecordObject(**{key: f(x) for key, f in funs_dict.iteritems() })
 
         return function, out_refs
 
 
 
 class With(Node):
-    """docstring for Dict."""
+    """docstring for Record."""
 
     GLOBAL_SCOPE = None
 
     def __init__(self, scope_code, body_code):
         super(With, self).__init__()
-        self.scope = parse(scope_code, else_constant=True)
+        self.scope = parse(scope_code, else_input=True)
         self.body = parse(body_code)
 
     def __compile__(self, refs):
@@ -252,6 +280,18 @@ class Write(Node):
         super(Write, self).__init__()
         self.ref = ref
 
+    @staticmethod
+    def __parse__(code):
+        if len(code) == 0:
+            return Identity
+
+        for ref in code:
+            if not isinstance(ref, (str, Ref)):
+                raise Exception("Parse Error: Sets can only contain strings or Refs, get {0}".format(code))
+
+        writes = tuple([ Write(ref) for ref in code ])
+        return parse(writes)
+
     def __compile__(self, refs):
 
         if type(self.ref) is str:
@@ -284,7 +324,7 @@ class Input(Node):
 class Apply(Node):
     """docstring for Read."""
     def __init__(self):
-        super(Write, self).__init__()
+        super(Apply, self).__init__()
 
 def compose(fs, g):
     if type(fs) is list:
@@ -312,10 +352,7 @@ def Compile(code, refs):
     return fs, refs
 
 
-def is_iter_instance(x):
-    return hasattr(x, '__iter__') and not isclass(x)
-
-def parse(code, else_constant=False):
+def parse(code, else_input=False):
     #if type(code) is tuple:
     if isinstance(code, Node):
         return code
@@ -324,66 +361,14 @@ def parse(code, else_constant=False):
     elif type(code) is str:
         return Read(code)
     elif type(code) is set:
-        return parse_set(code)
+        return Write.__parse__(code)
     elif type(code) is tuple:
-        return parse_tuple(code)
+        return Sequence.__parse__(code)
     elif type(code) is dict:
-        return Dict.__parse__(code)
-    elif is_iter_instance(code): #leave last
-        return parse_iterable(code) #its iterable
-    elif else_constant:
+        return Record.__parse__(code)
+    elif hasattr(code, '__iter__') and not isclass(code): #leave last
+        return Tree.__parse__(code) #its iterable
+    elif else_input:
         return Input(code)
     else:
         raise Exception("Parse Error: Element not part of the DSL. Got:\n{0} of type {1}".format(code, type(code)))
-
-def parse_set(code):
-    if len(code) == 0:
-        return Identity
-
-    for ref in code:
-        if not isinstance(ref, (str, Ref)):
-            raise Exception("Parse Error: Sets can only contain strings or Refs, get {0}".format(code))
-
-    writes = tuple([ Write(ref) for ref in code ])
-    return parse(writes)
-
-def build_sequence(right, *prevs):
-    left = prevs[0] if len(prevs) == 1 else build_sequence(*prevs)
-    return Sequence(left, right)
-
-def parse_tuple(tuple_code):
-    nodes = [ parse(code) for code in tuple_code ]
-
-    if len(nodes) == 0:
-        return Identity
-
-    if len(nodes) == 1:
-        return nodes[0]
-
-    nodes.reverse()
-
-    return build_sequence(*nodes)
-
-
-def parse_iterable(iterable_code):
-    nodes = [ parse(code) for code in iterable_code ]
-
-    if len(nodes) == 1:
-        return nodes[0]
-
-    return Tree(nodes)
-
-def parse_dictionary(dict_code):
-
-    if len(dict_code) != 1:
-        raise Exception("Parse Error: dict object has to have exactly 1 element. Got {0}".format(dict_code))
-
-    scope_code, body_code = list(dict_code.items())[0]
-    body = parse(body_code)
-
-    if not hasattr(scope_code, '__call__'):
-        scope = Input(scope_code)
-    else:
-        scope = parse(scope_code)
-
-    return With(scope, body)

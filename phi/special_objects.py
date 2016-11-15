@@ -16,13 +16,14 @@ class ObjectProxy(object):
     """docstring for RecClass."""
 
     def __getattr__ (self, attr):
-        def f(x):
-            def method_proxy(*args, **kwargs):
+
+        def method_proxy(*args, **kwargs):
+            def f(x):
                 method = getattr(x, attr)
                 return method(*args, **kwargs)
-            return method_proxy
+            return Builder(f)
 
-        return Builder(f)
+        return method_proxy
 
     def contains(self, *args, **kwargs):
         def f(x):
@@ -33,7 +34,7 @@ class ObjectProxy(object):
 
         return Builder(f)
 
-        
+
 
 ######################
 # Objects
