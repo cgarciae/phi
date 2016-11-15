@@ -61,7 +61,10 @@ class Builder(dsl.Function):
 
     @classmethod
     def Scope(cls):
-        return dsl.Scope.GLOBAL_SCOPE
+        return dsl.With.GLOBAL_SCOPE
+
+    def With(cls, scope_code, body_code):
+        return dsl.With(scope_code, scope_code)
 
     def C(self, *code, **kwargs):
         _return_type = None

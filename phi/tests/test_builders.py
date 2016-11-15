@@ -1,5 +1,5 @@
 import tensorflow as tf
-from phi import Builder, M, _0, _1, _2, C, P, val, on
+from phi import Builder, Obj, Rec, _0, _1, _2, C, P, val, on, With
 from fn import _
 import math
 # from phi import tb
@@ -50,8 +50,8 @@ class TestBuilder(object):
     def test_methods(self):
         assert 9 == P(
             "hello world !!!",
-            M.split(" ")
-            .filter(M.contains("wor").Not())
+            Obj.split(" ")
+            .filter(Obj.contains("wor").Not())
             .map(len),
             sum,
             _ + 0.5,
@@ -60,21 +60,17 @@ class TestBuilder(object):
 
         assert not P(
             [1,2,3],
-            M.contains(5)
+            Obj.contains(5)
         )
 
         class A(object):
             def something(self, x):
                 return "y" * x
 
-        assert "yyyy" == P(
-            A(),
-            M.method('something', 4) #registered something
-        )
 
-        assert "yy" == P(
+        assert "yyy" == P(
             A(),
-            M.something(2) #used something
+            Obj.something(3) #used something
         )
 
     def test_rrshift(self):
@@ -85,6 +81,55 @@ class TestBuilder(object):
         )
 
         assert 10 == 2 >> builder
+
+    def test_compose(self):
+        f = C(
+            _ + 1,
+            _ * 2,
+            _ + 4
+        )
+
+        assert 10 == f(2)
+
+    def test_compose_list(self):
+        f = C(
+            _ + 1,
+            _ * 2, {'x'},
+            _ + 4,
+            [
+                _ + 2
+            ,
+                _ / 2
+            ,
+                'x'
+            ]
+        )
+
+        assert [12, 5, 6] == f(2)
+
+    def test_compose_list_reduce(self):
+        f = C(
+            _ + 1,
+            _ * 2,
+            _ + 4,
+            [
+                _ + 2
+            ,
+                _ / 2
+            ],
+            sum
+        )
+
+        assert 17 == f(2)
+
+    def test_random(self):
+
+        assert 9 == P(
+            "Hola Cesar",
+            Obj.split(" ")
+            .map(len)
+            .sum()
+        )
 
     def test_0(self):
         from datetime import datetime
@@ -222,13 +267,12 @@ class TestBuilder(object):
 
         z = P(
             self.x,
-            { tf.name_scope('TEST'):
-                (
+            With( tf.name_scope('TEST'),
+            (
                 _ * 2,
                 _ + 4,
                 { y }
-                )
-            },
+            )),
             _ ** 3
         )
 
@@ -279,14 +323,14 @@ class TestBuilder(object):
 
         assert "some random text" == P(
             "some ",
-            { DummyContext("random "):
+            With( DummyContext("random "),
             (
                 lambda s: s + P.Scope(),
-                { DummyContext("text"):
+                With( DummyContext("text"),
                     lambda s: s + P.Scope()
-                }
+                )
             )
-            }
+            )
         )
 
         assert P.Scope() == None
