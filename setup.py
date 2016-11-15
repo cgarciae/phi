@@ -32,7 +32,7 @@ setup(
         '': ['LICENCE', 'requirements.txt', 'README.md', 'CHANGELOG.md'],
         'phi': ['version.txt', 'README-template.md']
     },
-    download_url = 'https://github.com/cgarciae/phi/tarball/{0}'.format(version)
+    download_url = 'https://github.com/cgarciae/phi/tarball/{0}'.format(version),
     include_package_data = True,
     long_description = read('README.md'),
     install_requires = reqs

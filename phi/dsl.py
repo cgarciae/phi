@@ -117,23 +117,21 @@ class Scope(Node):
 
     GLOBAL_SCOPE = None
 
-    def __init__(self, scope_obj, body):
+    def __init__(self, scope, body):
         super(Scope, self).__init__()
-        self.scope_obj = scope_obj
+        self.scope = scope
         self.body = body
 
     def __compile__(self, refs):
+        scope_f, refs = self.scope.__compile__(refs)
         body_fs, refs = self.body.__compile__(refs)
 
-        def scope_fun(x):
-            with self.scope_obj as scope:
+        def scope_function(x):
+            with scope_f(x) as scope:
                 with self.set_scope(scope):
                     return body_fs(x)
 
-        left = Identity
-        right = Function(scope_fun)
-
-        return Sequence(left, right).__compile__(refs)
+        return scope_function, refs
 
     def set_scope(self, new_scope):
         self.new_scope = new_scope
@@ -148,7 +146,7 @@ class Scope(Node):
         Scope.GLOBAL_SCOPE = self.old_scope
 
     def __str__(self):
-        return "\{ {0}: {1}\}".format(pprint.pformat(self.scope_obj), pprint.pformat(self.body))
+        return "\{ {0}: {1}\}".format(pprint.pformat(self.scope), pprint.pformat(self.body))
 
 class Read(Node):
     """docstring for Read."""
@@ -294,6 +292,12 @@ def parse_dictionary(dict_code):
     if len(dict_code) != 1:
         raise Exception("Parse Error: dict object has to have exactly 1 element. Got {0}".format(dict_code))
 
-    scope_obj, body_code = list(dict_code.items())[0]
+    scope_code, body_code = list(dict_code.items())[0]
     body = parse(body_code)
-    return Scope(scope_obj, body)
+
+    if not hasattr(scope_code, '__call__'):
+        scope = Input(scope_code)
+    else:
+        scope = parse(scope_code)
+
+    return Scope(scope, body)

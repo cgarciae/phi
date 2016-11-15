@@ -86,6 +86,55 @@ class TestBuilder(object):
 
         assert 10 == 2 >> builder
 
+    def test_compose(self):
+        f = C(
+            _ + 1,
+            _ * 2,
+            _ + 4
+        )
+
+        assert 10 == f(2)
+
+    def test_compose_list(self):
+        f = C(
+            _ + 1,
+            _ * 2, {'x'},
+            _ + 4,
+            [
+                _ + 2
+            ,
+                _ / 2
+            ,
+                'x'
+            ]
+        )
+
+        assert [12, 5, 6] == f(2)
+
+    def test_compose_list_reduce(self):
+        f = C(
+            _ + 1,
+            _ * 2,
+            _ + 4,
+            [
+                _ + 2
+            ,
+                _ / 2
+            ],
+            sum
+        )
+
+        assert 17 == f(2)
+
+    def test_random(self):
+
+        assert 9 == P(
+            "Hola Cesar",
+            M.split(" ")
+            .map(len)
+            .sum()
+        )
+
     def test_0(self):
         from datetime import datetime
         import time
