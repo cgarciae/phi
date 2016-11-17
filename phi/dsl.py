@@ -134,7 +134,7 @@ class Tree(Node):
 
     @staticmethod
     def __parse__(iterable_code):
-        iterable_code = list(iterable_code)
+        iterable_code = utils.flatten_list(iterable_code)
 
         if len(iterable_code) == 1:
             return parse(iterable_code[0])
@@ -145,14 +145,13 @@ class Tree(Node):
         fs = []
 
         for node in self.branches:
-            node_fs, refs = node.__compile__(refs)
+            node_f, refs = node.__compile__(refs)
+            fs.append(node_f)
 
-            if type(node_fs) is list:
-                fs += node_fs
-            else:
-                fs.append(node_fs)
+        def function(x):
+            return [ f(x) for f in fs ]
 
-        return fs, refs
+        return function, refs
 
     def __str__(self):
         return pprint.pformat(self.branches)
@@ -187,13 +186,11 @@ class Sequence(Node):
     def __compile__(self, refs):
         f_left, refs = self.left.__compile__(refs)
 
-        f_left = to_fn(f_left)
-
         f_right, refs = self.right.__compile__(refs)
 
-        f_right = compose(f_right, f_left)
+        f = utils.compose2(f_right, f_left)
 
-        return f_right, refs
+        return f, refs
 
     def __str__(self):
         return "Seq({0}, {1})".format(self.left, self.right)
@@ -213,8 +210,7 @@ class Record(Node):
         out_refs = refs.copy()
 
         for key, node in self.nodes_dict.iteritems():
-            fs, next_refs = node.__compile__(refs)
-            f = to_fn(fs)
+            f, next_refs = node.__compile__(refs)
 
             out_refs.update(next_refs)
             funs_dict[key] = f
@@ -259,8 +255,6 @@ class With(Node):
     def __exit__(self, *args):
         With.GLOBAL_SCOPE = self.old_scope
 
-    def __str__(self):
-        return "\{ {0}: {1}\}".format(pprint.pformat(self.scope), pprint.pformat(self.body))
 
 class Read(Node):
     """docstring for Read."""
@@ -326,18 +320,8 @@ class Apply(Node):
     def __init__(self):
         super(Apply, self).__init__()
 
-def compose(fs, g):
-    if type(fs) is list:
-        return [ utils.compose2(f, g) for f in fs ]
-    else:
-        return utils.compose2(fs, g)
 
 
-def to_fn(fs):
-    if type(fs) is list:
-        return lambda x: [ f(x) for f in fs ]
-    else:
-        return fs
 
 #######################
 ### FUNCTIONS
@@ -345,11 +329,9 @@ def to_fn(fs):
 
 def Compile(code, refs):
     ast = parse(code)
-    fs, refs = ast.__compile__(refs)
+    f, refs = ast.__compile__(refs)
 
-    fs = to_fn(fs)
-
-    return fs, refs
+    return f, refs
 
 
 def parse(code, else_input=False):

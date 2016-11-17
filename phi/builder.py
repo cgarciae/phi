@@ -50,11 +50,12 @@ class Builder(dsl.Function):
         else:
             return self.__class__(f, refs)
 
-    def __call__(self, x, *code):
+    def __call__(self, x, *code, **kwargs):
         if len(code) == 0:
-            return self._f(x)
+            y = self._f(x)
+            return utils.flatten_list(y) if 'flatten' in kwargs and kwargs['flatten'] else y
         else:
-            return self.C(*code)(x)
+            return self.C(*code, **kwargs)(x)
 
     def __rrshift__(self, x):
         return self(x)
@@ -63,20 +64,28 @@ class Builder(dsl.Function):
     def Scope(cls):
         return dsl.With.GLOBAL_SCOPE
 
-    def With(cls, scope_code, body_code):
-        return dsl.With(scope_code, scope_code)
+    With = dsl.With
 
     def C(self, *code, **kwargs):
         _return_type = None
+        flatten = None
 
         if '_return_type' in kwargs:
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-        g, refs = dsl.Compile(code, self._refs)
-        h = utils.compose2(g, self)
+        if 'flatten' in kwargs:
+            flatten = kwargs['flatten']
+            del kwargs['flatten']
 
-        return self._unit(h, refs, _return_type=_return_type)
+        g, refs = dsl.Compile(code, self._refs)
+        f = utils.compose2(g, self)
+        flatten_f = lambda x: utils.flatten_list(x) if type(x) is list else x
+
+        if flatten:
+            f = utils.compose2(flatten_f, f)
+
+        return self._unit(f, refs, _return_type=_return_type)
 
     def _0(self, g, *args, **kwargs):
         """
@@ -217,6 +226,11 @@ class Builder(dsl.Function):
             refs = self._refs
 
         return self._unit(utils.compose2(ref.set, self), refs)
+
+    # def With(self, *args, **kwargs):
+    #     code = (self, dsl.With(*args))
+    #     f, refs = dsl.Compile(code, {})
+    #     return self._unit(f, refs, **kwargs)
 
     def ref(self, name):
         return dsl.Ref(name)

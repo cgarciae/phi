@@ -188,7 +188,7 @@ class TestBuilder(object):
             ]
         )
 
-        assert P(
+        assert [18, 18, 15, 16] == P(
             4,
             [
                 (
@@ -211,32 +211,33 @@ class TestBuilder(object):
                         ]
                     )
                 ]
-            ]
-        ) == [18, 18, 15, 16]
+            ],
+            flatten=True
+        )
 
-        assert P(
+        assert [18, 18, 14, get_list(None)] == P(
             4,
             [
-                (
+            (
                 add2,
                 mul3
-                )
+            )
             ,
                 [
-                    (
+                (
                     add2,
                     mul3
-                    )
+                )
                 ,
-                    (
+                (
                     mul3,
                     add2
-                    )
+                )
                 ,
                     get_list
                 ]
             ]
-        ) == [18, 18, 14, get_list(None)]
+        )
 
         [a, b, c] = P(
             4,
@@ -344,6 +345,22 @@ class TestBuilder(object):
             1,
             _ + 4,
             on(y),
+            _ * 10,
+            'y'
+        )
+
+        assert 5 == P(
+            1,
+            _ + 4,
+            P.on(y),
+            _ * 10,
+            'y'
+        )
+
+        assert 5 == P(
+            1,
+            _ + 4,
+            P.on('y'),
             _ * 10,
             'y'
         )
