@@ -1,4 +1,4 @@
-from phi import dsl, _, _1, _2, Obj, Rec, Builder, val, utils
+from phi import dsl, ph, _
 
 class TestDSL(object):
     """docstring for TestDSL."""
@@ -37,13 +37,13 @@ class TestDSL(object):
             _ + 1,
             [
             (
-                val(10),
+                ph.val(10),
                 _ * 2
             )
             ,
                 'a'
             ,
-                utils.identity
+                ()
             ]
         )
 
@@ -82,3 +82,28 @@ class TestDSL(object):
 
         f, refs = dsl.Compile(code, {})
         assert [['4', '6'], [4, 6]] == f(3)
+
+    def test_dict(self):
+        code = (
+            dict(
+                original=(),
+                upper=ph.Obj.upper(),
+                len=len
+            ),
+            [
+                ()
+            ,
+            (
+                ph.Rec.len,
+                _ * 2
+            )
+            ]
+        )
+
+        f, refs = dsl.Compile(code, {})
+        [obj, double_len] = f("hello")
+
+        assert obj.original == "hello"
+        assert obj.upper == "HELLO"
+        assert obj.len == 5
+        assert double_len == 10

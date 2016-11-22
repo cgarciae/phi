@@ -11,8 +11,8 @@ class A(object):
 class B(A):
     """docstring for B."""
 
-class C(A):
-    """docstring for C ."""
+class Compile(A):
+    """docstring for Compile ."""
 
 
 class TestDummy(object):
@@ -21,7 +21,7 @@ class TestDummy(object):
     def test_global(self):
         a = A()
         b = B()
-        c = C()
+        c = Compile()
 
         A._S = "HOLA"
 

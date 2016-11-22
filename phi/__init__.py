@@ -1,6 +1,5 @@
 from builder import Builder
 from fn import _
-from shortcuts import C, val, on, _0, _1, _2, _3, _4, _5
 import utils
 import dsl
 from dsl import With
@@ -9,7 +8,7 @@ from special_objects import Obj, Rec
 #patches
 import functions_patch
 
-P = Builder()
+ph = Builder()
 
 
 ########################

@@ -1,5 +1,5 @@
 import tensorflow as tf
-from phi import Builder, Obj, Rec, _0, _1, _2, C, P, val, on, With
+from phi import ph, Builder
 from fn import _
 import math
 # from phi import tb
@@ -41,26 +41,26 @@ class TestBuilder(object):
         self.x = tf.placeholder(tf.float32, shape=[None, 5])
 
     def test_C_1(self):
-        assert P._1(add2)(4) == 6
-        assert P._1(add2)._1(mul3)(4) == 18
+        assert ph._1(add2)(4) == 6
+        assert ph._1(add2)._1(mul3)(4) == 18
 
-        assert P.C(add2)(4) == 6
-        assert P.C(add2, mul3)(4) == 18
+        assert ph.Compile(add2)(4) == 6
+        assert ph.Compile(add2, mul3)(4) == 18
 
     def test_methods(self):
-        assert 9 == P(
+        assert 9 == ph.Pipe(
             "hello world !!!",
-            Obj.split(" ")
-            .filter(Obj.contains("wor").Not())
+            ph.Obj.split(" ")
+            .filter(ph.Obj.contains("wor").Not())
             .map(len),
             sum,
             _ + 0.5,
             round
         )
 
-        assert not P(
+        assert not ph.Pipe(
             [1,2,3],
-            Obj.contains(5)
+            ph.Obj.contains(5)
         )
 
         class A(object):
@@ -68,13 +68,13 @@ class TestBuilder(object):
                 return "y" * x
 
 
-        assert "yyy" == P(
+        assert "yyy" == ph.Pipe(
             A(),
-            Obj.something(3) #used something
+            ph.Obj.something(3) #used something
         )
 
     def test_rrshift(self):
-        builder = C(
+        builder = ph.Compile(
             _ + 1,
             _ * 2,
             _ + 4
@@ -83,7 +83,7 @@ class TestBuilder(object):
         assert 10 == 2 >> builder
 
     def test_compose(self):
-        f = C(
+        f = ph.Compile(
             _ + 1,
             _ * 2,
             _ + 4
@@ -92,7 +92,7 @@ class TestBuilder(object):
         assert 10 == f(2)
 
     def test_compose_list(self):
-        f = C(
+        f = ph.Compile(
             _ + 1,
             _ * 2, {'x'},
             _ + 4,
@@ -108,7 +108,7 @@ class TestBuilder(object):
         assert [12, 5, 6] == f(2)
 
     def test_compose_list_reduce(self):
-        f = C(
+        f = ph.Compile(
             _ + 1,
             _ * 2,
             _ + 4,
@@ -124,9 +124,9 @@ class TestBuilder(object):
 
     def test_random(self):
 
-        assert 9 == P(
+        assert 9 == ph.Pipe(
             "Hola Cesar",
-            Obj.split(" ")
+            ph.Obj.split(" ")
             .map(len)
             .sum()
         )
@@ -139,41 +139,41 @@ class TestBuilder(object):
 
         time.sleep(0.01)
 
-        t1 = 2 >> C(
+        t1 = 2 >> ph.Compile(
             _ + 1,
-            _0(datetime.now)
+            ph._0(datetime.now)
         )
 
         assert t1 > t0
 
     def test_1(self):
-        assert 9 == 2 >> C(
+        assert 9 == 2 >> ph.Compile(
             _ + 1,
-            _1(math.pow, 2)
+            ph._1(math.pow, 2)
         )
 
     def test_2(self):
-        assert [2, 4] == [1, 2, 3] >> C(
-            _2(map, _ + 1),
-            _2(filter, _ % 2 == 0)
+        assert [2, 4] == [1, 2, 3] >> ph.Compile(
+            ph._2(map, _ + 1),
+            ph._2(filter, _ % 2 == 0)
         )
 
-        assert [2, 4] == P(
+        assert [2, 4] == ph.Pipe(
             [1, 2, 3],
-            _2(map, _ + 1),
-            _2(filter, _ % 2 == 0)
+            ph._2(map, _ + 1),
+            ph._2(filter, _ % 2 == 0)
         )
 
 
     def test_underscores(self):
-        assert P._1(a2_plus_b_minus_2c, 2, 4)(3) == 3 # (3)^2 + 2 - 2*4
-        assert P._2(a2_plus_b_minus_2c, 2, 4)(3) == -1 # (2)^2 + 3 - 2*4
-        assert P._3(a2_plus_b_minus_2c, 2, 4)(3) == 2 # (2)^2 + 4 - 2*3
+        assert ph._1(a2_plus_b_minus_2c, 2, 4)(3) == 3 # (3)^2 + 2 - 2*4
+        assert ph._2(a2_plus_b_minus_2c, 2, 4)(3) == -1 # (2)^2 + 3 - 2*4
+        assert ph._3(a2_plus_b_minus_2c, 2, 4)(3) == 2 # (2)^2 + 4 - 2*3
 
     def test_pipe(self):
-        assert P(4, add2, mul3) == 18
+        assert ph.Pipe(4, add2, mul3) == 18
 
-        assert [18, 14] == P(
+        assert [18, 14] == ph.Pipe(
             4,
             [
             (
@@ -188,7 +188,7 @@ class TestBuilder(object):
             ]
         )
 
-        assert [18, 18, 15, 16] == P(
+        assert [18, 18, 15, 16] == ph.Pipe(
             4,
             [
                 (
@@ -215,7 +215,7 @@ class TestBuilder(object):
             flatten=True
         )
 
-        assert [18, 18, 14, get_list(None)] == P(
+        assert [18, 18, 14, get_list(None)] == ph.Pipe(
             4,
             [
             (
@@ -239,7 +239,7 @@ class TestBuilder(object):
             ]
         )
 
-        [a, b, c] = P(
+        [a, b, c] = ph.Pipe(
             4,
             [
                 (
@@ -264,11 +264,11 @@ class TestBuilder(object):
         assert a == 18 and b == 18 and c == 14
 
     def test_scope(self):
-        y = P.ref('y')
+        y = ph.ref('y')
 
-        z = P(
+        z = ph.Pipe(
             self.x,
-            With( tf.name_scope('TEST'),
+            ph.With( tf.name_scope('TEST'),
             (
                 _ * 2,
                 _ + 4,
@@ -283,32 +283,32 @@ class TestBuilder(object):
     def test_register_1(self):
 
         #register
-        assert 5 == P(
+        assert 5 == ph.Pipe(
             3,
-            P.add(2)
+            ph.add(2)
         )
 
         #register_2
-        assert 8 == P(
+        assert 8 == ph.Pipe(
             3,
-            P.pow(2)
+            ph.pow(2)
         )
 
         #register_method
-        assert "identity" == P.get_function_name()
+        assert "identity" == ph.get_function_name()
 
     def test_reference(self):
-        add_ref = P.ref('add_ref')
+        add_ref = ph.ref('add_ref')
 
-        assert 8 == 3 >> C(P.add(2).on(add_ref).add(3))
+        assert 8 == 3 >> ph.Compile(ph.add(2).on(add_ref).add(3))
         assert 5 == add_ref()
 
     def test_ref_props(self):
 
-        a = P.ref('a')
-        b = P.ref('b')
+        a = ph.ref('a')
+        b = ph.ref('b')
 
-        assert [7, 3, 5] == P(
+        assert [7, 3, 5] == ph.Pipe(
             1,
             add2, a.set,
             add2, b.set,
@@ -322,52 +322,52 @@ class TestBuilder(object):
 
     def test_scope_property(self):
 
-        assert "some random text" == P(
+        assert "some random text" == ph.Pipe(
             "some ",
-            With( DummyContext("random "),
+            ph.With( DummyContext("random "),
             (
-                lambda s: s + P.Scope(),
-                With( DummyContext("text"),
-                    lambda s: s + P.Scope()
+                lambda s: s + ph.Scope(),
+                ph.With( DummyContext("text"),
+                    lambda s: s + ph.Scope()
                 )
             )
             )
         )
 
-        assert P.Scope() == None
+        assert ph.Scope() == None
 
     def test_ref_integraton_with_dsl(self):
 
-        y = P.ref('y')
+        y = ph.ref('y')
 
 
-        assert 5 == P(
+        assert 5 == ph.Pipe(
             1,
             _ + 4,
-            on(y),
+            ph.on(y),
             _ * 10,
             'y'
         )
 
-        assert 5 == P(
+        assert 5 == ph.Pipe(
             1,
             _ + 4,
-            P.on(y),
+            ph.on(y),
             _ * 10,
             'y'
         )
 
-        assert 5 == P(
+        assert 5 == ph.Pipe(
             1,
             _ + 4,
-            P.on('y'),
+            ph.on('y'),
             _ * 10,
             'y'
         )
 
     def test_list(self):
 
-        assert [['4', '6'], [4, 6]] == P(
+        assert [['4', '6'], [4, 6]] == ph.Pipe(
             3,
             [
                 _ + 1
@@ -375,7 +375,7 @@ class TestBuilder(object):
                 _ * 2
             ],
             [
-                _2(map, str)
+                ph._2(map, str)
             ,
                 ()
             ]

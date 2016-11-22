@@ -227,7 +227,7 @@ class With(Node):
 
     GLOBAL_SCOPE = None
 
-    def __init__(self, scope_code, body_code):
+    def __init__(self, scope_code, *body_code):
         super(With, self).__init__()
         self.scope = parse(scope_code, else_input=True)
         self.body = parse(body_code)

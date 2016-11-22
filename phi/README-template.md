@@ -11,9 +11,9 @@ Phi uses a DSL that allows you to express complex computations by building on si
 ### Composing
 The most simple thing the DSL does is function composition
 
-    from phi import C
+    from phi import Compile
 
-    f = C(
+    f = Compile(
       lambda x: x + 1,
       lambda x: x * 2,
       lambda x: x + 3
@@ -27,9 +27,9 @@ The above computation is the same as:
 
 Using `fn.py`s `_` object included with Phi one can rewrite the previous code as:
 
-    from phi import C, _
+    from phi import Compile, _
 
-    f = C(
+    f = Compile(
       _ + 1,
       _ * 2,
       _ + 3
@@ -47,7 +47,7 @@ as
 
 then
 
-    C(f1, f2, ..., fn-1, fn) = fn . fn-1 . (...) . f2 . f1
+    Compile(f1, f2, ..., fn-1, fn) = fn . fn-1 . (...) . f2 . f1
 
 in other words functions are composed backwards to express the natural flow of the computation.
 
@@ -64,7 +64,7 @@ You can also *P*ipe a value directly into an expression with the *P* object
       _ + 3
     )
 
-Most of the time this is more convenient, plus `P` contains some helper methods that we will see later, so `P` will be used instead of `C` from here on.
+Most of the time this is more convenient, plus `P` contains some helper methods that we will see later, so `P` will be used instead of `Compile` from here on.
 
 ### Branching
 Branching is express via lists and allows you to express a branched computation where a list with the values of the different paths is returned.

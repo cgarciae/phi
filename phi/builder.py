@@ -50,12 +50,9 @@ class Builder(dsl.Function):
         else:
             return self.__class__(f, refs)
 
-    def __call__(self, x, *code, **kwargs):
-        if len(code) == 0:
-            y = self._f(x)
-            return utils.flatten_list(y) if 'flatten' in kwargs and kwargs['flatten'] else y
-        else:
-            return self.C(*code, **kwargs)(x)
+    def __call__(self, x, flatten=False):
+        y = self._f(x)
+        return utils.flatten_list(y) if flatten else y
 
     def __rrshift__(self, x):
         return self(x)
@@ -66,7 +63,10 @@ class Builder(dsl.Function):
 
     With = dsl.With
 
-    def C(self, *code, **kwargs):
+    def Pipe(self, x, *code, **kwargs):
+        return self.Compile(*code, **kwargs)(x)
+
+    def Compile(self, *code, **kwargs):
         _return_type = None
         flatten = None
 

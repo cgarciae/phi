@@ -27,3 +27,6 @@ def And(x, y): return x and y
 
 @Builder.register_1("python")
 def Or(x, y): return x or y
+
+@Builder.register_1("python")
+def In(x, y): return x in y
