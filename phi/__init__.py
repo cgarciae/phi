@@ -10,6 +10,17 @@ import functions_patch
 
 ph = Builder()
 
+# shortcuts
+_0 = ph._0
+_1 = ph._1
+_2 = ph._2
+_3 = ph._3
+_4 = ph._4
+_5 = ph._5
+on = ph.on
+val = ph.val
+Pipe = ph.Pipe
+Compile = ph.Compile
 
 ########################
 # Documentation
