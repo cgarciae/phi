@@ -1067,7 +1067,7 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.BaseException">BaseException</a></li>
     <li class="mono"><a href="#phi.builder.Builder.BufferError">BufferError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.BytesWarning">BytesWarning</a></li>
-    <li class="mono"><a href="#phi.builder.Builder.C">C</a></li>
+    <li class="mono"><a href="#phi.builder.Builder.Compile">Compile</a></li>
     <li class="mono"><a href="#phi.builder.Builder.DeprecationWarning">DeprecationWarning</a></li>
     <li class="mono"><a href="#phi.builder.Builder.EOFError">EOFError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.EnvironmentError">EnvironmentError</a></li>
@@ -1078,6 +1078,7 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.IOError">IOError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.ImportError">ImportError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.ImportWarning">ImportWarning</a></li>
+    <li class="mono"><a href="#phi.builder.Builder.In">In</a></li>
     <li class="mono"><a href="#phi.builder.Builder.IndentationError">IndentationError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.IndexError">IndexError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.KeyError">KeyError</a></li>
@@ -1091,6 +1092,7 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.Or">Or</a></li>
     <li class="mono"><a href="#phi.builder.Builder.OverflowError">OverflowError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.PendingDeprecationWarning">PendingDeprecationWarning</a></li>
+    <li class="mono"><a href="#phi.builder.Builder.Pipe">Pipe</a></li>
     <li class="mono"><a href="#phi.builder.Builder.ReferenceError">ReferenceError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.RuntimeError">RuntimeError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.RuntimeWarning">RuntimeWarning</a></li>
@@ -1282,30 +1284,42 @@ table {
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">flatten</span> <span class="k">else</span> <span class="n">y</span>
 
     <span class="k">def</span> <span class="nf">__rrshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">Scope</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Scope</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
 
-    <span class="k">def</span> <span class="nf">C</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">With</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span>
+
+    <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">flatten</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
 
-        <span class="n">g</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span><span class="p">)</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;flatten&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">flatten</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;flatten&#39;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;flatten&#39;</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">g</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">flatten_f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="k">else</span> <span class="n">x</span>
+
+        <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">flatten_f</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1446,6 +1460,11 @@ table {
             <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">,</span> <span class="bp">self</span><span class="p">),</span> <span class="n">refs</span><span class="p">)</span>
+
+    <span class="c1"># def With(self, *args, **kwargs):</span>
+    <span class="c1">#     code = (self, dsl.With(*args))</span>
+    <span class="c1">#     f, refs = dsl.Compile(code, {})</span>
+    <span class="c1">#     return self._unit(f, refs, **kwargs)</span>
 
     <span class="k">def</span> <span class="nf">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -1786,30 +1805,42 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">flatten</span> <span class="k">else</span> <span class="n">y</span>
 
     <span class="k">def</span> <span class="nf">__rrshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">Scope</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Scope</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
 
-    <span class="k">def</span> <span class="nf">C</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">With</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span>
+
+    <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">flatten</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
 
-        <span class="n">g</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span><span class="p">)</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;flatten&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">flatten</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;flatten&#39;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;flatten&#39;</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">g</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">flatten_f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="k">else</span> <span class="n">x</span>
+
+        <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">flatten_f</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1950,6 +1981,11 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">,</span> <span class="bp">self</span><span class="p">),</span> <span class="n">refs</span><span class="p">)</span>
+
+    <span class="c1"># def With(self, *args, **kwargs):</span>
+    <span class="c1">#     code = (self, dsl.With(*args))</span>
+    <span class="c1">#     f, refs = dsl.Compile(code, {})</span>
+    <span class="c1">#     return self._unit(f, refs, **kwargs)</span>
 
     <span class="k">def</span> <span class="nf">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -2187,9 +2223,29 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
           <li>phi.dsl.Node</li>
           <li>__builtin__.object</li>
           </ul>
-          <h3>Instance variables</h3>
+          <h3>Class variables</h3>
             <div class="item">
-            <p id="phi.builder.Builder.M" class="name">var <span class="ident">M</span></p>
+            <p id="phi.builder.Builder.Obj" class="name">var <span class="ident">Obj</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.builder.Builder.Rec" class="name">var <span class="ident">Rec</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.builder.Builder.With" class="name">var <span class="ident">With</span></p>
             
 
             
@@ -2202,7 +2258,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function identity at 0x7f6e150078c0&gt;, refs={})</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function identity at 0x7f97bfea8938&gt;, refs={})</p>
     </div>
     
 
@@ -2479,24 +2535,31 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
   
             
   <div class="item">
-    <div class="name def" id="phi.builder.Builder.C">
-    <p>def <span class="ident">C</span>(</p><p>self, *code, **kwargs)</p>
+    <div class="name def" id="phi.builder.Builder.Compile">
+    <p>def <span class="ident">Compile</span>(</p><p>self, *code, **kwargs)</p>
     </div>
     
 
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.C', this);">Show source &equiv;</a></p>
-  <div id="source-phi.builder.Builder.C" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">C</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.Compile', this);">Show source &equiv;</a></p>
+  <div id="source-phi.builder.Builder.Compile" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">_return_type</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">flatten</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;flatten&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">flatten</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;flatten&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;flatten&#39;</span><span class="p">]</span>
     <span class="n">g</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span><span class="p">)</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="n">flatten_f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="k">else</span> <span class="n">x</span>
+    <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">flatten_f</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2856,6 +2919,42 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.ImportWarning', this);">Show source &equiv;</a></p>
   <div id="source-phi.builder.Builder.ImportWarning" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_1</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.builder.Builder.In">
+    <p>def <span class="ident">In</span>(</p><p>self, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>THIS METHOD IS AUTOMATICALLY GENERATED</p>
+<div class="codehilite"><pre><span></span>builder.In(*args, **kwargs)
+</pre></div>
+
+
+<p>This method accepts the same arguments as <code>python.In</code>. However, the 1st argument is omitted, a partial with the rest of the arguments is returned which expects the 1st argument such that</p>
+<div class="codehilite"><pre><span></span>python.In(x1, *args, **kwargs) &lt;==&gt; builder.In(*args, **kwargs)(x1)
+</pre></div>
+
+
+<p><strong> Documentation from <code>python.In</code></strong></p>
+<div class="codehilite"><pre><span></span>None
+</pre></div></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.In', this);">Show source &equiv;</a></p>
+  <div id="source-phi.builder.Builder.In" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
@@ -3340,6 +3439,27 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
   
             
   <div class="item">
+    <div class="name def" id="phi.builder.Builder.Pipe">
+    <p>def <span class="ident">Pipe</span>(</p><p>self, x, *code, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.Pipe', this);">Show source &equiv;</a></p>
+  <div id="source-phi.builder.Builder.Pipe" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.builder.Builder.ReferenceError">
     <p>def <span class="ident">ReferenceError</span>(</p><p>self, *args, **kwargs)</p>
     </div>
@@ -3460,7 +3580,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
   <div id="source-phi.builder.Builder.Scope" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">Scope</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Scope</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
+    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
 </pre></div>
 
   </div>
