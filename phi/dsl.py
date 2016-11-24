@@ -1,3 +1,7 @@
+"""
+Test
+"""
+
 from utils import identity
 import utils
 import pprint
@@ -9,15 +13,15 @@ from inspect import isclass
 # Helpers
 ###############################
 
-NO_VALUE = object()
+_NO_VALUE = object()
 
 class Ref(object):
     """docstring for Ref."""
-    def __init__(self, name, value=NO_VALUE):
+    def __init__(self, name, value=_NO_VALUE):
         super(Ref, self).__init__()
         self.name = name
-        self.value = None if value is NO_VALUE else value
-        self.assigned = value is not NO_VALUE
+        self.value = None if value is _NO_VALUE else value
+        self.assigned = value is not _NO_VALUE
 
     def __call__(self, *optional):
         if not self.assigned:
@@ -106,10 +110,12 @@ class Node(object):
         pass
 
 class Function(Node):
-    """docstring for Function."""
-    def __init__(self, f):
+    """
+    Functions are the most basic element of the DSL, 
+    """
+    def __init__(self, _f):
         super(Function, self).__init__()
-        self._f= f
+        self._f= _f
         self._refs = {}
 
     def __iter__(self):
@@ -123,21 +129,21 @@ class Function(Node):
         return "Fun({0})".format(self._f)
 
 
-Identity = Function(identity)
+_Identity = Function(identity)
 
 
 class Tree(Node):
     """docstring for Tree."""
 
     def __init__(self, iterable_code):
-        self.branches = [ parse(code) for code in iterable_code ]
+        self.branches = [ _parse(code) for code in iterable_code ]
 
     @staticmethod
     def __parse__(iterable_code):
         iterable_code = utils.flatten_list(iterable_code)
 
         if len(iterable_code) == 1:
-            return parse(iterable_code[0])
+            return _parse(iterable_code[0])
 
         return Tree(iterable_code)
 
@@ -161,8 +167,8 @@ class Sequence(Node):
     """docstring for Sequence."""
     def __init__(self, left_code, right_code):
         super(Sequence, self).__init__()
-        self.left = parse(left_code)
-        self.right = parse(right_code)
+        self.left = _parse(left_code)
+        self.right = _parse(right_code)
 
     @staticmethod
     def __build__(right, *prevs):
@@ -174,10 +180,10 @@ class Sequence(Node):
         tuple_code = list(tuple_code)
 
         if len(tuple_code) == 0:
-            return Identity
+            return _Identity
 
         if len(tuple_code) == 1:
-            return parse(tuple_code[0])
+            return _parse(tuple_code[0])
 
         tuple_code.reverse()
 
@@ -199,7 +205,7 @@ class Record(Node):
     """docstring for Record."""
     def __init__(self, dict_code):
         super(Record, self).__init__()
-        self.nodes_dict = { key: parse(code) for key, code in dict_code.iteritems() }
+        self.nodes_dict = { key: _parse(code) for key, code in dict_code.iteritems() }
 
     @staticmethod
     def __parse__(dict_code):
@@ -229,8 +235,8 @@ class With(Node):
 
     def __init__(self, scope_code, *body_code):
         super(With, self).__init__()
-        self.scope = parse(scope_code, else_input=True)
-        self.body = parse(body_code)
+        self.scope = _parse(scope_code, else_input=True)
+        self.body = _parse(body_code)
 
     def __compile__(self, refs):
         scope_f, refs = self.scope.__compile__(refs)
@@ -277,14 +283,14 @@ class Write(Node):
     @staticmethod
     def __parse__(code):
         if len(code) == 0:
-            return Identity
+            return _Identity
 
         for ref in code:
             if not isinstance(ref, (str, Ref)):
                 raise Exception("Parse Error: Sets can only contain strings or Refs, get {0}".format(code))
 
         writes = tuple([ Write(ref) for ref in code ])
-        return parse(writes)
+        return _parse(writes)
 
     def __compile__(self, refs):
 
@@ -315,12 +321,6 @@ class Input(Node):
         return f, refs
 
 
-class Apply(Node):
-    """docstring for Read."""
-    def __init__(self):
-        super(Apply, self).__init__()
-
-
 
 
 #######################
@@ -328,13 +328,13 @@ class Apply(Node):
 #######################
 
 def Compile(code, refs):
-    ast = parse(code)
+    ast = _parse(code)
     f, refs = ast.__compile__(refs)
 
     return f, refs
 
 
-def parse(code, else_input=False):
+def _parse(code, else_input=False):
     #if type(code) is tuple:
     if isinstance(code, Node):
         return code

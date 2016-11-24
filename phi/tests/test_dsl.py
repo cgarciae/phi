@@ -63,7 +63,7 @@ class TestDSL(object):
         assert 20 == f(2)
 
 
-        ast = dsl.parse(str)
+        ast = dsl._parse(str)
         assert type(ast) is dsl.Function
 
     def test_list(self):

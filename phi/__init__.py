@@ -29,7 +29,7 @@ import os
 import sys
 
 #pdoc
-__all__ = ["tensordata", "patches", "builder"]
+__all__ = ["tensordata", "dsl", "builder"]
 
 #set documentation
 def _read(fname):

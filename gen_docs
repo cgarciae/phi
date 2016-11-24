@@ -1,4 +1,5 @@
 #! /bin/bash
+find . -name "*.pyc" -delete
 cd /phi
 echo "Generating docs"
 PYTHONPATH= pdoc --html-dir=docs --html phi --only-pypath --overwrite
