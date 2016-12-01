@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>phi.dsl API documentation</title>
-    <meta name="description" content="Test" />
+    <meta name="description" content="The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that ca..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1048,6 +1048,24 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
+        <span class="class_name"><a href="#phi.dsl.Branch">Branch</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.dsl.Branch.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.dsl.Composition">Composition</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.dsl.Composition.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#phi.dsl.Function">Function</a></span>
         
           
@@ -1115,24 +1133,6 @@ table {
 
         </li>
         <li class="mono">
-        <span class="class_name"><a href="#phi.dsl.Sequence">Sequence</a></span>
-        
-          
-  <ul>
-    <li class="mono"><a href="#phi.dsl.Sequence.__init__">__init__</a></li>
-  </ul>
-
-        </li>
-        <li class="mono">
-        <span class="class_name"><a href="#phi.dsl.Tree">Tree</a></span>
-        
-          
-  <ul>
-    <li class="mono"><a href="#phi.dsl.Tree.__init__">__init__</a></li>
-  </ul>
-
-        </li>
-        <li class="mono">
         <span class="class_name"><a href="#phi.dsl.With">With</a></span>
         
           
@@ -1166,12 +1166,192 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">phi.dsl</span> module</h1>
-  <p>Test</p>
+  <p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>ph.Compile</code> or applied to a value using <code>ph.Pipe</code>.</p>
+<p>Phi offers the following constructs:</p>
+<ul>
+<li><strong>Function</strong>: any function that takes a single input is an element of the language</li>
+<li><strong>Composition</strong>: allows to sequentially compose functions</li>
+<li><strong>Branch</strong>: allows to create a branched computation that returns a list with the results of each branch</li>
+<li><strong>With</strong>: allows you to specify a context manager for the expresion (uses the <code>with</code> statemente)</li>
+<li><strong>Record</strong>: allows to create a branched computation with named branches that returns a record-like structure with the results of each branch</li>
+<li><strong>Write</strong>: allows you to create a reference to the value at that point that be read at another point</li>
+<li><strong>Read</strong>: allows you to read from a reference created previously</li>
+<li><strong>Input</strong>: allows you to specify an input value, compiles to a (constant) function that returns the value no matter the input (e.g. <code>lambda x: value</code>)</li>
+</ul>
+<h2>Function</h2>
+<p>All basic/terminal elements of this language are callables (implement <code>__call__</code>) of the form <code>A -&gt; B</code>, that is, functions that take a single input element.</p>
+<h4>Examples</h4>
+<p>Compiling a function just returns back the function</p>
+<div class="codehilite"><pre><span></span>ph.Compile(f) == f
+</pre></div>
+
+
+<p>and piping through a function is just the same a applying the function</p>
+<div class="codehilite"><pre><span></span>ph.Pipe(x, f) == f(x)
+</pre></div>
+
+
+<h2>Composition</h2>
+<p>In this language tuples are used to express function composition. After compilation, the expression</p>
+<div class="codehilite"><pre><span></span>(f, g)
+</pre></div>
+
+
+<p>be equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: g(f(x))
+</pre></div>
+
+
+<p>As you see, its a little different from the mathematical definition. Its based upon the <code>|&gt;</code> (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the <code>ph.Pipe</code> method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.</p>
+<p>In general, the following rules apply after compilation:</p>
+<p><strong>General Sequence</strong></p>
+<div class="codehilite"><pre><span></span>(f0, f1, ..., fn-1, fn)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: fn(fn-1(...(f1(f0(x)))))
+</pre></div>
+
+
+<p><strong>Single Function</strong></p>
+<div class="codehilite"><pre><span></span>(f)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>f
+</pre></div>
+
+
+<p><strong>Identity</strong></p>
+<p>The empty tuple</p>
+<div class="codehilite"><pre><span></span>()
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: x
+</pre></div>
+
+
+<h4>Examples</h4>
+<p>In this example we will use the <code>_</code> object from the <code>fn</code> library that is packaged with phi, it lets to easily create simple functions via operator overloading.</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">ph</span><span class="p">,</span> <span class="n">_</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">ph</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span>
+    <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">_</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span> <span class="c1"># ((1 * 2) + 1) ** 2</span>
+</pre></div>
+
+
+<p>The same using <code>ph.Pipe</code></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">ph</span><span class="p">,</span> <span class="n">_</span>
+
+<span class="k">assert</span> <span class="mi">9</span> <span class="o">==</span> <span class="n">ph</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">_</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="p">)</span>
+</pre></div>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl" class="source">
     <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Test</span>
+<span class="sd">The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `ph.Compile` or applied to a value using `ph.Pipe`.</span>
+
+<span class="sd">Phi offers the following constructs:</span>
+
+<span class="sd">* **Function**: any function that takes a single input is an element of the language</span>
+<span class="sd">* **Composition**: allows to sequentially compose functions</span>
+<span class="sd">* **Branch**: allows to create a branched computation that returns a list with the results of each branch</span>
+<span class="sd">* **With**: allows you to specify a context manager for the expresion (uses the `with` statemente)</span>
+<span class="sd">* **Record**: allows to create a branched computation with named branches that returns a record-like structure with the results of each branch</span>
+<span class="sd">* **Write**: allows you to create a reference to the value at that point that be read at another point</span>
+<span class="sd">* **Read**: allows you to read from a reference created previously</span>
+<span class="sd">* **Input**: allows you to specify an input value, compiles to a (constant) function that returns the value no matter the input (e.g. `lambda x: value`)</span>
+
+<span class="sd">## Function</span>
+<span class="sd">All basic/terminal elements of this language are callables (implement `__call__`) of the form `A -&gt; B`, that is, functions that take a single input element.</span>
+
+<span class="sd">#### Examples</span>
+<span class="sd">Compiling a function just returns back the function</span>
+
+<span class="sd">    ph.Compile(f) == f</span>
+
+<span class="sd">and piping through a function is just the same a applying the function</span>
+
+<span class="sd">    ph.Pipe(x, f) == f(x)</span>
+
+<span class="sd">## Composition</span>
+<span class="sd">In this language tuples are used to express function composition. After compilation, the expression</span>
+
+<span class="sd">    (f, g)</span>
+
+<span class="sd">be equivalent to</span>
+
+<span class="sd">    lambda x: g(f(x))</span>
+
+<span class="sd">As you see, its a little different from the mathematical definition. Its based upon the `|&gt;` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `ph.Pipe` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.</span>
+
+<span class="sd">In general, the following rules apply after compilation:</span>
+
+<span class="sd">**General Sequence**</span>
+
+<span class="sd">    (f0, f1, ..., fn-1, fn)</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda x: fn(fn-1(...(f1(f0(x)))))</span>
+
+<span class="sd">**Single Function**</span>
+
+<span class="sd">    (f)</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    f</span>
+
+<span class="sd">**Identity**</span>
+
+<span class="sd">The empty tuple</span>
+
+<span class="sd">    ()</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda x: x</span>
+
+<span class="sd">#### Examples</span>
+<span class="sd">In this example we will use the `_` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.</span>
+
+<span class="sd">    from phi import ph, _</span>
+
+<span class="sd">    f = ph.Compile(</span>
+<span class="sd">        _ * 2,</span>
+<span class="sd">        _ + 1,</span>
+<span class="sd">        _ ** 2</span>
+<span class="sd">    )</span>
+
+<span class="sd">    assert f(1) == 9 # ((1 * 2) + 1) ** 2</span>
+
+<span class="sd">The same using `ph.Pipe`</span>
+
+<span class="sd">    from phi import ph, _</span>
+
+<span class="sd">    assert 9 == ph.Pipe(</span>
+<span class="sd">        1,</span>
+<span class="sd">        _ * 2,</span>
+<span class="sd">        _ + 1,</span>
+<span class="sd">        _ ** 2</span>
+<span class="sd">    )</span>
+
+
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">identity</span>
@@ -1179,6 +1359,7 @@ table {
 <span class="kn">import</span> <span class="nn">pprint</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">isclass</span>
+<span class="kn">import</span> <span class="nn">functools</span>
 
 
 <span class="c1">###############################</span>
@@ -1282,7 +1463,20 @@ table {
         <span class="k">pass</span>
 
 <span class="k">class</span> <span class="nc">Function</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for Function.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions are the most basic element (leaf nodes) of the DSL, more specifically any function of the form `A -&gt; B` is an appropriate element, all callable objects are accepted but only the ones that take a single input will work correctly. The actual value of these is the composition you can get by combinning them through the other elements of the DSL.</span>
+
+<span class="sd">    ## Examples</span>
+<span class="sd">    Compiling a single function just returns the function</span>
+
+<span class="sd">        ph.Compile(f) == f</span>
+
+<span class="sd">    Piping through a single funciton is just function application</span>
+
+<span class="sd">        ph.Pipe(4, f) == f(4)</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_f</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">=</span> <span class="n">_f</span>
@@ -1302,11 +1496,27 @@ table {
 <span class="n">_Identity</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">identity</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">Tree</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for Tree.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">Branch</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for Branch.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable_code</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">iterable_code</span> <span class="p">]</span>
+        <span class="n">branches</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">iterable_code</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">Branch</span><span class="o">.</span><span class="n">_reduce_branches</span><span class="p">,</span> <span class="n">branches</span><span class="p">,</span> <span class="p">[])</span>
+
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_reduce_branches</span><span class="p">(</span><span class="n">branches</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">branches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Write</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">branches</span> <span class="o">+</span> <span class="p">[</span> <span class="n">b</span> <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># type(b) is Write</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">branches</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">branches</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span> <span class="n">seq</span> <span class="p">]</span>
+
+
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">):</span>
@@ -1315,7 +1525,7 @@ table {
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="n">Tree</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Branch</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
         <span class="n">fs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1333,17 +1543,17 @@ table {
         <span class="k">return</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">Sequence</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for Sequence.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">Composition</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for Composition.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_code</span><span class="p">,</span> <span class="n">right_code</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Sequence</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Composition</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">left_code</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">right_code</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__build__</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="o">*</span><span class="n">prevs</span><span class="p">):</span>
-        <span class="n">left</span> <span class="o">=</span> <span class="n">prevs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prevs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">Sequence</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">prevs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Sequence</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">prevs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prevs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">Composition</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">prevs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Composition</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">):</span>
@@ -1357,7 +1567,7 @@ table {
 
         <span class="n">tuple_code</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">Sequence</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">tuple_code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Composition</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">tuple_code</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
         <span class="n">f_left</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
@@ -1498,6 +1708,9 @@ table {
 <span class="c1">#######################</span>
 
 <span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hola</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ast</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
 
@@ -1515,11 +1728,11 @@ table {
     <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">set</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Write</span><span class="o">.</span><span class="n">__parse__</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Sequence</span><span class="o">.</span><span class="n">__parse__</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Composition</span><span class="o">.</span><span class="n">__parse__</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Record</span><span class="o">.</span><span class="n">__parse__</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">isclass</span><span class="p">(</span><span class="n">code</span><span class="p">):</span> <span class="c1">#leave last</span>
-        <span class="k">return</span> <span class="n">Tree</span><span class="o">.</span><span class="n">__parse__</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="c1">#its iterable</span>
+        <span class="k">return</span> <span class="n">Branch</span><span class="o">.</span><span class="n">__parse__</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="c1">#its iterable</span>
     <span class="k">elif</span> <span class="n">else_input</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Input</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1542,10 +1755,14 @@ table {
 
     
   
+    <div class="desc"><p>Hola</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Compile', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Compile" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hola</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ast</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
 
@@ -1561,15 +1778,246 @@ table {
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
+      <p id="phi.dsl.Branch" class="name">class <span class="ident">Branch</span></p>
+      
+  
+    <div class="desc"><p>docstring for Branch.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Branch', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Branch" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Branch</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for Branch.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable_code</span><span class="p">):</span>
+        <span class="n">branches</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">iterable_code</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">Branch</span><span class="o">.</span><span class="n">_reduce_branches</span><span class="p">,</span> <span class="n">branches</span><span class="p">,</span> <span class="p">[])</span>
+
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_reduce_branches</span><span class="p">(</span><span class="n">branches</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">branches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Write</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">branches</span> <span class="o">+</span> <span class="p">[</span> <span class="n">b</span> <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># type(b) is Write</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">branches</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">branches</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span> <span class="n">seq</span> <span class="p">]</span>
+
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">):</span>
+        <span class="n">iterable_code</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">Branch</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">:</span>
+            <span class="n">node_f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+            <span class="n">fs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_f</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span> <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">function</span><span class="p">,</span> <span class="n">refs</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.dsl.Branch">Branch</a></li>
+          <li><a href="#phi.dsl.Node">Node</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.dsl.Branch.branches" class="name">var <span class="ident">branches</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.Branch.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, iterable_code)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Branch.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Branch.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable_code</span><span class="p">):</span>
+    <span class="n">branches</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">iterable_code</span> <span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">Branch</span><span class="o">.</span><span class="n">_reduce_branches</span><span class="p">,</span> <span class="n">branches</span><span class="p">,</span> <span class="p">[])</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="phi.dsl.Composition" class="name">class <span class="ident">Composition</span></p>
+      
+  
+    <div class="desc"><p>docstring for Composition.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Composition', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Composition" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Composition</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for Composition.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_code</span><span class="p">,</span> <span class="n">right_code</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Composition</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">left_code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">right_code</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__build__</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="o">*</span><span class="n">prevs</span><span class="p">):</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">prevs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prevs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">Composition</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">prevs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Composition</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">):</span>
+        <span class="n">tuple_code</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_Identity</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">tuple_code</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">Composition</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">tuple_code</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+        <span class="n">f_left</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+
+        <span class="n">f_right</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">f_right</span><span class="p">,</span> <span class="n">f_left</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Seq({0}, {1})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.dsl.Composition">Composition</a></li>
+          <li><a href="#phi.dsl.Node">Node</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.dsl.Composition.left" class="name">var <span class="ident">left</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.dsl.Composition.right" class="name">var <span class="ident">right</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.Composition.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, left_code, right_code)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Composition.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Composition.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_code</span><span class="p">,</span> <span class="n">right_code</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Composition</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">left_code</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">right_code</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
       <p id="phi.dsl.Function" class="name">class <span class="ident">Function</span></p>
       
   
-    <div class="desc"><p>docstring for Function.</p></div>
+    <div class="desc"><p>Functions are the most basic element (leaf nodes) of the DSL, more specifically any function of the form <code>A -&gt; B</code> is an appropriate element, all callable objects are accepted but only the ones that take a single input will work correctly. The actual value of these is the composition you can get by combinning them through the other elements of the DSL.</p>
+<h2>Examples</h2>
+<p>Compiling a single function just returns the function</p>
+<div class="codehilite"><pre><span></span>ph.Compile(f) == f
+</pre></div>
+
+
+<p>Piping through a single funciton is just function application</p>
+<div class="codehilite"><pre><span></span>ph.Pipe(4, f) == f(4)
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Function', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Function" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Function</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for Function.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions are the most basic element (leaf nodes) of the DSL, more specifically any function of the form `A -&gt; B` is an appropriate element, all callable objects are accepted but only the ones that take a single input will work correctly. The actual value of these is the composition you can get by combinning them through the other elements of the DSL.</span>
+
+<span class="sd">    ## Examples</span>
+<span class="sd">    Compiling a single function just returns the function</span>
+
+<span class="sd">        ph.Compile(f) == f</span>
+
+<span class="sd">    Piping through a single funciton is just function application</span>
+
+<span class="sd">        ph.Pipe(4, f) == f(4)</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_f</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">=</span> <span class="n">_f</span>
@@ -2220,7 +2668,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.dsl.Ref.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7f97c2654140&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7f5537860140&gt;)</p>
     </div>
     
 
@@ -2258,198 +2706,6 @@ table {
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">assigned</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assigned</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">return</span> <span class="n">x</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      </div>
-      </div>
-      
-      <div class="item">
-      <p id="phi.dsl.Sequence" class="name">class <span class="ident">Sequence</span></p>
-      
-  
-    <div class="desc"><p>docstring for Sequence.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Sequence', this);">Show source &equiv;</a></p>
-  <div id="source-phi.dsl.Sequence" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Sequence</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for Sequence.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_code</span><span class="p">,</span> <span class="n">right_code</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Sequence</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">left_code</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">right_code</span><span class="p">)</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">__build__</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="o">*</span><span class="n">prevs</span><span class="p">):</span>
-        <span class="n">left</span> <span class="o">=</span> <span class="n">prevs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prevs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">Sequence</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">prevs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Sequence</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">):</span>
-        <span class="n">tuple_code</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_Identity</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">tuple_code</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-        <span class="n">tuple_code</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">Sequence</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">tuple_code</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">f_left</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
-
-        <span class="n">f_right</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
-
-        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">f_right</span><span class="p">,</span> <span class="n">f_left</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
-
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Seq({0}, {1})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#phi.dsl.Sequence">Sequence</a></li>
-          <li><a href="#phi.dsl.Node">Node</a></li>
-          <li>__builtin__.object</li>
-          </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="phi.dsl.Sequence.left" class="name">var <span class="ident">left</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="phi.dsl.Sequence.right" class="name">var <span class="ident">right</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="phi.dsl.Sequence.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, left_code, right_code)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Sequence.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-phi.dsl.Sequence.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_code</span><span class="p">,</span> <span class="n">right_code</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">Sequence</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">left_code</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">right_code</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      </div>
-      </div>
-      
-      <div class="item">
-      <p id="phi.dsl.Tree" class="name">class <span class="ident">Tree</span></p>
-      
-  
-    <div class="desc"><p>docstring for Tree.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Tree', this);">Show source &equiv;</a></p>
-  <div id="source-phi.dsl.Tree" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Tree</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for Tree.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable_code</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">iterable_code</span> <span class="p">]</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">):</span>
-        <span class="n">iterable_code</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-        <span class="k">return</span> <span class="n">Tree</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">fs</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">:</span>
-            <span class="n">node_f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
-            <span class="n">fs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_f</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span> <span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">function</span><span class="p">,</span> <span class="n">refs</span>
-
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#phi.dsl.Tree">Tree</a></li>
-          <li><a href="#phi.dsl.Node">Node</a></li>
-          <li>__builtin__.object</li>
-          </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="phi.dsl.Tree.branches" class="name">var <span class="ident">branches</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="phi.dsl.Tree.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, iterable_code)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Tree.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-phi.dsl.Tree.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable_code</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">iterable_code</span> <span class="p">]</span>
 </pre></div>
 
   </div>

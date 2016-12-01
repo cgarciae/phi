@@ -91,6 +91,7 @@ class TestBuilder(object):
 
         assert 10 == f(2)
 
+
     def test_compose_list(self):
         f = ph.Compile(
             _ + 1,

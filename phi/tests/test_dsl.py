@@ -8,6 +8,12 @@ class TestDSL(object):
         f, refs = dsl.Compile(code, {})
         assert f(2) == 6
 
+    def test_compile_single_function(self):
+        f = _ * 2
+        code = f
+        f_compiled, refs = dsl.Compile(code, {})
+        assert f == f_compiled
+
     def test_read(self):
         refs = dict(
             x=dsl.Ref('x', 10)
@@ -30,6 +36,44 @@ class TestDSL(object):
         f, refs = dsl.Compile(code, {})
 
         assert [600, 3, 6] == f(2)
+
+    def test_write_tree(self):
+
+        code = (
+            _ + 1,
+            _ * 2,
+            [
+                _ * 100, {'c'}
+            ,
+                _ - 3
+            ,
+                'c'
+            ]
+        )
+
+        f, refs = dsl.Compile(code, {})
+
+        assert [600, 3, 600] == f(2)
+
+    def test_write_tree(self):
+
+        code = (
+            _ + 1,
+            _ * 2,
+            [
+                _ * 100
+            ,
+                ph.on('c')
+            ,
+                _ - 3
+            ,
+                'c'
+            ]
+        )
+
+        f, refs = dsl.Compile(code, {})
+
+        assert [600, 6, 3, 6] == f(2)
 
     def test_input(self):
         code = (

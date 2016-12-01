@@ -1,4 +1,5 @@
 # Phi
+Python is a very nice language that favor readability, its not very strong at functional programming and this often leads to repetitive code.
 Phi is a library for [fluent](https://en.wikipedia.org/wiki/Fluent_interface) functional programming in Python which includes a DSL based on [applicatives](http://learnyouahaskell.com/functors-applicative-functors-and-monoids) + a Builder class that helps you to port/create libraries that integrate with the DSL.
 
 #### Goals

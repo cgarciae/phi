@@ -1,5 +1,98 @@
 """
-Test
+The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `ph.Compile` or applied to a value using `ph.Pipe`.
+
+Phi offers the following constructs/expressions:
+
+* **Function**: any function of arity 1 is an element of the language
+* **Composition**: allows to sequentially compose functions
+* **Branch**: allows to create a branched computation that returns a list with the results of each branch
+* **With**: allows you to specify a context manager for the expresion (uses the `with` statemente)
+* **Record**: allows to create a branched computation with named branches that returns a record-like structure with the results of each branch
+* **Write**: allows you to create a reference to the value at that point that be read at another point
+* **Read**: allows you to read from a reference created previously
+* **Input**: allows you to specify an input value, compiles to a (constant) function that returns the value no matter the input (e.g. `lambda x: value`)
+
+Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.
+
+## Function
+All basic/terminal elements of this language are callables (implement `__call__`) of arity 1.
+
+### Examples
+Compiling a function just returns back the function
+
+    ph.Compile(f) == f
+
+and piping through a function is just the same a applying the function
+
+    ph.Pipe(x, f) == f(x)
+
+## Composition
+In this language tuples are used to express function composition. After compilation, the expression
+
+    (f, g)
+
+be equivalent to
+
+    lambda x: g(f(x))
+
+As you see, its a little different from the mathematical definition. Its based upon the `|>` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `ph.Pipe` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.
+
+In general, the following rules apply after compilation:
+
+**General Sequence**
+
+    (f0, f1, ..., fn-1, fn)
+
+is equivalent to
+
+    lambda x: fn(fn-1(...(f1(f0(x)))))
+
+**Single Function**
+
+    (f)
+
+is equivalent to
+
+    f
+
+**Identity**
+
+The empty tuple
+
+    ()
+
+is equivalent to
+
+    lambda x: x
+
+### Examples
+In this example we will use the `_` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.
+
+    from phi import ph, _
+
+    f = ph.Compile(
+        _ * 2,
+        _ + 1,
+        _ ** 2
+    )
+
+    assert f(1) == 9 # ((1 * 2) + 1) ** 2
+
+The same using `ph.Pipe`
+
+    from phi import ph, _
+
+    assert 9 == ph.Pipe(
+        1,
+        _ * 2,
+        _ + 1,
+        _ ** 2
+    )
+
+## Branch
+
+Branching allows you to split the computation and to
+
 """
 
 from utils import identity
@@ -7,6 +100,7 @@ import utils
 import pprint
 from abc import ABCMeta, abstractmethod
 from inspect import isclass
+import functools
 
 
 ###############################
@@ -111,7 +205,18 @@ class Node(object):
 
 class Function(Node):
     """
-    Functions are the most basic element of the DSL, 
+    Functions are the most basic element (leaf nodes) of the DSL, more specifically any function of the form `A -> B` is an appropriate element, all callable objects are accepted but only the ones that take a single input will work correctly. The actual value of these is the composition you can get by combinning them through the other elements of the DSL.
+
+    ## Examples
+    Compiling a single function just returns the function
+
+        ph.Compile(f) == f
+
+    Piping through a single funciton is just function application
+
+        ph.Pipe(4, f) == f(4)
+
+
     """
     def __init__(self, _f):
         super(Function, self).__init__()
@@ -132,11 +237,27 @@ class Function(Node):
 _Identity = Function(identity)
 
 
-class Tree(Node):
-    """docstring for Tree."""
+class Branch(Node):
+    """docstring for Branch."""
 
     def __init__(self, iterable_code):
-        self.branches = [ _parse(code) for code in iterable_code ]
+        branches = [ _parse(code) for code in iterable_code ]
+        self.branches = functools.reduce(Branch._reduce_branches, branches, [])
+
+
+
+    @staticmethod
+    def _reduce_branches(branches, b):
+        if len(branches) == 0:
+            return [b]
+        elif type(b) is not Write:
+            return branches + [ b ]
+        else: # type(b) is Write
+            a = branches[-1]
+            seq = _parse((a, b))
+            return branches[:-1] + [ seq ]
+
+
 
     @staticmethod
     def __parse__(iterable_code):
@@ -145,7 +266,7 @@ class Tree(Node):
         if len(iterable_code) == 1:
             return _parse(iterable_code[0])
 
-        return Tree(iterable_code)
+        return Branch(iterable_code)
 
     def __compile__(self, refs):
         fs = []
@@ -163,17 +284,17 @@ class Tree(Node):
         return pprint.pformat(self.branches)
 
 
-class Sequence(Node):
-    """docstring for Sequence."""
+class Composition(Node):
+    """docstring for Composition."""
     def __init__(self, left_code, right_code):
-        super(Sequence, self).__init__()
+        super(Composition, self).__init__()
         self.left = _parse(left_code)
         self.right = _parse(right_code)
 
     @staticmethod
     def __build__(right, *prevs):
-        left = prevs[0] if len(prevs) == 1 else Sequence.__build__(*prevs)
-        return Sequence(left, right)
+        left = prevs[0] if len(prevs) == 1 else Composition.__build__(*prevs)
+        return Composition(left, right)
 
     @staticmethod
     def __parse__(tuple_code):
@@ -187,7 +308,7 @@ class Sequence(Node):
 
         tuple_code.reverse()
 
-        return Sequence.__build__(*tuple_code)
+        return Composition.__build__(*tuple_code)
 
     def __compile__(self, refs):
         f_left, refs = self.left.__compile__(refs)
@@ -328,6 +449,9 @@ class Input(Node):
 #######################
 
 def Compile(code, refs):
+    """
+    Hola
+    """
     ast = _parse(code)
     f, refs = ast.__compile__(refs)
 
@@ -345,11 +469,11 @@ def _parse(code, else_input=False):
     elif type(code) is set:
         return Write.__parse__(code)
     elif type(code) is tuple:
-        return Sequence.__parse__(code)
+        return Composition.__parse__(code)
     elif type(code) is dict:
         return Record.__parse__(code)
     elif hasattr(code, '__iter__') and not isclass(code): #leave last
-        return Tree.__parse__(code) #its iterable
+        return Branch.__parse__(code) #its iterable
     elif else_input:
         return Input(code)
     else:
