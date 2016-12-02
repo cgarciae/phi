@@ -91,7 +91,45 @@ The same using `ph.Pipe`
 
 ## Branch
 
-Branching allows you to split the computation and to
+While `Composition` is sequential, `Branch` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.
+
+After compilation the expresion:
+
+    [f, g]
+
+is equivalent to
+
+    lambda x: [ f(x), g(x) ]
+
+
+In general, the following rules apply after compilation:
+
+**General Branching**
+
+    let fs = <some iterable of valid expressions>
+
+is equivalent to
+
+    lambda x: [ f(x) for f in fs ]
+
+
+**Composing & Branching**
+
+A more common scenario however is to see how braching interacts with composing. After compilation the expresion:
+
+    (f, [g, h])
+
+is *almost* equivalent to
+
+    lambda x: [ g(f(x)), h(f(x)) ]
+
+except that its implementation is more like
+
+    def _lambda(x):
+        y = f(x)
+        return [ g(y), h(y) ]
+
+that is, `f` is only excecuted once.
 
 """
 
@@ -261,10 +299,8 @@ class Branch(Node):
 
     @staticmethod
     def __parse__(iterable_code):
-        iterable_code = utils.flatten_list(iterable_code)
 
-        if len(iterable_code) == 1:
-            return _parse(iterable_code[0])
+        iterable_code = list(iterable_code)
 
         return Branch(iterable_code)
 

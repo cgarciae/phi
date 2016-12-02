@@ -1,4 +1,8 @@
 from builder import Builder
+from fn.underscore import _Callable
+
+
+def Underscore()
 
 class RecordProxy(object):
     """docstring for RecClass."""

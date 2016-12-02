@@ -95,6 +95,28 @@ class TestDSL(object):
 
         assert [20, 2, 3] == f(2)
 
+    def test_identities(self):
+
+        code = [
+            (),
+            []
+        ]
+
+        f, refs = dsl.Compile(code, {})
+
+        assert [4, []] == f(4)
+
+    def test_single_functions(self):
+
+        code = [
+            (_ * 2),
+            [_ + 1]
+        ]
+
+        f, refs = dsl.Compile(code, {})
+
+        assert [2, [2]] == f(1)
+
     def test_class(self):
 
         code = (
@@ -151,3 +173,10 @@ class TestDSL(object):
         assert obj.upper == "HELLO"
         assert obj.len == 5
         assert double_len == 10
+
+    def test_fn(self):
+
+        assert "hola" == ph.Pipe(
+            "HOLA",
+            _.lower()
+        )

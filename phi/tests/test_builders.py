@@ -216,7 +216,7 @@ class TestBuilder(object):
             flatten=True
         )
 
-        assert [18, 18, 14, get_list(None)] == ph.Pipe(
+        assert [18, [18, 14, get_list(None)]] == ph.Pipe(
             4,
             [
             (
@@ -240,24 +240,24 @@ class TestBuilder(object):
             ]
         )
 
-        [a, b, c] = ph.Pipe(
+        [a, [b, c]] = ph.Pipe(
             4,
             [
-                (
+            (
                 add2,
                 mul3
-                )
+            )
             ,
                 [
-                    (
+                (
                     add2,
                     mul3
-                    )
+                )
                 ,
-                    (
+                (
                     mul3,
                     add2
-                    )
+                )
                 ]
             ]
         )
