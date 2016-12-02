@@ -1167,9 +1167,9 @@ table {
   <header id="section-intro">
   <h1 class="title"><span class="name">phi.dsl</span> module</h1>
   <p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>ph.Compile</code> or applied to a value using <code>ph.Pipe</code>.</p>
-<p>Phi offers the following constructs:</p>
+<p>Phi offers the following constructs/expressions:</p>
 <ul>
-<li><strong>Function</strong>: any function that takes a single input is an element of the language</li>
+<li><strong>Function</strong>: any function of arity 1 is an element of the language</li>
 <li><strong>Composition</strong>: allows to sequentially compose functions</li>
 <li><strong>Branch</strong>: allows to create a branched computation that returns a list with the results of each branch</li>
 <li><strong>With</strong>: allows you to specify a context manager for the expresion (uses the <code>with</code> statemente)</li>
@@ -1178,9 +1178,10 @@ table {
 <li><strong>Read</strong>: allows you to read from a reference created previously</li>
 <li><strong>Input</strong>: allows you to specify an input value, compiles to a (constant) function that returns the value no matter the input (e.g. <code>lambda x: value</code>)</li>
 </ul>
+<p>Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.</p>
 <h2>Function</h2>
-<p>All basic/terminal elements of this language are callables (implement <code>__call__</code>) of the form <code>A -&gt; B</code>, that is, functions that take a single input element.</p>
-<h4>Examples</h4>
+<p>All basic/terminal elements of this language are callables (implement <code>__call__</code>) of arity 1.</p>
+<h3>Examples</h3>
 <p>Compiling a function just returns back the function</p>
 <div class="codehilite"><pre><span></span>ph.Compile(f) == f
 </pre></div>
@@ -1235,7 +1236,7 @@ table {
 </pre></div>
 
 
-<h4>Examples</h4>
+<h3>Examples</h3>
 <p>In this example we will use the <code>_</code> object from the <code>fn</code> library that is packaged with phi, it lets to easily create simple functions via operator overloading.</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">ph</span><span class="p">,</span> <span class="n">_</span>
 
@@ -1259,15 +1260,59 @@ table {
     <span class="n">_</span> <span class="o">**</span> <span class="mi">2</span>
 <span class="p">)</span>
 </pre></div>
+
+
+<h2>Branch</h2>
+<p>While <code>Composition</code> is sequential, <code>Branch</code> allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements <code>__iter__</code>) that is not a tuple and yields a valid expresion.</p>
+<p>After compilation the expresion:</p>
+<div class="codehilite"><pre><span></span>[f, g]
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: [ f(x), g(x) ]
+</pre></div>
+
+
+<p>In general, the following rules apply after compilation:</p>
+<p><strong>General Branching</strong></p>
+<div class="codehilite"><pre><span></span>let fs = &lt;some iterable of valid expressions&gt;
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: [ f(x) for f in fs ]
+</pre></div>
+
+
+<p><strong>Composing &amp; Branching</strong></p>
+<p>A more common scenario however is to see how braching interacts with composing. After compilation the expresion:</p>
+<div class="codehilite"><pre><span></span>(f, [g, h])
+</pre></div>
+
+
+<p>is <em>almost</em> equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: [ g(f(x)), h(f(x)) ]
+</pre></div>
+
+
+<p>except that its implementation is more like</p>
+<div class="codehilite"><pre><span></span>def _lambda(x):
+    y = f(x)
+    return [ g(y), h(y) ]
+</pre></div>
+
+
+<p>that is, <code>f</code> is only excecuted once.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl" class="source">
     <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `ph.Compile` or applied to a value using `ph.Pipe`.</span>
 
-<span class="sd">Phi offers the following constructs:</span>
+<span class="sd">Phi offers the following constructs/expressions:</span>
 
-<span class="sd">* **Function**: any function that takes a single input is an element of the language</span>
+<span class="sd">* **Function**: any function of arity 1 is an element of the language</span>
 <span class="sd">* **Composition**: allows to sequentially compose functions</span>
 <span class="sd">* **Branch**: allows to create a branched computation that returns a list with the results of each branch</span>
 <span class="sd">* **With**: allows you to specify a context manager for the expresion (uses the `with` statemente)</span>
@@ -1276,10 +1321,12 @@ table {
 <span class="sd">* **Read**: allows you to read from a reference created previously</span>
 <span class="sd">* **Input**: allows you to specify an input value, compiles to a (constant) function that returns the value no matter the input (e.g. `lambda x: value`)</span>
 
-<span class="sd">## Function</span>
-<span class="sd">All basic/terminal elements of this language are callables (implement `__call__`) of the form `A -&gt; B`, that is, functions that take a single input element.</span>
+<span class="sd">Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion&#39;s point of view all of its elements are just functions.</span>
 
-<span class="sd">#### Examples</span>
+<span class="sd">## Function</span>
+<span class="sd">All basic/terminal elements of this language are callables (implement `__call__`) of arity 1.</span>
+
+<span class="sd">### Examples</span>
 <span class="sd">Compiling a function just returns back the function</span>
 
 <span class="sd">    ph.Compile(f) == f</span>
@@ -1327,7 +1374,7 @@ table {
 
 <span class="sd">    lambda x: x</span>
 
-<span class="sd">#### Examples</span>
+<span class="sd">### Examples</span>
 <span class="sd">In this example we will use the `_` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.</span>
 
 <span class="sd">    from phi import ph, _</span>
@@ -1351,6 +1398,47 @@ table {
 <span class="sd">        _ ** 2</span>
 <span class="sd">    )</span>
 
+<span class="sd">## Branch</span>
+
+<span class="sd">While `Composition` is sequential, `Branch` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.</span>
+
+<span class="sd">After compilation the expresion:</span>
+
+<span class="sd">    [f, g]</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda x: [ f(x), g(x) ]</span>
+
+
+<span class="sd">In general, the following rules apply after compilation:</span>
+
+<span class="sd">**General Branching**</span>
+
+<span class="sd">    let fs = &lt;some iterable of valid expressions&gt;</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda x: [ f(x) for f in fs ]</span>
+
+
+<span class="sd">**Composing &amp; Branching**</span>
+
+<span class="sd">A more common scenario however is to see how braching interacts with composing. After compilation the expresion:</span>
+
+<span class="sd">    (f, [g, h])</span>
+
+<span class="sd">is *almost* equivalent to</span>
+
+<span class="sd">    lambda x: [ g(f(x)), h(f(x)) ]</span>
+
+<span class="sd">except that its implementation is more like</span>
+
+<span class="sd">    def _lambda(x):</span>
+<span class="sd">        y = f(x)</span>
+<span class="sd">        return [ g(y), h(y) ]</span>
+
+<span class="sd">that is, `f` is only excecuted once.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -1520,10 +1608,8 @@ table {
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">):</span>
-        <span class="n">iterable_code</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">iterable_code</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Branch</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
 
@@ -1809,10 +1895,8 @@ table {
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">):</span>
-        <span class="n">iterable_code</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">iterable_code</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Branch</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
 
@@ -2668,7 +2752,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.dsl.Ref.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7f5537860140&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7fcbf3be1140&gt;)</p>
     </div>
     
 
