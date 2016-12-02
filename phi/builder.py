@@ -3,12 +3,13 @@ import utils
 from utils import identity
 import functools
 import dsl
+from underscore import Underscore
 
 #######################
 ### Applicative
 #######################
 
-class Builder(dsl.Function):
+class Builder(Underscore):
     """
     An [Applicative](http://learnyouahaskell.com/functors-applicative-functors-and-monoids) is an object who wraps around a function and posses the means to apply it.
 
@@ -37,25 +38,8 @@ class Builder(dsl.Function):
 
     """
 
-    def __init__(self, f=identity, refs={}):
-        super(Builder, self).__init__(f)
-        self._f = f
-        self._refs = refs
-
-
-    def _unit(self, f, refs, _return_type=None):
-        "Monadic unit, also known as `return`"
-        if _return_type:
-            return _return_type(f, refs)
-        else:
-            return self.__class__(f, refs)
-
-    def __call__(self, x, flatten=False):
-        y = self._f(x)
-        return utils.flatten_list(y) if flatten else y
-
-    def __rrshift__(self, x):
-        return self(x)
+    # def __rrshift__(self, x):
+    #     return self(x)
 
     @classmethod
     def Scope(cls):
@@ -85,7 +69,7 @@ class Builder(dsl.Function):
         if flatten:
             f = utils.compose2(flatten_f, f)
 
-        return self._unit(f, refs, _return_type=_return_type)
+        return self.__unit__(f, refs, _return_type=_return_type)
 
     def _0(self, g, *args, **kwargs):
         """
@@ -113,9 +97,9 @@ class Builder(dsl.Function):
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-        return self._unit(lambda x: g(*args, **kwargs), self._refs, _return_type=_return_type)
+        return self.__unit__(lambda x: g(*args, **kwargs), self._refs, _return_type=_return_type)
 
-    def _1(self, g, *args, **kwargs):
+    def Map(self, g, *args, **kwargs):
         """
         Takes in a function `g` and composes it with `phi.core.Applicative.f` as `g o f`. All \*args and \*\* are forwarded to g. This is an essential method since most registered methods use this.
 
@@ -141,9 +125,9 @@ class Builder(dsl.Function):
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-        return self._unit(lambda x: g(self(x), *args, **kwargs), self._refs, _return_type=_return_type)
+        return self.__unit__(lambda x: g(self(x), *args, **kwargs), self._refs, _return_type=_return_type)
 
-    def _2(self, g, arg1, *args, **kwargs):
+    def Map2(self, g, arg1, *args, **kwargs):
         """
         """
         _return_type = None
@@ -158,9 +142,9 @@ class Builder(dsl.Function):
             new_args = tuple([arg1, arg2] + list(args))
             return g(*new_args, **kwargs)
 
-        return self._unit(_lambda, self._refs, _return_type=_return_type)
+        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
 
-    def _3(self, g, arg1, arg2, *args, **kwargs):
+    def Map3(self, g, arg1, arg2, *args, **kwargs):
         """
         """
         _return_type = None
@@ -175,9 +159,9 @@ class Builder(dsl.Function):
             new_args = tuple([arg1, arg2, arg3] + list(args))
             return g(*new_args, **kwargs)
 
-        return self._unit(_lambda, self._refs, _return_type=_return_type)
+        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
 
-    def _4(self, g, arg1, arg2, arg3, *args, **kwargs):
+    def Map4(self, g, arg1, arg2, arg3, *args, **kwargs):
         """
         """
         _return_type = None
@@ -191,9 +175,9 @@ class Builder(dsl.Function):
             new_args = tuple([arg1, arg2, arg3, arg4] + list(args))
             return g(*new_args, **kwargs)
 
-        return self._unit(_lambda, self._refs, _return_type=_return_type)
+        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
 
-    def _5(self, g, arg1, arg2, arg3, arg4, *args, **kwargs):
+    def Map5(self, g, arg1, arg2, arg3, arg4, *args, **kwargs):
         """
         """
         _return_type = None
@@ -207,13 +191,13 @@ class Builder(dsl.Function):
             new_args = tuple([arg1, arg2, arg3, arg4, arg5] + list(args))
             return g(*new_args, **kwargs)
 
-        return self._unit(_lambda, self._refs, _return_type=_return_type)
+        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
 
 
-    def val(self, x):
+    def Val(self, x):
         """
         """
-        return self._1(lambda z: x)
+        return self.Map(lambda z: x)
 
     def on(self, ref):
 
@@ -225,12 +209,12 @@ class Builder(dsl.Function):
         else:
             refs = self._refs
 
-        return self._unit(utils.compose2(ref.set, self), refs)
+        return self.__unit__(utils.compose2(ref.set, self), refs)
 
     # def With(self, *args, **kwargs):
     #     code = (self, dsl.With(*args))
     #     f, refs = dsl.Compile(code, {})
-    #     return self._unit(f, refs, **kwargs)
+    #     return self.__unit__(f, refs, **kwargs)
 
     def ref(self, name):
         return dsl.Ref(name)
@@ -345,7 +329,7 @@ class Builder(dsl.Function):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._1(fn, *args, **kwargs)
+            return self.Map(fn, *args, **kwargs)
 
         explanation = """However, the 1st argument is omitted, a partial with the rest of the arguments is returned which expects the 1st argument such that
 
@@ -363,7 +347,7 @@ class Builder(dsl.Function):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._2(fn, *args, **kwargs)
+            return self.Map2(fn, *args, **kwargs)
 
         explanation = """However, the 2nd argument is omitted, a partial with the rest of the arguments is returned which expects the 2nd argument such that
 
@@ -379,7 +363,7 @@ class Builder(dsl.Function):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._3(fn, *args, **kwargs)
+            return self.Map3(fn, *args, **kwargs)
 
         explanation = """However, the 3rd argument is omitted, a partial with the rest of the arguments is returned which expects the 3rd argument such that
 
@@ -395,7 +379,7 @@ class Builder(dsl.Function):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._4(fn, *args, **kwargs)
+            return self.Map4(fn, *args, **kwargs)
 
         explanation = """However, the 4th argument is omitted, a partial with the rest of the arguments is returned which expects the 4th argument such that
 
@@ -411,7 +395,7 @@ class Builder(dsl.Function):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._5(fn, *args, **kwargs)
+            return self.Map5(fn, *args, **kwargs)
 
         explanation = """However, the 5th argument is omitted, a partial with the rest of the arguments is returned which expects the 5th argument such that
 

@@ -1,24 +1,24 @@
 from builder import Builder
-from fn import _
 import utils
 import dsl
 from dsl import With
 from special_objects import Obj, Rec
+from underscore import underscore as _
 
 #patches
 import functions_patch
 
-ph = Builder()
+ph = Builder(utils.identity, {})
 
 # shortcuts
 _0 = ph._0
-_1 = ph._1
-_2 = ph._2
-_3 = ph._3
-_4 = ph._4
-_5 = ph._5
+Map = ph.Map
+Map2 = ph.Map2
+Map3 = ph.Map3
+Map4 = ph.Map4
+Map5 = ph.Map5
 on = ph.on
-val = ph.val
+Val = ph.Val
 Pipe = ph.Pipe
 Compile = ph.Compile
 

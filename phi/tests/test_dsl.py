@@ -81,7 +81,7 @@ class TestDSL(object):
             _ + 1,
             [
             (
-                ph.val(10),
+                ph.Val(10),
                 _ * 2
             )
             ,

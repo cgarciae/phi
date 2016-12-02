@@ -24,11 +24,11 @@ def get_function_name(self):
     return self._f.__name__
 
 class DummyContext:
-    def __init__(self, val):
-        self.val = val
+    def __init__(self, value):
+        self.value = value
 
     def __enter__(self):
-        return self.val
+        return self.value
     def __exit__(self, type, value, traceback):
         pass
 
@@ -41,22 +41,22 @@ class TestBuilder(object):
         self.x = tf.placeholder(tf.float32, shape=[None, 5])
 
     def test_C_1(self):
-        assert ph._1(add2)(4) == 6
-        assert ph._1(add2)._1(mul3)(4) == 18
+        assert ph.Map(add2)(4) == 6
+        assert ph.Map(add2).Map(mul3)(4) == 18
 
         assert ph.Compile(add2)(4) == 6
         assert ph.Compile(add2, mul3)(4) == 18
 
     def test_methods(self):
-        assert 9 == ph.Pipe(
-            "hello world !!!",
-            ph.Obj.split(" ")
-            .filter(ph.Obj.contains("wor").Not())
-            .map(len),
-            sum,
-            _ + 0.5,
-            round
-        )
+        # assert 9 == ph.Pipe(
+        #     "hello world !!!",
+        #     _.split(" "),
+        #     ph.filter(_.contains("wor"))
+        #     .map(len),
+        #     sum,
+        #     _ + 0.5,
+        #     round
+        # )
 
         assert not ph.Pipe(
             [1,2,3],
@@ -127,8 +127,8 @@ class TestBuilder(object):
 
         assert 9 == ph.Pipe(
             "Hola Cesar",
-            ph.Obj.split(" ")
-            .map(len)
+            ph.Obj.split(" "),
+            ph.map(len)
             .sum()
         )
 
@@ -150,26 +150,26 @@ class TestBuilder(object):
     def test_1(self):
         assert 9 == 2 >> ph.Compile(
             _ + 1,
-            ph._1(math.pow, 2)
+            ph.Map(math.pow, 2)
         )
 
     def test_2(self):
         assert [2, 4] == [1, 2, 3] >> ph.Compile(
-            ph._2(map, _ + 1),
-            ph._2(filter, _ % 2 == 0)
+            ph.Map2(map, _ + 1),
+            ph.Map2(filter, _ % 2 == 0)
         )
 
         assert [2, 4] == ph.Pipe(
             [1, 2, 3],
-            ph._2(map, _ + 1),
-            ph._2(filter, _ % 2 == 0)
+            ph.Map2(map, _ + 1),
+            ph.Map2(filter, _ % 2 == 0)
         )
 
 
     def test_underscores(self):
-        assert ph._1(a2_plus_b_minus_2c, 2, 4)(3) == 3 # (3)^2 + 2 - 2*4
-        assert ph._2(a2_plus_b_minus_2c, 2, 4)(3) == -1 # (2)^2 + 3 - 2*4
-        assert ph._3(a2_plus_b_minus_2c, 2, 4)(3) == 2 # (2)^2 + 4 - 2*3
+        assert ph.Map(a2_plus_b_minus_2c, 2, 4)(3) == 3 # (3)^2 + 2 - 2*4
+        assert ph.Map2(a2_plus_b_minus_2c, 2, 4)(3) == -1 # (2)^2 + 3 - 2*4
+        assert ph.Map3(a2_plus_b_minus_2c, 2, 4)(3) == 2 # (2)^2 + 4 - 2*3
 
     def test_pipe(self):
         assert ph.Pipe(4, add2, mul3) == 18
@@ -376,7 +376,7 @@ class TestBuilder(object):
                 _ * 2
             ],
             [
-                ph._2(map, str)
+                ph.Map2(map, str)
             ,
                 ()
             ]
