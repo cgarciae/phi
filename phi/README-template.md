@@ -26,14 +26,14 @@ The above computation is the same as:
 
     f(x) = (x + 1) * 2 + 3
 
-Using `fn.py`s `_` object included with Phi one can rewrite the previous code as:
+Using `fn.py`s `P` object included with Phi one can rewrite the previous code as:
 
-    from phi import Compile, _
+    from phi import Compile, P
 
     f = Compile(
-      _ + 1,
-      _ * 2,
-      _ + 3
+      P + 1,
+      P * 2,
+      P + 3
     )
 
     assert 11 == f(3)
@@ -56,13 +56,13 @@ in other words functions are composed backwards to express the natural flow of t
 
 You can also *P*ipe a value directly into an expression with the *P* object
 
-    from phi import P, _
+    from phi import P, P
 
     assert 11 == P(
       3,
-      _ + 1,
-      _ * 2,
-      _ + 3
+      P + 1,
+      P * 2,
+      P + 3
     )
 
 Most of the time this is more convenient, plus `P` contains some helper methods that we will see later, so `P` will be used instead of `Compile` from here On.
@@ -70,15 +70,15 @@ Most of the time this is more convenient, plus `P` contains some helper methods 
 ### Branching
 Branching is express via lists and allows you to express a branched computation where a list with the values of the different paths is returned.
 
-    import phi import P, _
+    import phi import P, P
 
     assert [8, 7] == P(
       3,
-      _ + 1,
+      P + 1,
       [
-        _ * 2
+        P * 2
       ,
-        _ + 3
+        P + 3
       ]
     )
 

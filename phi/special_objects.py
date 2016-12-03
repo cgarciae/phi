@@ -1,31 +1,27 @@
-from builder import Builder
-from fn import underscore as us
+
+
+class ObjectProxy(object):
+    """docstring for Underscore."""
+
+    def __init__(self, __builder__):
+        self.__builder__ = __builder__
+
+    def __getattr__(self, name):
+
+        def method_proxy(*args, **kwargs):
+            f = lambda x: getattr(x, name)(*args, **kwargs)
+            return self.__builder__.__then__(f)
+
+        return method_proxy
+
 
 
 class RecordProxy(object):
     """docstring for RecClass."""
 
+    def __init__(self, __builder__):
+        self.__builder__ = __builder__
+
     def __getattr__ (self, attr):
         f = lambda x: getattr(x, attr)
-        return Builder(f, {})
-
-    def __getitem__(self, item):
-        f = lambda x: x[item]
-        return Builder(f, {})
-
-
-    def contains(self, *args, **kwargs):
-        def f(x):
-            if hasattr(x, 'contains'):
-                return x.contains(*args, **kwargs)
-            else:
-                return x.__contains__(*args, **kwargs)
-
-        return Builder(f, {})
-
-
-
-######################
-# Objects
-######################
-Rec = Builder.Rec = RecordProxy()
+        return self.__builder__.__then__(f)

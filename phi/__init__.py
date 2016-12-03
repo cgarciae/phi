@@ -2,25 +2,25 @@ from builder import Builder
 import utils
 import dsl
 from dsl import With
-from special_objects import Rec
-from underscore import underscore as _
 
 #patches
 import functions_patch
 
-ph = Builder(utils.identity, {})
+P = Builder(utils.identity, {})
 
 # shortcuts
-Map0 = ph.Map0
-Map = ph.Map
-Map2 = ph.Map2
-Map3 = ph.Map3
-Map4 = ph.Map4
-Map5 = ph.Map5
-On = ph.On
-Val = ph.Val
-P = Pipe = ph.Pipe
-C = Compile = ph.Compile
+Map0 = P.Map0
+Map = P.Map
+Map2 = P.Map2
+Map3 = P.Map3
+Map4 = P.Map4
+Map5 = P.Map5
+On = P.On
+Val = P.Val
+# P = Pipe = P.Pipe
+C = Compile = P.Compile
+Obj = P.Obj
+Rec = P.Rec
 
 ########################
 # Documentation

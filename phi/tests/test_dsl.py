@@ -1,15 +1,15 @@
-from phi import dsl, ph, _
+from phi import dsl, P, P as P
 
 class TestDSL(object):
     """docstring for TestDSL."""
 
     def test_compile(self):
-        code = (_ + 1, _ * 2)
+        code = (P + 1, P * 2)
         f, refs = dsl.Compile(code, {})
         assert f(2) == 6
 
     def test_compile_single_function(self):
-        f = _ * 2
+        f = P * 2
         code = f
         f_compiled, refs = dsl.Compile(code, {})
         assert f == f_compiled
@@ -27,9 +27,9 @@ class TestDSL(object):
     def test_write(self):
         r = dsl.Ref('r')
         code = (
-            _ + 1, {'a'},
-            _ * 2, {'b'},
-            _ * 100, {'c', r },
+            P + 1, {'a'},
+            P * 2, {'b'},
+            P * 100, {'c', r },
             ['c', 'a', 'b']
         )
 
@@ -40,12 +40,12 @@ class TestDSL(object):
     def test_write_tree(self):
 
         code = (
-            _ + 1,
-            _ * 2,
+            P + 1,
+            P * 2,
             [
-                _ * 100, {'c'}
+                P * 100, {'c'}
             ,
-                _ - 3
+                P - 3
             ,
                 'c'
             ]
@@ -58,14 +58,14 @@ class TestDSL(object):
     def test_write_tree(self):
 
         code = (
-            _ + 1,
-            _ * 2,
+            P + 1,
+            P * 2,
             [
-                _ * 100
+                P * 100
             ,
-                ph.On('c')
+                P.On('c')
             ,
-                _ - 3
+                P - 3
             ,
                 'c'
             ]
@@ -78,11 +78,11 @@ class TestDSL(object):
     def test_input(self):
         code = (
             {'a'},
-            _ + 1,
+            P + 1,
             [
             (
-                ph.Val(10),
-                _ * 2
+                P.Val(10),
+                P * 2
             )
             ,
                 'a'
@@ -109,8 +109,8 @@ class TestDSL(object):
     def test_single_functions(self):
 
         code = [
-            (_ * 2),
-            [_ + 1]
+            (P * 2),
+            [P + 1]
         ]
 
         f, refs = dsl.Compile(code, {})
@@ -121,7 +121,7 @@ class TestDSL(object):
 
         code = (
             str,
-            _ + '0',
+            P + '0',
             int
         )
 
@@ -135,9 +135,9 @@ class TestDSL(object):
     def test_list(self):
         code = (
             [
-                _ + 1
+                P + 1
             ,
-                _ * 2
+                P * 2
             ],
             [
                 lambda l: map(str, l)
@@ -152,16 +152,16 @@ class TestDSL(object):
     def test_dict(self):
         code = (
             dict(
-                original=(),
-                upper=_.upper(),
-                len=len
+                original = (),
+                upper = P.Obj.upper(),
+                len = len
             ),
             [
                 ()
             ,
             (
-                ph.Rec.len,
-                _ * 2
+                P.Rec.len,
+                P * 2
             )
             ]
         )
@@ -176,7 +176,7 @@ class TestDSL(object):
 
     def test_fn(self):
 
-        assert "hola" == ph.Pipe(
+        assert "hola" == P.Pipe(
             "HOLA",
-            _.lower()
+            P.Obj.lower()
         )

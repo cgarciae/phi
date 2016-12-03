@@ -9,7 +9,7 @@ functions_2 = [ (name, f) for name, f in __builtins__.items() if name in functio
 
 for name, f in __builtins__.items():
     try:
-        if hasattr(f, "__name__") and name[0] is not "_" and name not in function_2_names:
+        if hasattr(f, "__name__") and name[0] is not "P" and name not in function_2_names:
             Builder.RegisterFunction1(f, "python", alias=name)
     except Exception as e:
         print(e)

@@ -4,6 +4,7 @@ from utils import identity
 import functools
 import dsl
 from underscore import Lambda
+from special_objects import ObjectProxy, RecordProxy
 
 #######################
 ### Applicative
@@ -222,6 +223,14 @@ class Builder(Lambda):
 
     def Ref(self, name):
         return dsl.Ref(name)
+
+    @property
+    def Obj(self):
+        return ObjectProxy(self)
+
+    @property
+    def Rec(self):
+        return RecordProxy(self)
 
 
     @classmethod

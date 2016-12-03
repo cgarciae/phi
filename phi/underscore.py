@@ -103,22 +103,3 @@ class Lambda(dsl.Function):
     __rand__ = fMap_flip(operator.and_)
     __ror__ = fMap_flip(operator.or_)
     __rxor__ = fMap_flip(operator.xor)
-
-
-class Underscore(Lambda):
-    """docstring for Underscore."""
-
-    def __getattr__(self, name):
-
-        def method_proxy(*args, **kwargs):
-            def f(x):
-                method = getattr(x, name)
-                return method(*args, **kwargs)
-
-            return self.__then__(f)
-
-        return method_proxy
-
-
-
-underscore = Underscore(utils.identity, {})
