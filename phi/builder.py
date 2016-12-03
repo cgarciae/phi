@@ -51,8 +51,6 @@ class Builder(Lambda):
     def Pipe(self, x, *code, **kwargs):
         return self.Compile(*code, **kwargs)(x)
 
-    P = Pipe
-
     def Compile(self, *code, **kwargs):
         _return_type = None
         flatten = None

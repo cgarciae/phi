@@ -58,7 +58,7 @@ You can also *P*ipe a value directly into an expression with the *P* object
 
     from phi import P, P
 
-    assert 11 == P(
+    assert 11 == P.Pipe(
       3,
       P + 1,
       P * 2,
@@ -72,7 +72,7 @@ Branching is express via lists and allows you to express a branched computation 
 
     import phi import P, P
 
-    assert [8, 7] == P(
+    assert [8, 7] == P.Pipe(
       3,
       P + 1,
       [

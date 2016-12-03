@@ -1,5 +1,5 @@
 """
-The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Compile` or applied to a value using `P.Pipe`.
+The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Compile` or applied to a value using `P`.
 
 Phi offers the following constructs/expressions:
 
@@ -35,7 +35,7 @@ be equivalent to
 
     lambda x: g(f(x))
 
-As you see, its a little different from the mathematical definition. Its based upon the `|>` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `P.Pipe` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.
+As you see, its a little different from the mathematical definition. Its based upon the `|>` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `P` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.
 
 In general, the following rules apply after compilation:
 
@@ -78,7 +78,7 @@ In this example we will use the `P` object from the `fn` library that is package
 
     assert f(1) == 9 # ((1 * 2) + 1) ** 2
 
-The same using `P.Pipe`
+The same using `P`
 
     from phi import P, P
 

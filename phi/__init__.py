@@ -17,7 +17,7 @@ Map4 = P.Map4
 Map5 = P.Map5
 On = P.On
 Val = P.Val
-# P = Pipe = P.Pipe
+# P = Pipe = P
 C = Compile = P.Compile
 Obj = P.Obj
 Rec = P.Rec
