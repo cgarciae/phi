@@ -2,29 +2,29 @@ import dsl
 import utils
 import operator
 
-def fmap(opt):
+def fMap(opt):
     def method(self, b):
         return self.__then__(lambda a: opt(a, b))
 
     return method
 
-def fmap_flip(opt):
+def fMap_flip(opt):
     def method(self, b):
         return self.__then__(lambda a: opt(b, a))
 
     return method
 
-def unary_fmap(opt):
+def unary_fMap(opt):
     def method(self):
         return self.__then__(opt)
 
     return method
 
-class Underscore(dsl.Function):
-    """docstring for Underscore."""
+class Lambda(dsl.Function):
+    """docstring for Lambda."""
 
     def __init__(self, f, refs):
-        super(Underscore, self).__init__(f)
+        super(Lambda, self).__init__(f)
         self._f = f
         self._refs = refs
 
@@ -45,6 +45,69 @@ class Underscore(dsl.Function):
 
         return self.__unit__(f, refs)
 
+    def __rrshift__(self, x):
+        print ""
+        if type(x) is dsl.Node or hasattr(x, '__call__'):
+            print x, "RRSHIFT COMPOSE"
+            return self.__then__(x)
+        else: #apply
+            print x, "RRSHIFT APPLY"
+            return self(x)
+
+    __rshift__ = __then__
+    __getitem__ = fMap(operator.itemgetter)
+    __add__ = fMap(operator.add)
+    __mul__ = fMap(operator.mul)
+    __sub__ = fMap(operator.sub)
+    __mod__ = fMap(operator.mod)
+    __pow__ = fMap(operator.pow)
+
+    __and__ = fMap(operator.and_)
+    __or__ = fMap(operator.or_)
+    __xor__ = fMap(operator.xor)
+
+    __div__ = fMap(operator.div)
+    __divmod__ = fMap(divmod)
+    __floordiv__ = fMap(operator.floordiv)
+    __truediv__ = fMap(operator.truediv)
+
+    __contains__ = fMap(operator.contains)
+
+    # __lshift__ = fMap(operator.lshift)
+    # __rshift__ = fMap(operator.rshift)
+
+    __lt__ = fMap(operator.lt)
+    __le__ = fMap(operator.le)
+    __gt__ = fMap(operator.gt)
+    __ge__ = fMap(operator.ge)
+    __eq__ = fMap(operator.eq)
+    __ne__ = fMap(operator.ne)
+
+    __neg__ = unary_fMap(operator.neg)
+    __pos__ = unary_fMap(operator.pos)
+    __invert__ = unary_fMap(operator.invert)
+
+    __radd__ = fMap_flip(operator.add)
+    __rmul__ = fMap_flip(operator.mul)
+    __rsub__ = fMap_flip(operator.sub)
+    __rmod__ = fMap_flip(operator.mod)
+    __rpow__ = fMap_flip(operator.pow)
+    __rdiv__ = fMap_flip(operator.div)
+    __rdivmod__ = fMap_flip(divmod)
+    __rtruediv__ = fMap_flip(operator.truediv)
+    __rfloordiv__ = fMap_flip(operator.floordiv)
+
+    # __rlshift__ = fMap_flip(operator.lshift)
+    # __rrshift__ = fMap_flip(operator.rshift)
+
+    __rand__ = fMap_flip(operator.and_)
+    __ror__ = fMap_flip(operator.or_)
+    __rxor__ = fMap_flip(operator.xor)
+
+
+class Underscore(Lambda):
+    """docstring for Underscore."""
+
     def __getattr__(self, name):
 
         def method_proxy(*args, **kwargs):
@@ -56,62 +119,6 @@ class Underscore(dsl.Function):
 
         return method_proxy
 
-    def __rrshift__(self, x):
-        print ""
-        if type(x) is dsl.Node or hasattr(x, '__call__'):
-            print x, "RRSHIFT COMPOSE"
-            return self.__then__(x)
-        else: #apply
-            print x, "RRSHIFT APPLY"
-            return self(x)
-
-    __rshift__ = __then__
-    __getitem__ = fmap(operator.itemgetter)
-    __add__ = fmap(operator.add)
-    __mul__ = fmap(operator.mul)
-    __sub__ = fmap(operator.sub)
-    __mod__ = fmap(operator.mod)
-    __pow__ = fmap(operator.pow)
-
-    __and__ = fmap(operator.and_)
-    __or__ = fmap(operator.or_)
-    __xor__ = fmap(operator.xor)
-
-    __div__ = fmap(operator.div)
-    __divmod__ = fmap(divmod)
-    __floordiv__ = fmap(operator.floordiv)
-    __truediv__ = fmap(operator.truediv)
-
-    # __lshift__ = fmap(operator.lshift)
-    # __rshift__ = fmap(operator.rshift)
-
-    __lt__ = fmap(operator.lt)
-    __le__ = fmap(operator.le)
-    __gt__ = fmap(operator.gt)
-    __ge__ = fmap(operator.ge)
-    __eq__ = fmap(operator.eq)
-    __ne__ = fmap(operator.ne)
-
-    __neg__ = unary_fmap(operator.neg)
-    __pos__ = unary_fmap(operator.pos)
-    __invert__ = unary_fmap(operator.invert)
-
-    __radd__ = fmap_flip(operator.add)
-    __rmul__ = fmap_flip(operator.mul)
-    __rsub__ = fmap_flip(operator.sub)
-    __rmod__ = fmap_flip(operator.mod)
-    __rpow__ = fmap_flip(operator.pow)
-    __rdiv__ = fmap_flip(operator.div)
-    __rdivmod__ = fmap_flip(divmod)
-    __rtruediv__ = fmap_flip(operator.truediv)
-    __rfloordiv__ = fmap_flip(operator.floordiv)
-
-    # __rlshift__ = fmap_flip(operator.lshift)
-    # __rrshift__ = fmap_flip(operator.rshift)
-
-    __rand__ = fmap_flip(operator.and_)
-    __ror__ = fmap_flip(operator.or_)
-    __rxor__ = fmap_flip(operator.xor)
 
 
 underscore = Underscore(utils.identity, {})

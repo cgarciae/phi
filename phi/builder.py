@@ -3,17 +3,17 @@ import utils
 from utils import identity
 import functools
 import dsl
-from underscore import Underscore
+from underscore import Lambda
 
 #######################
 ### Applicative
 #######################
 
-class Builder(Underscore):
+class Builder(Lambda):
     """
     An [Applicative](http://learnyouahaskell.com/functors-applicative-functors-and-monoids) is an object who wraps around a function and posses the means to apply it.
 
-    The `Applicative` class contains a inner field `f` that must be a function, internal methods rely on this fact to give you the nice syntax of the DSL. The `Applicative` class is also a function, meaning it implements the `__call__` method, which very simply delegates the computation to the function it contains.
+    The `Applicative` class contains a inner field `f` that must be a function, internal methods rely On this fact to give you the nice syntax of the DSL. The `Applicative` class is also a function, meaning it implements the `__call__` method, which very simply delegates the computation to the function it contains.
 
     > **Note:** The `tb` object with is contains the whole TensorBuilder API is an Applicative itself, it contians the identity function.
 
@@ -50,6 +50,8 @@ class Builder(Underscore):
     def Pipe(self, x, *code, **kwargs):
         return self.Compile(*code, **kwargs)(x)
 
+    P = Pipe
+
     def Compile(self, *code, **kwargs):
         _return_type = None
         flatten = None
@@ -71,7 +73,9 @@ class Builder(Underscore):
 
         return self.__unit__(f, refs, _return_type=_return_type)
 
-    def _0(self, g, *args, **kwargs):
+    C = Compile
+
+    def Map0(self, g, *args, **kwargs):
         """
         Takes in a function `g` and composes it with `phi.core.Applicative.f` as `g o f`. All \*args and \*\* are forwarded to g. This is an essential method since most registered methods use this.
 
@@ -199,7 +203,7 @@ class Builder(Underscore):
         """
         return self.Map(lambda z: x)
 
-    def on(self, ref):
+    def On(self, ref):
 
         if type(ref) is str:
             ref = dsl.Ref(ref)
@@ -216,11 +220,12 @@ class Builder(Underscore):
     #     f, refs = dsl.Compile(code, {})
     #     return self.__unit__(f, refs, **kwargs)
 
-    def ref(self, name):
+    def Ref(self, name):
         return dsl.Ref(name)
 
+
     @classmethod
-    def do_register_method(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=""):
+    def DoRegisterMethod(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity):
         """
         This method enables you to register any function `fn` that takes an Applicative as its first argument as a method of the Builder class.
 
@@ -229,7 +234,7 @@ class Builder(Underscore):
         * `fn`: a function that atleast takes an Applicative as its first argument.
         * `library_path`: the route of the librar from which this function was taken, used for documentation purposes.
         * `alias`: allows you to specify the name of the method, it will take the name of the function if its `None`.
-        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based on the documentation of `fn`.
+        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based On the documentation of `fn`.
 
         **Return**
 
@@ -261,22 +266,23 @@ class Builder(Underscore):
         """).format(original_name, name, fn_docs, library_path)
 
         if name in cls.__core__:
-            raise Exception("Can't add method '{0}' because its on __core__".format(name))
+            raise Exception("Can't add method '{0}' because its On __core__".format(name))
 
+        fn = method_type(fn)
         setattr(cls, name, fn)
 
     @classmethod
-    def register_method(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=""):
+    def RegisterMethod(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity):
         def register_decorator(fn):
 
-            cls.do_register_method(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+            cls.DoRegisterMethod(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type)
 
             return fn
         return register_decorator
 
 
     @classmethod
-    def register_function_0(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def RegisterFunction0(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         """
         This method enables you to register any function `fn` that takes an object as its first argument as a method of the Builder and Applicative class.
 
@@ -285,7 +291,7 @@ class Builder(Underscore):
         * `fn`: a function that atleast takes an Object as its first argument.
         * `library_path`: the route of the librar from which this function was taken, used for documentation purposes.
         * `alias`: allows you to specify the name of the method, it will take the name of the function if its `None`.
-        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based on the documentation of `fn`.
+        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based On the documentation of `fn`.
 
         **Return**
 
@@ -297,7 +303,7 @@ class Builder(Underscore):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._0(fn, *args, **kwargs)
+            return self.Map0(fn, *args, **kwargs)
 
         explanation = """However, a partial with the arguments is returned which expects any argument `x` such that
 
@@ -305,10 +311,10 @@ class Builder(Underscore):
 
         """ + explanation
 
-        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type)
 
     @classmethod
-    def register_function_1(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def RegisterFunction1(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         """
         This method enables you to register any function `fn` that takes an object as its first argument as a method of the Builder and Applicative class.
 
@@ -317,7 +323,7 @@ class Builder(Underscore):
         * `fn`: a function that atleast takes an Object as its first argument.
         * `library_path`: the route of the librar from which this function was taken, used for documentation purposes.
         * `alias`: allows you to specify the name of the method, it will take the name of the function if its `None`.
-        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based on the documentation of `fn`.
+        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based On the documentation of `fn`.
 
         **Return**
 
@@ -337,11 +343,11 @@ class Builder(Underscore):
 
         """ + explanation
 
-        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type)
 
 
     @classmethod
-    def register_function_2(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def RegisterFunction2(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         """
         """
         @functools.wraps(fn)
@@ -354,10 +360,10 @@ class Builder(Underscore):
             {3}.{0}(x1, x2, *args, **kwargs) <==> builder.{1}(x1, *args, **kwargs)(x2)
         """ + explanation
 
-        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type)
 
     @classmethod
-    def register_function_3(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def RegisterFunction3(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         """
         """
         @functools.wraps(fn)
@@ -370,10 +376,10 @@ class Builder(Underscore):
             {3}.{0}(x1, x2, x3, *args, **kwargs) <==> builder.{1}(x1, x2, *args, **kwargs)(x3)
         """ + explanation
 
-        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type)
 
     @classmethod
-    def register_function_4(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def RegisterFunction4(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         """
         """
         @functools.wraps(fn)
@@ -386,10 +392,10 @@ class Builder(Underscore):
             {3}.{0}(x1, x2, x3, x4, *args, **kwargs) <==> builder.{1}(x1, x2, x3, *args, **kwargs)(x4)
         """ + explanation
 
-        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation)
+        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type)
 
     @classmethod
-    def register_function_5(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def RegisterFunction5(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         """
         """
         @functools.wraps(fn)
@@ -402,40 +408,47 @@ class Builder(Underscore):
             {3}.{0}(x1, x2, x3, x4, x5, *args, **kwargs) <==> builder.{1}(x1, x2, x3, x4, *args, **kwargs)(x5)
         """ + explanation
 
-        cls.do_register_method(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, _return_type=_return_type)
+        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, _return_type=_return_type)
 
     @classmethod
-    def register_1(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def Register0(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         def register_decorator(fn):
-            cls.register_function_1(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, _return_type=_return_type)
+            cls.RegisterFunction0(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, _return_type=_return_type)
             return fn
         return register_decorator
 
     @classmethod
-    def register_2(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def Register1(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         def register_decorator(fn):
-            cls.register_function_2(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, _return_type=_return_type)
+            cls.RegisterFunction1(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, _return_type=_return_type)
             return fn
         return register_decorator
 
     @classmethod
-    def register_3(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def Register2(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         def register_decorator(fn):
-            cls.register_function_3(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, _return_type=_return_type)
+            cls.RegisterFunction2(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, _return_type=_return_type)
             return fn
         return register_decorator
 
     @classmethod
-    def register_4(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def Register3(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         def register_decorator(fn):
-            cls.register_function_4(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, _return_type=_return_type)
+            cls.RegisterFunction3(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, _return_type=_return_type)
             return fn
         return register_decorator
 
     @classmethod
-    def register_5(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", _return_type=None):
+    def Register4(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
         def register_decorator(fn):
-            cls.register_function_5(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, _return_type=_return_type)
+            cls.RegisterFunction4(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, _return_type=_return_type)
+            return fn
+        return register_decorator
+
+    @classmethod
+    def Register5(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, _return_type=None):
+        def register_decorator(fn):
+            cls.RegisterFunction5(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, _return_type=_return_type)
             return fn
         return register_decorator
 

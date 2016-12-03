@@ -1,6 +1,5 @@
 import tensorflow as tf
-from phi import ph, Builder
-from fn import _
+from phi import ph, Builder, _, C, P
 import math
 # from phi import tb
 
@@ -10,16 +9,16 @@ get_list = lambda x: [1,2,3]
 a2_plus_b_minus_2c = lambda a, b, c: a ** 2 + b - 2*c
 
 
-@Builder.register_1("test.lib")
+@Builder.Register1("test.lib")
 def add(a, b):
     """Some docs"""
     return a + b
 
-@Builder.register_2("test.lib")
+@Builder.Register2("test.lib")
 def pow(a, b):
     return a ** b
 
-@Builder.register_method("test.lib")
+@Builder.RegisterMethod("test.lib")
 def get_function_name(self):
     return self._f.__name__
 
@@ -48,19 +47,19 @@ class TestBuilder(object):
         assert ph.Compile(add2, mul3)(4) == 18
 
     def test_methods(self):
-        # assert 9 == ph.Pipe(
-        #     "hello world !!!",
-        #     _.split(" "),
-        #     ph.filter(_.contains("wor"))
-        #     .map(len),
-        #     sum,
-        #     _ + 0.5,
-        #     round
-        # )
+        assert 9 == ph.Pipe(
+            "hello world !!!",
+            _.split(" "),
+            ph.filter(ph.Contains("wor").Not)
+            .map(len),
+            sum,
+            _ + 0.5,
+            round
+        )
 
         assert not ph.Pipe(
             [1,2,3],
-            ph.Obj.contains(5)
+            ph.Contains(5)
         )
 
         class A(object):
@@ -70,7 +69,7 @@ class TestBuilder(object):
 
         assert "yyy" == ph.Pipe(
             A(),
-            ph.Obj.something(3) #used something
+            _.something(3) #used something
         )
 
     def test_rrshift(self):
@@ -127,7 +126,7 @@ class TestBuilder(object):
 
         assert 9 == ph.Pipe(
             "Hola Cesar",
-            ph.Obj.split(" "),
+            _.split(" "),
             ph.map(len)
             .sum()
         )
@@ -142,7 +141,7 @@ class TestBuilder(object):
 
         t1 = 2 >> ph.Compile(
             _ + 1,
-            ph._0(datetime.now)
+            ph.Map0(datetime.now)
         )
 
         assert t1 > t0
@@ -265,7 +264,7 @@ class TestBuilder(object):
         assert a == 18 and b == 18 and c == 14
 
     def test_scope(self):
-        y = ph.ref('y')
+        y = ph.Ref('y')
 
         z = ph.Pipe(
             self.x,
@@ -289,25 +288,25 @@ class TestBuilder(object):
             ph.add(2)
         )
 
-        #register_2
+        #Register2
         assert 8 == ph.Pipe(
             3,
             ph.pow(2)
         )
 
-        #register_method
+        #RegisterMethod
         assert "identity" == ph.get_function_name()
 
     def test_reference(self):
-        add_ref = ph.ref('add_ref')
+        add_ref = ph.Ref('add_ref')
 
-        assert 8 == 3 >> ph.Compile(ph.add(2).on(add_ref).add(3))
+        assert 8 == 3 >> ph.Compile(ph.add(2).On(add_ref).add(3))
         assert 5 == add_ref()
 
     def test_ref_props(self):
 
-        a = ph.ref('a')
-        b = ph.ref('b')
+        a = ph.Ref('a')
+        b = ph.Ref('b')
 
         assert [7, 3, 5] == ph.Pipe(
             1,
@@ -339,13 +338,13 @@ class TestBuilder(object):
 
     def test_ref_integraton_with_dsl(self):
 
-        y = ph.ref('y')
+        y = ph.Ref('y')
 
 
         assert 5 == ph.Pipe(
             1,
             _ + 4,
-            ph.on(y),
+            ph.On(y),
             _ * 10,
             'y'
         )
@@ -353,7 +352,7 @@ class TestBuilder(object):
         assert 5 == ph.Pipe(
             1,
             _ + 4,
-            ph.on(y),
+            ph.On(y),
             _ * 10,
             'y'
         )
@@ -361,7 +360,7 @@ class TestBuilder(object):
         assert 5 == ph.Pipe(
             1,
             _ + 4,
-            ph.on('y'),
+            ph.On('y'),
             _ * 10,
             'y'
         )

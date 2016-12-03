@@ -63,7 +63,7 @@ class TestDSL(object):
             [
                 _ * 100
             ,
-                ph.on('c')
+                ph.On('c')
             ,
                 _ - 3
             ,
@@ -153,7 +153,7 @@ class TestDSL(object):
         code = (
             dict(
                 original=(),
-                upper=ph.Obj.upper(),
+                upper=_.upper(),
                 len=len
             ),
             [
