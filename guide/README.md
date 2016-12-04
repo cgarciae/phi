@@ -54,38 +54,44 @@ You can also pipe a value directly into an expression with `P.Pipe`
 ### Branching
 Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:
 
-    import phi import P, P
+```python
+import phi import P, P
 
-    assert [0, 4] == P.Pipe(
-      1,
-      P + 1,
-      [
-        P * 2
-      ,
-        P - 2
-      ]
-    )
+assert [0, 4] == P.Pipe(
+  1,
+  P + 1,
+  [
+    P * 2
+  ,
+    P - 2
+  ]
+)
+```
 
 The above computation equivalent to
 
-    lambda x: [(x + 1) * 2, (x + 1) - 2]
+```python
+lambda x: [(x + 1) * 2, (x + 1) - 2]
+```
 
 As you the the `[...]` element is compiled to a function that returns a list of values.
 
 ## Nice Examples
 
-    from phi import P, Obj
+```python
+from phi import P, Obj
 
-    text = "a bb ccc"
+text = "a bb ccc"
 
-    average_word_length = P.Pipe(
-        text,
-        Obj.split(" "), # ['a', 'bb', 'ccc']
-        P.map(len), # [1, 2, 3]
-        P.\_(sum) / len # 6 / 3 == 2
-    )
+average_word_length = P.Pipe(
+    text,
+    Obj.split(" "), # ['a', 'bb', 'ccc']
+    P.map(len), # [1, 2, 3]
+    P._(sum) / len # 6 / 3 == 2
+)
 
-    assert 2 == average_word_length
+assert 2 == average_word_length
+```
 
 ## Installation
 

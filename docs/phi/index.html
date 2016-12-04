@@ -1115,42 +1115,34 @@ Phi is a library for <a href="https://en.wikipedia.org/wiki/Fluent_interface">fl
 
 <h3>Branching</h3>
 <p>Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:</p>
-<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">phi</span> <span class="nn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">P</span>
-
-<span class="k">assert</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-  <span class="mi">1</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="p">[</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
-  <span class="p">,</span>
-    <span class="n">P</span> <span class="o">-</span> <span class="mi">2</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-
-
+<p>```python
+import phi import P, P</p>
+<p>assert [0, 4] == P.Pipe(
+  1,
+  P + 1,
+  [
+    P * 2
+  ,
+    P - 2
+  ]
+)
+```</p>
 <p>The above computation equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: [(x + 1) * 2, (x + 1) - 2]
-</pre></div>
-
-
+<p><code>python
+lambda x: [(x + 1) * 2, (x + 1) - 2]</code></p>
 <p>As you the the <code>[...]</code> element is compiled to a function that returns a list of values.</p>
 <h2>Nice Examples</h2>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
-
-<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
-
-<span class="n">average_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="n">text</span><span class="p">,</span>
-    <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1"># [&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
-    <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
-    <span class="n">P</span><span class="o">.</span>\<span class="n">_</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1"># 6 / 3 == 2</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">average_word_length</span>
-</pre></div>
-
-
+<p>```python
+from phi import P, Obj</p>
+<p>text = "a bb ccc"</p>
+<p>average_word_length = P.Pipe(
+    text,
+    Obj.split(" "), # ['a', 'bb', 'ccc']
+    P.map(len), # [1, 2, 3]
+    P._(sum) / len # 6 / 3 == 2
+)</p>
+<p>assert 2 == average_word_length
+```</p>
 <h2>Installation</h2>
 <div class="codehilite"><pre><span></span>pip install phi==0.2.0
 </pre></div>
