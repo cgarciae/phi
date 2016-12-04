@@ -21,7 +21,7 @@ _4 = P._4
 _5 = P._5
 On = P.On
 Val = P.Val
-# P = Pipe = P
+Pipe = P.Pipe
 M = Make = P.Make
 Obj = P.Obj
 Rec = P.Rec

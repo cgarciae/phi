@@ -1,0 +1,7 @@
+#! /bin/bash
+
+# Register
+#python setup.py register -r pypi
+
+# Upload
+python setup.py sdist upload -r pypi
