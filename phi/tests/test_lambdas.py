@@ -82,3 +82,6 @@ class TestLambdas(object):
             ),
             Rec.a / Rec.b
         )
+
+
+        assert 6 == 1 >> (P + 1) * (P + 2)

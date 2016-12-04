@@ -14,7 +14,7 @@ P = Builder(utils.identity, {})
 
 # shortcuts
 _0 = P._0
-_ = P._
+_1 = P._
 _2 = P._2
 _3 = P._3
 _4 = P._4

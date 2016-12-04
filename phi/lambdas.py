@@ -4,7 +4,7 @@ import operator
 
 def fmap(opt):
     def method(self, b):
-        if type(b) is not dsl.Node or not hasattr(b, '__call__'):
+        if type(b) is not dsl.Node and not hasattr(b, '__call__'):
             b = dsl.Input(b)
 
         code = (
@@ -20,7 +20,7 @@ def fmap(opt):
 
 def fmap_flip(opt):
     def method(self, b):
-        if type(b) is not dsl.Node or not hasattr(b, '__call__'):
+        if type(b) is not dsl.Node and not hasattr(b, '__call__'):
             b = dsl.Input(b)
 
         code = (

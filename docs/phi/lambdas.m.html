@@ -1083,7 +1083,7 @@ table {
 
 <span class="k">def</span> <span class="nf">fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
@@ -1099,7 +1099,7 @@ table {
 
 <span class="k">def</span> <span class="nf">fmap_flip</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
@@ -1234,7 +1234,7 @@ table {
   <div id="source-phi.lambdas.fmap" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
@@ -1268,7 +1268,7 @@ table {
   <div id="source-phi.lambdas.fmap_flip" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fmap_flip</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
