@@ -5,7 +5,7 @@
 
     <title>phi API documentation</title>
     <meta name="description" content="# Phi
-Phi is a library for [fluent](https://en.wikipedia.org/wiki/Fluent_interface) functional progr..." />
+Python is a very nice language that favor readability, its not very strong at functional progr..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1043,6 +1043,8 @@ table {
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
         <li class="mono"><a href="builder.m.html">phi.builder</a></li>
+        <li class="mono"><a href="dsl.m.html">phi.dsl</a></li>
+        <li class="mono"><a href="lambdas.m.html">phi.lambdas</a></li>
       </ul>
     </li>
     </ul>
@@ -1058,13 +1060,100 @@ table {
   <header id="section-intro">
   <h1 class="title"><span class="name">phi</span> module</h1>
   <h1>Phi</h1>
-<p>Phi is a library for <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent</a> functional programming in Python which includes a DSL based on <a href="http://learnyouahaskell.com/functors-applicative-functors-and-monoids">applicatives</a> + facilities to create libraries that integrate with its DSL.</p>
-<h3>Goals</h3>
+<p>Python is a very nice language that favor readability, its not very strong at functional programming and this often leads to repetitive code.
+Phi is a library for <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent</a> functional programming in Python which includes a DSL based On <a href="http://learnyouahaskell.com/functors-applicative-functors-and-monoids">applicatives</a> + a Builder class that helps you to port/create libraries that integrate with the DSL.</p>
+<h4>Goals</h4>
 <ul>
 <li>Comming Soon!</li>
 </ul>
+<h2>DSL</h2>
+<p>Phi uses a DSL that allows you to express complex computations by building On simple functions</p>
+<h3>Composing</h3>
+<p>The most simple thing the DSL does is function composition</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">Compile</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">Compile</span><span class="p">(</span>
+  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+
+<p>The above computation is the same as:</p>
+<div class="codehilite"><pre><span></span>f(x) = (x + 1) * 2 + 3
+</pre></div>
+
+
+<p>Using <code>fn.py</code>s <code>P</code> object included with Phi one can rewrite the previous code as:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">Compile</span><span class="p">,</span> <span class="n">P</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">Compile</span><span class="p">(</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+
+<p>In general, if express function composition</p>
+<div class="codehilite"><pre><span></span>lambda f, g: lambda x: f(g(x))
+</pre></div>
+
+
+<p>as</p>
+<div class="codehilite"><pre><span></span>f . g
+</pre></div>
+
+
+<p>then</p>
+<div class="codehilite"><pre><span></span>Compile(f1, f2, ..., fn-1, fn) = fn . fn-1 . (...) . f2 . f1
+</pre></div>
+
+
+<p>in other words functions are composed backwards to express the natural flow of the computation.</p>
+<h5>P</h5>
+<p>You can also <em>P</em>ipe a value directly into an expression with the <em>P</em> object</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+  <span class="mi">3</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>Most of the time this is more convenient, plus <code>P</code> contains some helper methods that we will see later, so <code>P</code> will be used instead of <code>Compile</code> from here On.</p>
+<h3>Branching</h3>
+<p>Branching is express via lists and allows you to express a branched computation where a list with the values of the different paths is returned.</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">phi</span> <span class="nn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">P</span>
+
+<span class="k">assert</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+  <span class="mi">3</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="p">[</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+  <span class="p">,</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>the above computation is the same as</p>
+<div class="codehilite"><pre><span></span>f(x) = [(x + 1) * 2, (x + 1) + 3]
+</pre></div>
+
+
+<p>Branching has some subtle rules that you should checkout On the DSL's documentation.</p>
 <h2>Installation</h2>
-<div class="codehilite"><pre><span></span>pip install phi==0.1.0
+<div class="codehilite"><pre><span></span>pip install phi==0.2.0
 </pre></div>
 
 
@@ -1074,20 +1163,6 @@ table {
 
 
 <h2>Getting Started</h2>
-<p>import phi import P, _</p>
-<div class="codehilite"><pre><span></span>assert 8 == P(
-  3,
-  _ + 1,
-  _ * 2
-)
-</pre></div>
-
-
-<p>the above computation is the same as</p>
-<div class="codehilite"><pre><span></span>(3 + 1) * 2
-</pre></div>
-
-
 <h2>Features</h2>
 <p>Comming Soon!</p>
 <h2>Documentation</h2>
@@ -1099,35 +1174,42 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi', this);">Show source &equiv;</a></p>
   <div id="source-phi" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">builder</span> <span class="kn">import</span> <span class="n">Builder</span>
-<span class="kn">from</span> <span class="nn">method_builder</span> <span class="kn">import</span> <span class="n">M</span>
-<span class="kn">from</span> <span class="nn">fn</span> <span class="kn">import</span> <span class="n">_</span>
-<span class="kn">from</span> <span class="nn">shortcuts</span> <span class="kn">import</span> <span class="n">C</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">_0</span><span class="p">,</span> <span class="n">_1</span><span class="p">,</span> <span class="n">_2</span><span class="p">,</span> <span class="n">_3</span><span class="p">,</span> <span class="n">_4</span><span class="p">,</span> <span class="n">_5</span>
-<span class="kn">import</span> <span class="nn">utils</span>
-
-<span class="c1">#patches</span>
-<span class="kn">import</span> <span class="nn">functions_patch</span>
-
-<span class="n">P</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">()</span>
-
-
-<span class="c1">########################</span>
-<span class="c1"># Documentation</span>
-<span class="c1">########################</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="c1">#pdoc</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tensordata&quot;</span><span class="p">,</span> <span class="s2">&quot;patches&quot;</span><span class="p">,</span> <span class="s2">&quot;builder&quot;</span><span class="p">]</span>
-
-<span class="c1">#set documentation</span>
-<span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="n">fname</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
-<span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
-<span class="n">raw_docs</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;README-template.md&quot;</span><span class="p">)</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;version.txt&quot;</span><span class="p">)</span>
-<span class="n">module</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">raw_docs</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="n">mport</span> <span class="n">builder</span>
+<span class="n">mport</span> <span class="n">utils</span>
+<span class="n">mport</span> <span class="n">dsl</span>
+<span class="n">mport</span> <span class="n">lambdas</span>
+<span class="n">rom</span> <span class="n">dsl</span> <span class="kn">import</span> <span class="nn">With</span>
+<span class="n">rom</span> <span class="n">builder</span> <span class="kn">import</span> <span class="nn">Builder</span>
+<span class="n">patches</span>
+<span class="n">mport</span> <span class="n">functions_patch</span>
+ <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="p">{})</span>
+ <span class="n">shortcuts</span>
+<span class="mi">0</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_0</span>
+ <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_</span>
+<span class="mi">2</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_2</span>
+<span class="mi">3</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_3</span>
+<span class="mi">4</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_4</span>
+<span class="mi">5</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_5</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">On</span>
+<span class="n">al</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Val</span>
+<span class="n">ipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span>
+ <span class="o">=</span> <span class="n">Make</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span>
+<span class="n">bj</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span>
+<span class="n">ec</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Rec</span>
+<span class="c1">#######################</span>
+ <span class="n">Documentation</span>
+<span class="c1">#######################</span>
+<span class="n">mport</span> <span class="n">os</span>
+<span class="n">mport</span> <span class="n">sys</span>
+<span class="n">pdoc</span>
+<span class="n">_all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dsl&quot;</span><span class="p">,</span> <span class="s2">&quot;builder&quot;</span><span class="p">,</span> <span class="s2">&quot;lambdas&quot;</span><span class="p">]</span>
+<span class="nb">set</span> <span class="n">documentation</span>
+<span class="n">ef</span> <span class="n">_read</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="n">fname</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">odule</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
+<span class="n">aw_docs</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;README-template.md&quot;</span><span class="p">)</span>
+<span class="n">_version__</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;version.txt&quot;</span><span class="p">)</span>
+<span class="n">odule</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">raw_docs</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1141,6 +1223,20 @@ table {
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
       <p class="name"><a href="builder.m.html">phi.builder</a></p>
+      
+  
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="dsl.m.html">phi.dsl</a></p>
+      
+  
+    <div class="desc"><p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Compile</code> or applied to a value using <code>P.Pipe</code>.</p>
+<p>Phi offers the following...</p></div>
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="lambdas.m.html">phi.lambdas</a></p>
       
   
 

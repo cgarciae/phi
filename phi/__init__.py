@@ -1,14 +1,30 @@
-from builder import Builder
-from method_builder import M
-from fn import _
-from shortcuts import C, val, on, _0, _1, _2, _3, _4, _5
+
+import builder
 import utils
+import dsl
+import lambdas
+
+from dsl import With
+from builder import Builder
 
 #patches
 import functions_patch
 
-P = Builder()
+P = Builder(utils.identity, {})
 
+# shortcuts
+_0 = P._0
+_ = P._
+_2 = P._2
+_3 = P._3
+_4 = P._4
+_5 = P._5
+On = P.On
+Val = P.Val
+Pipe = P.Pipe
+M = Make = P.Make
+Obj = P.Obj
+Rec = P.Rec
 
 ########################
 # Documentation
@@ -17,7 +33,7 @@ import os
 import sys
 
 #pdoc
-__all__ = ["tensordata", "patches", "builder"]
+__all__ = ["dsl", "builder", "lambdas"]
 
 #set documentation
 def _read(fname):

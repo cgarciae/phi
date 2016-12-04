@@ -1,12 +1,18 @@
-from phi import dsl, _, _1, _2, M, Builder, val, utils
+from phi import dsl, P
 
 class TestDSL(object):
     """docstring for TestDSL."""
 
     def test_compile(self):
-        code = (_ + 1, _ * 2)
+        code = (P + 1, P * 2)
         f, refs = dsl.Compile(code, {})
         assert f(2) == 6
+
+    def test_compile_single_function(self):
+        f = P * 2
+        code = f
+        f_compiled, refs = dsl.Compile(code, {})
+        assert f == f_compiled
 
     def test_read(self):
         refs = dict(
@@ -21,9 +27,9 @@ class TestDSL(object):
     def test_write(self):
         r = dsl.Ref('r')
         code = (
-            _ + 1, {'a'},
-            _ * 2, {'b'},
-            _ * 100, {'c', r },
+            P + 1, {'a'},
+            P * 2, {'b'},
+            P * 100, {'c', r },
             ['c', 'a', 'b']
         )
 
@@ -31,19 +37,57 @@ class TestDSL(object):
 
         assert [600, 3, 6] == f(2)
 
+    def test_write_tree(self):
+
+        code = (
+            P + 1,
+            P * 2,
+            [
+                P * 100, {'c'}
+            ,
+                P - 3
+            ,
+                'c'
+            ]
+        )
+
+        f, refs = dsl.Compile(code, {})
+
+        assert [600, 3, 600] == f(2)
+
+    def test_write_tree(self):
+
+        code = (
+            P + 1,
+            P * 2,
+            [
+                P * 100
+            ,
+                P.On('c')
+            ,
+                P - 3
+            ,
+                'c'
+            ]
+        )
+
+        f, refs = dsl.Compile(code, {})
+
+        assert [600, 6, 3, 6] == f(2)
+
     def test_input(self):
         code = (
             {'a'},
-            _ + 1,
+            P + 1,
             [
             (
-                val(10),
-                _ * 2
+                P.Val(10),
+                P * 2
             )
             ,
                 'a'
             ,
-                utils.identity
+                ()
             ]
         )
 
@@ -51,11 +95,33 @@ class TestDSL(object):
 
         assert [20, 2, 3] == f(2)
 
+    def test_identities(self):
+
+        code = [
+            (),
+            []
+        ]
+
+        f, refs = dsl.Compile(code, {})
+
+        assert [4, []] == f(4)
+
+    def test_single_functions(self):
+
+        code = [
+            (P * 2),
+            [P + 1]
+        ]
+
+        f, refs = dsl.Compile(code, {})
+
+        assert [2, [2]] == f(1)
+
     def test_class(self):
 
         code = (
             str,
-            _ + '0',
+            P + '0',
             int
         )
 
@@ -63,15 +129,15 @@ class TestDSL(object):
         assert 20 == f(2)
 
 
-        ast = dsl.parse(str)
+        ast = dsl._parse(str)
         assert type(ast) is dsl.Function
 
     def test_list(self):
         code = (
             [
-                _ + 1
+                P + 1
             ,
-                _ * 2
+                P * 2
             ],
             [
                 lambda l: map(str, l)
@@ -82,3 +148,35 @@ class TestDSL(object):
 
         f, refs = dsl.Compile(code, {})
         assert [['4', '6'], [4, 6]] == f(3)
+
+    def test_dict(self):
+        code = (
+            dict(
+                original = (),
+                upper = P.Obj.upper(),
+                len = len
+            ),
+            [
+                ()
+            ,
+            (
+                P.Rec.len,
+                P * 2
+            )
+            ]
+        )
+
+        f, refs = dsl.Compile(code, {})
+        [obj, double_len] = f("hello")
+
+        assert obj.original == "hello"
+        assert obj.upper == "HELLO"
+        assert obj.len == 5
+        assert double_len == 10
+
+    def test_fn(self):
+
+        assert "hola" == P.Pipe(
+            "HOLA",
+            P.Obj.lower()
+        )

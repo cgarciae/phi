@@ -11,7 +11,8 @@ reqs = [str(r.req) for r in parse_requirements("requirements.txt", session=False
 # README file and 2) it's easier to type in the README file than to put a raw
 # string in below ...
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    with open(os.path.join(os.path.dirname(__file__), fname)) as f:
+        return f.read()
 
 version = read('phi/version.txt').split("\n")[0]
 
@@ -32,7 +33,7 @@ setup(
         '': ['LICENCE', 'requirements.txt', 'README.md', 'CHANGELOG.md'],
         'phi': ['version.txt', 'README-template.md']
     },
-    download_url = 'https://github.com/cgarciae/phi/tarball/{0}'.format(version)
+    download_url = 'https://github.com/cgarciae/phi/tarball/{0}'.format(version),
     include_package_data = True,
     long_description = read('README.md'),
     install_requires = reqs
