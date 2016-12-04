@@ -1084,7 +1084,7 @@ from phi import P</p>
 lambda x: (x + 1) * 2 + 3</code></p>
 <p>Using <code>P</code> to create quick lambdas we can rewrite the previous as:</p>
 <p>```python
-from phi import Compile, P</p>
+from phi import P</p>
 <p>f = P.Make(
   P + 1,
   P * 2,
@@ -1106,7 +1106,7 @@ from phi import P</p>
 <h3>Branching</h3>
 <p>Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:</p>
 <p>```python
-import phi import P, P</p>
+import phi import P</p>
 <p>assert [0, 4] == P.Pipe(
   1,
   P + 1,
