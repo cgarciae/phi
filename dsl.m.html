@@ -1166,7 +1166,7 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">phi.dsl</span> module</h1>
-  <p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>ph.Compile</code> or applied to a value using <code>ph.Pipe</code>.</p>
+  <p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Compile</code> or applied to a value using <code>P.Pipe</code>.</p>
 <p>Phi offers the following constructs/expressions:</p>
 <ul>
 <li><strong>Function</strong>: any function of arity 1 is an element of the language</li>
@@ -1183,12 +1183,12 @@ table {
 <p>All basic/terminal elements of this language are callables (implement <code>__call__</code>) of arity 1.</p>
 <h3>Examples</h3>
 <p>Compiling a function just returns back the function</p>
-<div class="codehilite"><pre><span></span>ph.Compile(f) == f
+<div class="codehilite"><pre><span></span>P.Compile(f) == f
 </pre></div>
 
 
 <p>and piping through a function is just the same a applying the function</p>
-<div class="codehilite"><pre><span></span>ph.Pipe(x, f) == f(x)
+<div class="codehilite"><pre><span></span>P.Pipe(x, f) == f(x)
 </pre></div>
 
 
@@ -1203,7 +1203,7 @@ table {
 </pre></div>
 
 
-<p>As you see, its a little different from the mathematical definition. Its based upon the <code>|&gt;</code> (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the <code>ph.Pipe</code> method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.</p>
+<p>As you see, its a little different from the mathematical definition. Its based upon the <code>|&gt;</code> (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the <code>P</code> method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.</p>
 <p>In general, the following rules apply after compilation:</p>
 <p><strong>General Sequence</strong></p>
 <div class="codehilite"><pre><span></span>(f0, f1, ..., fn-1, fn)
@@ -1237,27 +1237,27 @@ table {
 
 
 <h3>Examples</h3>
-<p>In this example we will use the <code>_</code> object from the <code>fn</code> library that is packaged with phi, it lets to easily create simple functions via operator overloading.</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">ph</span><span class="p">,</span> <span class="n">_</span>
+<p>In this example we will use the <code>P</code> object from the <code>fn</code> library that is packaged with phi, it lets to easily create simple functions via operator overloading.</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">P</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">ph</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span>
-    <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">_</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">**</span> <span class="mi">2</span>
 <span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span> <span class="c1"># ((1 * 2) + 1) ** 2</span>
 </pre></div>
 
 
-<p>The same using <code>ph.Pipe</code></p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">ph</span><span class="p">,</span> <span class="n">_</span>
+<p>The same using <code>P</code></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">P</span>
 
-<span class="k">assert</span> <span class="mi">9</span> <span class="o">==</span> <span class="n">ph</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="k">assert</span> <span class="mi">9</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mi">1</span><span class="p">,</span>
-    <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">_</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">**</span> <span class="mi">2</span>
 <span class="p">)</span>
 </pre></div>
 
@@ -1286,29 +1286,29 @@ table {
 
 
 <p><strong>Composing &amp; Branching</strong></p>
-<p>A more common scenario however is to see how braching interacts with composing. After compilation the expresion:</p>
+<p>A more common scenario however is to see how braching interacts with composing. The expression</p>
 <div class="codehilite"><pre><span></span>(f, [g, h])
 </pre></div>
 
 
 <p>is <em>almost</em> equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: [ g(f(x)), h(f(x)) ]
+<div class="codehilite"><pre><span></span>[ (f, g), (f, h) ]
 </pre></div>
 
 
-<p>except that its implementation is more like</p>
+<p>As you see its as if <code>f</code> where distributed over the list. We say <em>almost</em> because its implementation is more like this</p>
 <div class="codehilite"><pre><span></span>def _lambda(x):
     y = f(x)
     return [ g(y), h(y) ]
 </pre></div>
 
 
-<p>that is, <code>f</code> is only excecuted once.</p>
+<p>As you see <code>f</code> is only excecuted once.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl" class="source">
     <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `ph.Compile` or applied to a value using `ph.Pipe`.</span>
+<span class="sd">The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Compile` or applied to a value using `P.Pipe`.</span>
 
 <span class="sd">Phi offers the following constructs/expressions:</span>
 
@@ -1329,11 +1329,11 @@ table {
 <span class="sd">### Examples</span>
 <span class="sd">Compiling a function just returns back the function</span>
 
-<span class="sd">    ph.Compile(f) == f</span>
+<span class="sd">    P.Compile(f) == f</span>
 
 <span class="sd">and piping through a function is just the same a applying the function</span>
 
-<span class="sd">    ph.Pipe(x, f) == f(x)</span>
+<span class="sd">    P.Pipe(x, f) == f(x)</span>
 
 <span class="sd">## Composition</span>
 <span class="sd">In this language tuples are used to express function composition. After compilation, the expression</span>
@@ -1344,7 +1344,7 @@ table {
 
 <span class="sd">    lambda x: g(f(x))</span>
 
-<span class="sd">As you see, its a little different from the mathematical definition. Its based upon the `|&gt;` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `ph.Pipe` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.</span>
+<span class="sd">As you see, its a little different from the mathematical definition. Its based upon the `|&gt;` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `P` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.</span>
 
 <span class="sd">In general, the following rules apply after compilation:</span>
 
@@ -1375,27 +1375,27 @@ table {
 <span class="sd">    lambda x: x</span>
 
 <span class="sd">### Examples</span>
-<span class="sd">In this example we will use the `_` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.</span>
+<span class="sd">In this example we will use the `P` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.</span>
 
-<span class="sd">    from phi import ph, _</span>
+<span class="sd">    from phi import P, P</span>
 
-<span class="sd">    f = ph.Compile(</span>
-<span class="sd">        _ * 2,</span>
-<span class="sd">        _ + 1,</span>
-<span class="sd">        _ ** 2</span>
+<span class="sd">    f = P.Compile(</span>
+<span class="sd">        P * 2,</span>
+<span class="sd">        P + 1,</span>
+<span class="sd">        P ** 2</span>
 <span class="sd">    )</span>
 
 <span class="sd">    assert f(1) == 9 # ((1 * 2) + 1) ** 2</span>
 
-<span class="sd">The same using `ph.Pipe`</span>
+<span class="sd">The same using `P`</span>
 
-<span class="sd">    from phi import ph, _</span>
+<span class="sd">    from phi import P, P</span>
 
-<span class="sd">    assert 9 == ph.Pipe(</span>
+<span class="sd">    assert 9 == P.Pipe(</span>
 <span class="sd">        1,</span>
-<span class="sd">        _ * 2,</span>
-<span class="sd">        _ + 1,</span>
-<span class="sd">        _ ** 2</span>
+<span class="sd">        P * 2,</span>
+<span class="sd">        P + 1,</span>
+<span class="sd">        P ** 2</span>
 <span class="sd">    )</span>
 
 <span class="sd">## Branch</span>
@@ -1424,21 +1424,21 @@ table {
 
 <span class="sd">**Composing &amp; Branching**</span>
 
-<span class="sd">A more common scenario however is to see how braching interacts with composing. After compilation the expresion:</span>
+<span class="sd">A more common scenario however is to see how braching interacts with composing. The expression</span>
 
 <span class="sd">    (f, [g, h])</span>
 
 <span class="sd">is *almost* equivalent to</span>
 
-<span class="sd">    lambda x: [ g(f(x)), h(f(x)) ]</span>
+<span class="sd">    [ (f, g), (f, h) ]</span>
 
-<span class="sd">except that its implementation is more like</span>
+<span class="sd">As you see its as if `f` where distributed over the list. We say *almost* because its implementation is more like this</span>
 
 <span class="sd">    def _lambda(x):</span>
 <span class="sd">        y = f(x)</span>
 <span class="sd">        return [ g(y), h(y) ]</span>
 
-<span class="sd">that is, `f` is only excecuted once.</span>
+<span class="sd">As you see `f` is only excecuted once.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -1557,11 +1557,11 @@ table {
 <span class="sd">    ## Examples</span>
 <span class="sd">    Compiling a single function just returns the function</span>
 
-<span class="sd">        ph.Compile(f) == f</span>
+<span class="sd">        P.Compile(f) == f</span>
 
 <span class="sd">    Piping through a single funciton is just function application</span>
 
-<span class="sd">        ph.Pipe(4, f) == f(4)</span>
+<span class="sd">        P.Pipe(4, f) == f(4)</span>
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2077,12 +2077,12 @@ table {
     <div class="desc"><p>Functions are the most basic element (leaf nodes) of the DSL, more specifically any function of the form <code>A -&gt; B</code> is an appropriate element, all callable objects are accepted but only the ones that take a single input will work correctly. The actual value of these is the composition you can get by combinning them through the other elements of the DSL.</p>
 <h2>Examples</h2>
 <p>Compiling a single function just returns the function</p>
-<div class="codehilite"><pre><span></span>ph.Compile(f) == f
+<div class="codehilite"><pre><span></span>P.Compile(f) == f
 </pre></div>
 
 
 <p>Piping through a single funciton is just function application</p>
-<div class="codehilite"><pre><span></span>ph.Pipe(4, f) == f(4)
+<div class="codehilite"><pre><span></span>P.Pipe(4, f) == f(4)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Function', this);">Show source &equiv;</a></p>
@@ -2094,11 +2094,11 @@ table {
 <span class="sd">    ## Examples</span>
 <span class="sd">    Compiling a single function just returns the function</span>
 
-<span class="sd">        ph.Compile(f) == f</span>
+<span class="sd">        P.Compile(f) == f</span>
 
 <span class="sd">    Piping through a single funciton is just function application</span>
 
-<span class="sd">        ph.Pipe(4, f) == f(4)</span>
+<span class="sd">        P.Pipe(4, f) == f(4)</span>
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2752,7 +2752,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.dsl.Ref.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7fcbf3be1140&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7fe39a637140&gt;)</p>
     </div>
     
 
