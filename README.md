@@ -12,44 +12,52 @@ Phi uses a DSL that allows you to express complex computations by building On si
 ### Composing
 The most simple thing the DSL does is function composition
 
-    from phi import P
+```python
+from phi import P
 
-    f = P.Make(
-      lambda x: x + 1,
-      lambda x: x * 2,
-      lambda x: x + 3
-    )
+f = P.Make(
+  lambda x: x + 1,
+  lambda x: x * 2,
+  lambda x: x + 3
+)
 
-    assert 11 == f(3)
+assert 11 == f(3)
+```
 
 The above computation is equivalent to
 
-    lambda x: (x + 1) * 2 + 3
+```python
+lambda x: (x + 1) * 2 + 3
+```
 
 Using `P` to create quick lambdas we can rewrite the previous as:
 
-    from phi import Compile, P
+```python
+from phi import Compile, P
 
-    f = P.Make(
-      P + 1,
-      P * 2,
-      P + 3
-    )
+f = P.Make(
+  P + 1,
+  P * 2,
+  P + 3
+)
 
-    assert 11 == f(3)
+assert 11 == f(3)
+```
 
 ##### Pipe
 
 You can also pipe a value directly into an expression with `P.Pipe`
 
-    from phi import P
+```python
+from phi import P
 
-    assert 11 == P.Pipe(
-      3,
-      P + 1,
-      P * 2,
-      P + 3
-    )
+assert 11 == P.Pipe(
+  3,
+  P + 1,
+  P * 2,
+  P + 3
+)
+```
 
 ### Branching
 Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:

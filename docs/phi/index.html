@@ -1070,49 +1070,39 @@ Phi is a library for <a href="https://en.wikipedia.org/wiki/Fluent_interface">fl
 <p>Phi uses a DSL that allows you to express complex computations by building On simple functions</p>
 <h3>Composing</h3>
 <p>The most simple thing the DSL does is function composition</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
-
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
-  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">3</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-</pre></div>
-
-
+<p>```python
+from phi import P</p>
+<p>f = P.Make(
+  lambda x: x + 1,
+  lambda x: x * 2,
+  lambda x: x + 3
+)</p>
+<p>assert 11 == f(3)
+```</p>
 <p>The above computation is equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: (x + 1) * 2 + 3
-</pre></div>
-
-
+<p><code>python
+lambda x: (x + 1) * 2 + 3</code></p>
 <p>Using <code>P</code> to create quick lambdas we can rewrite the previous as:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">Compile</span><span class="p">,</span> <span class="n">P</span>
-
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-</pre></div>
-
-
+<p>```python
+from phi import Compile, P</p>
+<p>f = P.Make(
+  P + 1,
+  P * 2,
+  P + 3
+)</p>
+<p>assert 11 == f(3)
+```</p>
 <h5>Pipe</h5>
 <p>You can also pipe a value directly into an expression with <code>P.Pipe</code></p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
-
-<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-  <span class="mi">3</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
-<span class="p">)</span>
-</pre></div>
-
-
+<p>```python
+from phi import P</p>
+<p>assert 11 == P.Pipe(
+  3,
+  P + 1,
+  P * 2,
+  P + 3
+)
+```</p>
 <h3>Branching</h3>
 <p>Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:</p>
 <p>```python
