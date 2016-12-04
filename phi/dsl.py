@@ -1,5 +1,5 @@
 """
-The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Compile` or applied to a value using `P`.
+The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Compile` or applied to a value using `P.Pipe`.
 
 Phi offers the following constructs/expressions:
 
@@ -115,21 +115,21 @@ is equivalent to
 
 **Composing & Branching**
 
-A more common scenario however is to see how braching interacts with composing. After compilation the expresion:
+A more common scenario however is to see how braching interacts with composing. The expression
 
     (f, [g, h])
 
 is *almost* equivalent to
 
-    lambda x: [ g(f(x)), h(f(x)) ]
+    [ (f, g), (f, h) ]
 
-except that its implementation is more like
+As you see its as if `f` where distributed over the list. We say *almost* because its implementation is more like this
 
     def _lambda(x):
         y = f(x)
         return [ g(y), h(y) ]
 
-that is, `f` is only excecuted once.
+As you see `f` is only excecuted once.
 
 """
 

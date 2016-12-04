@@ -1,4 +1,4 @@
-from phi import dsl, P, P as P
+from phi import dsl, P
 
 class TestDSL(object):
     """docstring for TestDSL."""

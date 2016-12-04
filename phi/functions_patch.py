@@ -17,9 +17,8 @@ for name, f in __builtins__.items():
 for name, f in functions_2:
     Builder.RegisterFunction2(f, "python")
 
-
 #custom methods
-@Builder.Register1("python", method_type=property)
+@Builder.Register1("python")
 def Not(x): return not x
 
 @Builder.Register1("python")
@@ -33,3 +32,9 @@ def And(x, y): return x and y
 
 @Builder.Register1("python")
 def Or(x, y): return x or y
+
+@Builder.Register1("python")
+def First(x): next(iter(x))
+
+@Builder.Register1("python")
+def Last(x): list(x)[-1]

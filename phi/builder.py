@@ -3,7 +3,7 @@ import utils
 from utils import identity
 import functools
 import dsl
-from underscore import Lambda
+from lambdas import Lambda
 from special_objects import ObjectProxy, RecordProxy
 
 #######################
@@ -46,12 +46,17 @@ class Builder(Lambda):
     def Scope(cls):
         return dsl.With.GLOBAL_SCOPE
 
-    With = dsl.With
+    def With(self, *args, **kwargs):
+        w = dsl.With(*args, **kwargs)
+        return self.__then__(w)
 
     def Pipe(self, x, *code, **kwargs):
-        return self.Compile(*code, **kwargs)(x)
+        return self.Make(*code, **kwargs)(x)
 
-    def Compile(self, *code, **kwargs):
+    def Run(self, *code, **kwargs):
+        return self.Pipe(None, *code, **kwargs)
+
+    def Make(self, *code, **kwargs):
         _return_type = None
         flatten = None
 
@@ -72,9 +77,9 @@ class Builder(Lambda):
 
         return self.__unit__(f, refs, _return_type=_return_type)
 
-    C = Compile
+    M = Make
 
-    def Map0(self, g, *args, **kwargs):
+    def _0(self, g, *args, **kwargs):
         """
         Takes in a function `g` and composes it with `phi.core.Applicative.f` as `g o f`. All \*args and \*\* are forwarded to g. This is an essential method since most registered methods use this.
 
@@ -102,7 +107,7 @@ class Builder(Lambda):
 
         return self.__unit__(lambda x: g(*args, **kwargs), self._refs, _return_type=_return_type)
 
-    def Map(self, g, *args, **kwargs):
+    def _(self, g, *args, **kwargs):
         """
         Takes in a function `g` and composes it with `phi.core.Applicative.f` as `g o f`. All \*args and \*\* are forwarded to g. This is an essential method since most registered methods use this.
 
@@ -128,9 +133,10 @@ class Builder(Lambda):
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-        return self.__unit__(lambda x: g(self(x), *args, **kwargs), self._refs, _return_type=_return_type)
+        f = lambda x: g(x, *args, **kwargs)
+        return self.__then__(f, _return_type=_return_type)
 
-    def Map2(self, g, arg1, *args, **kwargs):
+    def _2(self, g, arg1, *args, **kwargs):
         """
         """
         _return_type = None
@@ -147,7 +153,7 @@ class Builder(Lambda):
 
         return self.__unit__(_lambda, self._refs, _return_type=_return_type)
 
-    def Map3(self, g, arg1, arg2, *args, **kwargs):
+    def _3(self, g, arg1, arg2, *args, **kwargs):
         """
         """
         _return_type = None
@@ -164,7 +170,7 @@ class Builder(Lambda):
 
         return self.__unit__(_lambda, self._refs, _return_type=_return_type)
 
-    def Map4(self, g, arg1, arg2, arg3, *args, **kwargs):
+    def _4(self, g, arg1, arg2, arg3, *args, **kwargs):
         """
         """
         _return_type = None
@@ -180,7 +186,7 @@ class Builder(Lambda):
 
         return self.__unit__(_lambda, self._refs, _return_type=_return_type)
 
-    def Map5(self, g, arg1, arg2, arg3, arg4, *args, **kwargs):
+    def _5(self, g, arg1, arg2, arg3, arg4, *args, **kwargs):
         """
         """
         _return_type = None
@@ -200,7 +206,7 @@ class Builder(Lambda):
     def Val(self, x):
         """
         """
-        return self.Map(lambda z: x)
+        return self._(lambda z: x)
 
     def On(self, ref):
 
@@ -310,7 +316,7 @@ class Builder(Lambda):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self.Map0(fn, *args, **kwargs)
+            return self._0(fn, *args, **kwargs)
 
         explanation = """However, a partial with the arguments is returned which expects any argument `x` such that
 
@@ -342,7 +348,7 @@ class Builder(Lambda):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self.Map(fn, *args, **kwargs)
+            return self._(fn, *args, **kwargs)
 
         explanation = """However, the 1st argument is omitted, a partial with the rest of the arguments is returned which expects the 1st argument such that
 
@@ -360,7 +366,7 @@ class Builder(Lambda):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self.Map2(fn, *args, **kwargs)
+            return self._2(fn, *args, **kwargs)
 
         explanation = """However, the 2nd argument is omitted, a partial with the rest of the arguments is returned which expects the 2nd argument such that
 
@@ -376,7 +382,7 @@ class Builder(Lambda):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self.Map3(fn, *args, **kwargs)
+            return self._3(fn, *args, **kwargs)
 
         explanation = """However, the 3rd argument is omitted, a partial with the rest of the arguments is returned which expects the 3rd argument such that
 
@@ -392,7 +398,7 @@ class Builder(Lambda):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self.Map4(fn, *args, **kwargs)
+            return self._4(fn, *args, **kwargs)
 
         explanation = """However, the 4th argument is omitted, a partial with the rest of the arguments is returned which expects the 4th argument such that
 
@@ -408,7 +414,7 @@ class Builder(Lambda):
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self.Map5(fn, *args, **kwargs)
+            return self._5(fn, *args, **kwargs)
 
         explanation = """However, the 5th argument is omitted, a partial with the rest of the arguments is returned which expects the 5th argument such that
 

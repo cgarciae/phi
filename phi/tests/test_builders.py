@@ -1,5 +1,5 @@
 import tensorflow as tf
-from phi import P, Builder, C, P, P as P
+from phi import P, Builder, Obj, Val, Rec
 import math
 # from phi import tb
 
@@ -40,21 +40,19 @@ class TestBuilder(object):
         self.x = tf.placeholder(tf.float32, shape=[None, 5])
 
     def test_C_1(self):
-        assert P.Map(add2)(4) == 6
-        assert P.Map(add2).Map(mul3)(4) == 18
+        assert P._(add2)(4) == 6
+        assert P._(add2)._(mul3)(4) == 18
 
-        assert P.Compile(add2)(4) == 6
-        assert P.Compile(add2, mul3)(4) == 18
+        assert P.Make(add2)(4) == 6
+        assert P.Make(add2, mul3)(4) == 18
 
     def test_methods(self):
-        assert 9 == P.Pipe(
-            "hello world !!!",
-            P.Obj.split(" "),
-            P.filter(P.Contains("wor").Not)
+        assert 5 == P.Pipe(
+            "hello world",
+            Obj.split(" ")
+            .filter(P.Contains("w").Not())
             .map(len),
-            sum,
-            P + 0.5,
-            round
+            P[0]
         )
 
         assert not P.Pipe(
@@ -73,7 +71,7 @@ class TestBuilder(object):
         )
 
     def test_rrshift(self):
-        builder = P.Compile(
+        builder = P.Make(
             P + 1,
             P * 2,
             P + 4
@@ -82,7 +80,7 @@ class TestBuilder(object):
         assert 10 == 2 >> builder
 
     def test_compose(self):
-        f = P.Compile(
+        f = P.Make(
             P + 1,
             P * 2,
             P + 4
@@ -92,7 +90,7 @@ class TestBuilder(object):
 
 
     def test_compose_list(self):
-        f = P.Compile(
+        f = P.Make(
             P + 1,
             P * 2, {'x'},
             P + 4,
@@ -108,7 +106,7 @@ class TestBuilder(object):
         assert [12, 5, 6] == f(2)
 
     def test_compose_list_reduce(self):
-        f = P.Compile(
+        f = P.Make(
             P + 1,
             P * 2,
             P + 4,
@@ -139,36 +137,38 @@ class TestBuilder(object):
 
         time.sleep(0.01)
 
-        t1 = 2 >> P.Compile(
+        t1 = 2 >> P.Make(
             P + 1,
-            P.Map0(datetime.now)
+            P._0(datetime.now)
         )
 
         assert t1 > t0
 
     def test_1(self):
-        assert 9 == 2 >> P.Compile(
+        assert 9 == 2 >> P.Make(
             P + 1,
-            P.Map(math.pow, 2)
+            P._(math.pow, 2)
         )
 
     def test_2(self):
-        assert [2, 4] == [1, 2, 3] >> P.Compile(
-            P.Map2(map, P + 1),
-            P.Map2(filter, P % 2 == 0)
+        assert [2, 4] == [1, 2, 3] >> P.Make(
+            P
+            ._2(map, P + 1)
+            ._2(filter, P % 2 == 0)
         )
 
         assert [2, 4] == P.Pipe(
             [1, 2, 3],
-            P.Map2(map, P + 1),
-            P.Map2(filter, P % 2 == 0)
+            P
+            ._2(map, P + 1)
+            ._2(filter, P % 2 == 0)
         )
 
 
     def test_underscores(self):
-        assert P.Map(a2_plus_b_minus_2c, 2, 4)(3) == 3 # (3)^2 + 2 - 2*4
-        assert P.Map2(a2_plus_b_minus_2c, 2, 4)(3) == -1 # (2)^2 + 3 - 2*4
-        assert P.Map3(a2_plus_b_minus_2c, 2, 4)(3) == 2 # (2)^2 + 4 - 2*3
+        assert P._(a2_plus_b_minus_2c, 2, 4)(3) == 3 # (3)^2 + 2 - 2*4
+        assert P._2(a2_plus_b_minus_2c, 2, 4)(3) == -1 # (2)^2 + 3 - 2*4
+        assert P._3(a2_plus_b_minus_2c, 2, 4)(3) == 2 # (2)^2 + 4 - 2*3
 
     def test_pipe(self):
         assert P.Pipe(4, add2, mul3) == 18
@@ -269,11 +269,9 @@ class TestBuilder(object):
         z = P.Pipe(
             self.x,
             P.With( tf.name_scope('TEST'),
-            (
                 P * 2,
-                P + 4,
-                { y }
-            )),
+                P + 4, { y }
+            ),
             P ** 3
         )
 
@@ -300,7 +298,7 @@ class TestBuilder(object):
     def test_reference(self):
         add_ref = P.Ref('add_ref')
 
-        assert 8 == 3 >> P.Compile(P.add(2).On(add_ref).add(3))
+        assert 8 == 3 >> P.Make(P.add(2).On(add_ref).add(3))
         assert 5 == add_ref()
 
     def test_ref_props(self):
@@ -375,7 +373,7 @@ class TestBuilder(object):
                 P * 2
             ],
             [
-                P.Map2(map, str)
+                P._2(map, str)
             ,
                 ()
             ]

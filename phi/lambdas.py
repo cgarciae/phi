@@ -4,17 +4,33 @@ import operator
 
 def fmap(opt):
     def method(self, b):
-        if type(b) is Lambda:
-            raise Exception("Cannot apply operator {} between two Lambdas".format(opt))
-        return self.__then__(lambda a: opt(a, b))
+        if type(b) is not dsl.Node or not hasattr(b, '__call__'):
+            b = dsl.Input(b)
+
+        code = (
+            [ self, b ],
+            lambda args: opt(*args)
+        )
+
+        f, refs = dsl.Compile(code, {})
+
+        return self.__unit__(f, refs)
 
     return method
 
 def fmap_flip(opt):
     def method(self, b):
-        if type(b) is Lambda:
-            raise Exception("Cannot apply operator {} between two Lambdas".format(opt))
-        return self.__then__(lambda a: opt(b, a))
+        if type(b) is not dsl.Node or not hasattr(b, '__call__'):
+            b = dsl.Input(b)
+
+        code = (
+            [ b, self ],
+            lambda args: opt(*args)
+        )
+
+        f, refs = dsl.Compile(code, {})
+
+        return self.__unit__(f, refs)
 
     return method
 
@@ -43,23 +59,32 @@ class Lambda(dsl.Function):
         y = self._f(x)
         return utils.flatten_list(y) if flatten else y
 
-    def __then__(self, other):
+    def __then__(self, other, **kwargs):
         code = (self, other)
         f, refs = dsl.Compile(code, {})
 
-        return self.__unit__(f, refs)
+        return self.__unit__(f, refs, **kwargs)
 
-    def __rrshift__(self, x):
-        print ""
-        if type(x) is dsl.Node or hasattr(x, '__call__'):
-            print x, "RRSHIFT COMPOSE"
-            return self.__then__(x)
+
+    def __getitem__(self, key):
+        f = lambda x: x[key]
+        return self.__then__(f)
+
+
+    def __rrshift__(self, prev):
+
+        if type(prev) is dsl.Node or hasattr(prev, '__call__'):
+            code = (prev, self)
+            f, refs = dsl.Compile(code, {})
+            return self.__unit__(f, refs)
         else: #apply
-            print x, "RRSHIFT APPLY"
-            return self(x)
+            return self(prev)
 
-    __rshift__ = __then__
-    __getitem__ = fmap(operator.itemgetter)
+    __rlshift__ = __rshift__ = __then__
+    __lshift__ = __rrshift__
+
+
+
     __add__ = fmap(operator.add)
     __mul__ = fmap(operator.mul)
     __sub__ = fmap(operator.sub)
