@@ -1,26 +1,30 @@
-from builder import Builder
-from fn import _
+
+import builder
 import utils
 import dsl
+import lambdas
+
 from dsl import With
-from special_objects import Obj, Rec
+from builder import Builder
 
 #patches
 import functions_patch
 
-ph = Builder()
+P = Builder(utils.identity, {})
 
 # shortcuts
-_0 = ph._0
-_1 = ph._1
-_2 = ph._2
-_3 = ph._3
-_4 = ph._4
-_5 = ph._5
-on = ph.on
-val = ph.val
-Pipe = ph.Pipe
-Compile = ph.Compile
+_0 = P._0
+_ = P._
+_2 = P._2
+_3 = P._3
+_4 = P._4
+_5 = P._5
+On = P.On
+Val = P.Val
+# P = Pipe = P
+M = Make = P.Make
+Obj = P.Obj
+Rec = P.Rec
 
 ########################
 # Documentation
@@ -29,7 +33,7 @@ import os
 import sys
 
 #pdoc
-__all__ = ["tensordata", "dsl", "builder"]
+__all__ = ["dsl", "builder", "lambdas"]
 
 #set documentation
 def _read(fname):

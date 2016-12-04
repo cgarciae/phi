@@ -1,5 +1,5 @@
 """
-The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `ph.Compile` or applied to a value using `ph.Pipe`.
+The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Compile` or applied to a value using `P.Pipe`.
 
 Phi offers the following constructs/expressions:
 
@@ -20,11 +20,11 @@ All basic/terminal elements of this language are callables (implement `__call__`
 ### Examples
 Compiling a function just returns back the function
 
-    ph.Compile(f) == f
+    P.Compile(f) == f
 
 and piping through a function is just the same a applying the function
 
-    ph.Pipe(x, f) == f(x)
+    P.Pipe(x, f) == f(x)
 
 ## Composition
 In this language tuples are used to express function composition. After compilation, the expression
@@ -35,7 +35,7 @@ be equivalent to
 
     lambda x: g(f(x))
 
-As you see, its a little different from the mathematical definition. Its based upon the `|>` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `ph.Pipe` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.
+As you see, its a little different from the mathematical definition. Its based upon the `|>` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `P` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.
 
 In general, the following rules apply after compilation:
 
@@ -66,27 +66,27 @@ is equivalent to
     lambda x: x
 
 ### Examples
-In this example we will use the `_` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.
+In this example we will use the `P` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.
 
-    from phi import ph, _
+    from phi import P, P
 
-    f = ph.Compile(
-        _ * 2,
-        _ + 1,
-        _ ** 2
+    f = P.Compile(
+        P * 2,
+        P + 1,
+        P ** 2
     )
 
     assert f(1) == 9 # ((1 * 2) + 1) ** 2
 
-The same using `ph.Pipe`
+The same using `P`
 
-    from phi import ph, _
+    from phi import P, P
 
-    assert 9 == ph.Pipe(
+    assert 9 == P.Pipe(
         1,
-        _ * 2,
-        _ + 1,
-        _ ** 2
+        P * 2,
+        P + 1,
+        P ** 2
     )
 
 ## Branch
@@ -115,21 +115,21 @@ is equivalent to
 
 **Composing & Branching**
 
-A more common scenario however is to see how braching interacts with composing. After compilation the expresion:
+A more common scenario however is to see how braching interacts with composing. The expression
 
     (f, [g, h])
 
 is *almost* equivalent to
 
-    lambda x: [ g(f(x)), h(f(x)) ]
+    [ (f, g), (f, h) ]
 
-except that its implementation is more like
+As you see its as if `f` where distributed over the list. We say *almost* because its implementation is more like this
 
     def _lambda(x):
         y = f(x)
         return [ g(y), h(y) ]
 
-that is, `f` is only excecuted once.
+As you see `f` is only excecuted once.
 
 """
 
@@ -248,11 +248,11 @@ class Function(Node):
     ## Examples
     Compiling a single function just returns the function
 
-        ph.Compile(f) == f
+        P.Compile(f) == f
 
     Piping through a single funciton is just function application
 
-        ph.Pipe(4, f) == f(4)
+        P.Pipe(4, f) == f(4)
 
 
     """
