@@ -33,7 +33,7 @@ lambda x: (x + 1) * 2 + 3
 Using `P` to create quick lambdas we can rewrite the previous as:
 
 ```python
-from phi import Compile, P
+from phi import P
 
 f = P.Make(
   P + 1,
@@ -63,7 +63,7 @@ assert 11 == P.Pipe(
 Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:
 
 ```python
-import phi import P, P
+import phi import P
 
 assert [0, 4] == P.Pipe(
   1,
