@@ -44,7 +44,7 @@ Using `P` to create quick lambdas we can rewrite the previous as:
     assert 11 == f(3)
 
 
-##### Pipe
+**Pipe**
 
 You can also pipe a value directly into an expression with `P.Pipe`
 
@@ -82,7 +82,7 @@ The above computation equivalent to
     lambda x: [(x + 1) * 2, (x + 1) - 2]
 
 
-As you the the `[...]` element is compiled to a function that returns a list of values.
+As you the the `[...]` element is compiled to a function that returns a list of values. Check out the documentation of the [dsl](https://cgarciae.github.io/phi/dsl.m.html) for more information.
 
 ## Nice Examples
 
@@ -103,8 +103,7 @@ As you the the `[...]` element is compiled to a function that returns a list of 
 
 ## Installation
 
-    pip install phi==0.2.0
-
+    pip install phi==0.2.1
 
 
 #### Bleeding Edge

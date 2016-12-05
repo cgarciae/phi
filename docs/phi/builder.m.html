@@ -1061,6 +1061,7 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.BufferError">BufferError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.BytesWarning">BytesWarning</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Contains">Contains</a></li>
+    <li class="mono"><a href="#phi.builder.Builder.Context">Context</a></li>
     <li class="mono"><a href="#phi.builder.Builder.DeprecationWarning">DeprecationWarning</a></li>
     <li class="mono"><a href="#phi.builder.Builder.DoRegisterMethod">DoRegisterMethod</a></li>
     <li class="mono"><a href="#phi.builder.Builder.EOFError">EOFError</a></li>
@@ -1109,7 +1110,6 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.Run">Run</a></li>
     <li class="mono"><a href="#phi.builder.Builder.RuntimeError">RuntimeError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.RuntimeWarning">RuntimeWarning</a></li>
-    <li class="mono"><a href="#phi.builder.Builder.Scope">Scope</a></li>
     <li class="mono"><a href="#phi.builder.Builder.StandardError">StandardError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.StopIteration">StopIteration</a></li>
     <li class="mono"><a href="#phi.builder.Builder.SyntaxError">SyntaxError</a></li>
@@ -1128,7 +1128,6 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.Val">Val</a></li>
     <li class="mono"><a href="#phi.builder.Builder.ValueError">ValueError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Warning">Warning</a></li>
-    <li class="mono"><a href="#phi.builder.Builder.With">With</a></li>
     <li class="mono"><a href="#phi.builder.Builder.ZeroDivisionError">ZeroDivisionError</a></li>
     <li class="mono"><a href="#phi.builder.Builder.abs">abs</a></li>
     <li class="mono"><a href="#phi.builder.Builder.all">all</a></li>
@@ -1276,12 +1275,10 @@ table {
     <span class="c1">#     return self(x)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">Scope</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
+    <span class="k">def</span> <span class="nf">Context</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
 
-    <span class="k">def</span> <span class="nf">With</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">With</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span>
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
@@ -1781,12 +1778,10 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
     <span class="c1">#     return self(x)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">Scope</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
+    <span class="k">def</span> <span class="nf">Context</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
 
-    <span class="k">def</span> <span class="nf">With</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">With</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span>
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
@@ -2217,6 +2212,17 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
           <li>dsl.Node</li>
           <li>__builtin__.object</li>
           </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="phi.builder.Builder.With" class="name">var <span class="ident">With</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Instance variables</h3>
             <div class="item">
             <p id="phi.builder.Builder.Obj" class="name">var <span class="ident">Obj</span></p>
@@ -2555,6 +2561,28 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
   
             
   <div class="item">
+    <div class="name def" id="phi.builder.Builder.Context">
+    <p>def <span class="ident">Context</span>(</p><p>cls, *args)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.Context', this);">Show source &equiv;</a></p>
+  <div id="source-phi.builder.Builder.Context" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">Context</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.builder.Builder.DeprecationWarning">
     <p>def <span class="ident">DeprecationWarning</span>(</p><p>self, *args, **kwargs)</p>
     </div>
@@ -2592,7 +2620,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.DoRegisterMethod">
-    <p>def <span class="ident">DoRegisterMethod</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;)</p>
+    <p>def <span class="ident">DoRegisterMethod</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;)</p>
     </div>
     
 
@@ -3693,7 +3721,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register0">
-    <p>def <span class="ident">Register0</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">Register0</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -3718,7 +3746,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register1">
-    <p>def <span class="ident">Register1</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">Register1</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -3743,7 +3771,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register2">
-    <p>def <span class="ident">Register2</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">Register2</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -3768,7 +3796,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register3">
-    <p>def <span class="ident">Register3</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">Register3</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -3793,7 +3821,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register4">
-    <p>def <span class="ident">Register4</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">Register4</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -3818,7 +3846,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register5">
-    <p>def <span class="ident">Register5</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">Register5</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -3843,7 +3871,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction0">
-    <p>def <span class="ident">RegisterFunction0</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction0</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -3894,7 +3922,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction1">
-    <p>def <span class="ident">RegisterFunction1</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction1</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -3945,7 +3973,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction2">
-    <p>def <span class="ident">RegisterFunction2</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction2</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -3976,7 +4004,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction3">
-    <p>def <span class="ident">RegisterFunction3</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction3</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -4007,7 +4035,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction4">
-    <p>def <span class="ident">RegisterFunction4</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction4</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -4038,7 +4066,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction5">
-    <p>def <span class="ident">RegisterFunction5</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction5</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;, _return_type=None)</p>
     </div>
     
 
@@ -4069,7 +4097,7 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterMethod">
-    <p>def <span class="ident">RegisterMethod</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2b744187d0&gt;)</p>
+    <p>def <span class="ident">RegisterMethod</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f24559177d0&gt;)</p>
     </div>
     
 
@@ -4177,28 +4205,6 @@ tb.relu_layer(10)) # Notice the begging and ending &#39;()&#39; tuple parenthesi
 <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="phi.builder.Builder.Scope">
-    <p>def <span class="ident">Scope</span>(</p><p>cls)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.Scope', this);">Show source &equiv;</a></p>
-  <div id="source-phi.builder.Builder.Scope" class="source">
-    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">Scope</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
 </pre></div>
 
   </div>
@@ -4844,28 +4850,6 @@ the Python version, and the hardware/OS platform and version.</p></div>
 <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="phi.builder.Builder.With">
-    <p>def <span class="ident">With</span>(</p><p>self, *args, **kwargs)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.With', this);">Show source &equiv;</a></p>
-  <div id="source-phi.builder.Builder.With" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">With</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">w</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 </pre></div>
 
   </div>

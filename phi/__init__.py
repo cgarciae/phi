@@ -3,6 +3,7 @@ import builder
 import utils
 import dsl
 import lambdas
+import special_objects
 
 from dsl import With
 from builder import Builder
@@ -25,6 +26,7 @@ Pipe = P.Pipe
 Make = P.Make
 Obj = P.Obj
 Rec = P.Rec
+Context = P.Context
 
 M = Make
 """
@@ -38,7 +40,7 @@ import os
 import sys
 
 #pdoc
-__all__ = ["dsl", "builder", "lambdas"]
+__all__ = ["dsl", "builder", "lambdas", "special_objects"]
 
 #set documentation
 

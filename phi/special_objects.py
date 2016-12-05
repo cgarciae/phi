@@ -25,3 +25,7 @@ class RecordProxy(object):
     def __getattr__ (self, attr):
         f = lambda x: getattr(x, attr)
         return self.__builder__.__then__(f)
+
+    def __getitem__(self, key):
+        f = lambda x: x[key]
+        return self.__then__(f)

@@ -44,7 +44,7 @@ f = P.Make(
 assert 11 == f(3)
 ```
 
-##### Pipe
+**Pipe**
 
 You can also pipe a value directly into an expression with `P.Pipe`
 
@@ -82,7 +82,7 @@ The above computation equivalent to
 lambda x: [(x + 1) * 2, (x + 1) - 2]
 ```
 
-As you the the `[...]` element is compiled to a function that returns a list of values.
+As you the the `[...]` element is compiled to a function that returns a list of values. Check out the documentation of the [dsl](https://cgarciae.github.io/phi/dsl.m.html) for more information.
 
 ## Nice Examples
 

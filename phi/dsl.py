@@ -66,28 +66,29 @@ is equivalent to
     k(x) = x
 
 ### Examples
-In this example we will use the `P` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.
 
-    from phi import P, P
+    from phi import P
 
     f = P.Compile(
-        P * 2,
-        P + 1,
-        P ** 2
+        lambda x: x * 2,
+        lambda x: x + 1,
+        lambda x: x ** 2
     )
 
     assert f(1) == 9 # ((1 * 2) + 1) ** 2
 
-The same using `P`
+As you see, `Compile`s `*args` are interpreted as a tuple which means all expressions contained are composed. The previous example using `P.Pipe`
 
-    from phi import P, P
+    from phi import P
 
     assert 9 == P.Pipe(
         1,
-        P * 2,
-        P + 1,
-        P ** 2
+        lambda x: x * 2,
+        lambda x: x + 1,
+        lambda x: x ** 2
     )
+
+Again, `Pipe`'s signature is `Pipe(x, *args)` and `*args` is interpreted as a tuple which means all expressions contained are composed.
 
 ## Branch
 
@@ -185,7 +186,73 @@ compile to a function of the form
 Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html).
 
 ## Input
-Sometimes you might need to branch the computation but start the branch with the different value than the one being passed
+Sometimes you might need to branch the computation but start one of the branches with a values different than the one being passed down, you could always solve it like this
+
+    P.Pipe(
+        ...,
+        [
+            lambda _: my_value
+        ,
+            ...
+        ]
+    )
+
+Here we just made a lamda that took in the argument `_` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`
+
+    from phi import P, Val
+
+    P.Pipe(
+        ...,
+        [
+            Val(my_value)
+        ,
+            ...
+        ]
+    )|
+
+## With
+
+    def With(context_manager, *body):
+
+where
+
+* **context_manager**: a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) object or valid expression from the DSL that returns a context manager.
+* ***body**: any valid expression of the DSL to be evaluated inside the context. `*body` is interpreted as a tuple so all expression contained are composed.
+
+As with normal python programs you sometimes might want to create a context for a block of code. You normally give a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) to the [with](https://docs.python.org/2/reference/compound_stmts.html#the-with-statement) statemente, in Phi you use `P.With` or `phi.With`
+
+**Context**
+Python's `with` statemente returns a context object through `as` keyword, in the DSL this object can be obtained using the `P.Context` method or the `phi.Context` function.
+
+### Examples
+
+    from phi import P, Obj, Context, With, Pipe
+
+    text = Pipe(
+        "text.txt",
+        With( open, Context,
+            Obj.read()
+        )
+    )
+
+The previous is equivalent to
+
+    with open("text.txt") as f:
+        text = f.read()
+
+## Record
+List or iterables in general provide you a way to branch your computation in the DSL, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. Record branches provide a way to create named branches via a dictionary object where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.
+
+A special object of type `phi.dsl.RecordProxy` is returned, this object behaves derives from `dict` and fully emulates it so you can treat it as such, however it also implements the `__getattr__` method, which you can use to access a value as if it where a field if its key is a string.
+
+### Examples
+
+    from phi import P
+
+    
+
+
+
 """
 
 from utils import identity
@@ -228,6 +295,9 @@ class RecordObject(dict):
     """docstring for DictObject."""
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
+
+    def __getattr__ (self, attr):
+        return self[attr]
 
     def __setitem__(self, key, item):
         self.__dict__[key] = item
@@ -443,7 +513,7 @@ class Record(Node):
 class With(Node):
     """docstring for Record."""
 
-    GLOBAL_SCOPE = None
+    GLOBAL_CONTEXT = None
 
     def __init__(self, scope_code, *body_code):
         super(With, self).__init__()
@@ -463,15 +533,15 @@ class With(Node):
 
     def set_scope(self, new_scope):
         self.new_scope = new_scope
-        self.old_scope = With.GLOBAL_SCOPE
+        self.old_scope = With.GLOBAL_CONTEXT
 
         return self
 
     def __enter__(self):
-        With.GLOBAL_SCOPE = self.new_scope
+        With.GLOBAL_CONTEXT = self.new_scope
 
     def __exit__(self, *args):
-        With.GLOBAL_SCOPE = self.old_scope
+        With.GLOBAL_CONTEXT = self.old_scope
 
 
 class Read(Node):
@@ -568,4 +638,4 @@ def _parse(code, else_input=False):
     elif else_input:
         return Input(code)
     else:
-        raise Exception("Parse Error: Element not part of the DSL. Got:\n{0} of type {1}".format(code, type(code)))
+        raise Exception("Parse Error: Element not part of the DSL. Got: {0} of type {1}".format(code, type(code)))

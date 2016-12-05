@@ -43,12 +43,10 @@ class Builder(Lambda):
     #     return self(x)
 
     @classmethod
-    def Scope(cls):
-        return dsl.With.GLOBAL_SCOPE
+    def Context(cls, *args):
+        return dsl.With.GLOBAL_CONTEXT
 
-    def With(self, *args, **kwargs):
-        w = dsl.With(*args, **kwargs)
-        return self.__then__(w)
+    With = dsl.With
 
     def Pipe(self, x, *code, **kwargs):
         return self.Make(*code, **kwargs)(x)
