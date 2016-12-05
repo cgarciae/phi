@@ -1070,69 +1070,87 @@ Phi is a library for <a href="https://en.wikipedia.org/wiki/Fluent_interface">fl
 <p>Phi uses a DSL that allows you to express complex computations by building On simple functions</p>
 <h3>Composing</h3>
 <p>The most simple thing the DSL does is function composition</p>
-<p>```python
-from phi import P</p>
-<p>f = P.Make(
-  lambda x: x + 1,
-  lambda x: x * 2,
-  lambda x: x + 3
-)</p>
-<p>assert 11 == f(3)
-```</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+
 <p>The above computation is equivalent to</p>
-<p><code>python
-lambda x: (x + 1) * 2 + 3</code></p>
+<div class="codehilite"><pre><span></span>lambda x: (x + 1) * 2 + 3
+</pre></div>
+
+
 <p>Using <code>P</code> to create quick lambdas we can rewrite the previous as:</p>
-<p>```python
-from phi import P</p>
-<p>f = P.Make(
-  P + 1,
-  P * 2,
-  P + 3
-)</p>
-<p>assert 11 == f(3)
-```</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+
 <h5>Pipe</h5>
 <p>You can also pipe a value directly into an expression with <code>P.Pipe</code></p>
-<p>```python
-from phi import P</p>
-<p>assert 11 == P.Pipe(
-  3,
-  P + 1,
-  P * 2,
-  P + 3
-)
-```</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+  <span class="mi">3</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="p">)</span>
+</pre></div>
+
+
 <h3>Branching</h3>
 <p>Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:</p>
-<p>```python
-import phi import P</p>
-<p>assert [0, 4] == P.Pipe(
-  1,
-  P + 1,
-  [
-    P * 2
-  ,
-    P - 2
-  ]
-)
-```</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">phi</span> <span class="nn">import</span> <span class="nn">P</span>
+
+<span class="k">assert</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+  <span class="mi">1</span><span class="p">,</span>
+  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="p">[</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+  <span class="p">,</span>
+    <span class="n">P</span> <span class="o">-</span> <span class="mi">2</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+
+
 <p>The above computation equivalent to</p>
-<p><code>python
-lambda x: [(x + 1) * 2, (x + 1) - 2]</code></p>
+<div class="codehilite"><pre><span></span>lambda x: [(x + 1) * 2, (x + 1) - 2]
+</pre></div>
+
+
 <p>As you the the <code>[...]</code> element is compiled to a function that returns a list of values.</p>
 <h2>Nice Examples</h2>
-<p>```python
-from phi import P, Obj</p>
-<p>text = "a bb ccc"</p>
-<p>average_word_length = P.Pipe(
-    text,
-    Obj.split(" "), # ['a', 'bb', 'ccc']
-    P.map(len), # [1, 2, 3]
-    P._(sum) / len # 6 / 3 == 2
-)</p>
-<p>assert 2 == average_word_length
-```</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+
+<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="n">text</span><span class="p">,</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1"># [&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1"># sum([1,2,3]) / len([1,2,3]) == 6 / 3 == 2</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
+</pre></div>
+
+
 <h2>Installation</h2>
 <div class="codehilite"><pre><span></span>pip install phi==0.2.0
 </pre></div>
@@ -1174,9 +1192,13 @@ from phi import P, Obj</p>
 <span class="n">n</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">On</span>
 <span class="n">al</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Val</span>
 <span class="n">ipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span>
- <span class="o">=</span> <span class="n">Make</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span>
+<span class="n">ake</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span>
 <span class="n">bj</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span>
 <span class="n">ec</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Rec</span>
+ <span class="o">=</span> <span class="n">Make</span>
+<span class="s2">&quot;&quot;</span>
+<span class="n">breviation</span> <span class="k">for</span> <span class="sb">`P.Make`</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">module</span> <span class="n">function</span> <span class="sb">`phi.Make`</span><span class="o">.</span>
+<span class="s2">&quot;&quot;</span>
 <span class="c1">#######################</span>
  <span class="n">Documentation</span>
 <span class="c1">#######################</span>
@@ -1185,12 +1207,27 @@ from phi import P, Obj</p>
 <span class="n">pdoc</span>
 <span class="n">_all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dsl&quot;</span><span class="p">,</span> <span class="s2">&quot;builder&quot;</span><span class="p">,</span> <span class="s2">&quot;lambdas&quot;</span><span class="p">]</span>
 <span class="nb">set</span> <span class="n">documentation</span>
+<span class="n">ef</span> <span class="n">_to_pdoc_markdown</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+   <span class="n">indent</span> <span class="o">=</span> <span class="bp">False</span>
+   <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+   <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+       <span class="k">if</span> <span class="s2">&quot;```&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+           <span class="n">indent</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">indent</span>
+           <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```python&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+           <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+       <span class="k">if</span> <span class="n">indent</span><span class="p">:</span>
+           <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">line</span>
+       <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+   <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 <span class="n">ef</span> <span class="n">_read</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="n">fname</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">odule</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
 <span class="n">aw_docs</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;README-template.md&quot;</span><span class="p">)</span>
 <span class="n">_version__</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;version.txt&quot;</span><span class="p">)</span>
-<span class="n">odule</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">raw_docs</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
+<span class="n">odule</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
+   <span class="n">raw_docs</span><span class="p">,</span>
+   <span class="n">Obj</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">),</span>
+   <span class="n">_to_pdoc_markdown</span>
 </pre></div>
 
   </div>
@@ -1212,8 +1249,8 @@ from phi import P, Obj</p>
       <p class="name"><a href="dsl.m.html">phi.dsl</a></p>
       
   
-    <div class="desc"><p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Compile</code> or applied to a value using <code>P.Pipe</code>.</p>
-<p>Phi offers the following...</p></div>
+    <div class="desc"><p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Make</code> or applied to a value using <code>P.Pipe</code>.</p>
+<p>Phi offers the following co...</p></div>
 
       </div>
       <div class="item">

@@ -1166,17 +1166,17 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">phi.dsl</span> module</h1>
-  <p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Compile</code> or applied to a value using <code>P.Pipe</code>.</p>
+  <p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Make</code> or applied to a value using <code>P.Pipe</code>.</p>
 <p>Phi offers the following constructs/expressions:</p>
 <ul>
 <li><strong>Function</strong>: any function of arity 1 is an element of the language</li>
 <li><strong>Composition</strong>: allows to sequentially compose functions</li>
-<li><strong>Branch</strong>: allows to create a branched computation that returns a list with the results of each branch</li>
-<li><strong>With</strong>: allows you to specify a context manager for the expresion (uses the <code>with</code> statemente)</li>
-<li><strong>Record</strong>: allows to create a branched computation with named branches that returns a record-like structure with the results of each branch</li>
-<li><strong>Write</strong>: allows you to create a reference to the value at that point that be read at another point</li>
-<li><strong>Read</strong>: allows you to read from a reference created previously</li>
+<li><strong>Branch</strong>: lets to create a branched computation that returns a list with the results of each branch</li>
 <li><strong>Input</strong>: allows you to specify an input value, compiles to a (constant) function that returns the value no matter the input (e.g. <code>lambda x: value</code>)</li>
+<li><strong>With</strong>: lets you to specify a context manager for the expresion (uses the <code>with</code> statemente)</li>
+<li><strong>Record</strong>: lets to create a branched computation with named branches that returns a record-like structure with the results of each branch</li>
+<li><strong>Write</strong>: allows you to create a reference to the value at that point so that it can be read at another point</li>
+<li><strong>Read</strong>: lets you to read from a reference created previously</li>
 </ul>
 <p>Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.</p>
 <h2>Function</h2>
@@ -1194,45 +1194,45 @@ table {
 
 <h2>Composition</h2>
 <p>In this language tuples are used to express function composition. After compilation, the expression</p>
-<div class="codehilite"><pre><span></span>(f, g)
+<div class="codehilite"><pre><span></span>k = (f, g)
 </pre></div>
 
 
 <p>be equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: g(f(x))
+<div class="codehilite"><pre><span></span>k(x) = g(f(x))
 </pre></div>
 
 
 <p>As you see, its a little different from the mathematical definition. Its based upon the <code>|&gt;</code> (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the <code>P</code> method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.</p>
 <p>In general, the following rules apply after compilation:</p>
 <p><strong>General Sequence</strong></p>
-<div class="codehilite"><pre><span></span>(f0, f1, ..., fn-1, fn)
+<div class="codehilite"><pre><span></span>k = (f0, f1, ..., fn-1, fn)
 </pre></div>
 
 
 <p>is equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: fn(fn-1(...(f1(f0(x)))))
+<div class="codehilite"><pre><span></span>k(x) = fn(fn-1(...(f1(f0(x)))))
 </pre></div>
 
 
 <p><strong>Single Function</strong></p>
-<div class="codehilite"><pre><span></span>(f)
+<div class="codehilite"><pre><span></span>k = (f)
 </pre></div>
 
 
 <p>is equivalent to</p>
-<div class="codehilite"><pre><span></span>f
+<div class="codehilite"><pre><span></span>k = f
 </pre></div>
 
 
 <p><strong>Identity</strong></p>
 <p>The empty tuple</p>
-<div class="codehilite"><pre><span></span>()
+<div class="codehilite"><pre><span></span>k = ()
 </pre></div>
 
 
 <p>is equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: x
+<div class="codehilite"><pre><span></span>k(x) = x
 </pre></div>
 
 
@@ -1265,12 +1265,12 @@ table {
 <h2>Branch</h2>
 <p>While <code>Composition</code> is sequential, <code>Branch</code> allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements <code>__iter__</code>) that is not a tuple and yields a valid expresion.</p>
 <p>After compilation the expresion:</p>
-<div class="codehilite"><pre><span></span>[f, g]
+<div class="codehilite"><pre><span></span>k = [f, g]
 </pre></div>
 
 
 <p>is equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: [ f(x), g(x) ]
+<div class="codehilite"><pre><span></span>k(x) = [ f(x), g(x) ]
 </pre></div>
 
 
@@ -1281,45 +1281,104 @@ table {
 
 
 <p>is equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: [ f(x) for f in fs ]
+<div class="codehilite"><pre><span></span>k(x) = [ f(x) for f in fs ]
 </pre></div>
 
 
 <p><strong>Composing &amp; Branching</strong></p>
 <p>A more common scenario however is to see how braching interacts with composing. The expression</p>
-<div class="codehilite"><pre><span></span>(f, [g, h])
+<div class="codehilite"><pre><span></span>k = (f, [g, h])
 </pre></div>
 
 
 <p>is <em>almost</em> equivalent to</p>
-<div class="codehilite"><pre><span></span>[ (f, g), (f, h) ]
+<div class="codehilite"><pre><span></span>k = [ (f, g), (f, h) ]
 </pre></div>
 
 
-<p>As you see its as if <code>f</code> where distributed over the list. We say <em>almost</em> because its implementation is more like this</p>
-<div class="codehilite"><pre><span></span>def _lambda(x):
-    y = f(x)
-    return [ g(y), h(y) ]
+<p>As you see its as if <code>f</code> where distributed over the list. We say <em>almost</em> because what really happens is that the iterable is first compiled to a function and the whole sequence is then composed</p>
+<div class="codehilite"><pre><span></span> z(x) = [ g(x), h(x) ]
+ k(x) = (f, z)(x) = z(f(x))
 </pre></div>
 
 
 <p>As you see <code>f</code> is only excecuted once.</p>
+<h3>Examples</h3>
+<div class="codehilite"><pre><span></span><span class="n">form</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span>
+
+<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
+    <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+    <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+    <span class="p">[</span>
+        <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
+    <span class="p">,</span>
+        <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
+    <span class="p">],</span>
+    <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># sum / len == 6 / 3 == 2</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+
+<p>The previous could also be done more briefly like this</p>
+<div class="codehilite"><pre><span></span><span class="n">form</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">Obj</span>
+
+<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+    <span class="p">[</span>
+        <span class="nb">sum</span> <span class="c1"># sum([1, 2, 3]) == 6</span>
+    <span class="p">,</span>
+        <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
+    <span class="p">],</span>
+    <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># 6 / 3 == 2</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+
+<p>In the example above the last expression</p>
+<div class="codehilite"><pre><span></span>P[0] / P[1]
+</pre></div>
+
+
+<p>works for a couple of reasons</p>
+<ol>
+<li>The previous expression returns a list</li>
+<li>In general the expression <code>P[x]</code> compiles to a function with the form <code>lambda obj: obj[x]</code></li>
+<li>
+<p>The class <code>Lambda</code> (the class from which the object <code>P</code> inherits) overrides most operators to create functions easily. For example, the expression</p>
+<p>(P * 2) / (P + 1)</p>
+</li>
+</ol>
+<p>compile to a function of the form</p>
+<div class="codehilite"><pre><span></span>f(x) = (x * 2) / (x + 1)
+</pre></div>
+
+
+<p>Check out the documentatio for Phi <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>.</p>
+<h2>Input</h2>
+<p>Sometimes you might need to branch the computation but start the branch with the different value than the one being passed</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl" class="source">
     <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Compile` or applied to a value using `P.Pipe`.</span>
+<span class="sd">The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Make` or applied to a value using `P.Pipe`.</span>
 
 <span class="sd">Phi offers the following constructs/expressions:</span>
 
 <span class="sd">* **Function**: any function of arity 1 is an element of the language</span>
 <span class="sd">* **Composition**: allows to sequentially compose functions</span>
-<span class="sd">* **Branch**: allows to create a branched computation that returns a list with the results of each branch</span>
-<span class="sd">* **With**: allows you to specify a context manager for the expresion (uses the `with` statemente)</span>
-<span class="sd">* **Record**: allows to create a branched computation with named branches that returns a record-like structure with the results of each branch</span>
-<span class="sd">* **Write**: allows you to create a reference to the value at that point that be read at another point</span>
-<span class="sd">* **Read**: allows you to read from a reference created previously</span>
+<span class="sd">* **Branch**: lets to create a branched computation that returns a list with the results of each branch</span>
 <span class="sd">* **Input**: allows you to specify an input value, compiles to a (constant) function that returns the value no matter the input (e.g. `lambda x: value`)</span>
+<span class="sd">* **With**: lets you to specify a context manager for the expresion (uses the `with` statemente)</span>
+<span class="sd">* **Record**: lets to create a branched computation with named branches that returns a record-like structure with the results of each branch</span>
+<span class="sd">* **Write**: allows you to create a reference to the value at that point so that it can be read at another point</span>
+<span class="sd">* **Read**: lets you to read from a reference created previously</span>
 
 <span class="sd">Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion&#39;s point of view all of its elements are just functions.</span>
 
@@ -1338,11 +1397,11 @@ table {
 <span class="sd">## Composition</span>
 <span class="sd">In this language tuples are used to express function composition. After compilation, the expression</span>
 
-<span class="sd">    (f, g)</span>
+<span class="sd">    k = (f, g)</span>
 
 <span class="sd">be equivalent to</span>
 
-<span class="sd">    lambda x: g(f(x))</span>
+<span class="sd">    k(x) = g(f(x))</span>
 
 <span class="sd">As you see, its a little different from the mathematical definition. Its based upon the `|&gt;` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `P` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.</span>
 
@@ -1350,29 +1409,29 @@ table {
 
 <span class="sd">**General Sequence**</span>
 
-<span class="sd">    (f0, f1, ..., fn-1, fn)</span>
+<span class="sd">    k = (f0, f1, ..., fn-1, fn)</span>
 
 <span class="sd">is equivalent to</span>
 
-<span class="sd">    lambda x: fn(fn-1(...(f1(f0(x)))))</span>
+<span class="sd">    k(x) = fn(fn-1(...(f1(f0(x)))))</span>
 
 <span class="sd">**Single Function**</span>
 
-<span class="sd">    (f)</span>
+<span class="sd">    k = (f)</span>
 
 <span class="sd">is equivalent to</span>
 
-<span class="sd">    f</span>
+<span class="sd">    k = f</span>
 
 <span class="sd">**Identity**</span>
 
 <span class="sd">The empty tuple</span>
 
-<span class="sd">    ()</span>
+<span class="sd">    k = ()</span>
 
 <span class="sd">is equivalent to</span>
 
-<span class="sd">    lambda x: x</span>
+<span class="sd">    k(x) = x</span>
 
 <span class="sd">### Examples</span>
 <span class="sd">In this example we will use the `P` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.</span>
@@ -1404,11 +1463,11 @@ table {
 
 <span class="sd">After compilation the expresion:</span>
 
-<span class="sd">    [f, g]</span>
+<span class="sd">    k = [f, g]</span>
 
 <span class="sd">is equivalent to</span>
 
-<span class="sd">    lambda x: [ f(x), g(x) ]</span>
+<span class="sd">    k(x) = [ f(x), g(x) ]</span>
 
 
 <span class="sd">In general, the following rules apply after compilation:</span>
@@ -1419,27 +1478,82 @@ table {
 
 <span class="sd">is equivalent to</span>
 
-<span class="sd">    lambda x: [ f(x) for f in fs ]</span>
+<span class="sd">    k(x) = [ f(x) for f in fs ]</span>
 
 
 <span class="sd">**Composing &amp; Branching**</span>
 
 <span class="sd">A more common scenario however is to see how braching interacts with composing. The expression</span>
 
-<span class="sd">    (f, [g, h])</span>
+<span class="sd">    k = (f, [g, h])</span>
 
 <span class="sd">is *almost* equivalent to</span>
 
-<span class="sd">    [ (f, g), (f, h) ]</span>
+<span class="sd">    k = [ (f, g), (f, h) ]</span>
 
-<span class="sd">As you see its as if `f` where distributed over the list. We say *almost* because its implementation is more like this</span>
+<span class="sd">As you see its as if `f` where distributed over the list. We say *almost* because what really happens is that the iterable is first compiled to a function and the whole sequence is then composed</span>
 
-<span class="sd">    def _lambda(x):</span>
-<span class="sd">        y = f(x)</span>
-<span class="sd">        return [ g(y), h(y) ]</span>
+<span class="sd">     z(x) = [ g(x), h(x) ]</span>
+<span class="sd">     k(x) = (f, z)(x) = z(f(x))</span>
 
 <span class="sd">As you see `f` is only excecuted once.</span>
 
+<span class="sd">### Examples</span>
+
+<span class="sd">    form phi import P</span>
+
+<span class="sd">    avg_word_length = P.Pipe(</span>
+<span class="sd">        &quot;1 22 333&quot;,</span>
+<span class="sd">        lambda s: s.split(&#39; &#39;), # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+<span class="sd">        lambda l: map(len, l), # [1, 2, 3]</span>
+<span class="sd">        [</span>
+<span class="sd">            sum # 1 + 2 + 3 == 6</span>
+<span class="sd">        ,</span>
+<span class="sd">            len # len([1, 2, 3]) == 3</span>
+<span class="sd">        ],</span>
+<span class="sd">        lambda l: l[0] / l[1] # sum / len == 6 / 3 == 2</span>
+<span class="sd">    )</span>
+
+<span class="sd">    assert avg_word_length == 2</span>
+
+<span class="sd">The previous could also be done more briefly like this</span>
+
+<span class="sd">    form phi import P, Obj</span>
+
+<span class="sd">    avg_word_length = P.Pipe(</span>
+<span class="sd">        &quot;1 22 333&quot;,</span>
+<span class="sd">        Obj.split(&#39; &#39;), # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+<span class="sd">        P.map(len), # [1, 2, 3]</span>
+<span class="sd">        [</span>
+<span class="sd">            sum # sum([1, 2, 3]) == 6</span>
+<span class="sd">        ,</span>
+<span class="sd">            len # len([1, 2, 3]) == 3</span>
+<span class="sd">        ],</span>
+<span class="sd">        P[0] / P[1] # 6 / 3 == 2</span>
+<span class="sd">    )</span>
+
+<span class="sd">    assert avg_word_length == 2</span>
+
+<span class="sd">In the example above the last expression</span>
+
+<span class="sd">    P[0] / P[1]</span>
+
+<span class="sd">works for a couple of reasons</span>
+
+<span class="sd">1. The previous expression returns a list</span>
+<span class="sd">2. In general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`</span>
+<span class="sd">3. The class `Lambda` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
+
+<span class="sd">    (P * 2) / (P + 1)</span>
+
+<span class="sd">compile to a function of the form</span>
+
+<span class="sd">    f(x) = (x * 2) / (x + 1)</span>
+
+<span class="sd">Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html).</span>
+
+<span class="sd">## Input</span>
+<span class="sd">Sometimes you might need to branch the computation but start the branch with the different value than the one being passed</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">identity</span>
@@ -2752,7 +2866,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.dsl.Ref.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7fb783dfe140&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7f2b76bc5140&gt;)</p>
     </div>
     
 

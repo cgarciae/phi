@@ -1,16 +1,16 @@
 """
-The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Compile` or applied to a value using `P.Pipe`.
+The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Make` or applied to a value using `P.Pipe`.
 
 Phi offers the following constructs/expressions:
 
 * **Function**: any function of arity 1 is an element of the language
 * **Composition**: allows to sequentially compose functions
-* **Branch**: allows to create a branched computation that returns a list with the results of each branch
-* **With**: allows you to specify a context manager for the expresion (uses the `with` statemente)
-* **Record**: allows to create a branched computation with named branches that returns a record-like structure with the results of each branch
-* **Write**: allows you to create a reference to the value at that point that be read at another point
-* **Read**: allows you to read from a reference created previously
+* **Branch**: lets to create a branched computation that returns a list with the results of each branch
 * **Input**: allows you to specify an input value, compiles to a (constant) function that returns the value no matter the input (e.g. `lambda x: value`)
+* **With**: lets you to specify a context manager for the expresion (uses the `with` statemente)
+* **Record**: lets to create a branched computation with named branches that returns a record-like structure with the results of each branch
+* **Write**: allows you to create a reference to the value at that point so that it can be read at another point
+* **Read**: lets you to read from a reference created previously
 
 Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.
 
@@ -29,11 +29,11 @@ and piping through a function is just the same a applying the function
 ## Composition
 In this language tuples are used to express function composition. After compilation, the expression
 
-    (f, g)
+    k = (f, g)
 
 be equivalent to
 
-    lambda x: g(f(x))
+    k(x) = g(f(x))
 
 As you see, its a little different from the mathematical definition. Its based upon the `|>` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `P` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.
 
@@ -41,29 +41,29 @@ In general, the following rules apply after compilation:
 
 **General Sequence**
 
-    (f0, f1, ..., fn-1, fn)
+    k = (f0, f1, ..., fn-1, fn)
 
 is equivalent to
 
-    lambda x: fn(fn-1(...(f1(f0(x)))))
+    k(x) = fn(fn-1(...(f1(f0(x)))))
 
 **Single Function**
 
-    (f)
+    k = (f)
 
 is equivalent to
 
-    f
+    k = f
 
 **Identity**
 
 The empty tuple
 
-    ()
+    k = ()
 
 is equivalent to
 
-    lambda x: x
+    k(x) = x
 
 ### Examples
 In this example we will use the `P` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.
@@ -95,11 +95,11 @@ While `Composition` is sequential, `Branch` allows you to split the computation 
 
 After compilation the expresion:
 
-    [f, g]
+    k = [f, g]
 
 is equivalent to
 
-    lambda x: [ f(x), g(x) ]
+    k(x) = [ f(x), g(x) ]
 
 
 In general, the following rules apply after compilation:
@@ -110,27 +110,82 @@ In general, the following rules apply after compilation:
 
 is equivalent to
 
-    lambda x: [ f(x) for f in fs ]
+    k(x) = [ f(x) for f in fs ]
 
 
 **Composing & Branching**
 
 A more common scenario however is to see how braching interacts with composing. The expression
 
-    (f, [g, h])
+    k = (f, [g, h])
 
 is *almost* equivalent to
 
-    [ (f, g), (f, h) ]
+    k = [ (f, g), (f, h) ]
 
-As you see its as if `f` where distributed over the list. We say *almost* because its implementation is more like this
+As you see its as if `f` where distributed over the list. We say *almost* because what really happens is that the iterable is first compiled to a function and the whole sequence is then composed
 
-    def _lambda(x):
-        y = f(x)
-        return [ g(y), h(y) ]
+     z(x) = [ g(x), h(x) ]
+     k(x) = (f, z)(x) = z(f(x))
 
 As you see `f` is only excecuted once.
 
+### Examples
+
+    form phi import P
+
+    avg_word_length = P.Pipe(
+        "1 22 333",
+        lambda s: s.split(' '), # ['1', '22', '333']
+        lambda l: map(len, l), # [1, 2, 3]
+        [
+            sum # 1 + 2 + 3 == 6
+        ,
+            len # len([1, 2, 3]) == 3
+        ],
+        lambda l: l[0] / l[1] # sum / len == 6 / 3 == 2
+    )
+
+    assert avg_word_length == 2
+
+The previous could also be done more briefly like this
+
+    form phi import P, Obj
+
+    avg_word_length = P.Pipe(
+        "1 22 333",
+        Obj.split(' '), # ['1', '22', '333']
+        P.map(len), # [1, 2, 3]
+        [
+            sum # sum([1, 2, 3]) == 6
+        ,
+            len # len([1, 2, 3]) == 3
+        ],
+        P[0] / P[1] # 6 / 3 == 2
+    )
+
+    assert avg_word_length == 2
+
+In the example above the last expression
+
+    P[0] / P[1]
+
+works for a couple of reasons
+
+1. The previous expression returns a list
+2. In general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`
+3. The class `Lambda` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression
+
+    (P * 2) / (P + 1)
+
+compile to a function of the form
+
+    f(x) = (x * 2) / (x + 1)
+
+Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html).
+
+## Input
+Sometimes you might need to branch the computation but start the branch with the different value than the one being passed
 """
 
 from utils import identity

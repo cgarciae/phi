@@ -85,3 +85,5 @@ class TestLambdas(object):
 
 
         assert 6 == 1 >> (P + 1) * (P + 2)
+
+        assert 6 == 10 >> (P * 3) / (P - 5)
