@@ -1237,31 +1237,31 @@ table {
 
 
 <h3>Examples</h3>
-<p>In this example we will use the <code>P</code> object from the <code>fn</code> library that is packaged with phi, it lets to easily create simple functions via operator overloading.</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">P</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
 <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">P</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span>
 <span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span> <span class="c1"># ((1 * 2) + 1) ** 2</span>
 </pre></div>
 
 
-<p>The same using <code>P</code></p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">P</span>
+<p>As you see, <code>Compile</code>s <code>*args</code> are interpreted as a tuple which means all expressions contained are composed. The previous example using <code>P.Pipe</code></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
 <span class="k">assert</span> <span class="mi">9</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mi">1</span><span class="p">,</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">P</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span>
 <span class="p">)</span>
 </pre></div>
 
 
+<p>Again, <code>Pipe</code>'s signature is <code>Pipe(x, *args)</code> and <code>*args</code> is interpreted as a tuple which means all expressions contained are composed.</p>
 <h2>Branch</h2>
 <p>While <code>Composition</code> is sequential, <code>Branch</code> allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements <code>__iter__</code>) that is not a tuple and yields a valid expresion.</p>
 <p>After compilation the expresion:</p>
@@ -1362,7 +1362,66 @@ table {
 
 <p>Check out the documentatio for Phi <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>.</p>
 <h2>Input</h2>
-<p>Sometimes you might need to branch the computation but start the branch with the different value than the one being passed</p>
+<p>Sometimes you might need to branch the computation but start one of the branches with a values different than the one being passed down, you could always solve it like this</p>
+<div class="codehilite"><pre><span></span>P.Pipe(
+    ...,
+    [
+        lambda _: my_value
+    ,
+        ...
+    ]
+)
+</pre></div>
+
+
+<p>Here we just made a lamda that took in the argument <code>_</code> but it was completely ignored and it always returns <code>my_value</code>, this is called a constant function. You could also do the same with <code>P.Val</code> or the top level function <code>phi.Val</code></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span>
+
+<span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="n">Val</span><span class="p">(</span><span class="n">my_value</span><span class="p">)</span>
+    <span class="p">,</span>
+        <span class="o">...</span>
+    <span class="p">]</span>
+<span class="p">)</span><span class="o">|</span>
+</pre></div>
+
+
+<h2>With</h2>
+<div class="codehilite"><pre><span></span>def With(context_manager, *body):
+</pre></div>
+
+
+<p>where</p>
+<ul>
+<li><strong>context_manager</strong>: a <a href="https://docs.python.org/2/reference/datamodel.html#context-managers">context manager</a> object or valid expression from the DSL that returns a context manager.</li>
+<li><strong>*body</strong>: any valid expression of the DSL to be evaluated inside the context. <code>*body</code> is interpreted as a tuple so all expression contained are composed.</li>
+</ul>
+<p>As with normal python programs you sometimes might want to create a context for a block of code. You normally give a <a href="https://docs.python.org/2/reference/datamodel.html#context-managers">context manager</a> to the <a href="https://docs.python.org/2/reference/compound_stmts.html#the-with-statement">with</a> statemente, in Phi you use <code>P.With</code> or <code>phi.With</code></p>
+<p><strong>Context</strong>
+Python's <code>with</code> statemente returns a context object through <code>as</code> keyword, in the DSL this object can be obtained using the <code>P.Context</code> method or the <code>phi.Context</code> function.</p>
+<h3>Examples</h3>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">With</span><span class="p">,</span> <span class="n">Pipe</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;text.txt&quot;</span><span class="p">,</span>
+    <span class="n">With</span><span class="p">(</span> <span class="nb">open</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>The previous is equivalent to</p>
+<div class="codehilite"><pre><span></span>with open(&quot;text.txt&quot;) as f:
+    text = f.read()
+</pre></div>
+
+
+<h2>Record</h2>
+<p>List or iterables in general provide you a way to branch your computation in the DSL, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. Record branches provide a way to create named branches via a dictionary object where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.
+A special object of type <code>RecordProxy</code> is returned</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl" class="source">
@@ -1434,28 +1493,29 @@ table {
 <span class="sd">    k(x) = x</span>
 
 <span class="sd">### Examples</span>
-<span class="sd">In this example we will use the `P` object from the `fn` library that is packaged with phi, it lets to easily create simple functions via operator overloading.</span>
 
-<span class="sd">    from phi import P, P</span>
+<span class="sd">    from phi import P</span>
 
 <span class="sd">    f = P.Compile(</span>
-<span class="sd">        P * 2,</span>
-<span class="sd">        P + 1,</span>
-<span class="sd">        P ** 2</span>
+<span class="sd">        lambda x: x * 2,</span>
+<span class="sd">        lambda x: x + 1,</span>
+<span class="sd">        lambda x: x ** 2</span>
 <span class="sd">    )</span>
 
 <span class="sd">    assert f(1) == 9 # ((1 * 2) + 1) ** 2</span>
 
-<span class="sd">The same using `P`</span>
+<span class="sd">As you see, `Compile`s `*args` are interpreted as a tuple which means all expressions contained are composed. The previous example using `P.Pipe`</span>
 
-<span class="sd">    from phi import P, P</span>
+<span class="sd">    from phi import P</span>
 
 <span class="sd">    assert 9 == P.Pipe(</span>
 <span class="sd">        1,</span>
-<span class="sd">        P * 2,</span>
-<span class="sd">        P + 1,</span>
-<span class="sd">        P ** 2</span>
+<span class="sd">        lambda x: x * 2,</span>
+<span class="sd">        lambda x: x + 1,</span>
+<span class="sd">        lambda x: x ** 2</span>
 <span class="sd">    )</span>
+
+<span class="sd">Again, `Pipe`&#39;s signature is `Pipe(x, *args)` and `*args` is interpreted as a tuple which means all expressions contained are composed.</span>
 
 <span class="sd">## Branch</span>
 
@@ -1553,7 +1613,64 @@ table {
 <span class="sd">Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html).</span>
 
 <span class="sd">## Input</span>
-<span class="sd">Sometimes you might need to branch the computation but start the branch with the different value than the one being passed</span>
+<span class="sd">Sometimes you might need to branch the computation but start one of the branches with a values different than the one being passed down, you could always solve it like this</span>
+
+<span class="sd">    P.Pipe(</span>
+<span class="sd">        ...,</span>
+<span class="sd">        [</span>
+<span class="sd">            lambda _: my_value</span>
+<span class="sd">        ,</span>
+<span class="sd">            ...</span>
+<span class="sd">        ]</span>
+<span class="sd">    )</span>
+
+<span class="sd">Here we just made a lamda that took in the argument `_` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`</span>
+
+<span class="sd">    from phi import P, Val</span>
+
+<span class="sd">    P.Pipe(</span>
+<span class="sd">        ...,</span>
+<span class="sd">        [</span>
+<span class="sd">            Val(my_value)</span>
+<span class="sd">        ,</span>
+<span class="sd">            ...</span>
+<span class="sd">        ]</span>
+<span class="sd">    )|</span>
+
+<span class="sd">## With</span>
+
+<span class="sd">    def With(context_manager, *body):</span>
+
+<span class="sd">where</span>
+
+<span class="sd">* **context_manager**: a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) object or valid expression from the DSL that returns a context manager.</span>
+<span class="sd">* ***body**: any valid expression of the DSL to be evaluated inside the context. `*body` is interpreted as a tuple so all expression contained are composed.</span>
+
+<span class="sd">As with normal python programs you sometimes might want to create a context for a block of code. You normally give a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) to the [with](https://docs.python.org/2/reference/compound_stmts.html#the-with-statement) statemente, in Phi you use `P.With` or `phi.With`</span>
+
+<span class="sd">**Context**</span>
+<span class="sd">Python&#39;s `with` statemente returns a context object through `as` keyword, in the DSL this object can be obtained using the `P.Context` method or the `phi.Context` function.</span>
+
+<span class="sd">### Examples</span>
+
+<span class="sd">    from phi import P, Obj, Context, With, Pipe</span>
+
+<span class="sd">    text = Pipe(</span>
+<span class="sd">        &quot;text.txt&quot;,</span>
+<span class="sd">        With( open, Context,</span>
+<span class="sd">            Obj.read()</span>
+<span class="sd">        )</span>
+<span class="sd">    )</span>
+
+<span class="sd">The previous is equivalent to</span>
+
+<span class="sd">    with open(&quot;text.txt&quot;) as f:</span>
+<span class="sd">        text = f.read()</span>
+
+<span class="sd">## Record</span>
+<span class="sd">List or iterables in general provide you a way to branch your computation in the DSL, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. Record branches provide a way to create named branches via a dictionary object where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.</span>
+<span class="sd">A special object of type `RecordProxy` is returned</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">identity</span>
@@ -1596,6 +1713,9 @@ table {
     <span class="sd">&quot;&quot;&quot;docstring for DictObject.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
@@ -1811,7 +1931,7 @@ table {
 <span class="k">class</span> <span class="nc">With</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for Record.&quot;&quot;&quot;</span>
 
-    <span class="n">GLOBAL_SCOPE</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope_code</span><span class="p">,</span> <span class="o">*</span><span class="n">body_code</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">With</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
@@ -1831,15 +1951,15 @@ table {
 
     <span class="k">def</span> <span class="nf">set_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_scope</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span> <span class="o">=</span> <span class="n">new_scope</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span>
+        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span>
 
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span>
+        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span>
 
 
 <span class="k">class</span> <span class="nc">Read</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
@@ -1936,7 +2056,7 @@ table {
     <span class="k">elif</span> <span class="n">else_input</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Input</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Parse Error: Element not part of the DSL. Got:</span><span class="se">\n</span><span class="s2">{0} of type {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">code</span><span class="p">)))</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Parse Error: Element not part of the DSL. Got: {0} of type {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">code</span><span class="p">)))</span>
 </pre></div>
 
   </div>
@@ -2531,6 +2651,9 @@ table {
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">__getattr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
 
@@ -2866,7 +2989,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.dsl.Ref.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7f2b76bc5140&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=&lt;object object at 0x7f24580c4140&gt;)</p>
     </div>
     
 
@@ -2925,7 +3048,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">With</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for Record.&quot;&quot;&quot;</span>
 
-    <span class="n">GLOBAL_SCOPE</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope_code</span><span class="p">,</span> <span class="o">*</span><span class="n">body_code</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">With</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
@@ -2945,15 +3068,15 @@ table {
 
     <span class="k">def</span> <span class="nf">set_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_scope</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span> <span class="o">=</span> <span class="n">new_scope</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span>
+        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span>
 
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span>
+        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span>
 </pre></div>
 
   </div>
@@ -2969,7 +3092,7 @@ table {
           </ul>
           <h3>Class variables</h3>
             <div class="item">
-            <p id="phi.dsl.With.GLOBAL_SCOPE" class="name">var <span class="ident">GLOBAL_SCOPE</span></p>
+            <p id="phi.dsl.With.GLOBAL_CONTEXT" class="name">var <span class="ident">GLOBAL_CONTEXT</span></p>
             
 
             
@@ -3037,7 +3160,7 @@ table {
   <div id="source-phi.dsl.With.set_scope" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_scope</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span> <span class="o">=</span> <span class="n">new_scope</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_SCOPE</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
     <span class="k">return</span> <span class="bp">self</span>
 </pre></div>
 
