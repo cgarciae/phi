@@ -9,8 +9,7 @@ Phi offers the following constructs/expressions:
 * **Input**: allows you to specify an input value, compiles to a (constant) function that returns the value no matter the input (e.g. `lambda x: value`)
 * **With**: lets you to specify a context manager for the expresion (uses the `with` statemente)
 * **Record**: lets to create a branched computation with named branches that returns a record-like structure with the results of each branch
-* **Write**: allows you to create a reference to the value at that point so that it can be read at another point
-* **Read**: lets you to read from a reference created previously
+* **Read & Write**: allows you to create a reference to the value at some point and read them latter on.
 
 Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.
 
@@ -222,6 +221,7 @@ where
 As with normal python programs you sometimes might want to create a context for a block of code. You normally give a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) to the [with](https://docs.python.org/2/reference/compound_stmts.html#the-with-statement) statemente, in Phi you use `P.With` or `phi.With`
 
 **Context**
+
 Python's `with` statemente returns a context object through `as` keyword, in the DSL this object can be obtained using the `P.Context` method or the `phi.Context` function.
 
 ### Examples
@@ -243,15 +243,114 @@ The previous is equivalent to
 ## Record
 List or iterables in general provide you a way to branch your computation in the DSL, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. Record branches provide a way to create named branches via a dictionary object where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.
 
-A special object of type `phi.dsl.RecordProxy` is returned, this object behaves derives from `dict` and fully emulates it so you can treat it as such, however it also implements the `__getattr__` method, which you can use to access a value as if it where a field if its key is a string.
+A special object of type `phi.dsl.RecordObject` is returned by this expression when excecuted, this object derives from `dict` and fully emulates it so you can treat it as such, however it also implements the `__getattr__` method, this lets you access a value as if it where a field if its key is a of type string.
 
 ### Examples
 
     from phi import P
 
-    
+    stats = P.Pipe(
+        [1,2,3],
+        dict(
+            sum = sum
+        ,
+            len = len
+        )
+    )
+
+    assert stats.sum == 6
+    assert stats.len == 3
+
+    assert stats['sum'] == 6
+    assert stats['len'] == 3
+
+Now lets image that we want to find the average value of the list, we could calculate it outside of the pipe doing something like `avg = stats.sum / stats.len`, however we could also do it inside the pipe using `P.Rec` or `phi.Rec` like this
+
+    from phi import P, Rec
+
+    avg = P.Pipe(
+        [1,2,3],
+        dict(
+            sum = sum
+        ,
+            len = len
+        ),
+        Rec.sum / Rec.len
+    )
 
 
+## Read & Write
+Giving names and saving parts of your computation to use then latter is useful to say the least. In the DSL the expression
+
+    {'x'}
+
+behaves like just like the indentity except that as a side effect it creates a reference to that value which you can call latter. Here `{..}` is python's sytax for a set literal and `x` is a string with the name of the reference. To read the previous you would use the expression
+
+    'x'
+
+This is equivalent to a sort of function like this
+
+    lambda _: read('x')
+
+where the input is totally ignored and a hypothetical `read` function is given the reference name and it should return its stored value (internally its not implemented like this). As you see strings in the DSL mean read from a reference and a set with a string means write to a reference.
+
+### Example
+Lets see a common situation where you would use this
+
+    from phi import P
+
+    P.Pipe(
+        input,
+        fun_1, {'fun_1_val'}
+        fun_2,
+        [
+            fun_4
+        ,
+        (
+            'fun_1_val',
+            fun_5
+        )
+        ]
+    )
+
+Here you *save* the value outputed by `fun_1` and the load it as the initial value of the second branch. In normal python the previous would be *almost* equivalent to this
+
+    x = fun_1(input)
+    fun_1_val = x
+    x = fun_2(x)
+    x = [
+        fun_4(x)
+    ,
+        fun_5(fun_1_val)
+    ]
+
+    return x
+
+### Write especial case
+When composing its aesthetically better to put writes in the same line as the function whos value its storing to make the intent a bit more clear:
+
+    (
+        f, {'a'},
+        g
+    )
+
+Here we store the value of `f` in `'a'`, however, when you are inside a branch you will be tempted to do the following to get the same result:
+
+    [
+        f, {'a'}
+    ,
+        g
+    ]
+
+However, if you flatten the text you realize you actually have 3 branches instead of 2
+
+    [ f, {'a'}, g ]
+
+and that wont save the value of `f` in `'a'` as you intended. To avoid this possible error, the DSL rewrites the expression during parsing to
+
+    [ ( f, {'a'} ), g ]
+
+every time there is a write expression inside a branch expression.
 
 """
 

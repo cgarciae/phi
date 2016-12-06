@@ -1,8 +1,17 @@
+"""
+# Lambdas
+The `phi.P` global object is of type `Builder` which follows the following class hierarchy
+
+    Builder < Lambda < Function < Node
+
+where `dsl.Node` is the base class for any object in the DSL and `dsl.Function` is the class that wraps functions, which are the leaf/terminal elements that actually excecute the user's functions. In this scheme `Lambda` is a class which has a very specific purpose: enable you to create quick lambdas. `Lambda` takes code from [fn.py](https://github.com/fnpy/fn.py)'s `_` (underscore)
+"""
+
 import dsl
 import utils
 import operator
 
-def fmap(opt):
+def _fmap(opt):
     def method(self, b):
         if type(b) is not dsl.Node and not hasattr(b, '__call__'):
             b = dsl.Input(b)
@@ -18,7 +27,7 @@ def fmap(opt):
 
     return method
 
-def fmap_flip(opt):
+def _fmap_flip(opt):
     def method(self, b):
         if type(b) is not dsl.Node and not hasattr(b, '__call__'):
             b = dsl.Input(b)
@@ -34,7 +43,7 @@ def fmap_flip(opt):
 
     return method
 
-def unary_fmap(opt):
+def _unary_fmap(opt):
     def method(self):
         return self.__then__(opt)
 
@@ -85,50 +94,53 @@ class Lambda(dsl.Function):
 
 
 
-    __add__ = fmap(operator.add)
-    __mul__ = fmap(operator.mul)
-    __sub__ = fmap(operator.sub)
-    __mod__ = fmap(operator.mod)
-    __pow__ = fmap(operator.pow)
+    __add__ = _fmap(operator.add)
+    __mul__ = _fmap(operator.mul)
+    __sub__ = _fmap(operator.sub)
+    __mod__ = _fmap(operator.mod)
+    __pow__ = _fmap(operator.pow)
 
-    __and__ = fmap(operator.and_)
-    __or__ = fmap(operator.or_)
-    __xor__ = fmap(operator.xor)
+    __and__ = _fmap(operator.and_)
+    __or__ = _fmap(operator.or_)
+    __xor__ = _fmap(operator.xor)
 
-    __div__ = fmap(operator.div)
-    __divmod__ = fmap(divmod)
-    __floordiv__ = fmap(operator.floordiv)
-    __truediv__ = fmap(operator.truediv)
+    __div__ = _fmap(operator.div)
+    __divmod__ = _fmap(divmod)
+    __floordiv__ = _fmap(operator.floordiv)
+    __truediv__ = _fmap(operator.truediv)
 
-    __contains__ = fmap(operator.contains)
+    __contains__ = _fmap(operator.contains)
 
-    # __lshift__ = fmap(operator.lshift)
-    # __rshift__ = fmap(operator.rshift)
+    # __lshift__ = _fmap(operator.lshift)
+    # __rshift__ = _fmap(operator.rshift)
 
-    __lt__ = fmap(operator.lt)
-    __le__ = fmap(operator.le)
-    __gt__ = fmap(operator.gt)
-    __ge__ = fmap(operator.ge)
-    __eq__ = fmap(operator.eq)
-    __ne__ = fmap(operator.ne)
+    __lt__ = _fmap(operator.lt)
+    __le__ = _fmap(operator.le)
+    __gt__ = _fmap(operator.gt)
+    __ge__ = _fmap(operator.ge)
+    __eq__ = _fmap(operator.eq)
+    __ne__ = _fmap(operator.ne)
 
-    __neg__ = unary_fmap(operator.neg)
-    __pos__ = unary_fmap(operator.pos)
-    __invert__ = unary_fmap(operator.invert)
+    __neg__ = _unary_fmap(operator.neg)
+    __pos__ = _unary_fmap(operator.pos)
+    __invert__ = _unary_fmap(operator.invert)
 
-    __radd__ = fmap_flip(operator.add)
-    __rmul__ = fmap_flip(operator.mul)
-    __rsub__ = fmap_flip(operator.sub)
-    __rmod__ = fmap_flip(operator.mod)
-    __rpow__ = fmap_flip(operator.pow)
-    __rdiv__ = fmap_flip(operator.div)
-    __rdivmod__ = fmap_flip(divmod)
-    __rtruediv__ = fmap_flip(operator.truediv)
-    __rfloordiv__ = fmap_flip(operator.floordiv)
+    __radd__ = _fmap_flip(operator.add)
+    __rmul__ = _fmap_flip(operator.mul)
+    __rsub__ = _fmap_flip(operator.sub)
+    __rmod__ = _fmap_flip(operator.mod)
+    __rpow__ = _fmap_flip(operator.pow)
+    __rdiv__ = _fmap_flip(operator.div)
+    __rdivmod__ = _fmap_flip(divmod)
+    __rtruediv__ = _fmap_flip(operator.truediv)
+    __rfloordiv__ = _fmap_flip(operator.floordiv)
 
-    # __rlshift__ = fmap_flip(operator.lshift)
-    # __rrshift__ = fmap_flip(operator.rshift)
+    # __rlshift__ = _fmap_flip(operator.lshift)
+    # __rrshift__ = _fmap_flip(operator.rshift)
 
-    __rand__ = fmap_flip(operator.and_)
-    __ror__ = fmap_flip(operator.or_)
-    __rxor__ = fmap_flip(operator.xor)
+    __rand__ = _fmap_flip(operator.and_)
+    __ror__ = _fmap_flip(operator.or_)
+    __rxor__ = _fmap_flip(operator.xor)
+
+
+__all__ = []
