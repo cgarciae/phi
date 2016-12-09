@@ -123,7 +123,7 @@ from phi import P, Rec
 
 [result, s] = P.Pipe(
     1,  #input 1
-    P * 2, {'s'}  #1 * 2 == 2
+    P * 2, {'s'}  #2 * 1 == 2, saved as 's'
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -132,7 +132,7 @@ from phi import P, Rec
     [
         Rec.x / Rec.y  #3 / 6 == 0.5
     ,
-        's'
+        's'  #load 's' == 2
     ]
 )
 
@@ -156,7 +156,7 @@ from phi import P, Rec, Val
     [
         Rec.x / Rec.y  #3 / 6 == 0.5
     ,
-        's'  #load s == 2
+        's'  #load 's' == 2
     ,
         Val(9) + 1  #input 9 and add 1, gives 10
     ]
