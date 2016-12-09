@@ -19,23 +19,23 @@ def add1(x): return x + 1
 def mul3(x): return x * 3
 
 x = P.Pipe(
-    1,
-    add1,
-    mul3
+    1,     #input 1
+    add1,  #1 + 1 == 2
+    mul3   #2 * 3 == 6
 )
 
 assert x == 6
 ```
 
-The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)
+Use phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions
 
 ```python
 from phi import P
 
 x = P.Pipe(
-    1,
-    P + 1,
-    P * 3
+    1,      #input 1
+    P + 1,  #1 + 1 == 2
+    P * 3   #2 * 3 == 6
 )
 
 assert x == 6
@@ -47,7 +47,7 @@ Create a branched computation instead
 from phi import P
 
 [x, y] = P.Pipe(
-    1,
+    1,  #input 1
     [
         P + 1  #1 + 1 == 2
     ,
@@ -59,13 +59,13 @@ assert x == 2
 assert y == 3
 ```
 
-Compose it with a multiplication by 2
+Compose it with a multiplication by 2 (`P * 2`)
 
 ```python
 from phi import P
 
 [x, y] = P.Pipe(
-    1,
+    1,  #input 1
     P * 2,  #1 * 2 == 2
     [
         P + 1  #2 + 1 == 3
@@ -84,7 +84,7 @@ Give names to the branches
 from phi import P
 
 result = P.Pipe(
-    1,
+    1,  #input 1
     P * 2,  #1 * 2 == 2
     dict(
         x = P + 1  #2 + 1 == 3
@@ -103,7 +103,7 @@ Divide the `x` by the `y`.
 from phi import P, Rec
 
 result = P.Pipe(
-    1,
+    1,  #input 1
     P * 2,  #1 * 2 == 2
     dict(
         x = P + 1  #2 + 1 == 3
@@ -122,7 +122,7 @@ Save the value from the `P * 2` computation as `s` and retrieve it at the end in
 from phi import P, Rec
 
 [result, s] = P.Pipe(
-    1,
+    1,  #input 1
     P * 2, {{'s'}}  #1 * 2 == 2
     dict(
         x = P + 1  #2 + 1 == 3
@@ -146,8 +146,8 @@ Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
 from phi import P, Rec, Val
 
 [result, s, val] = P.Pipe(
-    1,
-    P * 2, {{'s'}}  #2 * 1 == 2
+    1,  #input 1
+    P * 2, {{'s'}}  #2 * 1 == 2, saved as 's'
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -156,9 +156,9 @@ from phi import P, Rec, Val
     [
         Rec.x / Rec.y  #3 / 6 == 0.5
     ,
-        's'  #2
+        's'  #load s == 2
     ,
-        Val(9) + 1  #10
+        Val(9) + 1  #input 9 and add 1, gives 10
     ]
 )
 
