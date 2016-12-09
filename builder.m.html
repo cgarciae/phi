@@ -1066,7 +1066,6 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.On">On</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Or">Or</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Pipe">Pipe</a></li>
-    <li class="mono"><a href="#phi.builder.Builder.Ref">Ref</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Register0">Register0</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Register1">Register1</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Register2">Register2</a></li>
@@ -1260,9 +1259,43 @@ table {
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">Context</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        **Builder Core**</span>
+<span class="sd">**Builder Core**. Also available as a global function as `phi.Context`.</span>
 
-<span class="sd">        Returns the current</span>
+<span class="sd">Returns the context object of the current `dsl.With` statemente. This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:</span>
+
+<span class="sd">    from phi import P, Context, Obj</span>
+
+<span class="sd">    def read_file(_):</span>
+<span class="sd">        f = Context()</span>
+<span class="sd">        return f.read()</span>
+
+<span class="sd">    lines = P.Pipe(</span>
+<span class="sd">        &quot;text.txt&quot;,</span>
+<span class="sd">        P.With( open,</span>
+<span class="sd">            read_file,</span>
+<span class="sd">            Obj.split(&quot;\\n&quot;)</span>
+<span class="sd">        )</span>
+<span class="sd">    )</span>
+
+<span class="sd">Here we called `Context` with no arguments to get the context back, however, this function accepts any variable number of arguments and completely ignores them, therefore it also can be used inside the dsl. We can rewrite the previous as:</span>
+
+<span class="sd">    from phi import P, Context, Obj</span>
+
+<span class="sd">    lines = P.Pipe(</span>
+<span class="sd">        &quot;text.txt&quot;,</span>
+<span class="sd">        P.With( open,</span>
+<span class="sd">            Context, # f</span>
+<span class="sd">            Obj.read()</span>
+<span class="sd">            Obj.split(&quot;\\n&quot;)</span>
+<span class="sd">        )</span>
+<span class="sd">    )</span>
+
+<span class="sd">`Context` yields an expection when used outside of a `With` block.</span>
+
+<span class="sd">**More info**</span>
+
+<span class="sd">* `phi.builder.Builder.Obj`</span>
+<span class="sd">* [dsl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
@@ -1270,6 +1303,7 @@ table {
         <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
 
     <span class="n">With</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span>
+    <span class="n">Ref</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span>
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1417,10 +1451,7 @@ table {
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">,</span> <span class="bp">self</span><span class="p">),</span> <span class="n">refs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">Ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1713,7 +1744,7 @@ table {
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1749,9 +1780,43 @@ table {
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">Context</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        **Builder Core**</span>
+<span class="sd">**Builder Core**. Also available as a global function as `phi.Context`.</span>
 
-<span class="sd">        Returns the current</span>
+<span class="sd">Returns the context object of the current `dsl.With` statemente. This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:</span>
+
+<span class="sd">    from phi import P, Context, Obj</span>
+
+<span class="sd">    def read_file(_):</span>
+<span class="sd">        f = Context()</span>
+<span class="sd">        return f.read()</span>
+
+<span class="sd">    lines = P.Pipe(</span>
+<span class="sd">        &quot;text.txt&quot;,</span>
+<span class="sd">        P.With( open,</span>
+<span class="sd">            read_file,</span>
+<span class="sd">            Obj.split(&quot;\\n&quot;)</span>
+<span class="sd">        )</span>
+<span class="sd">    )</span>
+
+<span class="sd">Here we called `Context` with no arguments to get the context back, however, this function accepts any variable number of arguments and completely ignores them, therefore it also can be used inside the dsl. We can rewrite the previous as:</span>
+
+<span class="sd">    from phi import P, Context, Obj</span>
+
+<span class="sd">    lines = P.Pipe(</span>
+<span class="sd">        &quot;text.txt&quot;,</span>
+<span class="sd">        P.With( open,</span>
+<span class="sd">            Context, # f</span>
+<span class="sd">            Obj.read()</span>
+<span class="sd">            Obj.split(&quot;\\n&quot;)</span>
+<span class="sd">        )</span>
+<span class="sd">    )</span>
+
+<span class="sd">`Context` yields an expection when used outside of a `With` block.</span>
+
+<span class="sd">**More info**</span>
+
+<span class="sd">* `phi.builder.Builder.Obj`</span>
+<span class="sd">* [dsl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
@@ -1759,6 +1824,7 @@ table {
         <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
 
     <span class="n">With</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span>
+    <span class="n">Ref</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span>
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1906,10 +1972,7 @@ table {
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">,</span> <span class="bp">self</span><span class="p">),</span> <span class="n">refs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">Ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2186,6 +2249,16 @@ table {
           </ul>
           <h3>Class variables</h3>
             <div class="item">
+            <p id="phi.builder.Builder.Ref" class="name">var <span class="ident">Ref</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="phi.builder.Builder.With" class="name">var <span class="ident">With</span></p>
             
 
@@ -2314,16 +2387,77 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 
     
   
-    <div class="desc"><p><strong>Builder Core</strong></p>
-<p>Returns the current</p></div>
+    <div class="desc"><p><strong>Builder Core</strong>. Also available as a global function as <code>phi.Context</code>.</p>
+<p>Returns the context object of the current <code>dsl.With</code> statemente. This is a classmethod and it doesnt return a <code>Builder</code>/<code>Lambda</code> by design so it can be called directly:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Obj</span>
+
+<span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Context</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">lines</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;text.txt&quot;</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="nb">open</span><span class="p">,</span>
+        <span class="n">read_file</span><span class="p">,</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>Here we called <code>Context</code> with no arguments to get the context back, however, this function accepts any variable number of arguments and completely ignores them, therefore it also can be used inside the dsl. We can rewrite the previous as:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Obj</span>
+
+<span class="n">lines</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;text.txt&quot;</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="nb">open</span><span class="p">,</span>
+        <span class="n">Context</span><span class="p">,</span> <span class="c1"># f</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><code>Context</code> yields an expection when used outside of a <code>With</code> block.</p>
+<p><strong>More info</strong></p>
+<ul>
+<li><a href="#phi.builder.Builder.Obj"><code>Obj</code></a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.Context', this);">Show source &equiv;</a></p>
   <div id="source-phi.builder.Builder.Context" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">Context</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    **Builder Core**</span>
-<span class="sd">    Returns the current</span>
+<span class="sd">ilder Core**. Also available as a global function as `phi.Context`.</span>
+<span class="sd">rns the context object of the current `dsl.With` statemente. This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:</span>
+<span class="sd">from phi import P, Context, Obj</span>
+<span class="sd">def read_file(_):</span>
+<span class="sd">    f = Context()</span>
+<span class="sd">    return f.read()</span>
+<span class="sd">lines = P.Pipe(</span>
+<span class="sd">    &quot;text.txt&quot;,</span>
+<span class="sd">    P.With( open,</span>
+<span class="sd">        read_file,</span>
+<span class="sd">        Obj.split(&quot;\\n&quot;)</span>
+<span class="sd">    )</span>
+<span class="sd">)</span>
+<span class="sd"> we called `Context` with no arguments to get the context back, however, this function accepts any variable number of arguments and completely ignores them, therefore it also can be used inside the dsl. We can rewrite the previous as:</span>
+<span class="sd">from phi import P, Context, Obj</span>
+<span class="sd">lines = P.Pipe(</span>
+<span class="sd">    &quot;text.txt&quot;,</span>
+<span class="sd">    P.With( open,</span>
+<span class="sd">        Context, # f</span>
+<span class="sd">        Obj.read()</span>
+<span class="sd">        Obj.split(&quot;\\n&quot;)</span>
+<span class="sd">    )</span>
+<span class="sd">)</span>
+<span class="sd">text` yields an expection when used outside of a `With` block.</span>
+<span class="sd">re info**</span>
+<span class="sd">hi.builder.Builder.Obj`</span>
+<span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
@@ -2338,7 +2472,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.DoRegisterMethod">
-    <p>def <span class="ident">DoRegisterMethod</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True)</p>
+    <p>def <span class="ident">DoRegisterMethod</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True)</p>
     </div>
     
 
@@ -2713,31 +2847,8 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
   
             
   <div class="item">
-    <div class="name def" id="phi.builder.Builder.Ref">
-    <p>def <span class="ident">Ref</span>(</p><p>self, name)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.Ref', this);">Show source &equiv;</a></p>
-  <div id="source-phi.builder.Builder.Ref" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="phi.builder.Builder.Register0">
-    <p>def <span class="ident">Register0</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register0</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -2762,7 +2873,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register1">
-    <p>def <span class="ident">Register1</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register1</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -2788,7 +2899,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register2">
-    <p>def <span class="ident">Register2</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register2</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -2813,7 +2924,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register3">
-    <p>def <span class="ident">Register3</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register3</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -2838,7 +2949,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register4">
-    <p>def <span class="ident">Register4</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register4</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -2863,7 +2974,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register5">
-    <p>def <span class="ident">Register5</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register5</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -2888,7 +2999,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction0">
-    <p>def <span class="ident">RegisterFunction0</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction0</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -2922,7 +3033,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction1">
-    <p>def <span class="ident">RegisterFunction1</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction1</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -2976,7 +3087,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction2">
-    <p>def <span class="ident">RegisterFunction2</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction2</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3010,7 +3121,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction3">
-    <p>def <span class="ident">RegisterFunction3</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction3</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3044,7 +3155,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction4">
-    <p>def <span class="ident">RegisterFunction4</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction4</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3078,7 +3189,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction5">
-    <p>def <span class="ident">RegisterFunction5</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction5</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3112,7 +3223,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterMethod">
-    <p>def <span class="ident">RegisterMethod</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff1de190410&gt;, explain=True)</p>
+    <p>def <span class="ident">RegisterMethod</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f2fcf5ec410&gt;, explain=True)</p>
     </div>
     
 
@@ -7029,7 +7140,7 @@ in length to the length of the shortest argument sequence.</p></div>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
 
   </div>

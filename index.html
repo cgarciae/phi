@@ -1066,10 +1066,28 @@ table {
 <li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>: a neat way to compose computations + more.</li>
 <li><a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>: easy way to create quick lambdas with a mathematical flavor.</li>
 <li><a href="https://cgarciae.github.io/phi/builder.m.html">builder</a>: an extensible class that enables you to integrate other libraries into the DSL through a <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent</a> API.</li>
+<li><a href="https://cgarciae.github.io/phi/patch.m.html">patch</a>: this module contains some helpers that enable you to integrate a complete existing module or class into the DSL be registering its methods/functions into a <a href="https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder">Builder</a>.</li>
 </ul>
-<p>Also check out the complete <a href="https://cgarciae.github.io/phi/index.m.html">documentation</a>. Even though there are 3 main modules, the <code>builder</code> module integrates both the <code>lambda</code> and <code>dsl</code> modules. The object <code>phi.P</code> exposes the entire API and all of the libraries functionalities.</p>
-<h3>Mini-Tutorial</h3>
-<p>The most simple thing the DSL does is function composition</p>
+<h2>Documentation</h2>
+<p>Check out the <a href="https://cgarciae.github.io/phi/index.m.html">complete documentation</a>.</p>
+<h2>Installation</h2>
+<div class="codehilite"><pre><span></span>pip install phi==0.2.1
+</pre></div>
+
+
+<h4>Bleeding Edge</h4>
+<div class="codehilite"><pre><span></span>pip install git+https://github.com/cgarciae/phi.git@develop
+</pre></div>
+
+
+<h2>Status</h2>
+<ul>
+<li>Version: <strong>0.2.1</strong>.</li>
+<li>Current effort: Documentation (&gt; 60%). Please create an issue if documentation is unclear, its of great priority for this library.</li>
+<li>Milestone: reach 1.0.0 after docs completed + feedback from the community.</li>
+</ul>
+<h2>Getting Started</h2>
+<p>The global <code>phi.P</code> object exposes most of the API and preferably should be imported directly. The most simple thing the DSL does is function composition:</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
 <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
@@ -1115,7 +1133,7 @@ table {
 
 
 <h3>Branching</h3>
-<p>Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:</p>
+<p>Sometimes we have do separate computations, this is where branching comes in. It is expressed via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:</p>
 <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">phi</span> <span class="nn">import</span> <span class="nn">P</span>
 
 <span class="k">assert</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -1150,27 +1168,6 @@ table {
 
 <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
 </pre></div>
-
-
-<h2>Installation</h2>
-<div class="codehilite"><pre><span></span>pip install phi==0.2.1
-</pre></div>
-
-
-<h4>Bleeding Edge</h4>
-<div class="codehilite"><pre><span></span>pip install git+https://github.com/cgarciae/phi.git@develop
-</pre></div>
-
-
-<h2>Getting Started</h2>
-<h2>Features</h2>
-<p>Comming Soon!</p>
-<h2>Documentation</h2>
-<p><a href="http://cgarciae.github.io/phi/index.html">Complete Documentation</a></p>
-<h2>The Guide</h2>
-<p>Check out <a href="https://cgarciae.gitbooks.io/phi/content/">The Guide</a> to learn to code in Phi. (Comming Soon!)</p>
-<h2>Full Example</h2>
-<p>Comming Soon!</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi', this);">Show source &equiv;</a></p>
   <div id="source-phi" class="source">
