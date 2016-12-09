@@ -3,9 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>phi API documentation</title>
-    <meta name="description" content="# Phi
-Python is a very nice language that favors readability but its not very strong at functional p..." />
+    <title>phi.especial_objects API documentation</title>
+    <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1039,15 +1038,29 @@ table {
     <ul id="index">
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="builder.m.html">phi.builder</a></li>
-        <li class="mono"><a href="dsl.m.html">phi.dsl</a></li>
-        <li class="mono"><a href="lambdas.m.html">phi.lambdas</a></li>
-        <li class="mono"><a href="patch.m.html">phi.patch</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.especial_objects.ObjectProxy">ObjectProxy</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.especial_objects.ObjectProxy.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.especial_objects.RecordProxy">RecordProxy</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.especial_objects.RecordProxy.__init__">__init__</a></li>
+  </ul>
+
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1059,178 +1072,30 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">phi</span> module</h1>
-  <h1>Phi</h1>
-<p>Python is a very nice language that favors readability but its not very strong at functional programming and this often leads to repetitive code. Phi eases your functional programming experience in Python by providing the following modules</p>
-<ul>
-<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>: a neat way to compose computations + more.</li>
-<li><a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>: easy way to create quick lambdas with a mathematical flavor.</li>
-<li><a href="https://cgarciae.github.io/phi/builder.m.html">builder</a>: an extensible class that enables you to integrate other libraries into the DSL through a <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent</a> API.</li>
-</ul>
-<p>Also check out the complete <a href="https://cgarciae.github.io/phi/index.m.html">documentation</a>. Even though there are 3 main modules, the <code>builder</code> module integrates both the <code>lambda</code> and <code>dsl</code> modules. The object <code>phi.P</code> exposes the entire API and all of the libraries functionalities.</p>
-<h3>Mini-Tutorial</h3>
-<p>The most simple thing the DSL does is function composition</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
-
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
-  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">3</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-</pre></div>
-
-
-<p>The above computation is equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: (x + 1) * 2 + 3
-</pre></div>
-
-
-<p><code>P.Make</code> can compile any valid expression of the DSL into a function, what you are seeing here is the compilation of the <code>*args</code> tuple. Check out the documentation of the <a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>.</p>
-<p>Now lets rewrite the previous using <code>P</code>'s <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a> capabilities</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
-
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-</pre></div>
-
-
-<p><strong>Pipe</strong></p>
-<p>You can also pipe a value directly into an expression with <code>P.Pipe</code></p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
-
-<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-  <span class="mi">3</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
-<span class="p">)</span>
-</pre></div>
-
-
-<h3>Branching</h3>
-<p>Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:</p>
-<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">phi</span> <span class="nn">import</span> <span class="nn">P</span>
-
-<span class="k">assert</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-  <span class="mi">1</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="p">[</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
-  <span class="p">,</span>
-    <span class="n">P</span> <span class="o">-</span> <span class="mi">2</span>
-  <span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-
-
-<p>The above computation equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: [(x + 1) * 2, (x + 1) - 2]
-</pre></div>
-
-
-<p>As you the the <code>[...]</code> element is compiled to a function that returns a list of values. Check out the documentation of the <a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a> for more information.</p>
-<h2>Nice Examples</h2>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
-
-<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;1 22 33&quot;</span>
-
-<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="n">text</span><span class="p">,</span>
-    <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
-    <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
-    <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1"># sum([1,2,3]) / len([1,2,3]) == 6 / 3 == 2</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
-</pre></div>
-
-
-<h2>Installation</h2>
-<div class="codehilite"><pre><span></span>pip install phi==0.2.1
-</pre></div>
-
-
-<h4>Bleeding Edge</h4>
-<div class="codehilite"><pre><span></span>pip install git+https://github.com/cgarciae/phi.git@develop
-</pre></div>
-
-
-<h2>Getting Started</h2>
-<h2>Features</h2>
-<p>Comming Soon!</p>
-<h2>Documentation</h2>
-<p><a href="http://cgarciae.github.io/phi/index.html">Complete Documentation</a></p>
-<h2>The Guide</h2>
-<p>Check out <a href="https://cgarciae.gitbooks.io/phi/content/">The Guide</a> to learn to code in Phi. (Comming Soon!)</p>
-<h2>Full Example</h2>
-<p>Comming Soon!</p>
+  <h1 class="title"><span class="name">phi.especial_objects</span> module</h1>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi', this);">Show source &equiv;</a></p>
-  <div id="source-phi" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">mport</span> <span class="n">builder</span>
-<span class="n">mport</span> <span class="n">utils</span>
-<span class="n">mport</span> <span class="n">dsl</span>
-<span class="n">mport</span> <span class="n">lambdas</span>
-<span class="n">mport</span> <span class="n">patch</span>
-<span class="n">rom</span> <span class="n">dsl</span> <span class="kn">import</span> <span class="nn">With</span>
-<span class="n">rom</span> <span class="n">builder</span> <span class="kn">import</span> <span class="nn">Builder</span>
-<span class="n">patches</span>
-<span class="n">mport</span> <span class="n">functions_patch</span>
- <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="p">{})</span>
- <span class="n">shortcuts</span>
-<span class="mi">0</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_0</span>
-<span class="mi">1</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_</span>
-<span class="mi">2</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_2</span>
-<span class="mi">3</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_3</span>
-<span class="mi">4</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_4</span>
-<span class="mi">5</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">_5</span>
-<span class="n">n</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">On</span>
-<span class="n">al</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Val</span>
-<span class="n">ipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span>
-<span class="n">ake</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span>
-<span class="n">bj</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span>
-<span class="n">ec</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Rec</span>
-<span class="n">ontext</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span>
- <span class="o">=</span> <span class="n">Make</span>
-<span class="s2">&quot;&quot;</span>
-<span class="n">breviation</span> <span class="k">for</span> <span class="sb">`P.Make`</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">module</span> <span class="n">function</span> <span class="sb">`phi.Make`</span><span class="o">.</span>
-<span class="s2">&quot;&quot;</span>
-<span class="c1">#######################</span>
- <span class="n">Documentation</span>
-<span class="c1">#######################</span>
-<span class="n">mport</span> <span class="n">os</span>
-<span class="n">mport</span> <span class="n">sys</span>
-<span class="n">pdoc</span>
-<span class="n">_all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dsl&quot;</span><span class="p">,</span> <span class="s2">&quot;builder&quot;</span><span class="p">,</span> <span class="s2">&quot;lambdas&quot;</span><span class="p">,</span> <span class="s2">&quot;patch&quot;</span><span class="p">]</span>
-<span class="nb">set</span> <span class="n">documentation</span>
-<span class="n">ef</span> <span class="n">_to_pdoc_markdown</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
-   <span class="n">indent</span> <span class="o">=</span> <span class="bp">False</span>
-   <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-   <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
-       <span class="k">if</span> <span class="s2">&quot;```&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-           <span class="n">indent</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">indent</span>
-           <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```python&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-           <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-       <span class="k">if</span> <span class="n">indent</span><span class="p">:</span>
-           <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">line</span>
-       <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-   <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
-<span class="n">ef</span> <span class="n">_read</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-   <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="n">fname</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">odule</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
-<span class="n">aw_docs</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;README-template.md&quot;</span><span class="p">)</span>
-<span class="n">_version__</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;version.txt&quot;</span><span class="p">)</span>
-<span class="n">odule</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
-   <span class="n">raw_docs</span><span class="p">,</span>
-   <span class="n">Obj</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">),</span>
-   <span class="n">_to_pdoc_markdown</span>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects', this);">Show source &equiv;</a></p>
+  <div id="source-phi.especial_objects" class="source">
+    <div class="codehilite"><pre><span></span><span class="n">lass</span> <span class="n">ObjectProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;docstring for Underscore.&quot;&quot;&quot;</span>
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
+       <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
+   <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+       <span class="k">def</span> <span class="nf">method_proxy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+           <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+           <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+       <span class="k">return</span> <span class="n">method_proxy</span>
+<span class="n">lass</span> <span class="n">RecordProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;docstring for RecClass.&quot;&quot;&quot;</span>
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
+       <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
+   <span class="k">def</span> <span class="nf">__getattr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+       <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+   <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+       <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1240,40 +1105,124 @@ table {
   <section id="section-items">
 
 
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p class="name"><a href="builder.m.html">phi.builder</a></p>
+      <p id="phi.especial_objects.ObjectProxy" class="name">class <span class="ident">ObjectProxy</span></p>
       
   
-    <div class="desc"><p>The <a href="builder.m.html#phi.builder.Builder"><code>phi.builder.Builder</code></a> class exposes most of the API, you will normally use the <code>phi.P</code> object instance (or any equivalent object provided by a Phi-based library) to do most of the work. This module 4 main goals:</p>
-<ol>
-<li>Exposing a public API for the <a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>. ...</li>
-</ol></div>
+    <div class="desc"><p>docstring for Underscore.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects.ObjectProxy', this);">Show source &equiv;</a></p>
+  <div id="source-phi.especial_objects.ObjectProxy" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ObjectProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for Underscore.&quot;&quot;&quot;</span>
 
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">method_proxy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">method_proxy</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.especial_objects.ObjectProxy">ObjectProxy</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.especial_objects.ObjectProxy.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, __builder__)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects.ObjectProxy.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-phi.especial_objects.ObjectProxy.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       </div>
+      </div>
+      
       <div class="item">
-      <p class="name"><a href="dsl.m.html">phi.dsl</a></p>
+      <p id="phi.especial_objects.RecordProxy" class="name">class <span class="ident">RecordProxy</span></p>
       
   
-    <div class="desc"><p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Make</code> or applied to a value using <code>P.Pipe</code>.</p>
-<p>Phi offers the following co...</p></div>
+    <div class="desc"><p>docstring for RecClass.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects.RecordProxy', this);">Show source &equiv;</a></p>
+  <div id="source-phi.especial_objects.RecordProxy" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">RecordProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for RecClass.&quot;&quot;&quot;</span>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="lambdas.m.html">phi.lambdas</a></p>
-      
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.especial_objects.RecordProxy">RecordProxy</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.especial_objects.RecordProxy.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, __builder__)</p>
+    </div>
+    
+
+    
   
-    <div class="desc"><h1>Lambdas</h1>
-<p>Phi's <code>Lambda</code> class allows you to create quick lambdas that are much more readable and compact than Python's <code>lambda</code> keyword. You probably will not use an object of type <code>Lambda</code> directly but rather one of type <code>Builder</code> or type derived from <code>Builder</code>. These types have the following hier...</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects.RecordProxy.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-phi.especial_objects.RecordProxy.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
+</pre></div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="patch.m.html">phi.patch</a></p>
-      
+  </div>
+</div>
+
+  </div>
   
-
       </div>
+      </div>
+
   </section>
 
     </article>

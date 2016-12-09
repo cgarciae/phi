@@ -4,7 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>phi.lambdas API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="# Lambdas
+Phi's `Lambda` class allows you to create quick lambdas that are much more readable and co..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1037,15 +1038,6 @@ table {
     <h1>Index</h1>
     <ul id="index">
 
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#phi.lambdas.fmap">fmap</a></li>
-    <li class="mono"><a href="#phi.lambdas.fmap_flip">fmap_flip</a></li>
-    <li class="mono"><a href="#phi.lambdas.unary_fmap">unary_fmap</a></li>
-  </ul>
-
-    </li>
 
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
@@ -1073,15 +1065,296 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">phi.lambdas</span> module</h1>
-  
+  <h1>Lambdas</h1>
+<p>Phi's <code>Lambda</code> class allows you to create quick lambdas that are much more readable and compact than Python's <code>lambda</code> keyword. You probably will not use an object of type <code>Lambda</code> directly but rather one of type <code>Builder</code> or type derived from <code>Builder</code>. These types have the following hierarchy</p>
+<div class="codehilite"><pre><span></span>Builder &lt; Lambda &lt; Function &lt; Node
+</pre></div>
+
+
+<p>where <code>dsl.Node</code> is the base class for any object in the DSL and <code>dsl.Function</code> is the class that wraps functions. In this scheme <code>Lambda</code> is a class which has a very specific purpose: enable you to create quick lambdas and integrate the <code>Builder</code> class with the DSL. The main way in which you will use <code>Lambda</code>'s capabilities with be through the <code>phi.P</code> which implements the <code>Builder</code> class.</p>
+<h2>Operations</h2>
+<p><code>Lambda</code> overrides all operators plus the <code>__getitem__</code> and <code>__call__</code> special methods. Using operator overloading you can do things like</p>
+<div class="codehilite"><pre><span></span><span class="n">form</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>  <span class="c1">#( 1 * 2 ) / ( 1 + 1) == 2 / 2 == 1</span>
+</pre></div>
+
+
+<p>the previous expression for <code>f</code> is equivalent to</p>
+<div class="codehilite"><pre><span></span>f(x) = (x * 2) / (x + 1)
+</pre></div>
+
+
+<p>As you see, it creates very math-like functions that are very readable. The overloading mechanism has the following rules:</p>
+<p>Let <code>g</code> be a Lambda, <code>h</code> a callable or Node, and <code>$</code> any python operator, then</p>
+<div class="codehilite"><pre><span></span>f = g $ h
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>f(x) = g(x) $ h(x)
+</pre></div>
+
+
+<p>Naturally <code>a $ b</code> returns also returns Lambda so operations can be chained. When <code>b</code> is not a callable or Node (as <code>1</code> in <code>P + 1</code>) then the expression</p>
+<div class="codehilite"><pre><span></span>a $ b
+</pre></div>
+
+
+<p>is reinterpreted as this so it does what you expect</p>
+<div class="codehilite"><pre><span></span>a $ Input(b)
+</pre></div>
+
+
+<p>where <code>Input</code> derives from <code>Node</code>. For more information see <a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>. Also, reverse methods like <code>__radd__</code> (reverse for <code>__add__</code>) are also implemented so that expressions like <code>1 + P</code> -where <code>1</code> is not a Lambda- work as expected.</p>
+<h2><strong>call</strong></h2>
+<p>Lambda implements the <code>__call__</code> special method so you can naturally use them as functions.</p>
+<h2><strong>getitem</strong></h2>
+<p>The special method <code>__getitem__</code> is also implemented and enables you to define a lambda uses pythons access mechanism on its argument. The expression</p>
+<div class="codehilite"><pre><span></span>P[x]
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda obj: obj[x]
+</pre></div>
+
+
+<h3>Examples</h3>
+<p>Add the first and last element of a list</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span>  <span class="c1">#1 + 4 == 5</span>
+</pre></div>
+
+
+<h2><code>&gt;&gt;</code></h2>
+<p>The special method <code>__rshift__</code> (right shift) needed to overload <code>&gt;&gt;</code> is implemented differently than the other methods in that</p>
+<div class="codehilite"><pre><span></span>f = g &gt;&gt; h
+</pre></div>
+
+
+<p>is NOT equivalent to</p>
+<div class="codehilite"><pre><span></span>f(x) = g(x) &gt;&gt; h(x)
+</pre></div>
+
+
+<p>Instead it represents Composition from the <a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a> or function application depending on the context</p>
+<h3>Composition</h3>
+<p>The expression</p>
+<div class="codehilite"><pre><span></span>g &gt;&gt; h
+</pre></div>
+
+
+<p>is equivalent to the expression</p>
+<div class="codehilite"><pre><span></span>(g, h)
+</pre></div>
+
+
+<p>which is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: h(g(x))
+</pre></div>
+
+
+<p>Note that atleast one of <code>g</code> or <code>h</code> has to be a <code>Lambda</code> for this operator to work. An easy way create a Lambda from any function <code>f</code> is to do</p>
+<div class="codehilite"><pre><span></span>P.Make(f)
+</pre></div>
+
+
+<h3>Application</h3>
+<p>Given <code>a</code> and <code>g</code> where</p>
+<ul>
+<li><code>a</code> is not an instance of <code>dsl.Node</code> and is not a callable</li>
+<li><code>g</code> is an instance of <code>Lambda</code></li>
+</ul>
+<p>then the expresion</p>
+<div class="codehilite"><pre><span></span>a &gt;&gt; g
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>g(a)
+</pre></div>
+
+
+<h2>&lt;&lt;</h2>
+<p>The special method <code>__lshift__</code> (left shift) behaves as a reversed form of <code>&gt;&gt;</code> in the sense that the order of operations on excecution is done backwards</p>
+<h3>Composition Comparison</h3>
+<ul>
+<li><code>f &gt;&gt; g</code> is equivalent to <code>lambda x: g(f(x))</code>. <code>f</code> is executed first then <code>g</code>. Reads left to right.</li>
+<li><code>f &lt;&lt; g</code> is equivalent to <code>lambda x: f(g(x))</code>. <code>g</code> is executed first then <code>f</code>. Reads right to left.</li>
+</ul>
+<h3>Application</h3>
+<p>Given <code>a</code> and <code>g</code> where</p>
+<ul>
+<li><code>a</code> is not an instance of <code>dsl.Node</code> and is not a callable</li>
+<li><code>g</code> is an instance of <code>Lambda</code></li>
+</ul>
+<p>then</p>
+<div class="codehilite"><pre><span></span>g &lt;&lt; a
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>g(a)
+</pre></div>
+
+
+<h2>fn.py</h2>
+<p>The <code>Lambda</code> class takes much of its inspiration and code from <a href="https://github.com/fnpy/fn.py">fn.py</a>'s '<code>_</code>' object, however it differs from it in the following aspects:</p>
+<ul>
+<li>It implements <code>dsl.Function</code> to better integrate with the DSL</li>
+<li>It only creates functions of arity 1 to comply with the DSL. Where in fn.py expressions like <code>_ + _</code> are equivalent to <code>lambda a, b: a + b</code>, phi's lambdas intepret <code>P + P</code> as <code>lambda a: a + a</code>. In the context of the DSL this is incredibly useful since it allows you to write expressions like <code>P[0] + P[1]</code> (equivalent to <code>lambda a: a[0] + a[1]</code>) to add the first two elements of e.g. a previous branched computation, in fn.py <code>_[0] + _[1]</code> is equivalent to <code>lambda a, b: a[0] + b[1]</code>.</li>
+<li>The operators <code>&gt;&gt;</code> and <code>&lt;&lt;</code> are used for function composition or application.</li>
+</ul>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.lambdas', this);">Show source &equiv;</a></p>
   <div id="source-phi.lambdas" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">dsl</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"># Lambdas</span>
+<span class="sd">Phi&#39;s `Lambda` class allows you to create quick lambdas that are much more readable and compact than Python&#39;s `lambda` keyword. You probably will not use an object of type `Lambda` directly but rather one of type `Builder` or type derived from `Builder`. These types have the following hierarchy</span>
+
+<span class="sd">    Builder &lt; Lambda &lt; Function &lt; Node</span>
+
+<span class="sd">where `dsl.Node` is the base class for any object in the DSL and `dsl.Function` is the class that wraps functions. In this scheme `Lambda` is a class which has a very specific purpose: enable you to create quick lambdas and integrate the `Builder` class with the DSL. The main way in which you will use `Lambda`&#39;s capabilities with be through the `phi.P` which implements the `Builder` class.</span>
+
+<span class="sd">## Operations</span>
+<span class="sd">`Lambda` overrides all operators plus the `__getitem__` and `__call__` special methods. Using operator overloading you can do things like</span>
+
+<span class="sd">    form phi import P</span>
+
+<span class="sd">    f = (P * 2) / (P + 1)</span>
+
+<span class="sd">    assert f(1) == 1  #( 1 * 2 ) / ( 1 + 1) == 2 / 2 == 1</span>
+
+<span class="sd">the previous expression for `f` is equivalent to</span>
+
+<span class="sd">    f(x) = (x * 2) / (x + 1)</span>
+
+<span class="sd">As you see, it creates very math-like functions that are very readable. The overloading mechanism has the following rules:</span>
+
+<span class="sd">Let `g` be a Lambda, `h` a callable or Node, and `$` any python operator, then</span>
+
+<span class="sd">    f = g $ h</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    f(x) = g(x) $ h(x)</span>
+
+<span class="sd">Naturally `a $ b` returns also returns Lambda so operations can be chained. When `b` is not a callable or Node (as `1` in `P + 1`) then the expression</span>
+
+<span class="sd">    a $ b</span>
+
+<span class="sd">is reinterpreted as this so it does what you expect</span>
+
+<span class="sd">    a $ Input(b)</span>
+
+<span class="sd">where `Input` derives from `Node`. For more information see [dsl](https://cgarciae.github.io/phi/dsl.m.html). Also, reverse methods like `__radd__` (reverse for `__add__`) are also implemented so that expressions like `1 + P` -where `1` is not a Lambda- work as expected.</span>
+
+
+<span class="sd">## __call__</span>
+<span class="sd">Lambda implements the `__call__` special method so you can naturally use them as functions.</span>
+
+<span class="sd">## __getitem__</span>
+<span class="sd">The special method `__getitem__` is also implemented and enables you to define a lambda uses pythons access mechanism on its argument. The expression</span>
+
+<span class="sd">    P[x]</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda obj: obj[x]</span>
+
+<span class="sd">### Examples</span>
+<span class="sd">Add the first and last element of a list</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    f = P[0] + P[-1]</span>
+
+<span class="sd">    assert f([1, 2, 3, 4]) == 5  #1 + 4 == 5</span>
+
+<span class="sd">## `&gt;&gt;`</span>
+<span class="sd">The special method `__rshift__` (right shift) needed to overload `&gt;&gt;` is implemented differently than the other methods in that</span>
+
+<span class="sd">    f = g &gt;&gt; h</span>
+
+<span class="sd">is NOT equivalent to</span>
+
+<span class="sd">    f(x) = g(x) &gt;&gt; h(x)</span>
+
+<span class="sd">Instead it represents Composition from the [dsl](https://cgarciae.github.io/phi/dsl.m.html) or function application depending on the context</span>
+
+<span class="sd">### Composition</span>
+<span class="sd">The expression</span>
+
+<span class="sd">    g &gt;&gt; h</span>
+
+<span class="sd">is equivalent to the expression</span>
+
+<span class="sd">    (g, h)</span>
+
+<span class="sd">which is equivalent to</span>
+
+<span class="sd">    lambda x: h(g(x))</span>
+
+<span class="sd">Note that atleast one of `g` or `h` has to be a `Lambda` for this operator to work. An easy way create a Lambda from any function `f` is to do</span>
+
+<span class="sd">    P.Make(f)</span>
+
+<span class="sd">### Application</span>
+<span class="sd">Given `a` and `g` where</span>
+
+<span class="sd">* `a` is not an instance of `dsl.Node` and is not a callable</span>
+<span class="sd">* `g` is an instance of `Lambda`</span>
+
+<span class="sd">then the expresion</span>
+
+<span class="sd">    a &gt;&gt; g</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    g(a)</span>
+
+<span class="sd">## &lt;&lt;</span>
+<span class="sd">The special method `__lshift__` (left shift) behaves as a reversed form of `&gt;&gt;` in the sense that the order of operations on excecution is done backwards</span>
+
+<span class="sd">### Composition Comparison</span>
+
+<span class="sd">* `f &gt;&gt; g` is equivalent to `lambda x: g(f(x))`. `f` is executed first then `g`. Reads left to right.</span>
+<span class="sd">* `f &lt;&lt; g` is equivalent to `lambda x: f(g(x))`. `g` is executed first then `f`. Reads right to left.</span>
+
+<span class="sd">### Application</span>
+<span class="sd">Given `a` and `g` where</span>
+
+<span class="sd">* `a` is not an instance of `dsl.Node` and is not a callable</span>
+<span class="sd">* `g` is an instance of `Lambda`</span>
+
+<span class="sd">then</span>
+
+<span class="sd">    g &lt;&lt; a</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    g(a)</span>
+
+<span class="sd">## fn.py</span>
+<span class="sd">The `Lambda` class takes much of its inspiration and code from [fn.py](https://github.com/fnpy/fn.py)&#39;s &#39;`_`&#39; object, however it differs from it in the following aspects:</span>
+
+<span class="sd">* It implements `dsl.Function` to better integrate with the DSL</span>
+<span class="sd">* It only creates functions of arity 1 to comply with the DSL. Where in fn.py expressions like `_ + _` are equivalent to `lambda a, b: a + b`, phi&#39;s lambdas intepret `P + P` as `lambda a: a + a`. In the context of the DSL this is incredibly useful since it allows you to write expressions like `P[0] + P[1]` (equivalent to `lambda a: a[0] + a[1]`) to add the first two elements of e.g. a previous branched computation, in fn.py `_[0] + _[1]` is equivalent to `lambda a, b: a[0] + b[1]`.</span>
+<span class="sd">* The operators `&gt;&gt;` and `&lt;&lt;` are used for function composition or application.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">dsl</span>
 <span class="kn">import</span> <span class="nn">utils</span>
 <span class="kn">import</span> <span class="nn">operator</span>
 
-<span class="k">def</span> <span class="nf">fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
@@ -1097,9 +1370,9 @@ table {
 
     <span class="k">return</span> <span class="n">method</span>
 
-<span class="k">def</span> <span class="nf">fmap_flip</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_fmap_flip</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
@@ -1113,7 +1386,7 @@ table {
 
     <span class="k">return</span> <span class="n">method</span>
 
-<span class="k">def</span> <span class="nf">unary_fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_unary_fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
 
@@ -1134,15 +1407,16 @@ table {
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">flatten</span> <span class="k">else</span> <span class="n">y</span>
-
     <span class="k">def</span> <span class="nf">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1">## Override operators</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">flatten</span> <span class="k">else</span> <span class="n">y</span>
 
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -1164,53 +1438,47 @@ table {
 
 
 
-    <span class="n">__add__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
-    <span class="n">__mul__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
-    <span class="n">__sub__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
-    <span class="n">__mod__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
-    <span class="n">__pow__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
+    <span class="n">__add__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+    <span class="n">__mul__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
+    <span class="n">__sub__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+    <span class="n">__mod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
+    <span class="n">__pow__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
 
-    <span class="n">__and__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
-    <span class="n">__or__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
-    <span class="n">__xor__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
+    <span class="n">__and__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
+    <span class="n">__or__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
+    <span class="n">__xor__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
 
-    <span class="n">__div__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
-    <span class="n">__divmod__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
-    <span class="n">__floordiv__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
-    <span class="n">__truediv__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__div__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
+    <span class="n">__divmod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
+    <span class="n">__floordiv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
+    <span class="n">__truediv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
 
-    <span class="n">__contains__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">contains</span><span class="p">)</span>
+    <span class="n">__contains__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">contains</span><span class="p">)</span>
 
-    <span class="c1"># __lshift__ = fmap(operator.lshift)</span>
-    <span class="c1"># __rshift__ = fmap(operator.rshift)</span>
+    <span class="n">__lt__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">lt</span><span class="p">)</span>
+    <span class="n">__le__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">le</span><span class="p">)</span>
+    <span class="n">__gt__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">)</span>
+    <span class="n">__ge__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ge</span><span class="p">)</span>
+    <span class="n">__eq__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">)</span>
+    <span class="n">__ne__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ne</span><span class="p">)</span>
 
-    <span class="n">__lt__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">lt</span><span class="p">)</span>
-    <span class="n">__le__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">le</span><span class="p">)</span>
-    <span class="n">__gt__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">)</span>
-    <span class="n">__ge__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ge</span><span class="p">)</span>
-    <span class="n">__eq__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">)</span>
-    <span class="n">__ne__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ne</span><span class="p">)</span>
+    <span class="n">__neg__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">neg</span><span class="p">)</span>
+    <span class="n">__pos__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+    <span class="n">__invert__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">invert</span><span class="p">)</span>
 
-    <span class="n">__neg__</span> <span class="o">=</span> <span class="n">unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">neg</span><span class="p">)</span>
-    <span class="n">__pos__</span> <span class="o">=</span> <span class="n">unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
-    <span class="n">__invert__</span> <span class="o">=</span> <span class="n">unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">invert</span><span class="p">)</span>
+    <span class="n">__radd__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+    <span class="n">__rmul__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
+    <span class="n">__rsub__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+    <span class="n">__rmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
+    <span class="n">__rpow__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
+    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
+    <span class="n">__rdivmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
+    <span class="n">__rtruediv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__rfloordiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
 
-    <span class="n">__radd__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
-    <span class="n">__rmul__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
-    <span class="n">__rsub__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
-    <span class="n">__rmod__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
-    <span class="n">__rpow__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
-    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
-    <span class="n">__rdivmod__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
-    <span class="n">__rtruediv__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
-    <span class="n">__rfloordiv__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
-
-    <span class="c1"># __rlshift__ = fmap_flip(operator.lshift)</span>
-    <span class="c1"># __rrshift__ = fmap_flip(operator.rshift)</span>
-
-    <span class="n">__rand__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
-    <span class="n">__ror__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
-    <span class="n">__rxor__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
+    <span class="n">__rand__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
+    <span class="n">__ror__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
+    <span class="n">__rxor__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1219,99 +1487,6 @@ table {
 
   <section id="section-items">
 
-    <h2 class="section-title" id="header-functions">Functions</h2>
-      
-  <div class="item">
-    <div class="name def" id="phi.lambdas.fmap">
-    <p>def <span class="ident">fmap</span>(</p><p>opt)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.lambdas.fmap', this);">Show source &equiv;</a></p>
-  <div id="source-phi.lambdas.fmap" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-
-        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">[</span> <span class="bp">self</span><span class="p">,</span> <span class="n">b</span> <span class="p">],</span>
-            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">opt</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">method</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="phi.lambdas.fmap_flip">
-    <p>def <span class="ident">fmap_flip</span>(</p><p>opt)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.lambdas.fmap_flip', this);">Show source &equiv;</a></p>
-  <div id="source-phi.lambdas.fmap_flip" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fmap_flip</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-
-        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">[</span> <span class="n">b</span><span class="p">,</span> <span class="bp">self</span> <span class="p">],</span>
-            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">opt</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">method</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="phi.lambdas.unary_fmap">
-    <p>def <span class="ident">unary_fmap</span>(</p><p>opt)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.lambdas.unary_fmap', this);">Show source &equiv;</a></p>
-  <div id="source-phi.lambdas.unary_fmap" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">unary_fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">method</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
 
     <h2 class="section-title" id="header-classes">Classes</h2>
       
@@ -1338,15 +1513,16 @@ table {
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">flatten</span> <span class="k">else</span> <span class="n">y</span>
-
     <span class="k">def</span> <span class="nf">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1">## Override operators</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">flatten</span> <span class="k">else</span> <span class="n">y</span>
 
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -1368,53 +1544,47 @@ table {
 
 
 
-    <span class="n">__add__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
-    <span class="n">__mul__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
-    <span class="n">__sub__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
-    <span class="n">__mod__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
-    <span class="n">__pow__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
+    <span class="n">__add__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+    <span class="n">__mul__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
+    <span class="n">__sub__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+    <span class="n">__mod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
+    <span class="n">__pow__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
 
-    <span class="n">__and__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
-    <span class="n">__or__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
-    <span class="n">__xor__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
+    <span class="n">__and__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
+    <span class="n">__or__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
+    <span class="n">__xor__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
 
-    <span class="n">__div__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
-    <span class="n">__divmod__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
-    <span class="n">__floordiv__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
-    <span class="n">__truediv__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__div__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
+    <span class="n">__divmod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
+    <span class="n">__floordiv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
+    <span class="n">__truediv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
 
-    <span class="n">__contains__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">contains</span><span class="p">)</span>
+    <span class="n">__contains__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">contains</span><span class="p">)</span>
 
-    <span class="c1"># __lshift__ = fmap(operator.lshift)</span>
-    <span class="c1"># __rshift__ = fmap(operator.rshift)</span>
+    <span class="n">__lt__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">lt</span><span class="p">)</span>
+    <span class="n">__le__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">le</span><span class="p">)</span>
+    <span class="n">__gt__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">)</span>
+    <span class="n">__ge__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ge</span><span class="p">)</span>
+    <span class="n">__eq__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">)</span>
+    <span class="n">__ne__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ne</span><span class="p">)</span>
 
-    <span class="n">__lt__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">lt</span><span class="p">)</span>
-    <span class="n">__le__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">le</span><span class="p">)</span>
-    <span class="n">__gt__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">)</span>
-    <span class="n">__ge__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ge</span><span class="p">)</span>
-    <span class="n">__eq__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">)</span>
-    <span class="n">__ne__</span> <span class="o">=</span> <span class="n">fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ne</span><span class="p">)</span>
+    <span class="n">__neg__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">neg</span><span class="p">)</span>
+    <span class="n">__pos__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+    <span class="n">__invert__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">invert</span><span class="p">)</span>
 
-    <span class="n">__neg__</span> <span class="o">=</span> <span class="n">unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">neg</span><span class="p">)</span>
-    <span class="n">__pos__</span> <span class="o">=</span> <span class="n">unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
-    <span class="n">__invert__</span> <span class="o">=</span> <span class="n">unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">invert</span><span class="p">)</span>
+    <span class="n">__radd__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+    <span class="n">__rmul__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
+    <span class="n">__rsub__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+    <span class="n">__rmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
+    <span class="n">__rpow__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
+    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
+    <span class="n">__rdivmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
+    <span class="n">__rtruediv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__rfloordiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
 
-    <span class="n">__radd__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
-    <span class="n">__rmul__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
-    <span class="n">__rsub__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
-    <span class="n">__rmod__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
-    <span class="n">__rpow__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
-    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
-    <span class="n">__rdivmod__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
-    <span class="n">__rtruediv__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
-    <span class="n">__rfloordiv__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
-
-    <span class="c1"># __rlshift__ = fmap_flip(operator.lshift)</span>
-    <span class="c1"># __rrshift__ = fmap_flip(operator.rshift)</span>
-
-    <span class="n">__rand__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
-    <span class="n">__ror__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
-    <span class="n">__rxor__</span> <span class="o">=</span> <span class="n">fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
+    <span class="n">__rand__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
+    <span class="n">__ror__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
+    <span class="n">__rxor__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
 </pre></div>
 
   </div>
