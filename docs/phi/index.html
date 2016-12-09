@@ -1074,70 +1074,152 @@ table {
 <p>The global <code>phi.P</code> object exposes most of the API and preferably should be imported directly. The most simple thing the DSL does is function composition:</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
-  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="k">def</span> <span class="nf">add1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="k">def</span> <span class="nf">mul3</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">add1</span><span class="p">,</span>
+    <span class="n">mul3</span>
 <span class="p">)</span>
 
-<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">6</span>
 </pre></div>
 
 
-<p>The above computation is equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: (x + 1) * 2 + 3
-</pre></div>
-
-
-<p><code>P.Make</code> can compile any valid expression of the DSL into a function, what you are seeing here is the compilation of the <code>*args</code> tuple. Check out the documentation of the <a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>.</p>
-<p>Now lets rewrite the previous using <code>P</code>'s <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a> capabilities</p>
+<p>The previous using <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a></p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>
 <span class="p">)</span>
 
-<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">6</span>
 </pre></div>
 
 
-<p><strong>Pipe</strong></p>
-<p>You can also pipe a value directly into an expression with <code>P.Pipe</code></p>
+<p>Create a branched computation instead</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
-<span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-  <span class="mi">3</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#1 + 1 == 2</span>
+    <span class="p">,</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#1 * 3 == 3</span>
+    <span class="p">]</span>
 <span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="k">assert</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">3</span>
 </pre></div>
 
 
-<h3>Branching</h3>
-<p>Sometimes we have do separate computations, this is where branching comes in. It is expressed via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:</p>
-<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">phi</span> <span class="nn">import</span> <span class="nn">P</span>
+<p>Compose it with a multiplication by 2</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
-<span class="k">assert</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-  <span class="mi">1</span><span class="p">,</span>
-  <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="p">[</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
-  <span class="p">,</span>
-    <span class="n">P</span> <span class="o">-</span> <span class="mi">2</span>
-  <span class="p">]</span>
+<span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
+    <span class="p">[</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="p">,</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
+    <span class="p">]</span>
 <span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="k">assert</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">6</span>
 </pre></div>
 
 
-<p>The above computation equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: [(x + 1) * 2, (x + 1) - 2]
+<p>Give names to the branches</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="p">,</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">6</span>
 </pre></div>
 
 
-<p>As you the the <code>[...]</code> element is compiled to a function that returns a list of values. Check out the documentation of the <a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a> for more information.</p>
+<p>Divide the <code>x</code> by the <code>y</code>.</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="p">,</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
+    <span class="p">),</span>
+    <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
+</pre></div>
+
+
+<p>Save the value from the <code>P * 2</code> computation as <code>s</code> and retrieve it at the end in a branch</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span>
+
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>  <span class="c1">#1 * 2 == 2</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="p">,</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
+    <span class="p">),</span>
+    <span class="p">[</span>
+        <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
+    <span class="p">,</span>
+        <span class="s1">&#39;s&#39;</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
+<span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+
+<p>Add an input <code>Val</code> of 9 on a branch and add to it 1 just for the sake of it</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Val</span>
+
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>  <span class="c1">#2 * 1 == 2</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="p">,</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
+    <span class="p">),</span>
+    <span class="p">[</span>
+        <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
+    <span class="p">,</span>
+        <span class="s1">&#39;s&#39;</span>  <span class="c1">#2</span>
+    <span class="p">,</span>
+        <span class="n">Val</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#10</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
+<span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">10</span>
+</pre></div>
+
+
 <h2>Installation</h2>
 <div class="codehilite"><pre><span></span>pip install phi
 </pre></div>
@@ -1222,10 +1304,7 @@ table {
 <span class="n">odule</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
 <span class="n">aw_docs</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;README-template.md&quot;</span><span class="p">)</span>
 <span class="n">_version__</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;version.txt&quot;</span><span class="p">)</span>
-<span class="n">odule</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
-   <span class="n">raw_docs</span><span class="p">,</span>
-   <span class="n">Obj</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">),</span>
-   <span class="n">_to_pdoc_markdown</span>
+<span class="n">odule</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">_to_pdoc_markdown</span><span class="p">(</span><span class="n">raw_docs</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 </pre></div>
 
   </div>

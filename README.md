@@ -15,76 +15,157 @@ The global `phi.P` object exposes most of the API and preferably should be impor
     
     from phi import P
     
-    f = P.Make(
-      lambda x: x + 1,
-      lambda x: x * 2,
-      lambda x: x + 3
+    def add1(x): return x + 1
+    def mul3(x): return x * 3
+    
+    x = P.Pipe(
+        1,
+        add1,
+        mul3
     )
     
-    assert 11 == f(3)
+    assert x == 6
 
 
-The above computation is equivalent to
-
-    
-    lambda x: (x + 1) * 2 + 3
-
-
-`P.Make` can compile any valid expression of the DSL into a function, what you are seeing here is the compilation of the `*args` tuple. Check out the documentation of the [dsl](https://cgarciae.github.io/phi/dsl.m.html).
-
-Now lets rewrite the previous using `P`'s [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) capabilities
+The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)
 
     
     from phi import P
     
-    f = P.Make(
-      P + 1,
-      P * 2,
-      P + 3
+    x = P.Pipe(
+        1,
+        P + 1,
+        P * 3
     )
     
-    assert 11 == f(3)
+    assert x == 6
 
 
-**Pipe**
-
-You can also pipe a value directly into an expression with `P.Pipe`
+Create a branched computation instead
 
     
     from phi import P
     
-    assert 11 == P.Pipe(
-      3,
-      P + 1,
-      P * 2,
-      P + 3
+    [x, y] = P.Pipe(
+        1,
+        [
+            P + 1  #1 + 1 == 2
+        ,
+            P * 3  #1 * 3 == 3
+        ]
     )
+    
+    assert x == 2
+    assert y == 3
 
 
-### Branching
-Sometimes we have do separate computations, this is where branching comes in. It is expressed via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:
+Compose it with a multiplication by 2
 
     
-    import phi import P
+    from phi import P
     
-    assert [0, 4] == P.Pipe(
-      1,
-      P + 1,
-      [
-        P * 2
-      ,
-        P - 2
-      ]
+    [x, y] = P.Pipe(
+        1,
+        P * 2,  #1 * 2 == 2
+        [
+            P + 1  #2 + 1 == 3
+        ,
+            P * 3  #2 * 3 == 6
+        ]
     )
+    
+    assert x == 3
+    assert y == 6
 
 
-The above computation equivalent to
+Give names to the branches
 
     
-    lambda x: [(x + 1) * 2, (x + 1) - 2]
+    from phi import P
+    
+    result = P.Pipe(
+        1,
+        P * 2,  #1 * 2 == 2
+        dict(
+            x = P + 1  #2 + 1 == 3
+        ,
+            y = P * 3  #2 * 3 == 6
+        )
+    )
+    
+    assert result.x == 3
+    assert result.y == 6
 
 
-As you the the `[...]` element is compiled to a function that returns a list of values. Check out the documentation of the [dsl](https://cgarciae.github.io/phi/dsl.m.html) for more information.
+Divide the `x` by the `y`.
+
+    
+    from phi import P, Rec
+    
+    result = P.Pipe(
+        1,
+        P * 2,  #1 * 2 == 2
+        dict(
+            x = P + 1  #2 + 1 == 3
+        ,
+            y = P * 3  #2 * 3 == 6
+        ),
+        Rec.x / Rec.y  #3 / 6 == 0.5
+    )
+    
+    assert result == 0.5
+
+
+Save the value from the `P * 2` computation as `s` and retrieve it at the end in a branch
+
+    
+    from phi import P, Rec
+    
+    [result, s] = P.Pipe(
+        1,
+        P * 2, {'s'}  #1 * 2 == 2
+        dict(
+            x = P + 1  #2 + 1 == 3
+        ,
+            y = P * 3  #2 * 3 == 6
+        ),
+        [
+            Rec.x / Rec.y  #3 / 6 == 0.5
+        ,
+            's'
+        ]
+    )
+    
+    assert result == 0.5
+    assert s == 2
+
+
+Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
+
+    
+    from phi import P, Rec, Val
+    
+    [result, s, val] = P.Pipe(
+        1,
+        P * 2, {'s'}  #2 * 1 == 2
+        dict(
+            x = P + 1  #2 + 1 == 3
+        ,
+            y = P * 3  #2 * 3 == 6
+        ),
+        [
+            Rec.x / Rec.y  #3 / 6 == 0.5
+        ,
+            's'  #2
+        ,
+            Val(9) + 1  #10
+        ]
+    )
+    
+    assert result == 0.5
+    assert s == 2
+    assert val == 10
+
 
 ## Installation
 

@@ -133,7 +133,7 @@ All basic/terminal elements of this language are callables (implement `__call__`
 ### Examples
 Compiling a function just returns back the function
 
-    P.Compile(f) == f
+    Make(f) == f
 
 and piping through a function is just the same a applying the function
 
@@ -308,7 +308,7 @@ be equivalent to
 
     k(x) = g(f(x))
 
-As you see, its a little different from the mathematical definition. Its based upon the `|>` (pipe) operator found in languages like F#, Elixir and Elm, and its the reason for the name of the `P` method. You can put as many functions as you like and they will be applied in order to the data that is passed through them.
+As you see, its a little different from the mathematical definition. Excecution order flow from left to right, and this makes reading and reasoning about code structured in the way more easy. This bahaviour is based upon the `|>` (pipe) operator found in languages like F#, Elixir and Elm. You can pack as many expressions as you like and they will be applied in order to the data that is passed through them when compiled an excecuted.
 
 In general, the following rules apply after compilation:
 
@@ -342,7 +342,7 @@ is equivalent to
 
     from phi import P
 
-    f = P.Compile(
+    f = Make(
         lambda x: x * 2,
         lambda x: x + 1,
         lambda x: x ** 2
@@ -350,7 +350,7 @@ is equivalent to
 
     assert f(1) == 9 # ((1 * 2) + 1) ** 2
 
-As you see, `Compile`s `*args` are interpreted as a tuple which means all expressions contained are composed. The previous example using `P.Pipe`
+As you see, `Make`s `*args` are interpreted as a tuple which means all expressions contained are composed. The previous example using `P.Pipe`
 
     from phi import P
 
