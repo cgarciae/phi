@@ -1,5 +1,5 @@
 # Phi
-Python is a very nice language that favors readability but its not very strong at functional programming and this often leads to repetitive code. Phi eases your functional programming experience in Python by providing the following modules
+Python is a very nice language that favors readability but its not very strong at functional programming and this often leads to repetitive code. Phi intends to remove as much of the pain as possible from your functional programming experience in Python by providing the following modules
 
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html): a small DSL that helps you compose computations in various ways & more.
 * [lambdas](https://cgarciae.github.io/phi/lambdas.m.html): easy way to create quick lambdas with a mathematical flavor.
@@ -8,21 +8,6 @@ Python is a very nice language that favors readability but its not very strong a
 
 ## Documentation
 Check out the [complete documentation](https://cgarciae.github.io/phi/).
-
-## Installation
-
-    pip install phi
-
-
-#### Bleeding Edge
-
-    pip install git+https://github.com/cgarciae/phi.git@develop
-
-## Status
-* Version: **{0}**.
-* Current effort: Documentation (> 60%). Please create an issue if documentation is unclear, its of great priority for this library.
-* Milestone: reach 1.0.0 after docs completed + feedback from the community.
-
 
 ## Getting Started
 The global `phi.P` object exposes most of the API and preferably should be imported directly. The most simple thing the DSL does is function composition:
@@ -100,6 +85,20 @@ lambda x: [(x + 1) * 2, (x + 1) - 2]
 ```
 
 As you the the `[...]` element is compiled to a function that returns a list of values. Check out the documentation of the [dsl](https://cgarciae.github.io/phi/dsl.m.html) for more information.
+
+## Installation
+
+    pip install phi
+
+
+#### Bleeding Edge
+
+    pip install git+https://github.com/cgarciae/phi.git@develop
+
+## Status
+* Version: **{0}**.
+* Current effort: Documentation (> 60%). Please create an issue if documentation is unclear, its of great priority for this library.
+* Milestone: reach 1.0.0 after docs completed + feedback from the community.
 
 ## Nice Examples
 

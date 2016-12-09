@@ -1061,7 +1061,7 @@ table {
   <header id="section-intro">
   <h1 class="title"><span class="name">phi</span> module</h1>
   <h1>Phi</h1>
-<p>Python is a very nice language that favors readability but its not very strong at functional programming and this often leads to repetitive code. Phi eases your functional programming experience in Python by providing the following modules</p>
+<p>Python is a very nice language that favors readability but its not very strong at functional programming and this often leads to repetitive code. Phi intends to remove as much of the pain as possible from your functional programming experience in Python by providing the following modules</p>
 <ul>
 <li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>: a small DSL that helps you compose computations in various ways &amp; more.</li>
 <li><a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>: easy way to create quick lambdas with a mathematical flavor.</li>
@@ -1070,22 +1070,6 @@ table {
 </ul>
 <h2>Documentation</h2>
 <p>Check out the <a href="https://cgarciae.github.io/phi/">complete documentation</a>.</p>
-<h2>Installation</h2>
-<div class="codehilite"><pre><span></span>pip install phi
-</pre></div>
-
-
-<h4>Bleeding Edge</h4>
-<div class="codehilite"><pre><span></span>pip install git+https://github.com/cgarciae/phi.git@develop
-</pre></div>
-
-
-<h2>Status</h2>
-<ul>
-<li>Version: <strong>0.2.1</strong>.</li>
-<li>Current effort: Documentation (&gt; 60%). Please create an issue if documentation is unclear, its of great priority for this library.</li>
-<li>Milestone: reach 1.0.0 after docs completed + feedback from the community.</li>
-</ul>
 <h2>Getting Started</h2>
 <p>The global <code>phi.P</code> object exposes most of the API and preferably should be imported directly. The most simple thing the DSL does is function composition:</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
@@ -1154,6 +1138,22 @@ table {
 
 
 <p>As you the the <code>[...]</code> element is compiled to a function that returns a list of values. Check out the documentation of the <a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a> for more information.</p>
+<h2>Installation</h2>
+<div class="codehilite"><pre><span></span>pip install phi
+</pre></div>
+
+
+<h4>Bleeding Edge</h4>
+<div class="codehilite"><pre><span></span>pip install git+https://github.com/cgarciae/phi.git@develop
+</pre></div>
+
+
+<h2>Status</h2>
+<ul>
+<li>Version: <strong>0.2.1</strong>.</li>
+<li>Current effort: Documentation (&gt; 60%). Please create an issue if documentation is unclear, its of great priority for this library.</li>
+<li>Milestone: reach 1.0.0 after docs completed + feedback from the community.</li>
+</ul>
 <h2>Nice Examples</h2>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
 
