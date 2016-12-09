@@ -1063,7 +1063,7 @@ table {
   <h1>Phi</h1>
 <p>Python is a very nice language that favors readability but its not very strong at functional programming and this often leads to repetitive code. Phi eases your functional programming experience in Python by providing the following modules</p>
 <ul>
-<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>: a neat way to compose computations + more.</li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>: a small DSL that helps you compose computations in various ways &amp; more.</li>
 <li><a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>: easy way to create quick lambdas with a mathematical flavor.</li>
 <li><a href="https://cgarciae.github.io/phi/builder.m.html">builder</a>: an extensible class that enables you to integrate other libraries into the DSL through a <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent</a> API.</li>
 <li><a href="https://cgarciae.github.io/phi/patch.m.html">patch</a>: this module contains some helpers that enable you to integrate a complete existing module or class into the DSL be registering its methods/functions into a <a href="https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder">Builder</a>.</li>
@@ -1071,7 +1071,7 @@ table {
 <h2>Documentation</h2>
 <p>Check out the <a href="https://cgarciae.github.io/phi/">complete documentation</a>.</p>
 <h2>Installation</h2>
-<div class="codehilite"><pre><span></span>pip install phi==0.2.1
+<div class="codehilite"><pre><span></span>pip install phi
 </pre></div>
 
 
@@ -1157,10 +1157,8 @@ table {
 <h2>Nice Examples</h2>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
 
-<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;1 22 33&quot;</span>
-
 <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="n">text</span><span class="p">,</span>
+    <span class="s2">&quot;1 22 33&quot;</span><span class="p">,</span>
     <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
     <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
     <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1"># sum([1,2,3]) / len([1,2,3]) == 6 / 3 == 2</span>
