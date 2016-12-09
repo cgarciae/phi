@@ -4,11 +4,28 @@ Python is a very nice language that favors readability but its not very strong a
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html): a neat way to compose computations + more.
 * [lambdas](https://cgarciae.github.io/phi/lambdas.m.html): easy way to create quick lambdas with a mathematical flavor.
 * [builder](https://cgarciae.github.io/phi/builder.m.html): an extensible class that enables you to integrate other libraries into the DSL through a [fluent](https://en.wikipedia.org/wiki/Fluent_interface) API.
+* [patch](https://cgarciae.github.io/phi/patch.m.html): this module contains some helpers that enable you to integrate a complete existing module or class into the DSL be registering its methods/functions into a [Builder](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder).
 
-Also check out the complete [documentation](https://cgarciae.github.io/phi/index.m.html). Even though there are 3 main modules, the `builder` module integrates both the `lambda` and `dsl` modules. The object `phi.P` exposes the entire API and all of the libraries functionalities.
+## Documentation
+Check out the [complete documentation](https://cgarciae.github.io/phi/index.m.html).
 
-### Mini-Tutorial
-The most simple thing the DSL does is function composition
+## Installation
+
+    pip install phi=={0}
+
+
+#### Bleeding Edge
+
+    pip install git+https://github.com/cgarciae/phi.git@develop
+
+## Status
+* Version: **{0}**.
+* Current effort: Documentation (> 60%). Please create an issue if documentation is unclear, its of great priority for this library.
+* Milestone: reach 1.0.0 after docs completed + feedback from the community.
+
+
+## Getting Started
+The global `phi.P` object exposes most of the API and preferably should be imported directly. The most simple thing the DSL does is function composition:
 
 ```python
 from phi import P
@@ -60,7 +77,7 @@ assert 11 == P.Pipe(
 ```
 
 ### Branching
-Sometimes we have do separate computations, this is where branching comes in. It is express via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:
+Sometimes we have do separate computations, this is where branching comes in. It is expressed via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:
 
 ```python
 import phi import P
@@ -100,28 +117,3 @@ avg_word_length = P.Pipe(
 
 assert 2 == avg_word_length
 ```
-
-## Installation
-
-    pip install phi=={0}
-
-
-#### Bleeding Edge
-
-    pip install git+https://github.com/cgarciae/phi.git@develop
-
-
-## Getting Started
-
-
-## Features
-Comming Soon!
-
-## Documentation
-[Complete Documentation](http://cgarciae.github.io/phi/index.html)
-
-## The Guide
-Check out [The Guide](https://cgarciae.gitbooks.io/phi/content/) to learn to code in Phi. (Comming Soon!)
-
-## Full Example
-Comming Soon!

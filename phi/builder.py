@@ -38,36 +38,43 @@ class Builder(Lambda):
     @classmethod
     def Context(cls, *args):
         """
-        **Builder Core**. Also available as a global function as `phi.Context`.
+**Builder Core**. Also available as a global function as `phi.Context`.
 
-        Returns the context object of the current `dsl.With` statemente. This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:
+Returns the context object of the current `dsl.With` statemente. This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:
 
-            from phi import P, Context, Obj
+    from phi import P, Context, Obj
 
-            def read_file(_):
-                f = Context()
-                return f.read()
+    def read_file(_):
+        f = Context()
+        return f.read()
 
-            lines = P.Pipe(
-                "text.txt",
-                P.With( open,
-                    read_file,
-                    Obj.split("\n")
-                )
-            )
+    lines = P.Pipe(
+        "text.txt",
+        P.With( open,
+            read_file,
+            Obj.split("\\n")
+        )
+    )
 
-        Here we called `Context` with no arguments to get the context back, however, this function accepts any variable number of arguments and completely ignores them, therefore it also can be used inside the dsl. We can rewrite the previous as:
+Here we called `Context` with no arguments to get the context back, however, this function accepts any variable number of arguments and completely ignores them, therefore it also can be used inside the dsl. We can rewrite the previous as:
 
-            from phi import P, Context, Obj
+    from phi import P, Context, Obj
 
-            lines = P.Pipe(
-                "text.txt",
-                P.With( open,
-                    Context,
-                    Obj.read(),
-                    Obj.split("\n")
-                )
-            )
+    lines = P.Pipe(
+        "text.txt",
+        P.With( open,
+            Context, # f
+            Obj.read()
+            Obj.split("\\n")
+        )
+    )
+
+`Context` yields an expection when used outside of a `With` block.
+
+**More info**
+
+* `phi.builder.Builder.Obj`
+* [dsl](https://cgarciae.github.io/phi/dsl.m.html)
         """
         if dsl.With.GLOBAL_CONTEXT is dsl._NO_VALUE:
             raise Exception("Cannot use 'Context' outside of a 'With' block")
@@ -75,6 +82,7 @@ class Builder(Lambda):
         return dsl.With.GLOBAL_CONTEXT
 
     With = dsl.With
+    Ref = dsl.Ref
 
     def Pipe(self, x, *code, **kwargs):
         """
@@ -222,10 +230,7 @@ class Builder(Lambda):
 
         return self.__unit__(utils.compose2(ref.set, self), refs)
 
-    def Ref(self, name):
-        """
-        """
-        return dsl.Ref(name)
+
 
     @property
     def Obj(self):
@@ -518,4 +523,4 @@ class RecordProxy(object):
 
     def __getitem__(self, key):
         f = lambda x: x[key]
-        return self.__then__(f)
+        return self.__builder__.__then__(f)
