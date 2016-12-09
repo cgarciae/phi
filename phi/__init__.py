@@ -37,7 +37,6 @@ Abreviation for `P.Make` or the module function `phi.Make`.
 # Documentation
 ########################
 import os
-import sys
 
 #pdoc
 __all__ = ["dsl", "builder", "lambdas", "patch"]
@@ -64,7 +63,6 @@ def _to_pdoc_markdown(doc):
 def _read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-module = sys.modules[__name__]
 raw_docs = _read("README-template.md")
 __version__ = _read("version.txt")
-module.__doc__ = _to_pdoc_markdown(raw_docs.format(__version__))
+__doc__ = _to_pdoc_markdown(raw_docs.format(__version__))

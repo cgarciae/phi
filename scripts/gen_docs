@@ -4,5 +4,5 @@ find . -name "*.pyc" -delete
 echo "Generating docs"
 PYTHONPATH=./phi pdoc --html-dir=docs --html phi --only-pypath --overwrite
 echo "Making README.md"
-python -c "import phi; import os; open('README.md', 'w').write(phi.__doc__); open('guide/README.md', 'w').write(phi.__doc__)"
+python scripts/create_readme.py
 echo "Finished"
