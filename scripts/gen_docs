@@ -1,7 +1,6 @@
 #! /bin/bash
 
 find . -name "*.pyc" -delete
-cd /phi
 echo "Generating docs"
 PYTHONPATH=./phi pdoc --html-dir=docs --html phi --only-pypath --overwrite
 echo "Making README.md"
