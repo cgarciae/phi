@@ -40,7 +40,13 @@ class Builder(Lambda):
         """
 **Builder Core**. Also available as a global function as `phi.Context`.
 
-Returns the context object of the current `dsl.With` statemente. This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:
+Returns the context object of the current `dsl.With` statemente.
+
+**Arguments**
+
+* ***args**: By design `Context` accepts any number of arguments and completely ignores them.
+
+This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:
 
     from phi import P, Context, Obj
 
@@ -56,7 +62,7 @@ Returns the context object of the current `dsl.With` statemente. This is a class
         )
     )
 
-Here we called `Context` with no arguments to get the context back, however, this function accepts any variable number of arguments and completely ignores them, therefore it also can be used inside the dsl. We can rewrite the previous as:
+Here we called `Context` with no arguments to get the context back, however, since you can also give this function an argument (which it will ignore) it can be passed to the DSL so we can rewrite the previous as:
 
     from phi import P, Context, Obj
 
@@ -69,13 +75,14 @@ Here we called `Context` with no arguments to get the context back, however, thi
         )
     )
 
-`Context` yields an expection when used outside of a `With` block.
+`Context` yields an exception when used outside of a `With` block.
 
 **More info**
 
 * `phi.builder.Builder.Obj`
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html)
         """
+
         if dsl.With.GLOBAL_CONTEXT is dsl._NO_VALUE:
             raise Exception("Cannot use 'Context' outside of a 'With' block")
 
@@ -86,6 +93,155 @@ Here we called `Context` with no arguments to get the context back, however, thi
 
     def Pipe(self, x, *code, **kwargs):
         """
+`Pipe` is method that takes an input argument plus an expression from the DSL, it compiles the expression and applies the resulting function to the input. Its highly inspired by Elixir's [|> (pipe)](https://hexdocs.pm/elixir/Kernel.html#%7C%3E/2) operator.
+
+**Arguments**
+
+* **x**: any input object
+* ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).
+
+**Examples**
+
+    from phi import P
+
+    def add1(x): return x + 1
+    def mul3(x): return x * 3
+
+    x = P.Pipe(
+        1,
+        add1,
+        mul3
+    )
+
+    assert x == 6
+
+The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)
+
+    from phi import P
+
+    x = P.Pipe(
+        1,
+        P + 1,
+        P * 3
+    )
+
+    assert x == 6
+
+Create a branched computation instead
+
+    from phi import P
+
+    [x, y] = P.Pipe(
+        1,
+        [
+            P + 1  #1 + 1 == 2
+        ,
+            P * 3  #1 * 3 == 3
+        ]
+    )
+
+    assert x == 2
+    assert y == 3
+
+Compose it with a multiplication by 2
+
+    from phi import P
+
+    [x, y] = P.Pipe(
+        1,
+        P * 2,  #1 * 2 == 2
+        [
+            P + 1  #2 + 1 == 3
+        ,
+            P * 3  #2 * 3 == 6
+        ]
+    )
+
+    assert x == 3
+    assert y == 6
+
+Give names to the branches
+
+    from phi import P
+
+    result = P.Pipe(
+        1,
+        P * 2,  #1 * 2 == 2
+        dict(
+            x = P + 1  #2 + 1 == 3
+        ,
+            y = P * 3  #2 * 3 == 6
+        )
+    )
+
+    assert result.x == 3
+    assert result.y == 6
+
+Divide the `x` by the `y`.
+
+
+    from phi import P, Rec
+
+    result = P.Pipe(
+        1,
+        P * 2,  #1 * 2 == 2
+        dict(
+            x = P + 1  #2 + 1 == 3
+        ,
+            y = P * 3  #2 * 3 == 6
+        ),
+        Rec.x / Rec.y  #3 / 6 == 0.5
+    )
+
+    assert result == 0.5
+
+Save the value from the `P * 2` computation as `s` and retrieve it at the end in a branch
+
+    from phi import P, Rec
+
+    [result, s] = P.Pipe(
+        1,
+        P * 2, {'s'}  #1 * 2 == 2
+        dict(
+            x = P + 1  #2 + 1 == 3
+        ,
+            y = P * 3  #2 * 3 == 6
+        ),
+        [
+            Rec.x / Rec.y  #3 / 6 == 0.5
+        ,
+            's'
+        ]
+    )
+
+    assert result == 0.5
+    assert s == 2
+
+Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
+
+    from phi import P, Rec, Val
+
+    [result, s, val] = P.Pipe(
+        1,
+        P * 2, {'s'}  #2 * 1 == 2
+        dict(
+            x = P + 1  #2 + 1 == 3
+        ,
+            y = P * 3  #2 * 3 == 6
+        ),
+        [
+            Rec.x / Rec.y  #3 / 6 == 0.5
+        ,
+            's'  #2
+        ,
+            Val(9) + 1  #10
+        ]
+    )
+
+    assert result == 0.5
+    assert s == 2
+    assert val == 10
+
         """
         return self.Make(*code, **kwargs)(x)
 

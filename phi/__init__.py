@@ -67,8 +67,4 @@ def _read(fname):
 module = sys.modules[__name__]
 raw_docs = _read("README-template.md")
 __version__ = _read("version.txt")
-module.__doc__ = Pipe(
-    raw_docs,
-    Obj.format(__version__),
-    _to_pdoc_markdown
-)
+module.__doc__ = _to_pdoc_markdown(raw_docs.format(__version__))
