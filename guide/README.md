@@ -1,7 +1,7 @@
 # Phi
 Python is a very nice language that favors readability but its not very strong at functional programming and this often leads to repetitive code. Phi eases your functional programming experience in Python by providing the following modules
 
-* [dsl](https://cgarciae.github.io/phi/dsl.m.html): a neat way to compose computations + more.
+* [dsl](https://cgarciae.github.io/phi/dsl.m.html): a small DSL that helps you compose computations in various ways & more.
 * [lambdas](https://cgarciae.github.io/phi/lambdas.m.html): easy way to create quick lambdas with a mathematical flavor.
 * [builder](https://cgarciae.github.io/phi/builder.m.html): an extensible class that enables you to integrate other libraries into the DSL through a [fluent](https://en.wikipedia.org/wiki/Fluent_interface) API.
 * [patch](https://cgarciae.github.io/phi/patch.m.html): this module contains some helpers that enable you to integrate a complete existing module or class into the DSL be registering its methods/functions into a [Builder](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder).
@@ -11,7 +11,7 @@ Check out the [complete documentation](https://cgarciae.github.io/phi/).
 
 ## Installation
 
-    pip install phi==0.2.1
+    pip install phi
 
 
 #### Bleeding Edge
@@ -106,10 +106,8 @@ As you the the `[...]` element is compiled to a function that returns a list of 
     
     from phi import P, Obj
     
-    text = "1 22 33"
-    
     avg_word_length = P.Pipe(
-        text,
+        "1 22 33",
         Obj.split(" "), # ['1', '22', '333']
         P.map(len), # [1, 2, 3]
         P.sum() / P.len() # sum([1,2,3]) / len([1,2,3]) == 6 / 3 == 2
