@@ -1329,21 +1329,21 @@ table {
 <span class="sd">    def mul3(x): return x * 3</span>
 
 <span class="sd">    x = P.Pipe(</span>
-<span class="sd">        1,</span>
-<span class="sd">        add1,</span>
-<span class="sd">        mul3</span>
+<span class="sd">        1,     #input</span>
+<span class="sd">        add1,  #1 + 1 == 2</span>
+<span class="sd">        mul3   #2 * 3 == 6</span>
 <span class="sd">    )</span>
 
 <span class="sd">    assert x == 6</span>
 
-<span class="sd">The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)</span>
+<span class="sd">Use phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions</span>
 
 <span class="sd">    from phi import P</span>
 
 <span class="sd">    x = P.Pipe(</span>
-<span class="sd">        1,</span>
-<span class="sd">        P + 1,</span>
-<span class="sd">        P * 3</span>
+<span class="sd">        1,      #input</span>
+<span class="sd">        P + 1,  #1 + 1 == 2</span>
+<span class="sd">        P * 3   #2 * 3 == 6</span>
 <span class="sd">    )</span>
 
 <span class="sd">    assert x == 6</span>
@@ -1353,7 +1353,7 @@ table {
 <span class="sd">    from phi import P</span>
 
 <span class="sd">    [x, y] = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        [</span>
 <span class="sd">            P + 1  #1 + 1 == 2</span>
 <span class="sd">        ,</span>
@@ -1364,12 +1364,12 @@ table {
 <span class="sd">    assert x == 2</span>
 <span class="sd">    assert y == 3</span>
 
-<span class="sd">Compose it with a multiplication by 2</span>
+<span class="sd">Compose it with a multiplication by 2 (`P * 2`)</span>
 
 <span class="sd">    from phi import P</span>
 
 <span class="sd">    [x, y] = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        P * 2,  #1 * 2 == 2</span>
 <span class="sd">        [</span>
 <span class="sd">            P + 1  #2 + 1 == 3</span>
@@ -1386,7 +1386,7 @@ table {
 <span class="sd">    from phi import P</span>
 
 <span class="sd">    result = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        P * 2,  #1 * 2 == 2</span>
 <span class="sd">        dict(</span>
 <span class="sd">            x = P + 1  #2 + 1 == 3</span>
@@ -1404,7 +1404,7 @@ table {
 <span class="sd">    from phi import P, Rec</span>
 
 <span class="sd">    result = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        P * 2,  #1 * 2 == 2</span>
 <span class="sd">        dict(</span>
 <span class="sd">            x = P + 1  #2 + 1 == 3</span>
@@ -1421,8 +1421,8 @@ table {
 <span class="sd">    from phi import P, Rec</span>
 
 <span class="sd">    [result, s] = P.Pipe(</span>
-<span class="sd">        1,</span>
-<span class="sd">        P * 2, {&#39;s&#39;}  #1 * 2 == 2</span>
+<span class="sd">        1,  #input</span>
+<span class="sd">        P * 2, {&#39;s&#39;}  #1 * 2 == 2, saved as &#39;s&#39;</span>
 <span class="sd">        dict(</span>
 <span class="sd">            x = P + 1  #2 + 1 == 3</span>
 <span class="sd">        ,</span>
@@ -1431,7 +1431,7 @@ table {
 <span class="sd">        [</span>
 <span class="sd">            Rec.x / Rec.y  #3 / 6 == 0.5</span>
 <span class="sd">        ,</span>
-<span class="sd">            &#39;s&#39;</span>
+<span class="sd">            &#39;s&#39;  #load s == 2</span>
 <span class="sd">        ]</span>
 <span class="sd">    )</span>
 
@@ -1443,7 +1443,7 @@ table {
 <span class="sd">    from phi import P, Rec, Val</span>
 
 <span class="sd">    [result, s, val] = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        P * 2, {&#39;s&#39;}  #2 * 1 == 2</span>
 <span class="sd">        dict(</span>
 <span class="sd">            x = P + 1  #2 + 1 == 3</span>
@@ -1453,9 +1453,9 @@ table {
 <span class="sd">        [</span>
 <span class="sd">            Rec.x / Rec.y  #3 / 6 == 0.5</span>
 <span class="sd">        ,</span>
-<span class="sd">            &#39;s&#39;  #2</span>
+<span class="sd">            &#39;s&#39;  #load s == 2</span>
 <span class="sd">        ,</span>
-<span class="sd">            Val(9) + 1  #10</span>
+<span class="sd">            Val(9) + 1  #input 9 and add 1, gives 10</span>
 <span class="sd">        ]</span>
 <span class="sd">    )</span>
 
@@ -2006,21 +2006,21 @@ table {
 <span class="sd">    def mul3(x): return x * 3</span>
 
 <span class="sd">    x = P.Pipe(</span>
-<span class="sd">        1,</span>
-<span class="sd">        add1,</span>
-<span class="sd">        mul3</span>
+<span class="sd">        1,     #input</span>
+<span class="sd">        add1,  #1 + 1 == 2</span>
+<span class="sd">        mul3   #2 * 3 == 6</span>
 <span class="sd">    )</span>
 
 <span class="sd">    assert x == 6</span>
 
-<span class="sd">The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)</span>
+<span class="sd">Use phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions</span>
 
 <span class="sd">    from phi import P</span>
 
 <span class="sd">    x = P.Pipe(</span>
-<span class="sd">        1,</span>
-<span class="sd">        P + 1,</span>
-<span class="sd">        P * 3</span>
+<span class="sd">        1,      #input</span>
+<span class="sd">        P + 1,  #1 + 1 == 2</span>
+<span class="sd">        P * 3   #2 * 3 == 6</span>
 <span class="sd">    )</span>
 
 <span class="sd">    assert x == 6</span>
@@ -2030,7 +2030,7 @@ table {
 <span class="sd">    from phi import P</span>
 
 <span class="sd">    [x, y] = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        [</span>
 <span class="sd">            P + 1  #1 + 1 == 2</span>
 <span class="sd">        ,</span>
@@ -2041,12 +2041,12 @@ table {
 <span class="sd">    assert x == 2</span>
 <span class="sd">    assert y == 3</span>
 
-<span class="sd">Compose it with a multiplication by 2</span>
+<span class="sd">Compose it with a multiplication by 2 (`P * 2`)</span>
 
 <span class="sd">    from phi import P</span>
 
 <span class="sd">    [x, y] = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        P * 2,  #1 * 2 == 2</span>
 <span class="sd">        [</span>
 <span class="sd">            P + 1  #2 + 1 == 3</span>
@@ -2063,7 +2063,7 @@ table {
 <span class="sd">    from phi import P</span>
 
 <span class="sd">    result = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        P * 2,  #1 * 2 == 2</span>
 <span class="sd">        dict(</span>
 <span class="sd">            x = P + 1  #2 + 1 == 3</span>
@@ -2081,7 +2081,7 @@ table {
 <span class="sd">    from phi import P, Rec</span>
 
 <span class="sd">    result = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        P * 2,  #1 * 2 == 2</span>
 <span class="sd">        dict(</span>
 <span class="sd">            x = P + 1  #2 + 1 == 3</span>
@@ -2098,8 +2098,8 @@ table {
 <span class="sd">    from phi import P, Rec</span>
 
 <span class="sd">    [result, s] = P.Pipe(</span>
-<span class="sd">        1,</span>
-<span class="sd">        P * 2, {&#39;s&#39;}  #1 * 2 == 2</span>
+<span class="sd">        1,  #input</span>
+<span class="sd">        P * 2, {&#39;s&#39;}  #1 * 2 == 2, saved as &#39;s&#39;</span>
 <span class="sd">        dict(</span>
 <span class="sd">            x = P + 1  #2 + 1 == 3</span>
 <span class="sd">        ,</span>
@@ -2108,7 +2108,7 @@ table {
 <span class="sd">        [</span>
 <span class="sd">            Rec.x / Rec.y  #3 / 6 == 0.5</span>
 <span class="sd">        ,</span>
-<span class="sd">            &#39;s&#39;</span>
+<span class="sd">            &#39;s&#39;  #load s == 2</span>
 <span class="sd">        ]</span>
 <span class="sd">    )</span>
 
@@ -2120,7 +2120,7 @@ table {
 <span class="sd">    from phi import P, Rec, Val</span>
 
 <span class="sd">    [result, s, val] = P.Pipe(</span>
-<span class="sd">        1,</span>
+<span class="sd">        1,  #input</span>
 <span class="sd">        P * 2, {&#39;s&#39;}  #2 * 1 == 2</span>
 <span class="sd">        dict(</span>
 <span class="sd">            x = P + 1  #2 + 1 == 3</span>
@@ -2130,9 +2130,9 @@ table {
 <span class="sd">        [</span>
 <span class="sd">            Rec.x / Rec.y  #3 / 6 == 0.5</span>
 <span class="sd">        ,</span>
-<span class="sd">            &#39;s&#39;  #2</span>
+<span class="sd">            &#39;s&#39;  #load s == 2</span>
 <span class="sd">        ,</span>
-<span class="sd">            Val(9) + 1  #10</span>
+<span class="sd">            Val(9) + 1  #input 9 and add 1, gives 10</span>
 <span class="sd">        ]</span>
 <span class="sd">    )</span>
 
@@ -2792,7 +2792,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.DoRegisterMethod">
-    <p>def <span class="ident">DoRegisterMethod</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True)</p>
+    <p>def <span class="ident">DoRegisterMethod</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True)</p>
     </div>
     
 
@@ -3164,22 +3164,22 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <span class="k">def</span> <span class="nf">mul3</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span>
-    <span class="n">add1</span><span class="p">,</span>
-    <span class="n">mul3</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1">#input</span>
+    <span class="n">add1</span><span class="p">,</span>  <span class="c1">#1 + 1 == 2</span>
+    <span class="n">mul3</span>   <span class="c1">#2 * 3 == 6</span>
 <span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">6</span>
 </pre></div>
 
 
-<p>The previous using <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a></p>
+<p>Use phi <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a> to create the functions</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span>
-    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="mi">1</span><span class="p">,</span>      <span class="c1">#input</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1">#1 + 1 == 2</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>   <span class="c1">#2 * 3 == 6</span>
 <span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">6</span>
@@ -3190,7 +3190,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
 <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>  <span class="c1">#input</span>
     <span class="p">[</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#1 + 1 == 2</span>
     <span class="p">,</span>
@@ -3203,11 +3203,11 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 </pre></div>
 
 
-<p>Compose it with a multiplication by 2</p>
+<p>Compose it with a multiplication by 2 (<code>P * 2</code>)</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
 <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>  <span class="c1">#input</span>
     <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
     <span class="p">[</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
@@ -3225,7 +3225,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>  <span class="c1">#input</span>
     <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
@@ -3243,7 +3243,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>  <span class="c1">#input</span>
     <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
@@ -3261,8 +3261,8 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span>
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>  <span class="c1">#1 * 2 == 2</span>
+    <span class="mi">1</span><span class="p">,</span>  <span class="c1">#input</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>  <span class="c1">#1 * 2 == 2, saved as &#39;s&#39;</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -3271,7 +3271,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
     <span class="p">[</span>
         <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
     <span class="p">,</span>
-        <span class="s1">&#39;s&#39;</span>
+        <span class="s1">&#39;s&#39;</span>  <span class="c1">#load s == 2</span>
     <span class="p">]</span>
 <span class="p">)</span>
 
@@ -3284,7 +3284,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Val</span>
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>  <span class="c1">#input</span>
     <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>  <span class="c1">#2 * 1 == 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
@@ -3294,9 +3294,9 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
     <span class="p">[</span>
         <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
     <span class="p">,</span>
-        <span class="s1">&#39;s&#39;</span>  <span class="c1">#2</span>
+        <span class="s1">&#39;s&#39;</span>  <span class="c1">#load s == 2</span>
     <span class="p">,</span>
-        <span class="n">Val</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#10</span>
+        <span class="n">Val</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#input 9 and add 1, gives 10</span>
     <span class="p">]</span>
 <span class="p">)</span>
 
@@ -3318,23 +3318,23 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <span class="sd">def add1(x): return x + 1</span>
 <span class="sd">def mul3(x): return x * 3</span>
 <span class="sd">x = P.Pipe(</span>
-<span class="sd">    1,</span>
-<span class="sd">    add1,</span>
-<span class="sd">    mul3</span>
+<span class="sd">    1,     #input</span>
+<span class="sd">    add1,  #1 + 1 == 2</span>
+<span class="sd">    mul3   #2 * 3 == 6</span>
 <span class="sd">)</span>
 <span class="sd">assert x == 6</span>
-<span class="sd">previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)</span>
+<span class="sd">phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions</span>
 <span class="sd">from phi import P</span>
 <span class="sd">x = P.Pipe(</span>
-<span class="sd">    1,</span>
-<span class="sd">    P + 1,</span>
-<span class="sd">    P * 3</span>
+<span class="sd">    1,      #input</span>
+<span class="sd">    P + 1,  #1 + 1 == 2</span>
+<span class="sd">    P * 3   #2 * 3 == 6</span>
 <span class="sd">)</span>
 <span class="sd">assert x == 6</span>
 <span class="sd">te a branched computation instead</span>
 <span class="sd">from phi import P</span>
 <span class="sd">[x, y] = P.Pipe(</span>
-<span class="sd">    1,</span>
+<span class="sd">    1,  #input</span>
 <span class="sd">    [</span>
 <span class="sd">        P + 1  #1 + 1 == 2</span>
 <span class="sd">    ,</span>
@@ -3343,10 +3343,10 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <span class="sd">)</span>
 <span class="sd">assert x == 2</span>
 <span class="sd">assert y == 3</span>
-<span class="sd">ose it with a multiplication by 2</span>
+<span class="sd">ose it with a multiplication by 2 (`P * 2`)</span>
 <span class="sd">from phi import P</span>
 <span class="sd">[x, y] = P.Pipe(</span>
-<span class="sd">    1,</span>
+<span class="sd">    1,  #input</span>
 <span class="sd">    P * 2,  #1 * 2 == 2</span>
 <span class="sd">    [</span>
 <span class="sd">        P + 1  #2 + 1 == 3</span>
@@ -3359,7 +3359,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <span class="sd"> names to the branches</span>
 <span class="sd">from phi import P</span>
 <span class="sd">result = P.Pipe(</span>
-<span class="sd">    1,</span>
+<span class="sd">    1,  #input</span>
 <span class="sd">    P * 2,  #1 * 2 == 2</span>
 <span class="sd">    dict(</span>
 <span class="sd">        x = P + 1  #2 + 1 == 3</span>
@@ -3372,7 +3372,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <span class="sd">de the `x` by the `y`.</span>
 <span class="sd">from phi import P, Rec</span>
 <span class="sd">result = P.Pipe(</span>
-<span class="sd">    1,</span>
+<span class="sd">    1,  #input</span>
 <span class="sd">    P * 2,  #1 * 2 == 2</span>
 <span class="sd">    dict(</span>
 <span class="sd">        x = P + 1  #2 + 1 == 3</span>
@@ -3385,8 +3385,8 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <span class="sd"> the value from the `P * 2` computation as `s` and retrieve it at the end in a branch</span>
 <span class="sd">from phi import P, Rec</span>
 <span class="sd">[result, s] = P.Pipe(</span>
-<span class="sd">    1,</span>
-<span class="sd">    P * 2, {&#39;s&#39;}  #1 * 2 == 2</span>
+<span class="sd">    1,  #input</span>
+<span class="sd">    P * 2, {&#39;s&#39;}  #1 * 2 == 2, saved as &#39;s&#39;</span>
 <span class="sd">    dict(</span>
 <span class="sd">        x = P + 1  #2 + 1 == 3</span>
 <span class="sd">    ,</span>
@@ -3395,7 +3395,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <span class="sd">    [</span>
 <span class="sd">        Rec.x / Rec.y  #3 / 6 == 0.5</span>
 <span class="sd">    ,</span>
-<span class="sd">        &#39;s&#39;</span>
+<span class="sd">        &#39;s&#39;  #load s == 2</span>
 <span class="sd">    ]</span>
 <span class="sd">)</span>
 <span class="sd">assert result == 0.5</span>
@@ -3403,7 +3403,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <span class="sd">an input `Val` of 9 on a branch and add to it 1 just for the sake of it</span>
 <span class="sd">from phi import P, Rec, Val</span>
 <span class="sd">[result, s, val] = P.Pipe(</span>
-<span class="sd">    1,</span>
+<span class="sd">    1,  #input</span>
 <span class="sd">    P * 2, {&#39;s&#39;}  #2 * 1 == 2</span>
 <span class="sd">    dict(</span>
 <span class="sd">        x = P + 1  #2 + 1 == 3</span>
@@ -3413,9 +3413,9 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
 <span class="sd">    [</span>
 <span class="sd">        Rec.x / Rec.y  #3 / 6 == 0.5</span>
 <span class="sd">    ,</span>
-<span class="sd">        &#39;s&#39;  #2</span>
+<span class="sd">        &#39;s&#39;  #load s == 2</span>
 <span class="sd">    ,</span>
-<span class="sd">        Val(9) + 1  #10</span>
+<span class="sd">        Val(9) + 1  #input 9 and add 1, gives 10</span>
 <span class="sd">    ]</span>
 <span class="sd">)</span>
 <span class="sd">assert result == 0.5</span>
@@ -3433,7 +3433,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register0">
-    <p>def <span class="ident">Register0</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register0</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3458,7 +3458,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register1">
-    <p>def <span class="ident">Register1</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register1</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3484,7 +3484,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register2">
-    <p>def <span class="ident">Register2</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register2</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3509,7 +3509,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register3">
-    <p>def <span class="ident">Register3</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register3</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3534,7 +3534,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register4">
-    <p>def <span class="ident">Register4</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register4</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3559,7 +3559,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register5">
-    <p>def <span class="ident">Register5</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register5</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3584,7 +3584,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction0">
-    <p>def <span class="ident">RegisterFunction0</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction0</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3618,7 +3618,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction1">
-    <p>def <span class="ident">RegisterFunction1</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction1</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3672,7 +3672,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction2">
-    <p>def <span class="ident">RegisterFunction2</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction2</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3706,7 +3706,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction3">
-    <p>def <span class="ident">RegisterFunction3</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction3</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3740,7 +3740,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction4">
-    <p>def <span class="ident">RegisterFunction4</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction4</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3774,7 +3774,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction5">
-    <p>def <span class="ident">RegisterFunction5</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction5</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3808,7 +3808,7 @@ However, the 1st argument is omitted, a partial with the rest of the arguments i
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterMethod">
-    <p>def <span class="ident">RegisterMethod</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f1a8adab848&gt;, explain=True)</p>
+    <p>def <span class="ident">RegisterMethod</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f69b53ab848&gt;, explain=True)</p>
     </div>
     
 
