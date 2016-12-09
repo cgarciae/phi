@@ -7,7 +7,7 @@ Python is a very nice language that favors readability but its not very strong a
 * [patch](https://cgarciae.github.io/phi/patch.m.html): this module contains some helpers that enable you to integrate a complete existing module or class into the DSL be registering its methods/functions into a [Builder](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder).
 
 ## Documentation
-Check out the [complete documentation](https://cgarciae.github.io/phi/index.m.html).
+Check out the [complete documentation](https://cgarciae.github.io/phi/).
 
 ## Installation
 
