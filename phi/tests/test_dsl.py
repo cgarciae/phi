@@ -180,3 +180,20 @@ class TestDSL(object):
             "HOLA",
             P.Obj.lower()
         )
+
+    def test_record_object(self):
+
+        x = P.Pipe(
+            [1,2,3],
+            dict(
+                sum = sum
+            ,
+                len = len
+            )
+        )
+
+        assert x.sum == 6
+        assert x.len == 3
+
+        assert x['sum'] == 6
+        assert x['len'] == 3

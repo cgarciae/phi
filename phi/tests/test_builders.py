@@ -1,6 +1,6 @@
-import tensorflow as tf
-from phi import P, Builder, Obj, Val, Rec
+from phi import P, Builder, Obj, Val, Rec, Context
 import math
+import pytest
 # from phi import tb
 
 add2 = P + 2
@@ -37,7 +37,7 @@ class TestBuilder(object):
 
     @classmethod
     def setup_method(self):
-        self.x = tf.placeholder(tf.float32, shape=[None, 5])
+        pass
 
     def test_C_1(self):
         assert P._(add2)(4) == 6
@@ -263,20 +263,20 @@ class TestBuilder(object):
 
         assert a == 18 and b == 18 and c == 14
 
-    def test_scope(self):
+    def test_context(self):
         y = P.Ref('y')
 
-        z = P.Pipe(
-            self.x,
-            P.With( tf.name_scope('TEST'),
-                P * 2,
-                P + 4, { y }
-            ),
-            P ** 3
+        length = P.Pipe(
+            "phi/tests/test.txt",
+            P.With( open,
+                Context,
+                Obj.read(), { y },
+                len
+            )
         )
 
-        assert "TEST/" in y().name
-        assert "TEST/" not in z.name
+        assert length == 11
+        assert y() == "hello world"
 
     def test_register_1(self):
 
@@ -324,15 +324,16 @@ class TestBuilder(object):
             "some ",
             P.With( DummyContext("random "),
             (
-                lambda s: s + P.Scope(),
+                P + P.Context,
                 P.With( DummyContext("text"),
-                    lambda s: s + P.Scope()
+                    P + P.Context
                 )
             )
             )
         )
 
-        assert P.Scope() == None
+        with pytest.raises(Exception):
+            P.Context() #Cannot use it outside of With
 
     def test_ref_integraton_with_dsl(self):
 

@@ -1,92 +1,13 @@
 # Phi
-Python is a very nice language that favor readability, its not very strong at functional programming and this often leads to repetitive code.
-Phi is a library for [fluent](https://en.wikipedia.org/wiki/Fluent_interface) functional programming in Python which includes a DSL based On [applicatives](http://learnyouahaskell.com/functors-applicative-functors-and-monoids) + a Builder class that helps you to port/create libraries that integrate with the DSL.
+Python is a very nice language that favors readability but its not very strong at functional programming and this often leads to repetitive code. Phi eases your functional programming experience in Python by providing the following modules
 
-#### Goals
+* [dsl](https://cgarciae.github.io/phi/dsl.m.html): a neat way to compose computations + more.
+* [lambdas](https://cgarciae.github.io/phi/lambdas.m.html): easy way to create quick lambdas with a mathematical flavor.
+* [builder](https://cgarciae.github.io/phi/builder.m.html): an extensible class that enables you to integrate other libraries into the DSL through a [fluent](https://en.wikipedia.org/wiki/Fluent_interface) API.
+* [patch](https://cgarciae.github.io/phi/patch.m.html): this module contains some helpers that enable you to integrate a complete existing module or class into the DSL be registering its methods/functions into a [Builder](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder).
 
-* Comming Soon!
-
-## DSL
-Phi uses a DSL that allows you to express complex computations by building On simple functions
-
-### Composing
-The most simple thing the DSL does is function composition
-
-    from phi import Compile
-
-    f = Compile(
-      lambda x: x + 1,
-      lambda x: x * 2,
-      lambda x: x + 3
-    )
-
-    assert 11 == f(3)
-
-The above computation is the same as:
-
-    f(x) = (x + 1) * 2 + 3
-
-Using `fn.py`s `P` object included with Phi one can rewrite the previous code as:
-
-    from phi import Compile, P
-
-    f = Compile(
-      P + 1,
-      P * 2,
-      P + 3
-    )
-
-    assert 11 == f(3)
-
-In general, if express function composition
-
-    lambda f, g: lambda x: f(g(x))
-
-as
-
-    f . g
-
-then
-
-    Compile(f1, f2, ..., fn-1, fn) = fn . fn-1 . (...) . f2 . f1
-
-in other words functions are composed backwards to express the natural flow of the computation.
-
-##### P
-
-You can also *P*ipe a value directly into an expression with the *P* object
-
-    from phi import P, P
-
-    assert 11 == P.Pipe(
-      3,
-      P + 1,
-      P * 2,
-      P + 3
-    )
-
-Most of the time this is more convenient, plus `P` contains some helper methods that we will see later, so `P` will be used instead of `Compile` from here On.
-
-### Branching
-Branching is express via lists and allows you to express a branched computation where a list with the values of the different paths is returned.
-
-    import phi import P, P
-
-    assert [8, 7] == P.Pipe(
-      3,
-      P + 1,
-      [
-        P * 2
-      ,
-        P + 3
-      ]
-    )
-
-the above computation is the same as
-
-    f(x) = [(x + 1) * 2, (x + 1) + 3]
-
-Branching has some subtle rules that you should checkout On the DSL's documentation.
+## Documentation
+Check out the [complete documentation](https://cgarciae.github.io/phi/index.m.html).
 
 ## Installation
 
@@ -97,18 +18,102 @@ Branching has some subtle rules that you should checkout On the DSL's documentat
 
     pip install git+https://github.com/cgarciae/phi.git@develop
 
+## Status
+* Version: **{0}**.
+* Current effort: Documentation (> 60%). Please create an issue if documentation is unclear, its of great priority for this library.
+* Milestone: reach 1.0.0 after docs completed + feedback from the community.
+
 
 ## Getting Started
+The global `phi.P` object exposes most of the API and preferably should be imported directly. The most simple thing the DSL does is function composition:
 
+```python
+from phi import P
 
-## Features
-Comming Soon!
+f = P.Make(
+  lambda x: x + 1,
+  lambda x: x * 2,
+  lambda x: x + 3
+)
 
-## Documentation
-[Complete Documentation](http://cgarciae.github.io/phi/index.html)
+assert 11 == f(3)
+```
 
-## The Guide
-Check out [The Guide](https://cgarciae.gitbooks.io/phi/content/) to learn to code in Phi. (Comming Soon!)
+The above computation is equivalent to
 
-## Full Example
-Comming Soon!
+```python
+lambda x: (x + 1) * 2 + 3
+```
+
+`P.Make` can compile any valid expression of the DSL into a function, what you are seeing here is the compilation of the `*args` tuple. Check out the documentation of the [dsl](https://cgarciae.github.io/phi/dsl.m.html).
+
+Now lets rewrite the previous using `P`'s [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) capabilities
+
+```python
+from phi import P
+
+f = P.Make(
+  P + 1,
+  P * 2,
+  P + 3
+)
+
+assert 11 == f(3)
+```
+
+**Pipe**
+
+You can also pipe a value directly into an expression with `P.Pipe`
+
+```python
+from phi import P
+
+assert 11 == P.Pipe(
+  3,
+  P + 1,
+  P * 2,
+  P + 3
+)
+```
+
+### Branching
+Sometimes we have do separate computations, this is where branching comes in. It is expressed via a list (iterable in general) where each element is a different computational path and a list is returned by the Branch element:
+
+```python
+import phi import P
+
+assert [0, 4] == P.Pipe(
+  1,
+  P + 1,
+  [
+    P * 2
+  ,
+    P - 2
+  ]
+)
+```
+
+The above computation equivalent to
+
+```python
+lambda x: [(x + 1) * 2, (x + 1) - 2]
+```
+
+As you the the `[...]` element is compiled to a function that returns a list of values. Check out the documentation of the [dsl](https://cgarciae.github.io/phi/dsl.m.html) for more information.
+
+## Nice Examples
+
+```python
+from phi import P, Obj
+
+text = "1 22 33"
+
+avg_word_length = P.Pipe(
+    text,
+    Obj.split(" "), # ['1', '22', '333']
+    P.map(len), # [1, 2, 3]
+    P.sum() / P.len() # sum([1,2,3]) / len([1,2,3]) == 6 / 3 == 2
+)
+
+assert 2 == avg_word_length
+```
