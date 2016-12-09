@@ -326,7 +326,7 @@ Here you *save* the value outputed by `fun_1` and the load it as the initial val
 
     return x
 
-### Write especial case
+### Write special case
 When composing its aesthetically better to put writes in the same line as the function whos value its storing to make the intent a bit more clear:
 
     (
@@ -612,7 +612,7 @@ class Record(Node):
 class With(Node):
     """docstring for Record."""
 
-    GLOBAL_CONTEXT = None
+    GLOBAL_CONTEXT = _NO_VALUE
 
     def __init__(self, scope_code, *body_code):
         super(With, self).__init__()

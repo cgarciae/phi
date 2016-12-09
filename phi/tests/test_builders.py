@@ -1,5 +1,6 @@
 from phi import P, Builder, Obj, Val, Rec, Context
 import math
+import pytest
 # from phi import tb
 
 add2 = P + 2
@@ -331,7 +332,8 @@ class TestBuilder(object):
             )
         )
 
-        assert P.Context() == None
+        with pytest.raises(Exception):
+            P.Context() #Cannot use it outside of With
 
     def test_ref_integraton_with_dsl(self):
 

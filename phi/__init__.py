@@ -3,7 +3,7 @@ import builder
 import utils
 import dsl
 import lambdas
-import special_objects
+import patch
 
 from dsl import With
 from builder import Builder
@@ -40,7 +40,7 @@ import os
 import sys
 
 #pdoc
-__all__ = ["dsl", "builder", "lambdas", "special_objects"]
+__all__ = ["dsl", "builder", "lambdas", "patch"]
 
 #set documentation
 
