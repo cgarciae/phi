@@ -1045,10 +1045,21 @@ table {
         
           
   <ul>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_class">test_class</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_compile">test_compile</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_compile_refs">test_compile_refs</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_compile_single_function">test_compile_single_function</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_dict">test_dict</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_fn">test_fn</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_identities">test_identities</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_input">test_input</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_list">test_list</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_nested_compiles">test_nested_compiles</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_read">test_read</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_record_object">test_record_object</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_single_functions">test_single_functions</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_write">test_write</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_write_tree">test_write_tree</a></li>
   </ul>
 
         </li>
@@ -1071,22 +1082,28 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_dsl" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">dsl</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_1</span><span class="p">,</span> <span class="n">_2</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">Builder</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">utils</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">dsl</span><span class="p">,</span> <span class="n">P</span>
 
 <span class="k">class</span> <span class="nc">TestDSL</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for TestDSL.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">test_compile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
+
+    <span class="k">def</span> <span class="nf">test_compile_single_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="n">f_compiled</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">assert</span> <span class="n">f</span> <span class="o">==</span> <span class="n">f_compiled</span>
 
     <span class="k">def</span> <span class="nf">test_read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">refs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">x</span><span class="o">=</span><span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,)</span>
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">refs</span> <span class="o">==</span> <span class="n">refs</span> <span class="c1">#read doesnt modify</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>
@@ -1094,35 +1111,224 @@ table {
     <span class="k">def</span> <span class="nf">test_write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
-            <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
-            <span class="n">_</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>
             <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_write_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">}</span>
+            <span class="p">,</span>
+                <span class="n">P</span> <span class="o">-</span> <span class="mi">3</span>
+            <span class="p">,</span>
+                <span class="s1">&#39;c&#39;</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">600</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_write_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span>
+            <span class="p">,</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">P</span> <span class="o">-</span> <span class="mi">3</span>
+            <span class="p">,</span>
+                <span class="s1">&#39;c&#39;</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
-            <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="p">[</span>
             <span class="p">(</span>
-                <span class="n">val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-                <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
             <span class="p">)</span>
             <span class="p">,</span>
                 <span class="s1">&#39;a&#39;</span>
             <span class="p">,</span>
-                <span class="n">utils</span><span class="o">.</span><span class="n">identity</span>
+                <span class="p">()</span>
             <span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_identities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(),</span>
+            <span class="p">[]</span>
+        <span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_single_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">[</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+            <span class="nb">int</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">assert</span> <span class="mi">20</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+
+        <span class="n">ast</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">ast</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Function</span>
+
+    <span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">,</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+            <span class="p">,</span>
+                <span class="p">()</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">assert</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">original</span> <span class="o">=</span> <span class="p">(),</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+                <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
+            <span class="p">),</span>
+            <span class="p">[</span>
+                <span class="p">()</span>
+            <span class="p">,</span>
+            <span class="p">(</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Rec</span><span class="o">.</span><span class="n">len</span><span class="p">,</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="p">[</span><span class="n">obj</span><span class="p">,</span> <span class="n">double_len</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">obj</span><span class="o">.</span><span class="n">original</span> <span class="o">==</span> <span class="s2">&quot;hello&quot;</span>
+        <span class="k">assert</span> <span class="n">obj</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="s2">&quot;HELLO&quot;</span>
+        <span class="k">assert</span> <span class="n">obj</span><span class="o">.</span><span class="n">len</span> <span class="o">==</span> <span class="mi">5</span>
+        <span class="k">assert</span> <span class="n">double_len</span> <span class="o">==</span> <span class="mi">10</span>
+
+    <span class="k">def</span> <span class="nf">test_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="s2">&quot;hola&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="s2">&quot;HOLA&quot;</span><span class="p">,</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_record_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
+            <span class="p">,</span>
+                <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span> <span class="o">==</span> <span class="mi">6</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">len</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;len&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+
+    <span class="k">def</span> <span class="nf">test_compile_refs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
+            <span class="p">,</span>
+                <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
+            <span class="p">,</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
+            <span class="p">,</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+            <span class="p">),</span>
+            <span class="n">refs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="mi">5</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span> <span class="o">==</span> <span class="mi">6</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">len</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">10</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">z</span> <span class="o">==</span> <span class="mi">7</span>
+
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;len&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span>
+
+
+    <span class="k">def</span> <span class="nf">test_nested_compiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>
+        <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1146,16 +1352,22 @@ table {
     <span class="sd">&quot;&quot;&quot;docstring for TestDSL.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">test_compile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
+
+    <span class="k">def</span> <span class="nf">test_compile_single_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="n">f_compiled</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">assert</span> <span class="n">f</span> <span class="o">==</span> <span class="n">f_compiled</span>
 
     <span class="k">def</span> <span class="nf">test_read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">refs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">x</span><span class="o">=</span><span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,)</span>
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">refs</span> <span class="o">==</span> <span class="n">refs</span> <span class="c1">#read doesnt modify</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>
@@ -1163,35 +1375,224 @@ table {
     <span class="k">def</span> <span class="nf">test_write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
-            <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
-            <span class="n">_</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>
             <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_write_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">}</span>
+            <span class="p">,</span>
+                <span class="n">P</span> <span class="o">-</span> <span class="mi">3</span>
+            <span class="p">,</span>
+                <span class="s1">&#39;c&#39;</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">600</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_write_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span>
+            <span class="p">,</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">P</span> <span class="o">-</span> <span class="mi">3</span>
+            <span class="p">,</span>
+                <span class="s1">&#39;c&#39;</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
-            <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="p">[</span>
             <span class="p">(</span>
-                <span class="n">val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-                <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
             <span class="p">)</span>
             <span class="p">,</span>
                 <span class="s1">&#39;a&#39;</span>
             <span class="p">,</span>
-                <span class="n">utils</span><span class="o">.</span><span class="n">identity</span>
+                <span class="p">()</span>
             <span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_identities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(),</span>
+            <span class="p">[]</span>
+        <span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_single_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">[</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+            <span class="nb">int</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">assert</span> <span class="mi">20</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+
+        <span class="n">ast</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">ast</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Function</span>
+
+    <span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">,</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+            <span class="p">,</span>
+                <span class="p">()</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">assert</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">original</span> <span class="o">=</span> <span class="p">(),</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+                <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
+            <span class="p">),</span>
+            <span class="p">[</span>
+                <span class="p">()</span>
+            <span class="p">,</span>
+            <span class="p">(</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Rec</span><span class="o">.</span><span class="n">len</span><span class="p">,</span>
+                <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="p">[</span><span class="n">obj</span><span class="p">,</span> <span class="n">double_len</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">obj</span><span class="o">.</span><span class="n">original</span> <span class="o">==</span> <span class="s2">&quot;hello&quot;</span>
+        <span class="k">assert</span> <span class="n">obj</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="s2">&quot;HELLO&quot;</span>
+        <span class="k">assert</span> <span class="n">obj</span><span class="o">.</span><span class="n">len</span> <span class="o">==</span> <span class="mi">5</span>
+        <span class="k">assert</span> <span class="n">double_len</span> <span class="o">==</span> <span class="mi">10</span>
+
+    <span class="k">def</span> <span class="nf">test_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="s2">&quot;hola&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="s2">&quot;HOLA&quot;</span><span class="p">,</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_record_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
+            <span class="p">,</span>
+                <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span> <span class="o">==</span> <span class="mi">6</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">len</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;len&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+
+    <span class="k">def</span> <span class="nf">test_compile_refs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
+            <span class="p">,</span>
+                <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
+            <span class="p">,</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
+            <span class="p">,</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+            <span class="p">),</span>
+            <span class="n">refs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="mi">5</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span> <span class="o">==</span> <span class="mi">6</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">len</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">10</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">z</span> <span class="o">==</span> <span class="mi">7</span>
+
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;len&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span>
+
+
+    <span class="k">def</span> <span class="nf">test_nested_compiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>
+        <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1207,6 +1608,35 @@ table {
           <h3>Methods</h3>
             
   <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_class">
+    <p>def <span class="ident">test_class</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_class', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_class" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="nb">int</span>
+    <span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">assert</span> <span class="mi">20</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ast</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">ast</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Function</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.tests.test_dsl.TestDSL.test_compile">
     <p>def <span class="ident">test_compile</span>(</p><p>self)</p>
     </div>
@@ -1218,9 +1648,168 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_compile', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_dsl.TestDSL.test_compile" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_compile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_compile_refs">
+    <p>def <span class="ident">test_compile_refs</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_compile_refs', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_compile_refs" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_compile_refs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
+        <span class="p">,</span>
+            <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
+        <span class="p">,</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
+        <span class="p">,</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+        <span class="p">),</span>
+        <span class="n">refs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span> <span class="o">==</span> <span class="mi">6</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">len</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">10</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">z</span> <span class="o">==</span> <span class="mi">7</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;len&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_compile_single_function">
+    <p>def <span class="ident">test_compile_single_function</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_compile_single_function', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_compile_single_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_compile_single_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="n">f_compiled</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">assert</span> <span class="n">f</span> <span class="o">==</span> <span class="n">f_compiled</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_dict">
+    <p>def <span class="ident">test_dict</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_dict', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_dict" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">original</span> <span class="o">=</span> <span class="p">(),</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+            <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
+        <span class="p">),</span>
+        <span class="p">[</span>
+            <span class="p">()</span>
+        <span class="p">,</span>
+        <span class="p">(</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Rec</span><span class="o">.</span><span class="n">len</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="p">[</span><span class="n">obj</span><span class="p">,</span> <span class="n">double_len</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">obj</span><span class="o">.</span><span class="n">original</span> <span class="o">==</span> <span class="s2">&quot;hello&quot;</span>
+    <span class="k">assert</span> <span class="n">obj</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="s2">&quot;HELLO&quot;</span>
+    <span class="k">assert</span> <span class="n">obj</span><span class="o">.</span><span class="n">len</span> <span class="o">==</span> <span class="mi">5</span>
+    <span class="k">assert</span> <span class="n">double_len</span> <span class="o">==</span> <span class="mi">10</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_fn">
+    <p>def <span class="ident">test_fn</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_fn', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_fn" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="s2">&quot;hola&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="s2">&quot;HOLA&quot;</span><span class="p">,</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_identities">
+    <p>def <span class="ident">test_identities</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_identities', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_identities" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_identities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(),</span>
+        <span class="p">[]</span>
+    <span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1243,20 +1832,88 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
-        <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
         <span class="p">[</span>
         <span class="p">(</span>
-            <span class="n">val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-            <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
         <span class="p">)</span>
         <span class="p">,</span>
             <span class="s1">&#39;a&#39;</span>
         <span class="p">,</span>
-            <span class="n">utils</span><span class="o">.</span><span class="n">identity</span>
+            <span class="p">()</span>
         <span class="p">]</span>
     <span class="p">)</span>
-    <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_list">
+    <p>def <span class="ident">test_list</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_list', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_list" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">,</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+        <span class="p">,</span>
+            <span class="p">()</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">assert</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_nested_compiles">
+    <p>def <span class="ident">test_nested_compiles</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_nested_compiles', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_nested_compiles" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_nested_compiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;s&#39;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;s&#39;</span>
+    <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1281,9 +1938,67 @@ table {
         <span class="n">x</span><span class="o">=</span><span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,)</span>
-    <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">refs</span> <span class="o">==</span> <span class="n">refs</span> <span class="c1">#read doesnt modify</span>
     <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_record_object">
+    <p>def <span class="ident">test_record_object</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_record_object', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_record_object" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_record_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
+        <span class="p">,</span>
+            <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span> <span class="o">==</span> <span class="mi">6</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">len</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;len&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_single_functions">
+    <p>def <span class="ident">test_single_functions</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_single_functions', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_single_functions" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_single_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="p">[</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1306,13 +2021,48 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
     <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
-        <span class="n">_</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
-        <span class="n">_</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>
         <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
     <span class="p">)</span>
-    <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_write_tree">
+    <p>def <span class="ident">test_write_tree</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_write_tree', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_write_tree" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_write_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">[</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="p">,</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+        <span class="p">,</span>
+            <span class="n">P</span> <span class="o">-</span> <span class="mi">3</span>
+        <span class="p">,</span>
+            <span class="s1">&#39;c&#39;</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>

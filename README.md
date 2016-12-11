@@ -177,7 +177,7 @@ assert val == 10
     pip install git+https://github.com/cgarciae/phi.git@develop
 
 ## Status
-* Version: **0.2.1**.
+* Version: **0.3.0**.
 * Current effort: Documentation (> 60%). Please create an issue if documentation is unclear, its of great priority for this library.
 * Milestone: reach 1.0.0 after docs completed + feedback from the community.
 
@@ -187,7 +187,7 @@ assert val == 10
 from phi import P, Obj
 
 avg_word_length = P.Pipe(
-    "1 22 33",
+    "1 22 333",
     Obj.split(" "), # ['1', '22', '333']
     P.map(len), # [1, 2, 3]
     P.sum() / P.len() # sum([1,2,3]) / len([1,2,3]) == 6 / 3 == 2

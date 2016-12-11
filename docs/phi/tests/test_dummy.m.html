@@ -1049,7 +1049,7 @@ table {
         
         </li>
         <li class="mono">
-        <span class="class_name"><a href="#phi.tests.test_dummy.C">C</a></span>
+        <span class="class_name"><a href="#phi.tests.test_dummy.Compile">Compile</a></span>
         
         </li>
         <li class="mono">
@@ -1088,14 +1088,14 @@ table {
        <span class="k">return</span> <span class="n">A</span><span class="o">.</span><span class="n">_S</span>
 <span class="n">lass</span> <span class="n">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
    <span class="sd">&quot;&quot;&quot;docstring for B.&quot;&quot;&quot;</span>
-<span class="n">lass</span> <span class="n">C</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;docstring for C .&quot;&quot;&quot;</span>
+<span class="n">lass</span> <span class="n">Compile</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;docstring for Compile .&quot;&quot;&quot;</span>
 <span class="n">lass</span> <span class="n">TestDummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
    <span class="sd">&quot;&quot;&quot;docstring for TestDummy.&quot;&quot;&quot;</span>
    <span class="k">def</span> <span class="nf">test_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
        <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
        <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
-       <span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+       <span class="n">c</span> <span class="o">=</span> <span class="n">Compile</span><span class="p">()</span>
        <span class="n">A</span><span class="o">.</span><span class="n">_S</span> <span class="o">=</span> <span class="s2">&quot;HOLA&quot;</span>
        <span class="k">assert</span> <span class="n">b</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">a</span><span class="o">.</span><span class="n">S</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
 </pre></div>
@@ -1193,15 +1193,15 @@ table {
       </div>
       
       <div class="item">
-      <p id="phi.tests.test_dummy.C" class="name">class <span class="ident">C</span></p>
+      <p id="phi.tests.test_dummy.Compile" class="name">class <span class="ident">Compile</span></p>
       
   
-    <div class="desc"><p>docstring for C .</p></div>
+    <div class="desc"><p>docstring for Compile .</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dummy.C', this);">Show source &equiv;</a></p>
-  <div id="source-phi.tests.test_dummy.C" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for C .&quot;&quot;&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dummy.Compile', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dummy.Compile" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Compile</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for Compile .&quot;&quot;&quot;</span>
 </pre></div>
 
   </div>
@@ -1211,13 +1211,13 @@ table {
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#phi.tests.test_dummy.C">C</a></li>
+          <li><a href="#phi.tests.test_dummy.Compile">Compile</a></li>
           <li><a href="#phi.tests.test_dummy.A">A</a></li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="phi.tests.test_dummy.C.S" class="name">var <span class="ident">S</span></p>
+            <p id="phi.tests.test_dummy.Compile.S" class="name">var <span class="ident">S</span></p>
             
     <p class="inheritance">
      <strong>Inheritance:</strong>
@@ -1247,7 +1247,7 @@ table {
     <span class="k">def</span> <span class="nf">test_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Compile</span><span class="p">()</span>
 
         <span class="n">A</span><span class="o">.</span><span class="n">_S</span> <span class="o">=</span> <span class="s2">&quot;HOLA&quot;</span>
 
@@ -1280,7 +1280,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Compile</span><span class="p">()</span>
     <span class="n">A</span><span class="o">.</span><span class="n">_S</span> <span class="o">=</span> <span class="s2">&quot;HOLA&quot;</span>
     <span class="k">assert</span> <span class="n">b</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">a</span><span class="o">.</span><span class="n">S</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
 </pre></div>

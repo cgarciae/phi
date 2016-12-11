@@ -2,7 +2,7 @@
 
 find . -name "*.pyc" -delete
 echo "Generating docs"
-PYTHONPATH=./phi pdoc --html-dir=docs --html phi --only-pypath --overwrite
+PYTHONPATH=./phi pdoc --html-dir=docs --html --all-submodules --overwrite phi
 echo "Making README.md"
 python scripts/create_readme.py
 echo "Finished"

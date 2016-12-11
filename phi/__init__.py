@@ -17,9 +17,11 @@ P = PythonBuilder(utils.identity)
 Then0 = P.Then0
 Then = P.Then
 Then1 = P.Then1
+Then2 = P.Then2
 Then3 = P.Then3
 Then4 = P.Then4
 Then5 = P.Then5
+ThenAt = P.ThenAt
 Read = P.Read
 Write = P.Write
 Val = P.Val
@@ -47,9 +49,6 @@ Abreviation for `P.NMake` or `phi.Make`.
 ########################
 import os
 
-#pdoc
-__all__ = ["dsl", "builder", "lambdas", "patch"]
-
 #set documentation
 
 def _to_pdoc_markdown(doc):
@@ -72,6 +71,6 @@ def _to_pdoc_markdown(doc):
 def _read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-raw_docs = _read("README-template.md")
+_raw_docs = _read("README-template.md")
 __version__ = _read("version.txt")
-__doc__ = _to_pdoc_markdown(raw_docs.format(__version__))
+__doc__ = _to_pdoc_markdown(_raw_docs.format(__version__))
