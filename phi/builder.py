@@ -90,6 +90,7 @@ Here we called `Context` with no arguments to get the context back, however, sin
 
     With = dsl.With
     Ref = dsl.Ref
+    If = dsl.If
 
     def Pipe(self, x, *code, **kwargs):
         """
@@ -185,10 +186,10 @@ The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.ht
     assert f(1) == 6
         """
 
-        _return_type = kwargs['_return_type'] if '_return_type' in kwargs else None
-        flatten = kwargs['flatten'] if 'flatten' in kwargs else False
-        refs = kwargs['refs'] if 'refs' in kwargs else {}
-        ref_manager = kwargs['ref_manager'] if 'ref_manager' in kwargs else True
+        _return_type = kwargs.get('_return_type', None)
+        flatten = kwargs.get('flatten', False)
+        refs = kwargs.get('refs', {})
+        ref_manager = kwargs.get('ref_manager', True)
 
         # code = (self, code)
 

@@ -69,6 +69,9 @@ class RefManager(object):
 
     @classmethod
     def set_ref(cls, ref):
+        #Copy to avoid stateful behaviour
+        cls.CURRENT_REFS = cls.CURRENT_REFS.copy()
+
         if ref.name in cls.CURRENT_REFS:
             other_ref = cls.CURRENT_REFS[ref.name]
             # merge state: borg pattern
@@ -706,6 +709,32 @@ Here we just made a lamda that took in the argument `z` but it was completely ig
     def __compile__(self):
         f = lambda x: self.value
         return f
+
+
+class If(Node):
+    """docstring for If."""
+    def __init__(self, Predicate, *Then, **kwargs):
+
+        Else = kwargs.get('Else', ())
+
+        self.Predicate = _parse(Predicate)
+        self.Then = _parse(Then)
+        self.Else_ = _parse(Else)
+
+    def __compile__(self):
+        Predicate = self.Predicate.__compile__()
+        Then = self.Then.__compile__()
+        Else = self.Else_.__compile__()
+
+        f = lambda x: Then(x) if Predicate(x) else Else(x)
+
+        return f
+
+    def Else(self, *Else):
+        self.Else_ = _parse(Else)
+        return self
+
+
 
 
 
