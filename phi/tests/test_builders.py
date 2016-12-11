@@ -1,4 +1,4 @@
-from phi import P, Builder, Obj, Val, Rec, Context
+from phi import P, Builder, Obj, Val, Rec, Context, Read, Write
 import math
 import pytest
 # from phi import tb
@@ -298,7 +298,7 @@ class TestBuilder(object):
     def test_reference(self):
         add_ref = P.Ref('add_ref')
 
-        assert 8 == 3 >> P.Make(P.add(2).On(add_ref).add(3))
+        assert 8 == 3 >> P.Make(P.add(2).Write(add_ref).add(3))
         assert 5 == add_ref()
 
     def test_ref_props(self):
@@ -343,7 +343,7 @@ class TestBuilder(object):
         assert 5 == P.Pipe(
             1,
             P + 4,
-            P.On(y),
+            P.Write(y),
             P * 10,
             'y'
         )
@@ -351,7 +351,7 @@ class TestBuilder(object):
         assert 5 == P.Pipe(
             1,
             P + 4,
-            P.On(y),
+            P.Write(y),
             P * 10,
             'y'
         )
@@ -359,7 +359,7 @@ class TestBuilder(object):
         assert 5 == P.Pipe(
             1,
             P + 4,
-            P.On('y'),
+            P.Write('y'),
             P * 10,
             'y'
         )
@@ -378,4 +378,55 @@ class TestBuilder(object):
             ,
                 ()
             ]
+        )
+
+    def test_read_method(self):
+
+        assert 1 == P.Pipe(
+            1,
+            P + 1, {'s'},
+            P * 100,
+            's', P - 1
+        )
+
+        assert 1 == P.Pipe(
+            1,
+            P + 1, {'s'},
+            P * 100,
+            Read('s') - 1
+        )
+
+        assert 1 == P.Pipe(
+            1,
+            P + 1, {'s'},
+            P * 100,
+            Read.s - 1
+        )
+
+        assert 1 == P.Pipe(
+            1,
+            P + 1, {'s'},
+            P * 100,
+            Read['s'] - 1
+        )
+
+        assert 1 == P.Pipe(
+            1,
+            P + 1, Write.s,
+            P * 100,
+            Read.s - 1
+        )
+
+        assert 1 == P.Pipe(
+            1,
+            P + 1, Write('s'),
+            P * 100,
+            Read.s - 1
+        )
+
+        assert 1 == P.Pipe(
+            1,
+            P + 1, Write['s'],
+            P * 100,
+            Read.s - 1
         )
