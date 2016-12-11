@@ -38,18 +38,49 @@ class Ref(object):
     def __init__(self, name, value=_NO_VALUE):
         super(Ref, self).__init__()
         self.name = name
-        self._value = value
+        self.value = value
 
     def __call__(self, *optional):
-        if self._value is _NO_VALUE:
+        if self.value is _NO_VALUE:
             raise Exception("Trying to read Ref('{0}') before assignment".format(self.name))
 
-        return self._value
+        return self.value
 
     def set(self, x):
-        self._value = x
+        self.value = x
 
         return x
+
+
+class RefManager(object):
+
+    CURRENT_REFS = None
+
+    def __init__(self, next_refs={}):
+        self.previous_refs = RefManager.CURRENT_REFS
+        self.next_refs = next_refs
+
+    def __enter__(self):
+        RefManager.CURRENT_REFS = self.next_refs
+        return RefManager.CURRENT_REFS
+
+    def __exit__(self, *args):
+        RefManager.CURRENT_REFS = self.previous_refs
+
+    @classmethod
+    def set_ref(cls, ref):
+        if ref.name in cls.CURRENT_REFS:
+            other_ref = cls.CURRENT_REFS[ref.name]
+            # merge state: borg pattern
+            other_ref.__dict__.update(ref.__dict__)
+        else:
+            cls.CURRENT_REFS[ref.name] = ref
+
+    @classmethod
+    def get_ref(cls, name):
+        return cls.CURRENT_REFS[name]
+
+
 
 class _RecordObject(dict):
     """docstring for DictObject."""
@@ -123,7 +154,7 @@ class Node(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def __compile__(self, refs):
+    def __compile__(self):
         pass
 
 class Function(Node):
@@ -143,14 +174,12 @@ and piping through a function is just the same a applying the function
     def __init__(self, _f):
         super(Function, self).__init__()
         self._f= _f
-        self._refs = {}
 
     def __iter__(self):
         yield self
 
-    def __compile__(self, refs):
-        refs = dict(refs, **self._refs)
-        return self._f, refs
+    def __compile__(self):
+        return self._f
 
     def __str__(self):
         return "Fun({0})".format(self._f)
@@ -282,17 +311,17 @@ Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lamb
 
         return Branch(iterable_code)
 
-    def __compile__(self, refs):
+    def __compile__(self):
         fs = []
 
         for node in self.branches:
-            node_f, refs = node.__compile__(refs)
+            node_f = node.__compile__()
             fs.append(node_f)
 
         def function(x):
             return [ f(x) for f in fs ]
 
-        return function, refs
+        return function
 
     def __str__(self):
         return pprint.pformat(self.branches)
@@ -388,14 +417,14 @@ Again, `Pipe`'s signature is `Pipe(x, *args)` and `*args` is interpreted as a tu
 
         return Composition.__build__(*tuple_code)
 
-    def __compile__(self, refs):
-        f_left, refs = self.left.__compile__(refs)
+    def __compile__(self):
+        f_left = self.left.__compile__()
 
-        f_right, refs = self.right.__compile__(refs)
+        f_right = self.right.__compile__()
 
         f = utils.compose2(f_right, f_left)
 
-        return f, refs
+        return f
 
     def __str__(self):
         return "Seq({0}, {1})".format(self.left, self.right)
@@ -447,20 +476,18 @@ Now lets image that we want to find the average value of the list, we could calc
     def __parse__(dict_code):
         return Record(dict_code)
 
-    def __compile__(self, refs):
+    def __compile__(self):
         funs_dict = {}
-        out_refs = refs.copy()
 
         for key, node in self.nodes_dict.iteritems():
-            f, next_refs = node.__compile__(refs)
+            f = node.__compile__()
 
-            out_refs.update(next_refs)
             funs_dict[key] = f
 
         def function(x):
             return _RecordObject(**{key: f(x) for key, f in funs_dict.iteritems() })
 
-        return function, out_refs
+        return function
 
 
 
@@ -505,16 +532,16 @@ The previous is equivalent to
         self.scope = _parse(scope_code, else_input=True)
         self.body = _parse(body_code)
 
-    def __compile__(self, refs):
-        scope_f, refs = self.scope.__compile__(refs)
-        body_fs, refs = self.body.__compile__(refs)
+    def __compile__(self):
+        scope_f = self.scope.__compile__()
+        body_fs = self.body.__compile__()
 
         def function(x):
             with scope_f(x) as scope:
                 with self.set_scope(scope):
                     return body_fs(x)
 
-        return function, refs
+        return function
 
     def set_scope(self, new_scope):
         self.new_scope = new_scope
@@ -541,7 +568,7 @@ behaves like just like the indentity except that as a side effect it creates a r
 
 This is equivalent to a sort of function like this
 
-    lambda _: read('x')
+    lambda z: read('x')
 
 where the input is totally ignored and a hypothetical `read` function is given the reference name and it should return its stored value (internally its not implemented like this). As you see strings in the DSL mean read from a reference and a set with a string means write to a reference.
 
@@ -608,10 +635,9 @@ every time there is a write expression inside a branch expression.
         super(Read, self).__init__()
         self.name = name
 
-    def __compile__(self, refs):
-        ref = refs[self.name]
-        f = ref #ref is callable with an argument
-        return f, refs
+    def __compile__(self):
+        f = lambda z: RefManager.get_ref(self.name).value
+        return f
 
 
 class Write(Node):
@@ -634,22 +660,17 @@ class Write(Node):
         writes = tuple([ Write(ref) for ref in code ])
         return _parse(writes)
 
-    def __compile__(self, refs):
+    def __compile__(self):
 
-        if type(self.ref) is str:
-            name = self.ref
+        def f(x):
+            ref = Ref(self.ref, x) if type(self.ref) is str else self.ref
 
-            if name in refs:
-                self.ref = refs[name]
-            else:
-                refs = refs.copy()
-                refs[name] = self.ref = Ref(self.ref)
+            ref.set(x)
+            RefManager.set_ref(ref)
 
-        elif self.ref.name not in refs:
-            refs = refs.copy()
-            refs[self.ref.name] = self.ref
+            return x
 
-        return self.ref.set, refs
+        return f
 
 
 class Input(Node):
@@ -659,13 +680,13 @@ Sometimes you might need to branch the computation but start one of the branches
     P.Pipe(
         ...,
         [
-            lambda _: my_value
+            lambda z: my_value
         ,
             ...
         ]
     )
 
-Here we just made a lamda that took in the argument `_` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`
+Here we just made a lamda that took in the argument `z` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`
 
     from phi import P, Val
 
@@ -682,9 +703,9 @@ Here we just made a lamda that took in the argument `_` but it was completely ig
         super(Input, self).__init__()
         self.value = value
 
-    def __compile__(self, refs):
+    def __compile__(self):
         f = lambda x: self.value
-        return f, refs
+        return f
 
 
 
@@ -693,14 +714,20 @@ Here we just made a lamda that took in the argument `_` but it was completely ig
 ### FUNCTIONS
 #######################
 
-def Compile(code, refs):
+def Compile(code, refs, ref_manager=True):
     """
     Hola
     """
     ast = _parse(code)
-    f, refs = ast.__compile__(refs)
+    f = ast.__compile__()
 
-    return f, refs
+    refs = { name: value if type(value) is Ref else Ref(name, value) for name, value in refs.iteritems() }
+
+    def g(x):
+        with RefManager(refs):
+            return f(x)
+
+    return g if ref_manager else f
 
 
 def _parse(code, else_input=False):

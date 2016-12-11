@@ -1043,15 +1043,11 @@ table {
     <li class="mono"><a href="#phi.utils.compose2">compose2</a></li>
     <li class="mono"><a href="#phi.utils.flatten">flatten</a></li>
     <li class="mono"><a href="#phi.utils.flatten_list">flatten_list</a></li>
+    <li class="mono"><a href="#phi.utils.forward_compose2">forward_compose2</a></li>
     <li class="mono"><a href="#phi.utils.get_instance_methods">get_instance_methods</a></li>
     <li class="mono"><a href="#phi.utils.get_method_sig">get_method_sig</a></li>
     <li class="mono"><a href="#phi.utils.identity">identity</a></li>
-    <li class="mono"><a href="#phi.utils.immutable">immutable</a></li>
-    <li class="mono"><a href="#phi.utils.patch_with_members_from_1">patch_with_members_from_1</a></li>
-    <li class="mono"><a href="#phi.utils.patch_with_members_from_2">patch_with_members_from_2</a></li>
-    <li class="mono"><a href="#phi.utils.patch_with_members_from_3">patch_with_members_from_3</a></li>
-    <li class="mono"><a href="#phi.utils.patch_with_members_from_4">patch_with_members_from_4</a></li>
-    <li class="mono"><a href="#phi.utils.patch_with_members_from_5">patch_with_members_from_5</a></li>
+    <li class="mono"><a href="#phi.utils.merge">merge</a></li>
   </ul>
 
     </li>
@@ -1082,8 +1078,7 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils', this);">Show source &equiv;</a></p>
   <div id="source-phi.utils" class="source">
     <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
-<span class="kn">import</span> <span class="nn">functools</span><span class="o">,</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">decorator</span> <span class="kn">import</span> <span class="n">decorator</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
 
 <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span>
@@ -1091,14 +1086,11 @@ table {
 <span class="k">def</span> <span class="nf">compose2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
-<span class="c1"># Decorators</span>
-<span class="nd">@decorator</span>
-<span class="k">def</span> <span class="nf">immutable</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decorator. Passes a copy of the entity to the method so that the original object remains un touched.</span>
-<span class="sd">    Used in methods to get a fluent immatable API.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">forward_compose2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">g</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">dict_a</span><span class="p">,</span> <span class="n">dict_b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">dict_a</span><span class="p">,</span> <span class="o">**</span><span class="n">dict_b</span><span class="p">)</span>
 
 
 <span class="n">DefaultArgSpec</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;DefaultArgSpec&#39;</span><span class="p">,</span> <span class="s1">&#39;has_default default_value&#39;</span><span class="p">)</span>
@@ -1185,49 +1177,6 @@ table {
 
 <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">container</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">_flatten</span><span class="p">(</span><span class="n">container</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_functions</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="p">)</span>
-    <span class="n">whitelist</span> <span class="o">=</span> <span class="n">whitelist</span> <span class="k">if</span> <span class="n">whitelist</span> <span class="k">else</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">module_functions</span><span class="p">]</span>
-    <span class="n">module_function_names</span> <span class="o">=</span> <span class="n">whitelist</span> <span class="k">if</span> <span class="n">whitelist</span> <span class="k">else</span> <span class="p">[</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">module_functions</span> <span class="p">]</span>
-    <span class="n">blacklist</span> <span class="o">=</span> <span class="n">blacklist</span> <span class="o">+</span> <span class="n">builder</span><span class="o">.</span><span class="n">__core__</span>
-
-    <span class="k">return</span> <span class="p">[</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="ow">in</span> <span class="n">module_functions</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">whitelist</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">blacklist</span> <span class="p">]</span>
-
-<span class="k">def</span> <span class="nf">patch_with_members_from_1</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_1</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">patch_with_members_from_2</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">patch_with_members_from_3</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_3</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">patch_with_members_from_4</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_4</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">patch_with_members_from_5</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_5</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1293,6 +1242,27 @@ table {
   <div id="source-phi.utils.flatten_list" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">flatten_list</span><span class="p">(</span><span class="n">container</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">_flatten_list</span><span class="p">(</span><span class="n">container</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.utils.forward_compose2">
+    <p>def <span class="ident">forward_compose2</span>(</p><p>f, g)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.forward_compose2', this);">Show source &equiv;</a></p>
+  <div id="source-phi.utils.forward_compose2" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">forward_compose2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">g</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1398,150 +1368,18 @@ eg: "my_method(first_argArg, second_arg=42, third_arg='something')"</p></div>
   
       
   <div class="item">
-    <div class="name def" id="phi.utils.immutable">
-    <p>def <span class="ident">immutable</span>(</p><p>func)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Decorator. Passes a copy of the entity to the method so that the original object remains un touched.
-Used in methods to get a fluent immatable API.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.immutable', this);">Show source &equiv;</a></p>
-  <div id="source-phi.utils.immutable" class="source">
-    <div class="codehilite"><pre><span></span><span class="nd">@decorator</span>
-<span class="k">def</span> <span class="nf">immutable</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decorator. Passes a copy of the entity to the method so that the original object remains un touched.</span>
-<span class="sd">    Used in methods to get a fluent immatable API.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="phi.utils.patch_with_members_from_1">
-    <p>def <span class="ident">patch_with_members_from_1</span>(</p><p>builder, module, module_alias=None, blacklist=[], whitelist=None, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f93fe8809b0&gt;)</p>
+    <div class="name def" id="phi.utils.merge">
+    <p>def <span class="ident">merge</span>(</p><p>dict_a, dict_b)</p>
     </div>
     
 
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.patch_with_members_from_1', this);">Show source &equiv;</a></p>
-  <div id="source-phi.utils.patch_with_members_from_1" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">patch_with_members_from_1</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_1</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="phi.utils.patch_with_members_from_2">
-    <p>def <span class="ident">patch_with_members_from_2</span>(</p><p>builder, module, module_alias=None, blacklist=[], whitelist=None, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f93fe8809b0&gt;)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.patch_with_members_from_2', this);">Show source &equiv;</a></p>
-  <div id="source-phi.utils.patch_with_members_from_2" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">patch_with_members_from_2</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="phi.utils.patch_with_members_from_3">
-    <p>def <span class="ident">patch_with_members_from_3</span>(</p><p>builder, module, module_alias=None, blacklist=[], whitelist=None, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f93fe8809b0&gt;)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.patch_with_members_from_3', this);">Show source &equiv;</a></p>
-  <div id="source-phi.utils.patch_with_members_from_3" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">patch_with_members_from_3</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_3</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="phi.utils.patch_with_members_from_4">
-    <p>def <span class="ident">patch_with_members_from_4</span>(</p><p>builder, module, module_alias=None, blacklist=[], whitelist=None, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f93fe8809b0&gt;)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.patch_with_members_from_4', this);">Show source &equiv;</a></p>
-  <div id="source-phi.utils.patch_with_members_from_4" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">patch_with_members_from_4</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_4</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="phi.utils.patch_with_members_from_5">
-    <p>def <span class="ident">patch_with_members_from_5</span>(</p><p>builder, module, module_alias=None, blacklist=[], whitelist=None, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f93fe8809b0&gt;)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.patch_with_members_from_5', this);">Show source &equiv;</a></p>
-  <div id="source-phi.utils.patch_with_members_from_5" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">patch_with_members_from_5</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="p">[],</span> <span class="n">whitelist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">register_function_5</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.merge', this);">Show source &equiv;</a></p>
+  <div id="source-phi.utils.merge" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">dict_a</span><span class="p">,</span> <span class="n">dict_b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">dict_a</span><span class="p">,</span> <span class="o">**</span><span class="n">dict_b</span><span class="p">)</span>
 </pre></div>
 
   </div>

@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>phi.especial_objects API documentation</title>
+    <title>phi.tests.test_examples API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1041,20 +1041,11 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#phi.especial_objects.ObjectProxy">ObjectProxy</a></span>
+        <span class="class_name"><a href="#phi.tests.test_examples.TestExamples">TestExamples</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#phi.especial_objects.ObjectProxy.__init__">__init__</a></li>
-  </ul>
-
-        </li>
-        <li class="mono">
-        <span class="class_name"><a href="#phi.especial_objects.RecordProxy">RecordProxy</a></span>
-        
-          
-  <ul>
-    <li class="mono"><a href="#phi.especial_objects.RecordProxy.__init__">__init__</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_example_1">test_example_1</a></li>
   </ul>
 
         </li>
@@ -1072,30 +1063,51 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">phi.especial_objects</span> module</h1>
+  <h1 class="title"><span class="name">phi.tests.test_examples</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects', this);">Show source &equiv;</a></p>
-  <div id="source-phi.especial_objects" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">lass</span> <span class="n">ObjectProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;docstring for Underscore.&quot;&quot;&quot;</span>
-   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
-       <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
-   <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-       <span class="k">def</span> <span class="nf">method_proxy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-           <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-           <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-       <span class="k">return</span> <span class="n">method_proxy</span>
-<span class="n">lass</span> <span class="n">RecordProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;docstring for RecClass.&quot;&quot;&quot;</span>
-   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
-       <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
-   <span class="k">def</span> <span class="nf">__getattr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-       <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-   <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-       <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples" class="source">
+    <div class="codehilite"><pre><span></span><span class="n">rom</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">Obj</span><span class="o">,</span> <span class="nn">Rec</span><span class="o">,</span> <span class="nn">M</span>
+<span class="n">lass</span> <span class="n">TestExamples</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;docstring for TestExamples.&quot;&quot;&quot;</span>
+   <span class="k">def</span> <span class="nf">test_example_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+       <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="n">text</span><span class="p">,</span>
+           <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
+       <span class="p">)</span>
+       <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
+       <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+       <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="n">text</span><span class="p">,</span>
+           <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+           <span class="n">M</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
+       <span class="p">)</span>
+       <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
+       <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+       <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="n">text</span><span class="p">,</span>
+           <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1">#6 / 3 == 2</span>
+       <span class="p">)</span>
+       <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
+       <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
+           <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+           <span class="p">[</span>
+               <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
+           <span class="p">,</span>
+               <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
+           <span class="p">],</span>
+           <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># sum / len == 6 / 3 == 2</span>
+       <span class="p">)</span>
+       <span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
 </pre></div>
 
   </div>
@@ -1108,26 +1120,64 @@ table {
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="phi.especial_objects.ObjectProxy" class="name">class <span class="ident">ObjectProxy</span></p>
+      <p id="phi.tests.test_examples.TestExamples" class="name">class <span class="ident">TestExamples</span></p>
       
   
-    <div class="desc"><p>docstring for Underscore.</p></div>
+    <div class="desc"><p>docstring for TestExamples.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects.ObjectProxy', this);">Show source &equiv;</a></p>
-  <div id="source-phi.especial_objects.ObjectProxy" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ObjectProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for Underscore.&quot;&quot;&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestExamples</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for TestExamples.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
+    <span class="k">def</span> <span class="nf">test_example_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+        <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span>
+            <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
+        <span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">method_proxy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
 
-        <span class="k">return</span> <span class="n">method_proxy</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+        <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span>
+            <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+            <span class="n">M</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
+
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+        <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span>
+            <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1">#6 / 3 == 2</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
+
+
+        <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
+            <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+            <span class="p">[</span>
+                <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
+            <span class="p">,</span>
+                <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
+            <span class="p">],</span>
+            <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># sum / len == 6 / 3 == 2</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
 </pre></div>
 
   </div>
@@ -1137,82 +1187,59 @@ table {
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#phi.especial_objects.ObjectProxy">ObjectProxy</a></li>
+          <li><a href="#phi.tests.test_examples.TestExamples">TestExamples</a></li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="phi.especial_objects.ObjectProxy.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, __builder__)</p>
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_example_1">
+    <p>def <span class="ident">test_example_1</span>(</p><p>self)</p>
     </div>
     
 
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects.ObjectProxy.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-phi.especial_objects.ObjectProxy.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      </div>
-      </div>
-      
-      <div class="item">
-      <p id="phi.especial_objects.RecordProxy" class="name">class <span class="ident">RecordProxy</span></p>
-      
-  
-    <div class="desc"><p>docstring for RecClass.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects.RecordProxy', this);">Show source &equiv;</a></p>
-  <div id="source-phi.especial_objects.RecordProxy" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">RecordProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for RecClass.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
-
-    <span class="k">def</span> <span class="nf">__getattr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#phi.especial_objects.RecordProxy">RecordProxy</a></li>
-          <li>__builtin__.object</li>
-          </ul>
-          <h3>Methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="phi.especial_objects.RecordProxy.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, __builder__)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.especial_objects.RecordProxy.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-phi.especial_objects.RecordProxy.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_example_1', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_example_1" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_example_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+    <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+    <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+        <span class="n">M</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
+    <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1">#6 / 3 == 2</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
+    <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+        <span class="p">[</span>
+            <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
+        <span class="p">,</span>
+            <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
+        <span class="p">],</span>
+        <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># sum / len == 6 / 3 == 2</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
 </pre></div>
 
   </div>

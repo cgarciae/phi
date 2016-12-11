@@ -140,33 +140,31 @@ import operator
 
 def _fmap(opt):
     def method(self, b):
-        if type(b) is not dsl.Node and not hasattr(b, '__call__'):
-            b = dsl.Input(b)
 
-        code = (
-            [ self, b ],
-            lambda args: opt(*args)
-        )
+        other = (lambda z: b) if not hasattr(b, '__call__') else b
 
-        f, refs = dsl.Compile(code, {})
+        if not isinstance(other, Lambda):
+            other = self.__class__(other)
 
-        return self.__unit__(f, refs)
+        f = lambda x: opt( self(x), other(x) )
+
+
+        return self.__unit__(f)
 
     return method
 
 def _fmap_flip(opt):
     def method(self, b):
-        if not isinstance(b, dsl.Node) and not hasattr(b, '__call__'):
-            b = dsl.Input(b)
 
-        code = (
-            [ b, self ],
-            lambda args: opt(*args)
-        )
+        other = (lambda z: b) if not hasattr(b, '__call__') else b
 
-        f, refs = dsl.Compile(code, {})
+        if not isinstance(other, Lambda):
+            other = self.__class__(other)
 
-        return self.__unit__(f, refs)
+        f = lambda x: opt( other(x), self(x) )
+
+
+        return self.__unit__(f)
 
     return method
 
@@ -179,23 +177,22 @@ def _unary_fmap(opt):
 class Lambda(dsl.Function):
     """docstring for Lambda."""
 
-    def __init__(self, f, refs):
+    def __init__(self, f):
         super(Lambda, self).__init__(f)
         self._f = f
-        self._refs = refs
 
-    def __unit__(self, f, refs, _return_type=None):
+    def __unit__(self, f, _return_type=None):
         "Monadic unit, also known as `return`"
         if _return_type:
-            return _return_type(f, refs)
+            return _return_type(f)
         else:
-            return self.__class__(f, refs)
+            return self.__class__(f)
 
     def __then__(self, other, **kwargs):
-        code = (self, other)
-        f, refs = dsl.Compile(code, {})
 
-        return self.__unit__(f, refs, **kwargs)
+        f = utils.forward_compose2(self, other)
+
+        return self.__unit__(f, **kwargs)
 
     ## Override operators
     def __call__(self, x, flatten=False):
@@ -210,10 +207,11 @@ class Lambda(dsl.Function):
 
     def __rrshift__(self, prev):
 
-        if type(prev) is dsl.Node or hasattr(prev, '__call__'):
-            code = (prev, self)
-            f, refs = dsl.Compile(code, {})
-            return self.__unit__(f, refs)
+        if hasattr(prev, '__call__'):
+            if not isinstance(prev, Lambda):
+                prev = self.__class__(prev)
+
+            return prev.__then__(self)
         else: #apply
             return self(prev)
 

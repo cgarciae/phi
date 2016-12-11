@@ -1116,6 +1116,17 @@ table {
 
         </li>
         <li class="mono">
+        <span class="class_name"><a href="#phi.dsl.RefManager">RefManager</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.dsl.RefManager.__init__">__init__</a></li>
+    <li class="mono"><a href="#phi.dsl.RefManager.get_ref">get_ref</a></li>
+    <li class="mono"><a href="#phi.dsl.RefManager.set_ref">set_ref</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#phi.dsl.With">With</a></span>
         
           
@@ -1204,18 +1215,49 @@ table {
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">_NO_VALUE</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Ref</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">optional</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="n">_NO_VALUE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">_NO_VALUE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Trying to read Ref(&#39;{0}&#39;) before assignment&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">x</span>
 
         <span class="k">return</span> <span class="n">x</span>
+
+
+<span class="k">class</span> <span class="nc">RefManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span> <span class="o">=</span> <span class="n">next_refs</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span>
+        <span class="k">return</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">:</span>
+            <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="c1"># merge state: borg pattern</span>
+            <span class="n">other_ref</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+
 
 <span class="k">class</span> <span class="nc">_RecordObject</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for DictObject.&quot;&quot;&quot;</span>
@@ -1289,7 +1331,7 @@ table {
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <span class="k">class</span> <span class="nc">Function</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
@@ -1309,14 +1351,12 @@ table {
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_f</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">=</span> <span class="n">_f</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">yield</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">refs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_refs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">,</span> <span class="n">refs</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Fun({0})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">)</span>
@@ -1448,17 +1488,17 @@ table {
 
         <span class="k">return</span> <span class="n">Branch</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">fs</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">:</span>
-            <span class="n">node_f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+            <span class="n">node_f</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
             <span class="n">fs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_f</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span> <span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">function</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">function</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
@@ -1554,14 +1594,14 @@ table {
 
         <span class="k">return</span> <span class="n">Composition</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">tuple_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">f_left</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
-        <span class="n">f_right</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+        <span class="n">f_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
         <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">f_right</span><span class="p">,</span> <span class="n">f_left</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">f</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Seq({0}, {1})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
@@ -1613,20 +1653,18 @@ table {
     <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">dict_code</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Record</span><span class="p">(</span><span class="n">dict_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">funs_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">out_refs</span> <span class="o">=</span> <span class="n">refs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="n">f</span><span class="p">,</span> <span class="n">next_refs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
-            <span class="n">out_refs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">next_refs</span><span class="p">)</span>
             <span class="n">funs_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
 
         <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">funs_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">})</span>
 
-        <span class="k">return</span> <span class="n">function</span><span class="p">,</span> <span class="n">out_refs</span>
+        <span class="k">return</span> <span class="n">function</span>
 
 
 
@@ -1671,16 +1709,16 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">scope_code</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">body_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">scope_f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
-        <span class="n">body_fs</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scope_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">body_fs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
         <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">with</span> <span class="n">scope_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>
                 <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">body_fs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">function</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">function</span>
 
     <span class="k">def</span> <span class="nf">set_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_scope</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span> <span class="o">=</span> <span class="n">new_scope</span>
@@ -1707,7 +1745,7 @@ table {
 
 <span class="sd">This is equivalent to a sort of function like this</span>
 
-<span class="sd">    lambda _: read(&#39;x&#39;)</span>
+<span class="sd">    lambda z: read(&#39;x&#39;)</span>
 
 <span class="sd">where the input is totally ignored and a hypothetical `read` function is given the reference name and it should return its stored value (internally its not implemented like this). As you see strings in the DSL mean read from a reference and a set with a string means write to a reference.</span>
 
@@ -1774,10 +1812,9 @@ table {
         <span class="nb">super</span><span class="p">(</span><span class="n">Read</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">ref</span> <span class="o">=</span> <span class="n">refs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">ref</span> <span class="c1">#ref is callable with an argument</span>
-        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">get_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="n">f</span>
 
 
 <span class="k">class</span> <span class="nc">Write</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
@@ -1800,22 +1837,17 @@ table {
         <span class="n">writes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span> <span class="n">Write</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">code</span> <span class="p">])</span>
         <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">writes</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span>
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="n">Ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span>
 
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ref</span> <span class="o">=</span> <span class="n">refs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">refs</span> <span class="o">=</span> <span class="n">refs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                <span class="n">refs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span> <span class="o">=</span> <span class="n">Ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span>
+            <span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">RefManager</span><span class="o">.</span><span class="n">set_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">:</span>
-            <span class="n">refs</span> <span class="o">=</span> <span class="n">refs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">refs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span>
+            <span class="k">return</span> <span class="n">x</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">f</span>
 
 
 <span class="k">class</span> <span class="nc">Input</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
@@ -1825,13 +1857,13 @@ table {
 <span class="sd">    P.Pipe(</span>
 <span class="sd">        ...,</span>
 <span class="sd">        [</span>
-<span class="sd">            lambda _: my_value</span>
+<span class="sd">            lambda z: my_value</span>
 <span class="sd">        ,</span>
 <span class="sd">            ...</span>
 <span class="sd">        ]</span>
 <span class="sd">    )</span>
 
-<span class="sd">Here we just made a lamda that took in the argument `_` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`</span>
+<span class="sd">Here we just made a lamda that took in the argument `z` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`</span>
 
 <span class="sd">    from phi import P, Val</span>
 
@@ -1848,9 +1880,9 @@ table {
         <span class="nb">super</span><span class="p">(</span><span class="n">Input</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
-        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">f</span>
 
 
 
@@ -1859,14 +1891,20 @@ table {
 <span class="c1">### FUNCTIONS</span>
 <span class="c1">#######################</span>
 
-<span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">ref_manager</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hola</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ast</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-    <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
+    <span class="n">refs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Ref</span> <span class="k">else</span> <span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">refs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">RefManager</span><span class="p">(</span><span class="n">refs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">g</span> <span class="k">if</span> <span class="n">ref_manager</span> <span class="k">else</span> <span class="n">f</span>
 
 
 <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
@@ -1901,7 +1939,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.dsl.Compile">
-    <p>def <span class="ident">Compile</span>(</p><p>code, refs)</p>
+    <p>def <span class="ident">Compile</span>(</p><p>code, refs, ref_manager=True)</p>
     </div>
     
 
@@ -1911,14 +1949,20 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Compile', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Compile" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">ref_manager</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hola</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ast</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-    <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
+    <span class="n">refs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Ref</span> <span class="k">else</span> <span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">refs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">RefManager</span><span class="p">(</span><span class="n">refs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">g</span> <span class="k">if</span> <span class="n">ref_manager</span> <span class="k">else</span> <span class="n">f</span>
 </pre></div>
 
   </div>
@@ -2157,17 +2201,17 @@ table {
 
         <span class="k">return</span> <span class="n">Branch</span><span class="p">(</span><span class="n">iterable_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">fs</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">:</span>
-            <span class="n">node_f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+            <span class="n">node_f</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
             <span class="n">fs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_f</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span> <span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">function</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">function</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
@@ -2387,14 +2431,14 @@ table {
 
         <span class="k">return</span> <span class="n">Composition</span><span class="o">.</span><span class="n">__build__</span><span class="p">(</span><span class="o">*</span><span class="n">tuple_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">f_left</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
-        <span class="n">f_right</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+        <span class="n">f_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
         <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compose2</span><span class="p">(</span><span class="n">f_right</span><span class="p">,</span> <span class="n">f_left</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">f</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Seq({0}, {1})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
@@ -2493,14 +2537,12 @@ table {
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_f</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">=</span> <span class="n">_f</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">yield</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">refs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_refs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">,</span> <span class="n">refs</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Fun({0})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">)</span>
@@ -2533,7 +2575,6 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_f</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">=</span> <span class="n">_f</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span> <span class="o">=</span> <span class="p">{}</span>
 </pre></div>
 
   </div>
@@ -2552,7 +2593,7 @@ table {
 <div class="codehilite"><pre><span></span>P.Pipe(
     ...,
     [
-        lambda _: my_value
+        lambda z: my_value
     ,
         ...
     ]
@@ -2560,7 +2601,7 @@ table {
 </pre></div>
 
 
-<p>Here we just made a lamda that took in the argument <code>_</code> but it was completely ignored and it always returns <code>my_value</code>, this is called a constant function. You could also do the same with <code>P.Val</code> or the top level function <code>phi.Val</code></p>
+<p>Here we just made a lamda that took in the argument <code>z</code> but it was completely ignored and it always returns <code>my_value</code>, this is called a constant function. You could also do the same with <code>P.Val</code> or the top level function <code>phi.Val</code></p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span>
 
 <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -2582,13 +2623,13 @@ table {
 <span class="sd">    P.Pipe(</span>
 <span class="sd">        ...,</span>
 <span class="sd">        [</span>
-<span class="sd">            lambda _: my_value</span>
+<span class="sd">            lambda z: my_value</span>
 <span class="sd">        ,</span>
 <span class="sd">            ...</span>
 <span class="sd">        ]</span>
 <span class="sd">    )</span>
 
-<span class="sd">Here we just made a lamda that took in the argument `_` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`</span>
+<span class="sd">Here we just made a lamda that took in the argument `z` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`</span>
 
 <span class="sd">    from phi import P, Val</span>
 
@@ -2605,9 +2646,9 @@ table {
         <span class="nb">super</span><span class="p">(</span><span class="n">Input</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
-        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">f</span>
 </pre></div>
 
   </div>
@@ -2672,7 +2713,7 @@ table {
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 </pre></div>
 
@@ -2704,7 +2745,7 @@ table {
 
 
 <p>This is equivalent to a sort of function like this</p>
-<div class="codehilite"><pre><span></span>lambda _: read(&#39;x&#39;)
+<div class="codehilite"><pre><span></span>lambda z: read(&#39;x&#39;)
 </pre></div>
 
 
@@ -2787,7 +2828,7 @@ return x
 
 <span class="sd">This is equivalent to a sort of function like this</span>
 
-<span class="sd">    lambda _: read(&#39;x&#39;)</span>
+<span class="sd">    lambda z: read(&#39;x&#39;)</span>
 
 <span class="sd">where the input is totally ignored and a hypothetical `read` function is given the reference name and it should return its stored value (internally its not implemented like this). As you see strings in the DSL mean read from a reference and a set with a string means write to a reference.</span>
 
@@ -2854,10 +2895,9 @@ return x
         <span class="nb">super</span><span class="p">(</span><span class="n">Read</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">ref</span> <span class="o">=</span> <span class="n">refs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">ref</span> <span class="c1">#ref is callable with an argument</span>
-        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">get_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="n">f</span>
 </pre></div>
 
   </div>
@@ -2997,20 +3037,18 @@ return x
     <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">dict_code</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Record</span><span class="p">(</span><span class="n">dict_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">funs_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">out_refs</span> <span class="o">=</span> <span class="n">refs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="n">f</span><span class="p">,</span> <span class="n">next_refs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
-            <span class="n">out_refs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">next_refs</span><span class="p">)</span>
             <span class="n">funs_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
 
         <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">funs_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">})</span>
 
-        <span class="k">return</span> <span class="n">function</span><span class="p">,</span> <span class="n">out_refs</span>
+        <span class="k">return</span> <span class="n">function</span>
 </pre></div>
 
   </div>
@@ -3074,16 +3112,16 @@ return x
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">_NO_VALUE</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Ref</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">optional</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="n">_NO_VALUE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">_NO_VALUE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Trying to read Ref(&#39;{0}&#39;) before assignment&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">x</span>
 
         <span class="k">return</span> <span class="n">x</span>
 </pre></div>
@@ -3109,6 +3147,16 @@ return x
 </div>
 
             </div>
+            <div class="item">
+            <p id="phi.dsl.Ref.value" class="name">var <span class="ident">value</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">
@@ -3125,7 +3173,7 @@ return x
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">_NO_VALUE</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">Ref</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 </pre></div>
 
   </div>
@@ -3146,8 +3194,161 @@ return x
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Ref.set', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Ref.set" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">x</span>
     <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="phi.dsl.RefManager" class="name">class <span class="ident">RefManager</span></p>
+      
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.RefManager', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.RefManager" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">RefManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span> <span class="o">=</span> <span class="n">next_refs</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span>
+        <span class="k">return</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">:</span>
+            <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="c1"># merge state: borg pattern</span>
+            <span class="n">other_ref</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.dsl.RefManager">RefManager</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="phi.dsl.RefManager.CURRENT_REFS" class="name">var <span class="ident">CURRENT_REFS</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.dsl.RefManager.next_refs" class="name">var <span class="ident">next_refs</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.dsl.RefManager.previous_refs" class="name">var <span class="ident">previous_refs</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.RefManager.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, next_refs={})</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.RefManager.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.RefManager.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span> <span class="o">=</span> <span class="n">next_refs</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.RefManager.get_ref">
+    <p>def <span class="ident">get_ref</span>(</p><p>cls, name)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.RefManager.get_ref', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.RefManager.get_ref" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">get_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.RefManager.set_ref">
+    <p>def <span class="ident">set_ref</span>(</p><p>cls, ref)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.RefManager.set_ref', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.RefManager.set_ref" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">:</span>
+        <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="c1"># merge state: borg pattern</span>
+        <span class="n">other_ref</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span>
 </pre></div>
 
   </div>
@@ -3231,16 +3432,16 @@ return x
         <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">scope_code</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">body_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-        <span class="n">scope_f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
-        <span class="n">body_fs</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">__compile__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scope_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">body_fs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
         <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">with</span> <span class="n">scope_f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>
                 <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">body_fs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">function</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">function</span>
 
     <span class="k">def</span> <span class="nf">set_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_scope</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span> <span class="o">=</span> <span class="n">new_scope</span>
@@ -3363,7 +3564,7 @@ return x
 
 
 <p>This is equivalent to a sort of function like this</p>
-<div class="codehilite"><pre><span></span>lambda _: read(&#39;x&#39;)
+<div class="codehilite"><pre><span></span>lambda z: read(&#39;x&#39;)
 </pre></div>
 
 
@@ -3454,22 +3655,17 @@ return x
         <span class="n">writes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span> <span class="n">Write</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">code</span> <span class="p">])</span>
         <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">writes</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span>
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="n">Ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span>
 
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ref</span> <span class="o">=</span> <span class="n">refs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">refs</span> <span class="o">=</span> <span class="n">refs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                <span class="n">refs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span> <span class="o">=</span> <span class="n">Ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span>
+            <span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">RefManager</span><span class="o">.</span><span class="n">set_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">:</span>
-            <span class="n">refs</span> <span class="o">=</span> <span class="n">refs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">refs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span>
+            <span class="k">return</span> <span class="n">x</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">,</span> <span class="n">refs</span>
+        <span class="k">return</span> <span class="n">f</span>
 </pre></div>
 
   </div>

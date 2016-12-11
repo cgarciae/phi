@@ -8,7 +8,7 @@ The `phi.builder.Builder` class exposes most of the API, you will normally use t
 
 To integrate existing code, the `phi.builder.Builder` class offers the following functionalities:
 
-* Create *special* partials useful for the DSL. See the `phi.builder.Builder._` [underscore] method.
+* Create *special* partials useful for the DSL. See the `phi.builder.Builder.Then` method.
 * Register functions as methods of the `phi.builder.Builder` class. See the `*Register*` method family e.g. `phi.builder.Builder.Register1`.
 * Create functions that proxy methods from an object. See `phi.builder.Builder.Obj`.
 * Create functions that proxy fields from an object. See `phi.builder.Builder.Rec`.
@@ -50,7 +50,7 @@ This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it 
 
     from phi import P, Context, Obj
 
-    def read_file(_):
+    def read_file(z):
         f = Context()
         return f.read()
 
@@ -115,7 +115,7 @@ Here we called `Context` with no arguments to get the context back, however, sin
 
     assert x == 6
 
-Use phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions
+The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions
 
     from phi import P
 
@@ -126,218 +126,88 @@ Use phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the f
     )
 
     assert x == 6
-
-Create a branched computation instead
-
-    from phi import P
-
-    [x, y] = P.Pipe(
-        1,  #input
-        [
-            P + 1  #1 + 1 == 2
-        ,
-            P * 3  #1 * 3 == 3
-        ]
-    )
-
-    assert x == 2
-    assert y == 3
-
-Compose it with a multiplication by 2 (`P * 2`)
-
-    from phi import P
-
-    [x, y] = P.Pipe(
-        1,  #input
-        P * 2,  #1 * 2 == 2
-        [
-            P + 1  #2 + 1 == 3
-        ,
-            P * 3  #2 * 3 == 6
-        ]
-    )
-
-    assert x == 3
-    assert y == 6
-
-Give names to the branches
-
-    from phi import P
-
-    result = P.Pipe(
-        1,  #input
-        P * 2,  #1 * 2 == 2
-        dict(
-            x = P + 1  #2 + 1 == 3
-        ,
-            y = P * 3  #2 * 3 == 6
-        )
-    )
-
-    assert result.x == 3
-    assert result.y == 6
-
-Divide the `x` by the `y`.
-
-
-    from phi import P, Rec
-
-    result = P.Pipe(
-        1,  #input
-        P * 2,  #1 * 2 == 2
-        dict(
-            x = P + 1  #2 + 1 == 3
-        ,
-            y = P * 3  #2 * 3 == 6
-        ),
-        Rec.x / Rec.y  #3 / 6 == 0.5
-    )
-
-    assert result == 0.5
-
-Save the value from the `P * 2` computation as `s` and retrieve it at the end in a branch
-
-    from phi import P, Rec
-
-    [result, s] = P.Pipe(
-        1,  #input
-        P * 2, {'s'}  #1 * 2 == 2, saved as 's'
-        dict(
-            x = P + 1  #2 + 1 == 3
-        ,
-            y = P * 3  #2 * 3 == 6
-        ),
-        [
-            Rec.x / Rec.y  #3 / 6 == 0.5
-        ,
-            's'  #load s == 2
-        ]
-    )
-
-    assert result == 0.5
-    assert s == 2
-
-Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
-
-    from phi import P, Rec, Val
-
-    [result, s, val] = P.Pipe(
-        1,  #input
-        P * 2, {'s'}  #2 * 1 == 2
-        dict(
-            x = P + 1  #2 + 1 == 3
-        ,
-            y = P * 3  #2 * 3 == 6
-        ),
-        [
-            Rec.x / Rec.y  #3 / 6 == 0.5
-        ,
-            's'  #load s == 2
-        ,
-            Val(9) + 1  #input 9 and add 1, gives 10
-        ]
-    )
-
-    assert result == 0.5
-    assert s == 2
-    assert val == 10
-
         """
         return self.Make(*code, **kwargs)(x)
+
+    def NPipe(self, *code, **kwargs):
+        return self.NMake(*code, **kwargs)(x)
 
     def Run(self, *code, **kwargs):
         """
         """
         return self.Pipe(None, *code, **kwargs)
 
+    def NRun(self, *code, **kwargs):
+        """
+        """
+        return self.NPipe(None, *code, **kwargs)
+
     def Make(self, *code, **kwargs):
         """
+The `Make` method takes an expression from the DSL and compiles it to a function.
+
+**Arguments**
+
+* ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).
+* *flatten = False*: if `flatten` is True and the argument being returned by the compiled function is a `list` it will instead return a flattened list.
+* *_return_type = None*: By default `Make` returns an object of the same class as the object calling `Make` e.g. `Builder`, however if you have
+
+**Examples**
+
+    from phi import P
+
+    def add1(x): return x + 1
+    def mul3(x): return x * 3
+
+    f = P.Make(
+        add1,
+        mul3
+    )
+
+    assert f(1) == 6
+
+Here `f` is equivalent to
+
+def f(x):
+    x = add1(x)
+    x = mul3(x)
+    return x
+
+The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions
+
+    from phi import P
+
+    f = P.Make(
+        P + 1,
+        P * 3
+    )
+
+    assert f(1) == 6
         """
 
-        _return_type = None
-        flatten = None
+        _return_type = kwargs['_return_type'] if '_return_type' in kwargs else None
+        flatten = kwargs['flatten'] if 'flatten' in kwargs else False
+        refs = kwargs['refs'] if 'refs' in kwargs else {}
+        ref_manager = kwargs['ref_manager'] if 'ref_manager' in kwargs else True
 
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-        if 'flatten' in kwargs:
-            flatten = kwargs['flatten']
-            del kwargs['flatten']
-
-        g, refs = dsl.Compile(code, self._refs)
-        f = utils.compose2(g, self)
-        flatten_f = lambda x: utils.flatten_list(x) if type(x) is list else x
+        # code = (self, code)
 
         if flatten:
-            f = utils.compose2(flatten_f, f)
+            code = (code, lambda x: utils.flatten_list(x) if type(x) is list else x)
 
-        return self.__unit__(f, refs, _return_type=_return_type)
+        f = dsl.Compile(code, refs, ref_manager=ref_manager)
+
+        return self.__then__(f, _return_type=_return_type)
 
     M = Make
 
-    def _0(self, g, *args, **kwargs):
-        """
-        """
-        _return_type = None
+    def NMake(self, *args, **kwargs):
+        kwargs['ref_manager'] = False
+        return self.Make(*args, **kwargs)
 
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
+    NM = NMake
 
-        return self.__unit__(lambda x: g(*args, **kwargs), self._refs, _return_type=_return_type)
-
-    def _(self, g, *args, **kwargs):
-        """
-        """
-        _return_type = None
-
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-        f = lambda x: g(x, *args, **kwargs)
-        return self.__then__(f, _return_type=_return_type)
-
-    _1 = _
-
-    def _2(self, g, arg1, *args, **kwargs):
-        """
-        """
-        _return_type = None
-
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-
-        def _lambda(x):
-            arg2 = self(x)
-            new_args = tuple([arg1, arg2] + list(args))
-            return g(*new_args, **kwargs)
-
-        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
-
-    def _3(self, g, arg1, arg2, *args, **kwargs):
-        """
-        """
-        _return_type = None
-
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-
-        def _lambda(x):
-            arg3 = self(x)
-            new_args = tuple([arg1, arg2, arg3] + list(args))
-            return g(*new_args, **kwargs)
-
-        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
-
-    def _4(self, g, arg1, arg2, arg3, *args, **kwargs):
-        """
-        """
+    def ThenAt(self, n, expr, *args, **kwargs):
         _return_type = None
 
         if '_return_type' in kwargs:
@@ -345,48 +215,65 @@ Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
             del kwargs['_return_type']
 
         def _lambda(x):
-            arg4 = self(x)
-            new_args = tuple([arg1, arg2, arg3, arg4] + list(args))
-            return g(*new_args, **kwargs)
+            x = self(x)
+            new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
+            return expr(*new_args, **kwargs)
 
-        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
+        return self.__unit__(_lambda, _return_type=_return_type)
 
-    def _5(self, g, arg1, arg2, arg3, arg4, *args, **kwargs):
+    def Then0(self, expr, *args, **kwargs):
         """
         """
-        _return_type = None
+        return self.ThenAt(-1, expr, *args, **kwargs)
 
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
+    def Then(self, expr, *args, **kwargs):
+        """
+        """
+        return self.ThenAt(0, expr, *args, **kwargs)
 
-        def _lambda(x):
-            arg5 = self(x)
-            new_args = tuple([arg1, arg2, arg3, arg4, arg5] + list(args))
-            return g(*new_args, **kwargs)
+    Then1 = Then
 
-        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
+    def Then2(self, expr, arg1, *args, **kwargs):
+        """
+        """
+        args = (arg1,) + args
+        return self.ThenAt(1, expr, *args, **kwargs)
+
+    def Then3(self, expr, arg1, arg2, *args, **kwargs):
+        """
+        """
+        args = (arg1, arg2) + args
+        return self.ThenAt(2, expr, *args, **kwargs)
+
+    def Then4(self, expr, arg1, arg2, arg3, *args, **kwargs):
+        """
+        """
+        args = (arg1, arg2, arg3) + args
+        return self.ThenAt(3, expr, *args, **kwargs)
+
+    def Then5(self, expr, arg1, arg2, arg3, arg4, *args, **kwargs):
+        """
+        """
+        args = (arg1, arg2, arg3, arg4) + args
+        return self.ThenAt(4, expr, *args, **kwargs)
 
 
     def Val(self, x):
         """
         """
-        return self.__then__(lambda _: x)
+        return self.__then__(lambda z: x)
 
-    def On(self, ref):
+    @property
+    def Write(self):
         """
         """
-        if type(ref) is str:
-            ref = dsl.Ref(ref)
-
-        if ref.name not in self._refs:
-            refs = dict(self._refs, **{ref.name: ref})
-        else:
-            refs = self._refs
-
-        return self.__unit__(utils.compose2(ref.set, self), refs)
+        return WriteProxy(self)
 
 
+    @property
+    def Read(self):
+
+        return ReadProxy(self)
 
     @property
     def Obj(self):
@@ -411,7 +298,7 @@ Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
         * `fn`: a function that atleast takes an Applicative as its first argument.
         * `library_path`: the route of the librar from which this function was taken, used for documentation purposes.
         * `alias`: allows you to specify the name of the method, it will take the name of the function if its `None`.
-        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based On the documentation of `fn`.
+        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based on the documentation of `fn`.
 
         **Return**
 
@@ -444,7 +331,7 @@ It accepts the same arguments as `{3}.{0}`. """ + explanation + """
         """).format(original_name, name, fn_docs, library_path) if explain else fn_docs
 
         if name in cls.__core__:
-            raise Exception("Can't add method '{0}' because its On __core__".format(name))
+            raise Exception("Can't add method '{0}' because its on __core__".format(name))
 
         fn = method_type(fn)
         setattr(cls, name, fn)
@@ -466,7 +353,7 @@ It accepts the same arguments as `{3}.{0}`. """ + explanation + """
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._0(fn, *args, **kwargs)
+            return self.Then0(fn, *args, **kwargs)
 
         explanation = """
 However, a partial with the arguments is returned which expects any argument `x` and complete ignores it, such that
@@ -491,7 +378,7 @@ is equivalent to
         * `fn`: a function that atleast takes an Object as its first argument.
         * `library_path`: the route of the librar from which this function was taken, used for documentation purposes.
         * `alias`: allows you to specify the name of the method, it will take the name of the function if its `None`.
-        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based On the documentation of `fn`.
+        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based on the documentation of `fn`.
 
         **Return**
 
@@ -503,7 +390,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._(fn, *args, **kwargs)
+            return self.Then(fn, *args, **kwargs)
 
         explanation = """
 However, the 1st argument is omitted, a partial with the rest of the arguments is returned which expects the 1st argument such that
@@ -526,7 +413,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._2(fn, *args, **kwargs)
+            return self.Then2(fn, *args, **kwargs)
 
         explanation = """
 However, the 2nd argument is omitted, a partial with the rest of the arguments is returned which expects the 2nd argument such that
@@ -547,7 +434,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._3(fn, *args, **kwargs)
+            return self.Then3(fn, *args, **kwargs)
 
         explanation = """
 However, the 3rd argument is omitted, a partial with the rest of the arguments is returned which expects the 3rd argument such that
@@ -568,7 +455,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._4(fn, *args, **kwargs)
+            return self.Then4(fn, *args, **kwargs)
 
         explanation = """
 However, the 4th argument is omitted, a partial with the rest of the arguments is returned which expects the 4th argument such that
@@ -590,7 +477,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._5(fn, *args, **kwargs)
+            return self.Then5(fn, *args, **kwargs)
 
         explanation = """
 However, the 5th argument is omitted, a partial with the rest of the arguments is returned which expects the 5th argument such that
@@ -664,6 +551,38 @@ class ObjectProxy(object):
             return self.__builder__.__then__(f)
 
         return method_proxy
+
+
+class ReadProxy(object):
+    """docstring for Underscore."""
+
+    def __init__(self, __builder__):
+        self.__builder__ = __builder__
+
+    def __getitem__(self, name):
+        return self.__builder__.NMake(name)
+
+    def __getattr__(self, name):
+        return self.__builder__.NMake(name)
+
+    def __call__ (self, ref):
+        return self.__builder__.NMake(ref)
+
+
+class WriteProxy(object):
+    """docstring for Underscore."""
+
+    def __init__(self, __builder__):
+        self.__builder__ = __builder__
+
+    def __getitem__(self, ref):
+        return self.__builder__.NMake({ref})
+
+    def __getattr__ (self, ref):
+        return self.__builder__.NMake({ref})
+
+    def __call__ (self, ref):
+        return self.__builder__.NMake({ref})
 
 
 
