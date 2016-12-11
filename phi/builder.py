@@ -205,6 +205,8 @@ The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.ht
         kwargs['ref_manager'] = False
         return self.Make(*args, **kwargs)
 
+    NM = NMake
+
     def ThenAt(self, n, expr, *args, **kwargs):
         _return_type = None
 

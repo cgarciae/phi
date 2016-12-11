@@ -187,7 +187,7 @@ assert val == 10
 from phi import P, Obj
 
 avg_word_length = P.Pipe(
-    "1 22 33",
+    "1 22 333",
     Obj.split(" "), # ['1', '22', '333']
     P.map(len), # [1, 2, 3]
     P.sum() / P.len() # sum([1,2,3]) / len([1,2,3]) == 6 / 3 == 2

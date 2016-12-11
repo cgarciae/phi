@@ -24,12 +24,17 @@ Read = P.Read
 Write = P.Write
 Val = P.Val
 Pipe = P.Pipe
+NPipe = P.NPipe
 Make = P.Make
+NMake = P.NMake
+Run = P.Run
+NRun = P.NRun
 Obj = P.Obj
 Rec = P.Rec
 Context = P.Context
 
 M = Make
+NM = NMake
 """
 Abreviation for `P.Make` or the module function `phi.Make`.
 """
