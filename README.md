@@ -116,7 +116,7 @@ result = P.Pipe(
 assert result == 0.5
 ```
 
-Save the value from the `P * 2` computation as `s` and retrieve it at the end in a branch
+Save the value from the `P * 2` computation as `s` and load it at the end in a branch
 
 ```python
 from phi import P, Rec
@@ -140,12 +140,12 @@ assert result == 0.5
 assert s == 2
 ```
 
-Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
+Add 3 to the `s` loaded s... because you can
 
 ```python
-from phi import P, Rec, Val
+from phi import P, Rec, Read
 
-[result, s, val] = P.Pipe(
+[result, s] = P.Pipe(
     1,  #input 1
     P * 2, {'s'}  #2 * 1 == 2, saved as 's'
     dict(
@@ -156,14 +156,62 @@ from phi import P, Rec, Val
     [
         Rec.x / Rec.y  #3 / 6 == 0.5
     ,
-        's'  #load 's' == 2
+        Read.s + 3  # 2 + 3 == 5
+    ]
+)
+
+assert result == 0.5
+assert s == 5
+```
+
+Use the `Write` object instead of `{...}` just because
+
+```python
+from phi import P, Rec, Read, Write
+
+[result, s] = P.Pipe(
+    1,  #input 1
+    P * 2, Write.s  #2 * 1 == 2, saved as 's'
+    dict(
+        x = P + 1  #2 + 1 == 3
+    ,
+        y = P * 3  #2 * 3 == 6
+    ),
+    [
+        Rec.x / Rec.y  #3 / 6 == 0.5
+    ,
+        Read.s + 3  # 2 + 3 == 5
+    ]
+)
+
+assert result == 0.5
+assert s == 5
+```
+
+Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
+
+```python
+from phi import P, Rec, Val
+
+[result, s, val] = P.Pipe(
+    1,  #input 1
+    P * 2, Write.s  #2 * 1 == 2, saved as 's'
+    dict(
+        x = P + 1  #2 + 1 == 3
+    ,
+        y = P * 3  #2 * 3 == 6
+    ),
+    [
+        Rec.x / Rec.y  #3 / 6 == 0.5
+    ,
+        Read.s + 3  # 2 + 3 == 5
     ,
         Val(9) + 1  #input 9 and add 1, gives 10
     ]
 )
 
 assert result == 0.5
-assert s == 2
+assert s == 5
 assert val == 10
 ```
 
