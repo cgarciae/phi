@@ -1,4 +1,4 @@
-from phi import P, Builder, Obj, Val, Rec, Context, Read, Write
+from phi import P, Obj, Val, Rec, Context, Read, Write
 import math
 import pytest
 # from phi import tb
@@ -9,16 +9,16 @@ get_list = lambda x: [1,2,3]
 a2_plus_b_minus_2c = lambda a, b, c: a ** 2 + b - 2*c
 
 
-@Builder.Register1("test.lib")
+@P.Register1("test.lib")
 def add(a, b):
     """Some docs"""
     return a + b
 
-@Builder.Register2("test.lib")
+@P.Register2("test.lib")
 def pow(a, b):
     return a ** b
 
-@Builder.RegisterMethod("test.lib")
+@P.RegisterMethod("test.lib")
 def get_function_name(self):
     return self._f.__name__
 

@@ -6,12 +6,12 @@ import lambdas
 import patch
 
 from dsl import With
-from builder import Builder
 
 #patches
-import functions_patch
+import python_builder
+from python_builder import PythonBuilder
 
-P = Builder(utils.identity)
+P = PythonBuilder(utils.identity)
 
 # shortcuts
 Then0 = P.Then0
@@ -34,9 +34,12 @@ Rec = P.Rec
 Context = P.Context
 
 M = Make
+"""
+Abreviation for `P.Make` or `phi.Make`.
+"""
 NM = NMake
 """
-Abreviation for `P.Make` or the module function `phi.Make`.
+Abreviation for `P.NMake` or `phi.Make`.
 """
 
 ########################
