@@ -115,7 +115,7 @@ Here we called `Context` with no arguments to get the context back, however, sin
 
     assert x == 6
 
-Use phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions
+The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions
 
     from phi import P
 
@@ -126,122 +126,6 @@ Use phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the f
     )
 
     assert x == 6
-
-Create a branched computation instead
-
-    from phi import P
-
-    [x, y] = P.Pipe(
-        1,  #input
-        [
-            P + 1  #1 + 1 == 2
-        ,
-            P * 3  #1 * 3 == 3
-        ]
-    )
-
-    assert x == 2
-    assert y == 3
-
-Compose it with a multiplication by 2 (`P * 2`)
-
-    from phi import P
-
-    [x, y] = P.Pipe(
-        1,  #input
-        P * 2,  #1 * 2 == 2
-        [
-            P + 1  #2 + 1 == 3
-        ,
-            P * 3  #2 * 3 == 6
-        ]
-    )
-
-    assert x == 3
-    assert y == 6
-
-Give names to the branches
-
-    from phi import P
-
-    result = P.Pipe(
-        1,  #input
-        P * 2,  #1 * 2 == 2
-        dict(
-            x = P + 1  #2 + 1 == 3
-        ,
-            y = P * 3  #2 * 3 == 6
-        )
-    )
-
-    assert result.x == 3
-    assert result.y == 6
-
-Divide the `x` by the `y`.
-
-
-    from phi import P, Rec
-
-    result = P.Pipe(
-        1,  #input
-        P * 2,  #1 * 2 == 2
-        dict(
-            x = P + 1  #2 + 1 == 3
-        ,
-            y = P * 3  #2 * 3 == 6
-        ),
-        Rec.x / Rec.y  #3 / 6 == 0.5
-    )
-
-    assert result == 0.5
-
-Save the value from the `P * 2` computation as `s` and retrieve it at the end in a branch
-
-    from phi import P, Rec
-
-    [result, s] = P.Pipe(
-        1,  #input
-        P * 2, {'s'}  #1 * 2 == 2, saved as 's'
-        dict(
-            x = P + 1  #2 + 1 == 3
-        ,
-            y = P * 3  #2 * 3 == 6
-        ),
-        [
-            Rec.x / Rec.y  #3 / 6 == 0.5
-        ,
-            's'  #load s == 2
-        ]
-    )
-
-    assert result == 0.5
-    assert s == 2
-
-Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
-
-    from phi import P, Rec, Val
-
-    [result, s, val] = P.Pipe(
-        1,  #input
-        P * 2, {'s'}  #2 * 1 == 2
-        dict(
-            x = P + 1  #2 + 1 == 3
-        ,
-            y = P * 3  #2 * 3 == 6
-        ),
-        [
-            Rec.x / Rec.y  #3 / 6 == 0.5
-        ,
-            's'  #load s == 2
-        ,
-            Val(9) + 1  #input 9 and add 1, gives 10
-        ]
-    )
-
-    assert result == 0.5
-    assert s == 2
-    assert val == 10
-
         """
         return self.Make(*code, **kwargs)(x)
 
@@ -252,10 +136,49 @@ Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
 
     def Make(self, *code, **kwargs):
         """
+The `Make` method takes an expression from the DSL and compiles it to a function.
+
+**Arguments**
+
+* ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).
+* *flatten = False*: if `flatten` is True and the argument being returned by the compiled function is a `list` it will instead return a flattened list.
+* *_return_type = None*: By default `Make` returns an object of the same class as the object calling `Make` e.g. `Builder`, however if you have
+
+**Examples**
+
+    from phi import P
+
+    def add1(x): return x + 1
+    def mul3(x): return x * 3
+
+    f = P.Make(
+        add1,
+        mul3
+    )
+
+    assert f(1) == 6
+
+Here `f` is equivalent to
+
+def f(x):
+    x = add1(x)
+    x = mul3(x)
+    return x
+
+The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions
+
+    from phi import P
+
+    f = P.Make(
+        P + 1,
+        P * 3
+    )
+
+    assert f(1) == 6
         """
 
         _return_type = None
-        flatten = None
+        flatten = False
 
         if '_return_type' in kwargs:
             _return_type = kwargs['_return_type']
@@ -265,107 +188,67 @@ Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
             flatten = kwargs['flatten']
             del kwargs['flatten']
 
-        g, refs = dsl.Compile(code, self._refs)
-        f = utils.compose2(g, self)
-        flatten_f = lambda x: utils.flatten_list(x) if type(x) is list else x
+        code = (self, code)
 
         if flatten:
-            f = utils.compose2(flatten_f, f)
+            code = (code, lambda x: utils.flatten_list(x) if type(x) is list else x)
+
+        f, refs = dsl.Compile(code, self._refs)
+        refs = utils.merge(self._refs, refs)
 
         return self.__unit__(f, refs, _return_type=_return_type)
 
     M = Make
 
-    def _0(self, g, *args, **kwargs):
-        """
-        """
+    def _n(self, n, expr, *args, **kwargs):
         _return_type = None
 
         if '_return_type' in kwargs:
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-        return self.__unit__(lambda x: g(*args, **kwargs), self._refs, _return_type=_return_type)
+        def _lambda(x):
+            x = self(x)
+            new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
+            return expr(*new_args, **kwargs)
 
-    def _(self, g, *args, **kwargs):
+        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
+
+    def _0(self, expr, *args, **kwargs):
         """
         """
-        _return_type = None
+        return self._n(-1, expr, *args, **kwargs)
 
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-        f = lambda x: g(x, *args, **kwargs)
-        return self.__then__(f, _return_type=_return_type)
+    def _(self, expr, *args, **kwargs):
+        """
+        """
+        return self._n(0, expr, *args, **kwargs)
 
     _1 = _
 
-    def _2(self, g, arg1, *args, **kwargs):
+    def _2(self, expr, arg1, *args, **kwargs):
         """
         """
-        _return_type = None
+        args = (arg1,) + args
+        return self._n(1, expr, *args, **kwargs)
 
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-
-        def _lambda(x):
-            arg2 = self(x)
-            new_args = tuple([arg1, arg2] + list(args))
-            return g(*new_args, **kwargs)
-
-        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
-
-    def _3(self, g, arg1, arg2, *args, **kwargs):
+    def _3(self, expr, arg1, arg2, *args, **kwargs):
         """
         """
-        _return_type = None
+        args = (arg1, arg2) + args
+        return self._n(2, expr, *args, **kwargs)
 
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-
-        def _lambda(x):
-            arg3 = self(x)
-            new_args = tuple([arg1, arg2, arg3] + list(args))
-            return g(*new_args, **kwargs)
-
-        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
-
-    def _4(self, g, arg1, arg2, arg3, *args, **kwargs):
+    def _4(self, expr, arg1, arg2, arg3, *args, **kwargs):
         """
         """
-        _return_type = None
+        args = (arg1, arg2, arg3) + args
+        return self._n(3, expr, *args, **kwargs)
 
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-        def _lambda(x):
-            arg4 = self(x)
-            new_args = tuple([arg1, arg2, arg3, arg4] + list(args))
-            return g(*new_args, **kwargs)
-
-        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
-
-    def _5(self, g, arg1, arg2, arg3, arg4, *args, **kwargs):
+    def _5(self, expr, arg1, arg2, arg3, arg4, *args, **kwargs):
         """
         """
-        _return_type = None
-
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-        def _lambda(x):
-            arg5 = self(x)
-            new_args = tuple([arg1, arg2, arg3, arg4, arg5] + list(args))
-            return g(*new_args, **kwargs)
-
-        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
+        args = (arg1, arg2, arg3, arg4) + args
+        return self._n(4, expr, *args, **kwargs)
 
 
     def Val(self, x):

@@ -140,15 +140,15 @@ import operator
 
 def _fmap(opt):
     def method(self, b):
-        if type(b) is not dsl.Node and not hasattr(b, '__call__'):
-            b = dsl.Input(b)
 
-        code = (
-            [ self, b ],
-            lambda args: opt(*args)
-        )
+        other = (lambda _: b) if not hasattr(b, '__call__') else b
 
-        f, refs = dsl.Compile(code, {})
+        if not isinstance(other, Lambda):
+            other = self.__class__(other, {})
+
+        f = lambda x: opt( self(x), other(x) )
+        refs = utils.merge(self._refs, other._refs)
+
 
         return self.__unit__(f, refs)
 
@@ -156,15 +156,15 @@ def _fmap(opt):
 
 def _fmap_flip(opt):
     def method(self, b):
-        if not isinstance(b, dsl.Node) and not hasattr(b, '__call__'):
-            b = dsl.Input(b)
 
-        code = (
-            [ b, self ],
-            lambda args: opt(*args)
-        )
+        other = (lambda _: b) if not hasattr(b, '__call__') else b
 
-        f, refs = dsl.Compile(code, {})
+        if not isinstance(other, Lambda):
+            other = self.__class__(other, {})
+
+        f = lambda x: opt( other(x), self(x) )
+        refs = utils.merge(other._refs, self._refs)
+
 
         return self.__unit__(f, refs)
 
@@ -192,8 +192,9 @@ class Lambda(dsl.Function):
             return self.__class__(f, refs)
 
     def __then__(self, other, **kwargs):
-        code = (self, other)
-        f, refs = dsl.Compile(code, {})
+
+        f = utils.forward_compose2(self, other)
+        refs = dict(self._refs, **other._refs) if isinstance(other, Lambda) else self._refs
 
         return self.__unit__(f, refs, **kwargs)
 
@@ -210,10 +211,11 @@ class Lambda(dsl.Function):
 
     def __rrshift__(self, prev):
 
-        if type(prev) is dsl.Node or hasattr(prev, '__call__'):
-            code = (prev, self)
-            f, refs = dsl.Compile(code, {})
-            return self.__unit__(f, refs)
+        if hasattr(prev, '__call__'):
+            if not isinstance(prev, Lambda):
+                prev = self.__class__(prev, {})
+
+            return prev.__then__(self)
         else: #apply
             return self(prev)
 

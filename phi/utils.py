@@ -7,6 +7,12 @@ def identity(x):
 def compose2(f, g):
     return lambda x: f(g(x))
 
+def forward_compose2(f, g):
+    return lambda x: g(f(x))
+
+def merge(dict_a, dict_b):
+    return dict(dict_a, **dict_b)
+
 
 DefaultArgSpec = namedtuple('DefaultArgSpec', 'has_default default_value')
 

@@ -55,6 +55,12 @@ class TestLambdas(object):
 
         assert 11 == h(3)
 
+    def test_reverse(self):
+
+        f = 12 / P
+
+        assert f(3) == 4
+
     def test_lambda_opt_lambda(self):
 
         assert 3 == P.Pipe(
