@@ -129,10 +129,18 @@ The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to c
         """
         return self.Make(*code, **kwargs)(x)
 
+    def NPipe(self, *code, **kwargs):
+        return self.NMake(*code, **kwargs)(x)
+
     def Run(self, *code, **kwargs):
         """
         """
         return self.Pipe(None, *code, **kwargs)
+
+    def NRun(self, *code, **kwargs):
+        """
+        """
+        return self.NPipe(None, *code, **kwargs)
 
     def Make(self, *code, **kwargs):
         """
@@ -177,28 +185,25 @@ The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.ht
     assert f(1) == 6
         """
 
-        _return_type = None
-        flatten = False
+        _return_type = kwargs['_return_type'] if '_return_type' in kwargs else None
+        flatten = kwargs['flatten'] if 'flatten' in kwargs else False
+        refs = kwargs['refs'] if 'refs' in kwargs else {}
+        ref_manager = kwargs['ref_manager'] if 'ref_manager' in kwargs else True
 
-        if '_return_type' in kwargs:
-            _return_type = kwargs['_return_type']
-            del kwargs['_return_type']
-
-        if 'flatten' in kwargs:
-            flatten = kwargs['flatten']
-            del kwargs['flatten']
-
-        code = (self, code)
+        # code = (self, code)
 
         if flatten:
             code = (code, lambda x: utils.flatten_list(x) if type(x) is list else x)
 
-        f, refs = dsl.Compile(code, self._refs)
-        refs = utils.merge(self._refs, refs)
+        f = dsl.Compile(code, refs, ref_manager=ref_manager)
 
-        return self.__unit__(f, refs, _return_type=_return_type)
+        return self.__then__(f, _return_type=_return_type)
 
     M = Make
+
+    def NMake(self, *args, **kwargs):
+        kwargs['ref_manager'] = False
+        return self.Make(*args, **kwargs)
 
     def _n(self, n, expr, *args, **kwargs):
         _return_type = None
@@ -212,7 +217,7 @@ The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.ht
             new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
             return expr(*new_args, **kwargs)
 
-        return self.__unit__(_lambda, self._refs, _return_type=_return_type)
+        return self.__unit__(_lambda, _return_type=_return_type)
 
     def _0(self, expr, *args, **kwargs):
         """
@@ -256,20 +261,17 @@ The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.ht
         """
         return self.__then__(lambda _: x)
 
-    def On(self, ref):
+    @property
+    def Write(self):
         """
         """
-        if type(ref) is str:
-            ref = dsl.Ref(ref)
-
-        if ref.name not in self._refs:
-            refs = dict(self._refs, **{ref.name: ref})
-        else:
-            refs = self._refs
-
-        return self.__unit__(utils.compose2(ref.set, self), refs)
+        return WriteProxy(self)
 
 
+    @property
+    def Read(self):
+
+        return ReadProxy(self)
 
     @property
     def Obj(self):
@@ -294,7 +296,7 @@ The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.ht
         * `fn`: a function that atleast takes an Applicative as its first argument.
         * `library_path`: the route of the librar from which this function was taken, used for documentation purposes.
         * `alias`: allows you to specify the name of the method, it will take the name of the function if its `None`.
-        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based On the documentation of `fn`.
+        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based on the documentation of `fn`.
 
         **Return**
 
@@ -327,7 +329,7 @@ It accepts the same arguments as `{3}.{0}`. """ + explanation + """
         """).format(original_name, name, fn_docs, library_path) if explain else fn_docs
 
         if name in cls.__core__:
-            raise Exception("Can't add method '{0}' because its On __core__".format(name))
+            raise Exception("Can't add method '{0}' because its on __core__".format(name))
 
         fn = method_type(fn)
         setattr(cls, name, fn)
@@ -374,7 +376,7 @@ is equivalent to
         * `fn`: a function that atleast takes an Object as its first argument.
         * `library_path`: the route of the librar from which this function was taken, used for documentation purposes.
         * `alias`: allows you to specify the name of the method, it will take the name of the function if its `None`.
-        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based On the documentation of `fn`.
+        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based on the documentation of `fn`.
 
         **Return**
 
@@ -547,6 +549,38 @@ class ObjectProxy(object):
             return self.__builder__.__then__(f)
 
         return method_proxy
+
+
+class ReadProxy(object):
+    """docstring for Underscore."""
+
+    def __init__(self, __builder__):
+        self.__builder__ = __builder__
+
+    def __getitem__(self, name):
+        return self.__builder__.NMake(name)
+
+    def __getattr__(self, name):
+        return self.__builder__.NMake(name)
+
+    def __call__ (self, ref):
+        return self.__builder__.NMake(ref)
+
+
+class WriteProxy(object):
+    """docstring for Underscore."""
+
+    def __init__(self, __builder__):
+        self.__builder__ = __builder__
+
+    def __getitem__(self, ref):
+        return self.__builder__.NMake({ref})
+
+    def __getattr__ (self, ref):
+        return self.__builder__.NMake({ref})
+
+    def __call__ (self, ref):
+        return self.__builder__.NMake({ref})
 
 
 

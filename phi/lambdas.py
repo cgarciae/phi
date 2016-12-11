@@ -144,13 +144,12 @@ def _fmap(opt):
         other = (lambda _: b) if not hasattr(b, '__call__') else b
 
         if not isinstance(other, Lambda):
-            other = self.__class__(other, {})
+            other = self.__class__(other)
 
         f = lambda x: opt( self(x), other(x) )
-        refs = utils.merge(self._refs, other._refs)
 
 
-        return self.__unit__(f, refs)
+        return self.__unit__(f)
 
     return method
 
@@ -160,13 +159,12 @@ def _fmap_flip(opt):
         other = (lambda _: b) if not hasattr(b, '__call__') else b
 
         if not isinstance(other, Lambda):
-            other = self.__class__(other, {})
+            other = self.__class__(other)
 
         f = lambda x: opt( other(x), self(x) )
-        refs = utils.merge(other._refs, self._refs)
 
 
-        return self.__unit__(f, refs)
+        return self.__unit__(f)
 
     return method
 
@@ -179,24 +177,22 @@ def _unary_fmap(opt):
 class Lambda(dsl.Function):
     """docstring for Lambda."""
 
-    def __init__(self, f, refs):
+    def __init__(self, f):
         super(Lambda, self).__init__(f)
         self._f = f
-        self._refs = refs
 
-    def __unit__(self, f, refs, _return_type=None):
+    def __unit__(self, f, _return_type=None):
         "Monadic unit, also known as `return`"
         if _return_type:
-            return _return_type(f, refs)
+            return _return_type(f)
         else:
-            return self.__class__(f, refs)
+            return self.__class__(f)
 
     def __then__(self, other, **kwargs):
 
         f = utils.forward_compose2(self, other)
-        refs = dict(self._refs, **other._refs) if isinstance(other, Lambda) else self._refs
 
-        return self.__unit__(f, refs, **kwargs)
+        return self.__unit__(f, **kwargs)
 
     ## Override operators
     def __call__(self, x, flatten=False):
@@ -213,7 +209,7 @@ class Lambda(dsl.Function):
 
         if hasattr(prev, '__call__'):
             if not isinstance(prev, Lambda):
-                prev = self.__class__(prev, {})
+                prev = self.__class__(prev)
 
             return prev.__then__(self)
         else: #apply

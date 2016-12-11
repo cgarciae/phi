@@ -11,7 +11,7 @@ from builder import Builder
 #patches
 import functions_patch
 
-P = Builder(utils.identity, {})
+P = Builder(utils.identity)
 
 # shortcuts
 _0 = P._0
@@ -20,7 +20,8 @@ _2 = P._2
 _3 = P._3
 _4 = P._4
 _5 = P._5
-On = P.On
+Read = P.Read
+Write = P.Write
 Val = P.Val
 Pipe = P.Pipe
 Make = P.Make

@@ -5,13 +5,13 @@ class TestDSL(object):
 
     def test_compile(self):
         code = (P + 1, P * 2)
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
         assert f(2) == 6
 
     def test_compile_single_function(self):
         f = P * 2
         code = f
-        f_compiled, refs = dsl.Compile(code, {})
+        f_compiled = dsl.Compile(code, {})
         assert f == f_compiled
 
     def test_read(self):
@@ -19,7 +19,7 @@ class TestDSL(object):
             x=dsl.Ref('x', 10)
         )
         code = ('x',)
-        f, refs = dsl.Compile(code, refs)
+        f = dsl.Compile(code, refs)
 
         assert refs == refs #read doesnt modify
         assert f(None) == 10
@@ -33,7 +33,7 @@ class TestDSL(object):
             ['c', 'a', 'b']
         )
 
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
 
         assert [600, 3, 6] == f(2)
 
@@ -51,7 +51,7 @@ class TestDSL(object):
             ]
         )
 
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
 
         assert [600, 3, 600] == f(2)
 
@@ -63,7 +63,7 @@ class TestDSL(object):
             [
                 P * 100
             ,
-                P.On('c')
+                P.Write('c')
             ,
                 P - 3
             ,
@@ -71,7 +71,7 @@ class TestDSL(object):
             ]
         )
 
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
 
         assert [600, 6, 3, 6] == f(2)
 
@@ -91,7 +91,7 @@ class TestDSL(object):
             ]
         )
 
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
 
         assert [20, 2, 3] == f(2)
 
@@ -102,7 +102,7 @@ class TestDSL(object):
             []
         ]
 
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
 
         assert [4, []] == f(4)
 
@@ -113,7 +113,7 @@ class TestDSL(object):
             [P + 1]
         ]
 
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
 
         assert [2, [2]] == f(1)
 
@@ -125,7 +125,7 @@ class TestDSL(object):
             int
         )
 
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
         assert 20 == f(2)
 
 
@@ -146,7 +146,7 @@ class TestDSL(object):
             ]
         )
 
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
         assert [['4', '6'], [4, 6]] == f(3)
 
     def test_dict(self):
@@ -166,7 +166,7 @@ class TestDSL(object):
             ]
         )
 
-        f, refs = dsl.Compile(code, {})
+        f = dsl.Compile(code, {})
         [obj, double_len] = f("hello")
 
         assert obj.original == "hello"
@@ -197,3 +197,52 @@ class TestDSL(object):
 
         assert x['sum'] == 6
         assert x['len'] == 3
+
+    def test_compile_refs(self):
+
+        x = P.Pipe(
+            [1,2,3],
+            dict(
+                sum = sum
+            ,
+                len = len
+            ,
+                x = 'x'
+            ,
+                z = P.Read('y') + 2
+            ),
+            refs = dict(
+                x = 10,
+                y = 5
+            )
+        )
+
+        assert x.sum == 6
+        assert x.len == 3
+        assert x.x == 10
+        assert x.z == 7
+
+        assert x['sum'] == 6
+        assert x['len'] == 3
+        assert x['x'] == 10
+        assert x['z'] == 7
+
+
+    def test_nested_compiles(self):
+
+        assert 1 == P.Pipe(
+            1, {'s'},
+            P.Make(
+                P + 1, {'s'}
+            ),
+            's'
+        )
+
+        assert 2 == P.Pipe(
+            1, {'s'},
+            P.NMake(
+                P + 1, {'s'}
+            ),
+            's'
+        )
+
