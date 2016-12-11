@@ -140,7 +140,7 @@ assert result == 0.5
 assert s == 2
 ```
 
-Add 3 to the `s` loaded `s` for fun and profit
+Add 3 to the loaded `s` for fun and profit
 
 ```python
 from phi import P, Rec, Read
