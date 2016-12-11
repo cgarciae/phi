@@ -568,7 +568,7 @@ behaves like just like the indentity except that as a side effect it creates a r
 
 This is equivalent to a sort of function like this
 
-    lambda _: read('x')
+    lambda z: read('x')
 
 where the input is totally ignored and a hypothetical `read` function is given the reference name and it should return its stored value (internally its not implemented like this). As you see strings in the DSL mean read from a reference and a set with a string means write to a reference.
 
@@ -636,7 +636,7 @@ every time there is a write expression inside a branch expression.
         self.name = name
 
     def __compile__(self):
-        f = lambda _: RefManager.get_ref(self.name).value
+        f = lambda z: RefManager.get_ref(self.name).value
         return f
 
 
@@ -680,13 +680,13 @@ Sometimes you might need to branch the computation but start one of the branches
     P.Pipe(
         ...,
         [
-            lambda _: my_value
+            lambda z: my_value
         ,
             ...
         ]
     )
 
-Here we just made a lamda that took in the argument `_` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`
+Here we just made a lamda that took in the argument `z` but it was completely ignored and it always returns `my_value`, this is called a constant function. You could also do the same with `P.Val` or the top level function `phi.Val`
 
     from phi import P, Val
 

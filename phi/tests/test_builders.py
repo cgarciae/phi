@@ -40,8 +40,8 @@ class TestBuilder(object):
         pass
 
     def test_C_1(self):
-        assert P._(add2)(4) == 6
-        assert P._(add2)._(mul3)(4) == 18
+        assert P.Then(add2)(4) == 6
+        assert P.Then(add2).Then(mul3)(4) == 18
 
         assert P.Make(add2)(4) == 6
         assert P.Make(add2, mul3)(4) == 18
@@ -139,7 +139,7 @@ class TestBuilder(object):
 
         t1 = 2 >> P.Make(
             P + 1,
-            P._0(datetime.now)
+            P.Then0(datetime.now)
         )
 
         assert t1 > t0
@@ -147,28 +147,28 @@ class TestBuilder(object):
     def test_1(self):
         assert 9 == 2 >> P.Make(
             P + 1,
-            P._(math.pow, 2)
+            P.Then(math.pow, 2)
         )
 
     def test_2(self):
         assert [2, 4] == [1, 2, 3] >> P.Make(
             P
-            ._2(map, P + 1)
-            ._2(filter, P % 2 == 0)
+            .Then2(map, P + 1)
+            .Then2(filter, P % 2 == 0)
         )
 
         assert [2, 4] == P.Pipe(
             [1, 2, 3],
             P
-            ._2(map, P + 1)
-            ._2(filter, P % 2 == 0)
+            .Then2(map, P + 1)
+            .Then2(filter, P % 2 == 0)
         )
 
 
     def test_underscores(self):
-        assert P._(a2_plus_b_minus_2c, 2, 4)(3) == 3 # (3)^2 + 2 - 2*4
-        assert P._2(a2_plus_b_minus_2c, 2, 4)(3) == -1 # (2)^2 + 3 - 2*4
-        assert P._3(a2_plus_b_minus_2c, 2, 4)(3) == 2 # (2)^2 + 4 - 2*3
+        assert P.Then(a2_plus_b_minus_2c, 2, 4)(3) == 3 # (3)^2 + 2 - 2*4
+        assert P.Then2(a2_plus_b_minus_2c, 2, 4)(3) == -1 # (2)^2 + 3 - 2*4
+        assert P.Then3(a2_plus_b_minus_2c, 2, 4)(3) == 2 # (2)^2 + 4 - 2*3
 
     def test_pipe(self):
         assert P.Pipe(4, add2, mul3) == 18
@@ -374,7 +374,7 @@ class TestBuilder(object):
                 P * 2
             ],
             [
-                P._2(map, str)
+                P.Then2(map, str)
             ,
                 ()
             ]

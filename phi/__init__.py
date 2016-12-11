@@ -14,12 +14,12 @@ import functions_patch
 P = Builder(utils.identity)
 
 # shortcuts
-_0 = P._0
-_1 = P._
-_2 = P._2
-_3 = P._3
-_4 = P._4
-_5 = P._5
+Then0 = P.Then0
+Then = P.Then
+Then1 = P.Then1
+Then3 = P.Then3
+Then4 = P.Then4
+Then5 = P.Then5
 Read = P.Read
 Write = P.Write
 Val = P.Val

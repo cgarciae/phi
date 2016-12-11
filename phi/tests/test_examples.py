@@ -12,7 +12,7 @@ class TestExamples(object):
             text,
             Obj.split(" "), #['a', 'bb', 'ccc']
             P.map(len), #[1, 2, 3]
-            P._(sum) / len #6 / 3 == 2
+            P.sum() / len #6 / 3 == 2
         )
 
         assert 2 == avg_word_length

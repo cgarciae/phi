@@ -141,7 +141,7 @@ import operator
 def _fmap(opt):
     def method(self, b):
 
-        other = (lambda _: b) if not hasattr(b, '__call__') else b
+        other = (lambda z: b) if not hasattr(b, '__call__') else b
 
         if not isinstance(other, Lambda):
             other = self.__class__(other)
@@ -156,7 +156,7 @@ def _fmap(opt):
 def _fmap_flip(opt):
     def method(self, b):
 
-        other = (lambda _: b) if not hasattr(b, '__call__') else b
+        other = (lambda z: b) if not hasattr(b, '__call__') else b
 
         if not isinstance(other, Lambda):
             other = self.__class__(other)

@@ -8,7 +8,7 @@ The `phi.builder.Builder` class exposes most of the API, you will normally use t
 
 To integrate existing code, the `phi.builder.Builder` class offers the following functionalities:
 
-* Create *special* partials useful for the DSL. See the `phi.builder.Builder._` [underscore] method.
+* Create *special* partials useful for the DSL. See the `phi.builder.Builder.Then` method.
 * Register functions as methods of the `phi.builder.Builder` class. See the `*Register*` method family e.g. `phi.builder.Builder.Register1`.
 * Create functions that proxy methods from an object. See `phi.builder.Builder.Obj`.
 * Create functions that proxy fields from an object. See `phi.builder.Builder.Rec`.
@@ -50,7 +50,7 @@ This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it 
 
     from phi import P, Context, Obj
 
-    def read_file(_):
+    def read_file(z):
         f = Context()
         return f.read()
 
@@ -205,7 +205,7 @@ The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.ht
         kwargs['ref_manager'] = False
         return self.Make(*args, **kwargs)
 
-    def _n(self, n, expr, *args, **kwargs):
+    def ThenAt(self, n, expr, *args, **kwargs):
         _return_type = None
 
         if '_return_type' in kwargs:
@@ -219,47 +219,47 @@ The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.ht
 
         return self.__unit__(_lambda, _return_type=_return_type)
 
-    def _0(self, expr, *args, **kwargs):
+    def Then0(self, expr, *args, **kwargs):
         """
         """
-        return self._n(-1, expr, *args, **kwargs)
+        return self.ThenAt(-1, expr, *args, **kwargs)
 
-    def _(self, expr, *args, **kwargs):
+    def Then(self, expr, *args, **kwargs):
         """
         """
-        return self._n(0, expr, *args, **kwargs)
+        return self.ThenAt(0, expr, *args, **kwargs)
 
-    _1 = _
+    Then1 = Then
 
-    def _2(self, expr, arg1, *args, **kwargs):
+    def Then2(self, expr, arg1, *args, **kwargs):
         """
         """
         args = (arg1,) + args
-        return self._n(1, expr, *args, **kwargs)
+        return self.ThenAt(1, expr, *args, **kwargs)
 
-    def _3(self, expr, arg1, arg2, *args, **kwargs):
+    def Then3(self, expr, arg1, arg2, *args, **kwargs):
         """
         """
         args = (arg1, arg2) + args
-        return self._n(2, expr, *args, **kwargs)
+        return self.ThenAt(2, expr, *args, **kwargs)
 
-    def _4(self, expr, arg1, arg2, arg3, *args, **kwargs):
+    def Then4(self, expr, arg1, arg2, arg3, *args, **kwargs):
         """
         """
         args = (arg1, arg2, arg3) + args
-        return self._n(3, expr, *args, **kwargs)
+        return self.ThenAt(3, expr, *args, **kwargs)
 
-    def _5(self, expr, arg1, arg2, arg3, arg4, *args, **kwargs):
+    def Then5(self, expr, arg1, arg2, arg3, arg4, *args, **kwargs):
         """
         """
         args = (arg1, arg2, arg3, arg4) + args
-        return self._n(4, expr, *args, **kwargs)
+        return self.ThenAt(4, expr, *args, **kwargs)
 
 
     def Val(self, x):
         """
         """
-        return self.__then__(lambda _: x)
+        return self.__then__(lambda z: x)
 
     @property
     def Write(self):
@@ -351,7 +351,7 @@ It accepts the same arguments as `{3}.{0}`. """ + explanation + """
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._0(fn, *args, **kwargs)
+            return self.Then0(fn, *args, **kwargs)
 
         explanation = """
 However, a partial with the arguments is returned which expects any argument `x` and complete ignores it, such that
@@ -388,7 +388,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._(fn, *args, **kwargs)
+            return self.Then(fn, *args, **kwargs)
 
         explanation = """
 However, the 1st argument is omitted, a partial with the rest of the arguments is returned which expects the 1st argument such that
@@ -411,7 +411,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._2(fn, *args, **kwargs)
+            return self.Then2(fn, *args, **kwargs)
 
         explanation = """
 However, the 2nd argument is omitted, a partial with the rest of the arguments is returned which expects the 2nd argument such that
@@ -432,7 +432,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._3(fn, *args, **kwargs)
+            return self.Then3(fn, *args, **kwargs)
 
         explanation = """
 However, the 3rd argument is omitted, a partial with the rest of the arguments is returned which expects the 3rd argument such that
@@ -453,7 +453,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._4(fn, *args, **kwargs)
+            return self.Then4(fn, *args, **kwargs)
 
         explanation = """
 However, the 4th argument is omitted, a partial with the rest of the arguments is returned which expects the 4th argument such that
@@ -475,7 +475,7 @@ is equivalent to
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self._5(fn, *args, **kwargs)
+            return self.Then5(fn, *args, **kwargs)
 
         explanation = """
 However, the 5th argument is omitted, a partial with the rest of the arguments is returned which expects the 5th argument such that
