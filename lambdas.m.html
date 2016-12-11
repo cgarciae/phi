@@ -1356,33 +1356,31 @@ table {
 
 <span class="k">def</span> <span class="nf">_fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
-        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">[</span> <span class="bp">self</span><span class="p">,</span> <span class="n">b</span> <span class="p">],</span>
-            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">opt</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">other</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">b</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">b</span>
 
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">opt</span><span class="p">(</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">other</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">method</span>
 
 <span class="k">def</span> <span class="nf">_fmap_flip</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
-        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">[</span> <span class="n">b</span><span class="p">,</span> <span class="bp">self</span> <span class="p">],</span>
-            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">opt</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">other</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">b</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">b</span>
 
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">opt</span><span class="p">(</span> <span class="n">other</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">method</span>
 
@@ -1395,23 +1393,22 @@ table {
 <span class="k">class</span> <span class="nc">Lambda</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for Lambda.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Lambda</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_f</span> <span class="o">=</span> <span class="n">f</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span> <span class="o">=</span> <span class="n">refs</span>
 
-    <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="s2">&quot;Monadic unit, also known as `return`&quot;</span>
         <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">forward_compose2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1">## Override operators</span>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
@@ -1426,10 +1423,11 @@ table {
 
     <span class="k">def</span> <span class="nf">__rrshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prev</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
-            <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-            <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">):</span>
+                <span class="n">prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">prev</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span> <span class="c1">#apply</span>
             <span class="k">return</span> <span class="bp">self</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span>
 
@@ -1501,23 +1499,22 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Lambda</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for Lambda.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Lambda</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_f</span> <span class="o">=</span> <span class="n">f</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span> <span class="o">=</span> <span class="n">refs</span>
 
-    <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="s2">&quot;Monadic unit, also known as `return`&quot;</span>
         <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
-        <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">forward_compose2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1">## Override operators</span>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
@@ -1532,10 +1529,11 @@ table {
 
     <span class="k">def</span> <span class="nf">__rrshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prev</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Node</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
-            <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-            <span class="n">f</span><span class="p">,</span> <span class="n">refs</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">):</span>
+                <span class="n">prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">prev</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span> <span class="c1">#apply</span>
             <span class="k">return</span> <span class="bp">self</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span>
 
@@ -1595,15 +1593,15 @@ table {
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
           <li><a href="#phi.lambdas.Lambda">Lambda</a></li>
-          <li>dsl.Function</li>
-          <li>dsl.Node</li>
+          <li>phi.dsl.Function</li>
+          <li>phi.dsl.Node</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
             
   <div class="item">
     <div class="name def" id="phi.lambdas.Lambda.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f, refs)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f)</p>
     </div>
     
 
@@ -1612,10 +1610,9 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.lambdas.Lambda.__init__', this);">Show source &equiv;</a></p>
   <div id="source-phi.lambdas.Lambda.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">Lambda</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_f</span> <span class="o">=</span> <span class="n">f</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_refs</span> <span class="o">=</span> <span class="n">refs</span>
 </pre></div>
 
   </div>
