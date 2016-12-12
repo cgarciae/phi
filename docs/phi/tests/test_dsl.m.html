@@ -1052,6 +1052,7 @@ table {
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_dict">test_dict</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_fn">test_fn</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_identities">test_identities</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_if">test_if</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_input">test_input</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_list">test_list</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_nested_compiles">test_nested_compiles</a></li>
@@ -1083,6 +1084,7 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_dsl" class="source">
     <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">dsl</span><span class="p">,</span> <span class="n">P</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
 
 <span class="k">class</span> <span class="nc">TestDSL</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for TestDSL.&quot;&quot;&quot;</span>
@@ -1311,6 +1313,21 @@ table {
         <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
         <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span>
 
+        <span class="c1">#############################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span> <span class="n">P</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+
+
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+            <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">test_nested_compiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -1329,6 +1346,19 @@ table {
             <span class="p">),</span>
             <span class="s1">&#39;s&#39;</span>
         <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_if</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span> <span class="n">P</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">P</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Val</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 </pre></div>
 
   </div>
@@ -1575,6 +1605,21 @@ table {
         <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
         <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span>
 
+        <span class="c1">#############################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span> <span class="n">P</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+
+
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+            <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">test_nested_compiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -1593,6 +1638,19 @@ table {
             <span class="p">),</span>
             <span class="s1">&#39;s&#39;</span>
         <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_if</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span> <span class="n">P</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">P</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Val</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 </pre></div>
 
   </div>
@@ -1695,6 +1753,16 @@ table {
     <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;len&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
     <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
     <span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span>
+    <span class="c1">#############################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span> <span class="n">P</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;s&#39;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1810,6 +1878,35 @@ table {
     <span class="p">]</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_if">
+    <p>def <span class="ident">test_if</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_if', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_if" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_if</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span> <span class="n">P</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">P</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Val</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 </pre></div>
 
   </div>

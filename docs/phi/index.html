@@ -1053,9 +1053,7 @@ table {
       
   <ul>
     <li class="mono"><a href="#phi.Context">Context</a></li>
-    <li class="mono"><a href="#phi.M">M</a></li>
     <li class="mono"><a href="#phi.Make">Make</a></li>
-    <li class="mono"><a href="#phi.NM">NM</a></li>
     <li class="mono"><a href="#phi.NMake">NMake</a></li>
     <li class="mono"><a href="#phi.NPipe">NPipe</a></li>
     <li class="mono"><a href="#phi.NRun">NRun</a></li>
@@ -1074,6 +1072,20 @@ table {
 
     </li>
 
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.If">If</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.If.__init__">__init__</a></li>
+    <li class="mono"><a href="#phi.If.Else">Else</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
 
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
@@ -1155,12 +1167,12 @@ table {
 </pre></div>
 
 
-<p>Compose it with a multiplication by 2 (<code>P * 2</code>)</p>
+<p>Compose it with a function equivalent to <code>f(x) = (x + 3) / (x + 1)</code></p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
 <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1">#(1 + 3) / (1 + 1) == 4 / 2 == 2</span>
     <span class="p">[</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1178,7 +1190,7 @@ table {
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1">#(1 + 3) / (1 + 1) == 4 / 2 == 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1196,7 +1208,7 @@ table {
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1">#(1 + 3) / (1 + 1) == 4 / 2 == 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1209,12 +1221,12 @@ table {
 </pre></div>
 
 
-<p>Save the value from the <code>P * 2</code> computation as <code>s</code> and load it at the end in a branch</p>
+<p>Save the value from the <code>(P + 3) / (P + 1)</code> computation as <code>s</code> and load it at the end in a branch</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span>
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1237,7 +1249,7 @@ table {
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1260,7 +1272,7 @@ table {
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1283,7 +1295,7 @@ table {
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1316,7 +1328,7 @@ table {
 
 <h2>Status</h2>
 <ul>
-<li>Version: <strong>0.3.0</strong>.</li>
+<li>Version: <strong>0.3.2</strong>.</li>
 <li>Current effort: Documentation (&gt; 60%). Please create an issue if documentation is unclear, its of great priority for this library.</li>
 <li>Milestone: reach 1.0.0 after docs completed + feedback from the community.</li>
 </ul>
@@ -1358,22 +1370,16 @@ table {
 <span class="n">rite</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Write</span>
 <span class="n">al</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Val</span>
 <span class="n">ipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span>
-<span class="n">Pipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NPipe</span>
 <span class="n">ake</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span>
-<span class="n">Make</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NMake</span>
 <span class="n">un</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span>
+<span class="n">Make</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NMake</span>
+<span class="n">Pipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NPipe</span>
 <span class="n">Run</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NRun</span>
 <span class="n">bj</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span>
 <span class="n">ec</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Rec</span>
 <span class="n">ontext</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span>
- <span class="o">=</span> <span class="n">Make</span>
-<span class="s2">&quot;&quot;</span>
-<span class="n">breviation</span> <span class="k">for</span> <span class="sb">`P.Make`</span> <span class="ow">or</span> <span class="sb">`phi.Make`</span><span class="o">.</span>
-<span class="s2">&quot;&quot;</span>
-<span class="n">M</span> <span class="o">=</span> <span class="n">NMake</span>
-<span class="s2">&quot;&quot;</span>
-<span class="n">breviation</span> <span class="k">for</span> <span class="sb">`P.NMake`</span> <span class="ow">or</span> <span class="sb">`phi.Make`</span><span class="o">.</span>
-<span class="s2">&quot;&quot;</span>
+ <span class="n">Directly</span> <span class="n">imported</span> <span class="kn">from</span> <span class="nn">DSL</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">If</span>
 <span class="c1">#######################</span>
  <span class="n">Documentation</span>
 <span class="c1">#######################</span>
@@ -1493,7 +1499,7 @@ table {
 
 
 <p><code>Context</code> yields an exception when used outside of a <code>With</code> block.</p>
-<p><strong>More info</strong></p>
+<p><strong>Also see</strong></p>
 <ul>
 <li><a href="builder.m.html#phi.builder.Builder.Obj"><code>phi.builder.Builder.Obj</code></a></li>
 <li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
@@ -1531,107 +1537,13 @@ table {
 <span class="sd">    )</span>
 <span class="sd">)</span>
 <span class="sd">text` yields an exception when used outside of a `With` block.</span>
-<span class="sd">re info**</span>
+<span class="sd">so see**</span>
 <span class="sd">hi.builder.Builder.Obj`</span>
 <span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="phi.M">
-    <p>def <span class="ident">M</span>(</p><p>self, *code, **kwargs)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>The <code>Make</code> method takes an expression from the DSL and compiles it to a function.</p>
-<p><strong>Arguments</strong></p>
-<ul>
-<li><strong>*code</strong>: any expression from the DSL.<code>code</code> is implicitly a <code>tuple</code> since that is what Python gives you when you declare a <a href="https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists">Variadic Function</a>, therefore, according to the rules of the DSL, all expressions inside of <code>code</code> will be composed together. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition">Composition</a>.</li>
-<li><em>flatten = False</em>: if <code>flatten</code> is True and the argument being returned by the compiled function is a <code>list</code> it will instead return a flattened list.</li>
-<li><em>_return_type = None</em>: By default <code>Make</code> returns an object of the same class as the object calling <code>Make</code> e.g. <code>Builder</code>, however if you have</li>
-</ul>
-<p><strong>Examples</strong></p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
-
-<span class="k">def</span> <span class="nf">add1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="k">def</span> <span class="nf">mul3</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
-
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
-    <span class="n">add1</span><span class="p">,</span>
-    <span class="n">mul3</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
-</pre></div>
-
-
-<p>Here <code>f</code> is equivalent to</p>
-<p>def f(x):
-    x = add1(x)
-    x = mul3(x)
-    return x</p>
-<p>The previous example using <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a> to create the functions</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
-
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
-    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
-</pre></div></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.M', this);">Show source &equiv;</a></p>
-  <div id="source-phi.M" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">`Make` method takes an expression from the DSL and compiles it to a function.</span>
-<span class="sd">guments**</span>
-<span class="sd">*code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).</span>
-<span class="sd">latten = False*: if `flatten` is True and the argument being returned by the compiled function is a `list` it will instead return a flattened list.</span>
-<span class="sd">return_type = None*: By default `Make` returns an object of the same class as the object calling `Make` e.g. `Builder`, however if you have</span>
-<span class="sd">amples**</span>
-<span class="sd">from phi import P</span>
-<span class="sd">def add1(x): return x + 1</span>
-<span class="sd">def mul3(x): return x * 3</span>
-<span class="sd">f = P.Make(</span>
-<span class="sd">    add1,</span>
-<span class="sd">    mul3</span>
-<span class="sd">)</span>
-<span class="sd">assert f(1) == 6</span>
-<span class="sd"> `f` is equivalent to</span>
-<span class="sd">f(x):</span>
-<span class="sd">x = add1(x)</span>
-<span class="sd">x = mul3(x)</span>
-<span class="sd">return x</span>
-<span class="sd">previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions</span>
-<span class="sd">from phi import P</span>
-<span class="sd">f = P.Make(</span>
-<span class="sd">    P + 1,</span>
-<span class="sd">    P * 3</span>
-<span class="sd">)</span>
-<span class="sd">assert f(1) == 6</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="bp">None</span>
-    <span class="n">flatten</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;flatten&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;flatten&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="bp">False</span>
-    <span class="n">refs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;refs&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;refs&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="p">{}</span>
-    <span class="n">ref_manager</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;ref_manager&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;ref_manager&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="bp">True</span>
-    <span class="c1"># code = (self, code)</span>
-    <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">ref_manager</span><span class="o">=</span><span class="n">ref_manager</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1653,7 +1565,9 @@ table {
 <ul>
 <li><strong>*code</strong>: any expression from the DSL.<code>code</code> is implicitly a <code>tuple</code> since that is what Python gives you when you declare a <a href="https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists">Variadic Function</a>, therefore, according to the rules of the DSL, all expressions inside of <code>code</code> will be composed together. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition">Composition</a>.</li>
 <li><em>flatten = False</em>: if <code>flatten</code> is True and the argument being returned by the compiled function is a <code>list</code> it will instead return a flattened list.</li>
-<li><em>_return_type = None</em>: By default <code>Make</code> returns an object of the same class as the object calling <code>Make</code> e.g. <code>Builder</code>, however if you have</li>
+<li><em>_return_type = None</em>: By default <code>Make</code> returns an object of the same class e.g. <code>Builder</code>, however you can pass in a custom class that inherits from <code>Builder</code> as the returned contianer. This is useful if the custom builder has specialized methods.</li>
+<li><em>create_ref_context = True</em>: determines if a reference manager should be created on compilation. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a>.</li>
+<li><em>refs = True</em>: external/default values for references passed during compilation. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a>.</li>
 </ul>
 <p><strong>Examples</strong></p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
@@ -1684,7 +1598,16 @@ table {
 <span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
-</pre></div></div>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a></li>
+<li><a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>
+**</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.Make', this);">Show source &equiv;</a></p>
   <div id="source-phi.Make" class="source">
@@ -1694,7 +1617,9 @@ table {
 <span class="sd">guments**</span>
 <span class="sd">*code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).</span>
 <span class="sd">latten = False*: if `flatten` is True and the argument being returned by the compiled function is a `list` it will instead return a flattened list.</span>
-<span class="sd">return_type = None*: By default `Make` returns an object of the same class as the object calling `Make` e.g. `Builder`, however if you have</span>
+<span class="sd">return_type = None*: By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the returned contianer. This is useful if the custom builder has specialized methods.</span>
+<span class="sd">reate_ref_context = True*: determines if a reference manager should be created on compilation. See [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile).</span>
+<span class="sd">efs = True*: external/default values for references passed during compilation. See [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile).</span>
 <span class="sd">amples**</span>
 <span class="sd">from phi import P</span>
 <span class="sd">def add1(x): return x + 1</span>
@@ -1716,38 +1641,20 @@ table {
 <span class="sd">    P * 3</span>
 <span class="sd">)</span>
 <span class="sd">assert f(1) == 6</span>
+<span class="sd">so see**</span>
+<span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
+<span class="sd">ompile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)</span>
+<span class="sd">ambdas](https://cgarciae.github.io/phi/lambdas.m.html)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="bp">None</span>
-    <span class="n">flatten</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;flatten&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;flatten&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="bp">False</span>
-    <span class="n">refs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;refs&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;refs&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="p">{}</span>
-    <span class="n">ref_manager</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;ref_manager&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;ref_manager&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="bp">True</span>
+    <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_return_type&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">flatten</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;flatten&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">refs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;refs&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">create_ref_context</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;create_ref_context&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
     <span class="c1"># code = (self, code)</span>
     <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">ref_manager</span><span class="o">=</span><span class="n">ref_manager</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">create_ref_context</span><span class="o">=</span><span class="n">create_ref_context</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="phi.NM">
-    <p>def <span class="ident">NM</span>(</p><p>self, *args, **kwargs)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.NM', this);">Show source &equiv;</a></p>
-  <div id="source-phi.NM" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">NMake</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;ref_manager&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1764,11 +1671,107 @@ table {
 
     
   
+    <div class="desc"><p><code>NMake</code> is shortcut for <code>Make(..., create_ref_context=False)</code>, its full name should be <em>NoCreateRefContextMake</em> but its impractically long. Normally methods that <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">compile</a> DSL expressions like <a href="builder.m.html#phi.builder.Builder.Make"><code>phi.builder.Builder.Make</code></a> or <a href="builder.m.html#phi.builder.Builder.Pipe"><code>phi.builder.Builder.Pipe</code></a> create a reference context unless especified, these contexts encapsulate references (see <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">read</a> or <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">write</a>) and prevent them from leaking, which is good. There are times however when you consciously want a sub-Make or sub-Pipe expression to read or write references from the main Make or Pipe expression, for this you need to set <code>create_ref_context</code> to <code>False</code>.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li>Same arguments as <a href="builder.m.html#phi.builder.Builder.Make"><code>phi.builder.Builder.Make</code></a> but...</li>
+<li><strong>create_ref_context</strong> is hardcoded to <code>False</code></li>
+</ul>
+<p><strong>Examples</strong></p>
+<p>If you compile a sub expression as a function for another expression e.g.</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span> <span class="c1"># write s == 1, outer context</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span> <span class="c1"># write s == 2, inner context</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;s&#39;</span>  <span class="c1"># read s == 1, outer context</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>you find that references are not shared. However if you avoid the creation of a new reference context via a keyword arguments</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 2, same context</span>
+        <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">False</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>you can achieve what you want. Yet writting <code>create_ref_context=False</code> is a little cumbersome, so to make things nicer we just use a shortcut by appending an <code>N</code> at the beggining of the <code>NMake</code> method</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>   <span class="c1">#write s == 2, same context</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><a href="builder.m.html#phi.builder.Builder.Make"><code>phi.builder.Builder.Make</code></a></li>
+<li><a href="builder.m.html#phi.builder.Builder.NPipe"><code>phi.builder.Builder.NPipe</code></a></li>
+<li><a href="builder.m.html#phi.builder.Builder.NRun"><code>phi.builder.Builder.NRun</code></a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a></li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.NMake', this);">Show source &equiv;</a></p>
   <div id="source-phi.NMake" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">NMake</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;ref_manager&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ke` is shortcut for `Make(..., create_ref_context=False)`, its full name should be *NoCreateRefContextMake* but its impractically long. Normally methods that [compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile) DSL expressions like `phi.builder.Builder.Make` or `phi.builder.Builder.Pipe` create a reference context unless especified, these contexts encapsulate references (see [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) or [write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)) and prevent them from leaking, which is good. There are times however when you consciously want a sub-Make or sub-Pipe expression to read or write references from the main Make or Pipe expression, for this you need to set `create_ref_context` to `False`.</span>
+<span class="sd">guments**</span>
+<span class="sd">me arguments as `phi.builder.Builder.Make` but...</span>
+<span class="sd">create_ref_context** is hardcoded to `False`</span>
+<span class="sd">amples**</span>
+<span class="sd">ou compile a sub expression as a function for another expression e.g.</span>
+<span class="sd">from phi import P</span>
+<span class="sd">assert 1 == P.Pipe(</span>
+<span class="sd">    1, {&#39;s&#39;}, # write s == 1, outer context</span>
+<span class="sd">    P.Make(</span>
+<span class="sd">        P + 1, {&#39;s&#39;} # write s == 2, inner context</span>
+<span class="sd">    ),</span>
+<span class="sd">    &#39;s&#39;  # read s == 1, outer context</span>
+<span class="sd">)</span>
+<span class="sd">find that references are not shared. However if you avoid the creation of a new reference context via a keyword arguments</span>
+<span class="sd">from phi import P</span>
+<span class="sd">assert 2 == P.Pipe(</span>
+<span class="sd">    1, {&#39;s&#39;},   #write s == 1, same context</span>
+<span class="sd">    P.Make(</span>
+<span class="sd">        P + 1, {&#39;s&#39;},   #write s == 2, same context</span>
+<span class="sd">        create_ref_context=False</span>
+<span class="sd">    ),</span>
+<span class="sd">    &#39;s&#39;   # read s == 2, same context</span>
+<span class="sd">)</span>
+<span class="sd">can achieve what you want. Yet writting `create_ref_context=False` is a little cumbersome, so to make things nicer we just use a shortcut by appending an `N` at the beggining of the `NMake` method</span>
+<span class="sd">from phi import P</span>
+<span class="sd">assert 2 == P.Pipe(</span>
+<span class="sd">    1, {&#39;s&#39;},   #write s == 1, same context</span>
+<span class="sd">    P.NMake(</span>
+<span class="sd">        P + 1, {&#39;s&#39;}   #write s == 2, same context</span>
+<span class="sd">    ),</span>
+<span class="sd">    &#39;s&#39;   # read s == 2, same context</span>
+<span class="sd">)</span>
+<span class="sd">so see**</span>
+<span class="sd">hi.builder.Builder.Make`</span>
+<span class="sd">hi.builder.Builder.NPipe`</span>
+<span class="sd">hi.builder.Builder.NRun`</span>
+<span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
+<span class="sd">ompile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;create_ref_context&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -1780,16 +1783,118 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.NPipe">
-    <p>def <span class="ident">NPipe</span>(</p><p>self, *code, **kwargs)</p>
+    <p>def <span class="ident">NPipe</span>(</p><p>self, x, *code, **kwargs)</p>
     </div>
     
 
     
   
+    <div class="desc"><p><code>NPipe</code> is shortcut for <code>Pipe(..., create_ref_context=False)</code>, its full name should be <em>NoCreateRefContextPipe</em> but its impractically long. Normally methods that <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">compile</a> DSL expressions like <a href="builder.m.html#phi.builder.Builder.Make"><code>phi.builder.Builder.Make</code></a> or <a href="builder.m.html#phi.builder.Builder.Pipe"><code>phi.builder.Builder.Pipe</code></a> create a reference context unless especified, these contexts encapsulate references (see <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">read</a> or <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">write</a>) and prevent them from leaking, which is good. There are times however when you consciously want a sub-Make or sub-Pipe expression to read or write references from the main Make or Pipe expression, for this you need to set <code>create_ref_context</code> to <code>False</code>.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li>Same arguments as <a href="builder.m.html#phi.builder.Builder.Pipe"><code>phi.builder.Builder.Pipe</code></a> but...</li>
+<li><strong>create_ref_context</strong> is hardcoded to <code>False</code></li>
+</ul>
+<p><strong>Examples</strong></p>
+<p>If you compile a sub expression as a function for another expression e.g.</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span> <span class="c1"># write s == 1, outer context</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span> <span class="c1"># write s == 2, inner context</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;s&#39;</span>  <span class="c1"># read s == 1, outer context</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>you find that references are not shared. However if you avoid the creation of a new reference context via a keyword arguments</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 2, same context</span>
+        <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">False</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>you can achieve what you want. Yet writting <code>create_ref_context=False</code> is a little cumbersome, so to make things nicer we just use a shortcut by appending an <code>N</code> at the beggining of the <code>NPipe</code> method</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">NPipe</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>   <span class="c1">#write s == 2, same context</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><a href="builder.m.html#phi.builder.Builder.Pipe"><code>phi.builder.Builder.Pipe</code></a></li>
+<li><a href="builder.m.html#phi.builder.Builder.NMake"><code>phi.builder.Builder.NMake</code></a></li>
+<li><a href="builder.m.html#phi.builder.Builder.NRun"><code>phi.builder.Builder.NRun</code></a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a></li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.NPipe', this);">Show source &equiv;</a></p>
   <div id="source-phi.NPipe" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">NPipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">NPipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">pe` is shortcut for `Pipe(..., create_ref_context=False)`, its full name should be *NoCreateRefContextPipe* but its impractically long. Normally methods that [compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile) DSL expressions like `phi.builder.Builder.Make` or `phi.builder.Builder.Pipe` create a reference context unless especified, these contexts encapsulate references (see [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) or [write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)) and prevent them from leaking, which is good. There are times however when you consciously want a sub-Make or sub-Pipe expression to read or write references from the main Make or Pipe expression, for this you need to set `create_ref_context` to `False`.</span>
+<span class="sd">guments**</span>
+<span class="sd">me arguments as `phi.builder.Builder.Pipe` but...</span>
+<span class="sd">create_ref_context** is hardcoded to `False`</span>
+<span class="sd">amples**</span>
+<span class="sd">ou compile a sub expression as a function for another expression e.g.</span>
+<span class="sd">from phi import P</span>
+<span class="sd">assert 1 == P.Pipe(</span>
+<span class="sd">    1, {&#39;s&#39;}, # write s == 1, outer context</span>
+<span class="sd">    lambda x: P.Pipe(</span>
+<span class="sd">        x,</span>
+<span class="sd">        P + 1, {&#39;s&#39;} # write s == 2, inner context</span>
+<span class="sd">    ),</span>
+<span class="sd">    &#39;s&#39;  # read s == 1, outer context</span>
+<span class="sd">)</span>
+<span class="sd">find that references are not shared. However if you avoid the creation of a new reference context via a keyword arguments</span>
+<span class="sd">from phi import P</span>
+<span class="sd">assert 2 == P.Pipe(</span>
+<span class="sd">    1, {&#39;s&#39;},   #write s == 1, same context</span>
+<span class="sd">    lambda x: P.Pipe(</span>
+<span class="sd">        x,</span>
+<span class="sd">        P + 1, {&#39;s&#39;},   #write s == 2, same context</span>
+<span class="sd">        create_ref_context=False</span>
+<span class="sd">    ),</span>
+<span class="sd">    &#39;s&#39;   # read s == 2, same context</span>
+<span class="sd">)</span>
+<span class="sd">can achieve what you want. Yet writting `create_ref_context=False` is a little cumbersome, so to make things nicer we just use a shortcut by appending an `N` at the beggining of the `NPipe` method</span>
+<span class="sd">from phi import P</span>
+<span class="sd">assert 2 == P.Pipe(</span>
+<span class="sd">    1, {&#39;s&#39;},   #write s == 1, same context</span>
+<span class="sd">    lambda x: P.NPipe(</span>
+<span class="sd">        x,</span>
+<span class="sd">        P + 1, {&#39;s&#39;}   #write s == 2, same context</span>
+<span class="sd">    ),</span>
+<span class="sd">    &#39;s&#39;   # read s == 2, same context</span>
+<span class="sd">)</span>
+<span class="sd">so see**</span>
+<span class="sd">hi.builder.Builder.Pipe`</span>
+<span class="sd">hi.builder.Builder.NMake`</span>
+<span class="sd">hi.builder.Builder.NRun`</span>
+<span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
+<span class="sd">ompile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
@@ -1807,11 +1912,27 @@ table {
 
     
   
+    <div class="desc"><p><code>NRun</code> is shortcut for <code>Run(..., create_ref_context=False)</code>, its full name should be <em>NoCreateRefContextRun</em> but its impractically long.</p>
+<p><strong>Also see</strong></p>
+<ul>
+<li><a href="builder.m.html#phi.builder.Builder.Run"><code>phi.builder.Builder.Run</code></a></li>
+<li><a href="builder.m.html#phi.builder.Builder.NMake"><code>phi.builder.Builder.NMake</code></a></li>
+<li><a href="builder.m.html#phi.builder.Builder.NPipe"><code>phi.builder.Builder.NPipe</code></a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a></li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.NRun', this);">Show source &equiv;</a></p>
   <div id="source-phi.NRun" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">NRun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">n` is shortcut for `Run(..., create_ref_context=False)`, its full name should be *NoCreateRefContextRun* but its impractically long.</span>
+<span class="sd">so see**</span>
+<span class="sd">hi.builder.Builder.Run`</span>
+<span class="sd">hi.builder.Builder.NMake`</span>
+<span class="sd">hi.builder.Builder.NPipe`</span>
+<span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
+<span class="sd">ompile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NPipe</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -1835,6 +1956,7 @@ table {
 <ul>
 <li><strong>x</strong>: any input object</li>
 <li><strong>*code</strong>: any expression from the DSL.<code>code</code> is implicitly a <code>tuple</code> since that is what Python gives you when you declare a <a href="https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists">Variadic Function</a>, therefore, according to the rules of the DSL, all expressions inside of <code>code</code> will be composed together. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition">Composition</a>.</li>
+<li><strong>**kwargs</strong>: <code>Pipe</code> forwards all <code>kwargs</code> to <a href="builder.m.html#phi.builder.Builder.Make"><code>phi.builder.Builder.Make</code></a>, visit its documentation for more info.</li>
 </ul>
 <p><strong>Examples</strong></p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
@@ -1862,7 +1984,17 @@ table {
 <span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">6</span>
-</pre></div></div>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><a href="builder.m.html#phi.builder.Builder.Make"><code>phi.builder.Builder.Make</code></a></li>
+<li><a href="builder.m.html#phi.builder.Builder.Run"><code>phi.builder.Builder.Run</code></a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a></li>
+<li><a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a></li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.Pipe', this);">Show source &equiv;</a></p>
   <div id="source-phi.Pipe" class="source">
@@ -1872,6 +2004,7 @@ table {
 <span class="sd">guments**</span>
 <span class="sd">x**: any input object</span>
 <span class="sd">*code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).</span>
+<span class="sd">**kwargs**: `Pipe` forwards all `kwargs` to `phi.builder.Builder.Make`, visit its documentation for more info.</span>
 <span class="sd">amples**</span>
 <span class="sd">from phi import P</span>
 <span class="sd">def add1(x): return x + 1</span>
@@ -1890,6 +2023,12 @@ table {
 <span class="sd">    P * 3   #2 * 3 == 6</span>
 <span class="sd">)</span>
 <span class="sd">assert x == 6</span>
+<span class="sd">so see**</span>
+<span class="sd">hi.builder.Builder.Make`</span>
+<span class="sd">hi.builder.Builder.Run`</span>
+<span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
+<span class="sd">ompile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)</span>
+<span class="sd">ambdas](https://cgarciae.github.io/phi/lambdas.m.html)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -1908,11 +2047,109 @@ table {
 
     
   
+    <div class="desc"><p><code>Run(*code, **kwargs)</code> is equivalent to <code>Pipe(None, *code, **kwargs)</code>, that is, it compiles the code and applies in a <code>None</code> value.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li>Same as <a href="builder.m.html#phi.builder.Builder.Make"><code>phi.builder.Builder.Make</code></a>.</li>
+</ul>
+<p><strong>Examples</strong></p>
+<p>You might create code that totally ignores its input argument e.g.</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="bp">None</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">),</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">5</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">9</span>
+<span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">25</span>
+</pre></div>
+
+
+<p>Here the <code>Val</code> statemente drops the <code>None</code> and introduces its own constants. Given this its more suitable to use <code>Run</code></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">),</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">5</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">9</span>
+<span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">25</span>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><a href="builder.m.html#phi.builder.Builder.Make"><code>phi.builder.Builder.Make</code></a></li>
+<li><a href="builder.m.html#phi.builder.Builder.Pipe"><code>phi.builder.Builder.Pipe</code></a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a></li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.Run', this);">Show source &equiv;</a></p>
   <div id="source-phi.Run" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">(*code, **kwargs)` is equivalent to `Pipe(None, *code, **kwargs)`, that is, it compiles the code and applies in a `None` value.</span>
+<span class="sd">guments**</span>
+<span class="sd">me as `phi.builder.Builder.Make`.</span>
+<span class="sd">amples**</span>
+<span class="sd">might create code that totally ignores its input argument e.g.</span>
+<span class="sd">from phi import P</span>
+<span class="sd">result = P.Pipe(</span>
+<span class="sd">    None,</span>
+<span class="sd">    dict(</span>
+<span class="sd">        x = (</span>
+<span class="sd">            Val(10),</span>
+<span class="sd">            P + 1</span>
+<span class="sd">        ),</span>
+<span class="sd">        y = (</span>
+<span class="sd">            Val(5),</span>
+<span class="sd">            P * 5</span>
+<span class="sd">        )</span>
+<span class="sd">    )</span>
+<span class="sd">)</span>
+<span class="sd">assert result.x == 9</span>
+<span class="sd">assert result.y == 25</span>
+<span class="sd"> the `Val` statemente drops the `None` and introduces its own constants. Given this its more suitable to use `Run`</span>
+<span class="sd">from phi import P</span>
+<span class="sd">result = P.Run(</span>
+<span class="sd">    dict(</span>
+<span class="sd">        x = (</span>
+<span class="sd">            Val(10),</span>
+<span class="sd">            P + 1</span>
+<span class="sd">        ),</span>
+<span class="sd">        y = (</span>
+<span class="sd">            Val(5),</span>
+<span class="sd">            P * 5</span>
+<span class="sd">        )</span>
+<span class="sd">    )</span>
+<span class="sd">)</span>
+<span class="sd">assert result.x == 9</span>
+<span class="sd">assert result.y == 25</span>
+<span class="sd">so see**</span>
+<span class="sd">hi.builder.Builder.Make`</span>
+<span class="sd">hi.builder.Builder.Pipe`</span>
+<span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
+<span class="sd">ompile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -2140,6 +2377,131 @@ table {
   </div>
   
 
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="phi.If" class="name">class <span class="ident">If</span></p>
+      
+  
+    <div class="desc"><p>docstring for If.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.If', this);">Show source &equiv;</a></p>
+  <div id="source-phi.If" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">If</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for If.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">,</span> <span class="o">*</span><span class="n">Then</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">Else</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Else&#39;</span><span class="p">,</span> <span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Predicate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Then</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Then</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">Predicate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">Then</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Then</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">Else</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Then</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">Else</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">f</span>
+
+    <span class="k">def</span> <span class="nf">Else</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">Else</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.If">If</a></li>
+          <li><a href="dsl.m.html#phi.dsl.Node">phi.dsl.Node</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.If.Else_" class="name">var <span class="ident">Else_</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.If.Predicate" class="name">var <span class="ident">Predicate</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.If.Then" class="name">var <span class="ident">Then</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.If.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, Predicate, *Then, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.If.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-phi.If.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">,</span> <span class="o">*</span><span class="n">Then</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">Else</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Else&#39;</span><span class="p">,</span> <span class="p">())</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Predicate</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Then</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Then</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.If.Else">
+    <p>def <span class="ident">Else</span>(</p><p>self, *Else)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.If.Else', this);">Show source &equiv;</a></p>
+  <div id="source-phi.If.Else" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Else</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">Else</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
 
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">

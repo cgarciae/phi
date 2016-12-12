@@ -1,4 +1,5 @@
 from phi import dsl, P
+import pytest
 
 class TestDSL(object):
     """docstring for TestDSL."""
@@ -227,6 +228,21 @@ class TestDSL(object):
         assert x['x'] == 10
         assert x['z'] == 7
 
+        #############################
+
+        f = P.Make(
+            P.If( P > 2,
+                {'s'}
+            ),
+            's'
+        )
+
+        assert f(3) == 3
+
+
+        with pytest.raises(Exception):
+            f(1)
+
 
     def test_nested_compiles(self):
 
@@ -245,4 +261,17 @@ class TestDSL(object):
             ),
             's'
         )
+
+    def test_if(self):
+
+        f = P.Make(
+            P.If( P > 0,
+                P
+            ).Else(
+                P.Val(0)
+            )
+        )
+
+        assert f(5) == 5
+        assert f(-3) == 0
 

@@ -59,14 +59,14 @@ assert x == 2
 assert y == 3
 ```
 
-Compose it with a multiplication by 2 (`P * 2`)
+Compose it with a function equivalent to `f(x) = (x + 3) / (x + 1)`
 
 ```python
 from phi import P
 
 [x, y] = P.Pipe(
     1.0,  #input 1
-    P * 2,  #1 * 2 == 2
+    (P + 3) / (P + 1),  #(1 + 3) / (1 + 1) == 4 / 2 == 2
     [
         P + 1  #2 + 1 == 3
     ,
@@ -85,7 +85,7 @@ from phi import P
 
 result = P.Pipe(
     1.0,  #input 1
-    P * 2,  #1 * 2 == 2
+    (P + 3) / (P + 1),  #(1 + 3) / (1 + 1) == 4 / 2 == 2
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -104,7 +104,7 @@ from phi import P, Rec
 
 result = P.Pipe(
     1.0,  #input 1
-    P * 2,  #1 * 2 == 2
+    (P + 3) / (P + 1),  #(1 + 3) / (1 + 1) == 4 / 2 == 2
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -116,14 +116,14 @@ result = P.Pipe(
 assert result == 0.5
 ```
 
-Save the value from the `P * 2` computation as `s` and load it at the end in a branch
+Save the value from the `(P + 3) / (P + 1)` computation as `s` and load it at the end in a branch
 
 ```python
 from phi import P, Rec
 
 [result, s] = P.Pipe(
     1.0,  #input 1
-    P * 2, {'s'},  #2 * 1 == 2, saved as 's'
+    (P + 3) / (P + 1), {'s'},  #4 / 2 == 2, saved as 's'
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -147,7 +147,7 @@ from phi import P, Rec, Read
 
 [result, s] = P.Pipe(
     1.0,  #input 1
-    P * 2, {'s'},  #2 * 1 == 2, saved as 's'
+    (P + 3) / (P + 1), {'s'},  #4 / 2 == 2, saved as 's'
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -171,7 +171,7 @@ from phi import P, Rec, Read, Write
 
 [result, s] = P.Pipe(
     1.0,  #input 1
-    P * 2, Write.s,  #2 * 1 == 2, saved as 's'
+    (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -195,7 +195,7 @@ from phi import P, Rec, Val
 
 [result, s, val] = P.Pipe(
     1.0,  #input 1
-    P * 2, Write.s,  #2 * 1 == 2, saved as 's'
+    (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -225,7 +225,7 @@ assert val == 10
     pip install git+https://github.com/cgarciae/phi.git@develop
 
 ## Status
-* Version: **0.3.0**.
+* Version: **0.3.2**.
 * Current effort: Documentation (> 60%). Please create an issue if documentation is unclear, its of great priority for this library.
 * Milestone: reach 1.0.0 after docs completed + feedback from the community.
 

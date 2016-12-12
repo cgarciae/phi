@@ -69,6 +69,9 @@ class RefManager(object):
 
     @classmethod
     def set_ref(cls, ref):
+        #Copy to avoid stateful behaviour
+        cls.CURRENT_REFS = cls.CURRENT_REFS.copy()
+
         if ref.name in cls.CURRENT_REFS:
             other_ref = cls.CURRENT_REFS[ref.name]
             # merge state: borg pattern
@@ -493,10 +496,11 @@ Now lets image that we want to find the average value of the list, we could calc
 
 class With(Node):
     """
+**With**
 
     def With(context_manager, *body):
 
-where
+**Arguments**
 
 * **context_manager**: a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) object or valid expression from the DSL that returns a context manager.
 * ***body**: any valid expression of the DSL to be evaluated inside the context. `*body` is interpreted as a tuple so all expression contained are composed.
@@ -708,13 +712,39 @@ Here we just made a lamda that took in the argument `z` but it was completely ig
         return f
 
 
+class If(Node):
+    """docstring for If."""
+    def __init__(self, Predicate, *Then, **kwargs):
+
+        Else = kwargs.get('Else', ())
+
+        self.Predicate = _parse(Predicate)
+        self.Then = _parse(Then)
+        self.Else_ = _parse(Else)
+
+    def __compile__(self):
+        Predicate = self.Predicate.__compile__()
+        Then = self.Then.__compile__()
+        Else = self.Else_.__compile__()
+
+        f = lambda x: Then(x) if Predicate(x) else Else(x)
+
+        return f
+
+    def Else(self, *Else):
+        self.Else_ = _parse(Else)
+        return self
+
+
+
+
 
 
 #######################
 ### FUNCTIONS
 #######################
 
-def Compile(code, refs, ref_manager=True):
+def Compile(code, refs, create_ref_context=True):
     """
     Hola
     """
@@ -727,7 +757,7 @@ def Compile(code, refs, ref_manager=True):
         with RefManager(refs):
             return f(x)
 
-    return g if ref_manager else f
+    return g if create_ref_context else f
 
 
 def _parse(code, else_input=False):
