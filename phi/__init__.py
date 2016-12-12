@@ -26,23 +26,17 @@ Read = P.Read
 Write = P.Write
 Val = P.Val
 Pipe = P.Pipe
-NPipe = P.NPipe
 Make = P.Make
-NMake = P.NMake
 Run = P.Run
+NMake = P.NMake
+NPipe = P.NPipe
 NRun = P.NRun
 Obj = P.Obj
 Rec = P.Rec
 Context = P.Context
 
-M = Make
-"""
-Abreviation for `P.Make` or `phi.Make`.
-"""
-NM = NMake
-"""
-Abreviation for `P.NMake` or `phi.Make`.
-"""
+# Directly imported from DSL
+If = dsl.If
 
 ########################
 # Documentation

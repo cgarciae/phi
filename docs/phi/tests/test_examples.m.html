@@ -1045,6 +1045,8 @@ table {
         
           
   <ul>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_builder_NMake">test_builder_NMake</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_builder_NPipe">test_builder_NPipe</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_example_1">test_example_1</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_getting_started">test_getting_started</a></li>
   </ul>
@@ -1069,7 +1071,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_examples" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">rom</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">Obj</span><span class="o">,</span> <span class="nn">Rec</span><span class="o">,</span> <span class="nn">M</span>
+    <div class="codehilite"><pre><span></span><span class="n">rom</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">Obj</span><span class="o">,</span> <span class="nn">Rec</span><span class="o">,</span> <span class="nn">Make</span>
 <span class="n">lass</span> <span class="n">TestExamples</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
    <span class="sd">&quot;&quot;&quot;docstring for TestExamples.&quot;&quot;&quot;</span>
    <span class="k">def</span> <span class="nf">test_example_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1086,7 +1088,7 @@ table {
            <span class="n">text</span><span class="p">,</span>
            <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
            <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
-           <span class="n">M</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
+           <span class="n">Make</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
        <span class="p">)</span>
        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>
@@ -1262,6 +1264,71 @@ table {
        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
        <span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">5</span>
        <span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">10</span>
+   <span class="k">def</span> <span class="nf">test_builder_NMake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span> <span class="c1"># write s == 1, outer context</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+               <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span> <span class="c1"># write s == 2, inner context</span>
+           <span class="p">),</span>
+           <span class="s1">&#39;s&#39;</span>  <span class="c1"># read s == 1, outer context</span>
+       <span class="p">)</span>
+       <span class="c1">#############################</span>
+       <span class="c1">#############################</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+               <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 2, same context</span>
+               <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">False</span>
+           <span class="p">),</span>
+           <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+       <span class="p">)</span>
+       <span class="c1">#############################</span>
+       <span class="c1">#############################</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span>
+               <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>   <span class="c1">#write s == 2, same context</span>
+           <span class="p">),</span>
+           <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+       <span class="p">)</span>
+   <span class="k">def</span> <span class="nf">test_builder_NPipe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span> <span class="c1"># write s == 1, outer context</span>
+           <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+               <span class="n">x</span><span class="p">,</span>
+               <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span> <span class="c1"># write s == 2, inner context</span>
+           <span class="p">),</span>
+           <span class="s1">&#39;s&#39;</span>  <span class="c1"># read s == 1, outer context</span>
+       <span class="p">)</span>
+       <span class="c1">#############################</span>
+       <span class="c1">#############################</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+           <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+               <span class="n">x</span><span class="p">,</span>
+               <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 2, same context</span>
+               <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">False</span>
+           <span class="p">),</span>
+           <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+       <span class="p">)</span>
+       <span class="c1">#############################</span>
+       <span class="c1">#############################</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+           <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">NPipe</span><span class="p">(</span>
+               <span class="n">x</span><span class="p">,</span>
+               <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>   <span class="c1">#write s == 2, same context</span>
+           <span class="p">),</span>
+           <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+       <span class="p">)</span>
+       <span class="c1">#############################</span>
+       <span class="c1">#############################</span>
 </pre></div>
 
   </div>
@@ -1302,7 +1369,7 @@ table {
             <span class="n">text</span><span class="p">,</span>
             <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
             <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
-            <span class="n">M</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
+            <span class="n">Make</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
@@ -1525,6 +1592,89 @@ table {
         <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
         <span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">5</span>
         <span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">10</span>
+
+    <span class="k">def</span> <span class="nf">test_builder_NMake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span> <span class="c1"># write s == 1, outer context</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span> <span class="c1"># write s == 2, inner context</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>  <span class="c1"># read s == 1, outer context</span>
+        <span class="p">)</span>
+
+        <span class="c1">#############################</span>
+        <span class="c1">#############################</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 2, same context</span>
+                <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">False</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+        <span class="p">)</span>
+
+
+        <span class="c1">#############################</span>
+        <span class="c1">#############################</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>   <span class="c1">#write s == 2, same context</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+        <span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">test_builder_NPipe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span> <span class="c1"># write s == 1, outer context</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">,</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span> <span class="c1"># write s == 2, inner context</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>  <span class="c1"># read s == 1, outer context</span>
+        <span class="p">)</span>
+
+        <span class="c1">#############################</span>
+        <span class="c1">#############################</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">,</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 2, same context</span>
+                <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">False</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+        <span class="p">)</span>
+
+        <span class="c1">#############################</span>
+        <span class="c1">#############################</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">NPipe</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">,</span>
+                <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>   <span class="c1">#write s == 2, same context</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+        <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1538,6 +1688,107 @@ table {
           <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_builder_NMake">
+    <p>def <span class="ident">test_builder_NMake</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_builder_NMake', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_builder_NMake" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_builder_NMake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span> <span class="c1"># write s == 1, outer context</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span> <span class="c1"># write s == 2, inner context</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;s&#39;</span>  <span class="c1"># read s == 1, outer context</span>
+    <span class="p">)</span>
+    <span class="c1">#############################</span>
+    <span class="c1">#############################</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 2, same context</span>
+            <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">False</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+    <span class="p">)</span>
+    <span class="c1">#############################</span>
+    <span class="c1">#############################</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>   <span class="c1">#write s == 2, same context</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+    <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_builder_NPipe">
+    <p>def <span class="ident">test_builder_NPipe</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_builder_NPipe', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_builder_NPipe" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_builder_NPipe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span> <span class="c1"># write s == 1, outer context</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span> <span class="c1"># write s == 2, inner context</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;s&#39;</span>  <span class="c1"># read s == 1, outer context</span>
+    <span class="p">)</span>
+    <span class="c1">#############################</span>
+    <span class="c1">#############################</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 2, same context</span>
+            <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">False</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+    <span class="p">)</span>
+    <span class="c1">#############################</span>
+    <span class="c1">#############################</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>   <span class="c1">#write s == 1, same context</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">NPipe</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>   <span class="c1">#write s == 2, same context</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+    <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="phi.tests.test_examples.TestExamples.test_example_1">
@@ -1564,7 +1815,7 @@ table {
         <span class="n">text</span><span class="p">,</span>
         <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
         <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
-        <span class="n">M</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
+        <span class="n">Make</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
     <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;a bb ccc&quot;</span>

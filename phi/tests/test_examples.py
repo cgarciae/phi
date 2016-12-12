@@ -1,5 +1,5 @@
 
-from phi import P, Obj, Rec, M
+from phi import P, Obj, Rec, Make
 
 
 class TestExamples(object):
@@ -23,7 +23,7 @@ class TestExamples(object):
             text,
             Obj.split(" "), #['a', 'bb', 'ccc']
             P.map(len), #[1, 2, 3]
-            M(sum) / len #6 / 3 == 2
+            Make(sum) / len #6 / 3 == 2
         )
 
         assert 2 == avg_word_length
@@ -246,3 +246,89 @@ class TestExamples(object):
         assert result == 0.5
         assert s == 5
         assert val == 10
+
+    def test_builder_NMake(self):
+
+        from phi import P
+
+        assert 1 == P.Pipe(
+            1, {'s'}, # write s == 1, outer context
+            P.Make(
+                P + 1, {'s'} # write s == 2, inner context
+            ),
+            's'  # read s == 1, outer context
+        )
+
+        #############################
+        #############################
+
+        from phi import P
+
+        assert 2 == P.Pipe(
+            1, {'s'},   #write s == 1, same context
+            P.Make(
+                P + 1, {'s'},   #write s == 2, same context
+                create_ref_context=False
+            ),
+            's'   # read s == 2, same context
+        )
+
+
+        #############################
+        #############################
+
+        from phi import P
+
+        assert 2 == P.Pipe(
+            1, {'s'},   #write s == 1, same context
+            P.NMake(
+                P + 1, {'s'}   #write s == 2, same context
+            ),
+            's'   # read s == 2, same context
+        )
+
+
+    def test_builder_NPipe(self):
+
+        from phi import P
+
+        assert 1 == P.Pipe(
+            1, {'s'}, # write s == 1, outer context
+            lambda x: P.Pipe(
+                x,
+                P + 1, {'s'} # write s == 2, inner context
+            ),
+            's'  # read s == 1, outer context
+        )
+
+        #############################
+        #############################
+
+        from phi import P
+
+        assert 2 == P.Pipe(
+            1, {'s'},   #write s == 1, same context
+            lambda x: P.Pipe(
+                x,
+                P + 1, {'s'},   #write s == 2, same context
+                create_ref_context=False
+            ),
+            's'   # read s == 2, same context
+        )
+
+        #############################
+        #############################
+
+        from phi import P
+
+        assert 2 == P.Pipe(
+            1, {'s'},   #write s == 1, same context
+            lambda x: P.NPipe(
+                x,
+                P + 1, {'s'}   #write s == 2, same context
+            ),
+            's'   # read s == 2, same context
+        )
+
+        #############################
+        #############################

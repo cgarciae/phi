@@ -3,8 +3,9 @@ import utils
 import inspect
 
 class PythonBuilder(Builder):
-    """docstring for PythonBuilder."""
-    pass
+    """
+Methods that start with a lowercase letter are most probably core python functions automatically as methods (e.g. `phi.builder.Builder.map` or `phi.builder.Builder.sum`). There is a third batch of methods that like `phi.builder.Builder.And`, `phi.builder.Builder.Not`, `phi.builder.Builder.Contains`, etc, that are not considered core `Builder` methods but are packaged with this class for conveniece, initially they where capitalized because they mimimic keywords (`and`, `or`, `not`, etc) and its ilegal to give them these lowercase names, however, methods like `phi.builder.Builder.Contains` that could use lowercase are left capitalized to maintain uniformity.
+    """
 
 
 # built in functions
@@ -42,3 +43,6 @@ def First(x): next(iter(x))
 
 @PythonBuilder.Register1("python")
 def Last(x): list(x)[-1]
+
+
+# __all__ = ["PythonBuilder"]

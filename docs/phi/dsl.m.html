@@ -1075,6 +1075,16 @@ table {
 
         </li>
         <li class="mono">
+        <span class="class_name"><a href="#phi.dsl.If">If</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.dsl.If.__init__">__init__</a></li>
+    <li class="mono"><a href="#phi.dsl.If.Else">Else</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#phi.dsl.Input">Input</a></span>
         
           
@@ -1246,6 +1256,9 @@ table {
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+        <span class="c1">#Copy to avoid stateful behaviour</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">:</span>
             <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
             <span class="c1"># merge state: borg pattern</span>
@@ -1670,10 +1683,11 @@ table {
 
 <span class="k">class</span> <span class="nc">With</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**With**</span>
 
 <span class="sd">    def With(context_manager, *body):</span>
 
-<span class="sd">where</span>
+<span class="sd">**Arguments**</span>
 
 <span class="sd">* **context_manager**: a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) object or valid expression from the DSL that returns a context manager.</span>
 <span class="sd">* ***body**: any valid expression of the DSL to be evaluated inside the context. `*body` is interpreted as a tuple so all expression contained are composed.</span>
@@ -1885,13 +1899,39 @@ table {
         <span class="k">return</span> <span class="n">f</span>
 
 
+<span class="k">class</span> <span class="nc">If</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for If.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">,</span> <span class="o">*</span><span class="n">Then</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">Else</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Else&#39;</span><span class="p">,</span> <span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Predicate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Then</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Then</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">Predicate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">Then</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Then</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">Else</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Then</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">Else</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">f</span>
+
+    <span class="k">def</span> <span class="nf">Else</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">Else</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+
+
+
 
 
 <span class="c1">#######################</span>
 <span class="c1">### FUNCTIONS</span>
 <span class="c1">#######################</span>
 
-<span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">ref_manager</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hola</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1904,7 +1944,7 @@ table {
         <span class="k">with</span> <span class="n">RefManager</span><span class="p">(</span><span class="n">refs</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">g</span> <span class="k">if</span> <span class="n">ref_manager</span> <span class="k">else</span> <span class="n">f</span>
+    <span class="k">return</span> <span class="n">g</span> <span class="k">if</span> <span class="n">create_ref_context</span> <span class="k">else</span> <span class="n">f</span>
 
 
 <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
@@ -1939,7 +1979,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.dsl.Compile">
-    <p>def <span class="ident">Compile</span>(</p><p>code, refs, ref_manager=True)</p>
+    <p>def <span class="ident">Compile</span>(</p><p>code, refs, create_ref_context=True)</p>
     </div>
     
 
@@ -1949,7 +1989,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Compile', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Compile" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">ref_manager</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">refs</span><span class="p">,</span> <span class="n">create_ref_context</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hola</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1962,7 +2002,7 @@ table {
         <span class="k">with</span> <span class="n">RefManager</span><span class="p">(</span><span class="n">refs</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">g</span> <span class="k">if</span> <span class="n">ref_manager</span> <span class="k">else</span> <span class="n">f</span>
+    <span class="k">return</span> <span class="n">g</span> <span class="k">if</span> <span class="n">create_ref_context</span> <span class="k">else</span> <span class="n">f</span>
 </pre></div>
 
   </div>
@@ -2575,6 +2615,130 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_f</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">=</span> <span class="n">_f</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="phi.dsl.If" class="name">class <span class="ident">If</span></p>
+      
+  
+    <div class="desc"><p>docstring for If.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.If', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.If" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">If</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for If.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">,</span> <span class="o">*</span><span class="n">Then</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">Else</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Else&#39;</span><span class="p">,</span> <span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Predicate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Then</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Then</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">Predicate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">Then</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Then</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">Else</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Then</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">Else</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">f</span>
+
+    <span class="k">def</span> <span class="nf">Else</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">Else</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.dsl.If">If</a></li>
+          <li><a href="#phi.dsl.Node">Node</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.dsl.If.Else_" class="name">var <span class="ident">Else_</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.dsl.If.Predicate" class="name">var <span class="ident">Predicate</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.dsl.If.Then" class="name">var <span class="ident">Then</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.If.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, Predicate, *Then, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.If.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.If.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">,</span> <span class="o">*</span><span class="n">Then</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">Else</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Else&#39;</span><span class="p">,</span> <span class="p">())</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Predicate</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Then</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Then</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.If.Else">
+    <p>def <span class="ident">Else</span>(</p><p>self, *Else)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.If.Else', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.If.Else" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Else</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">Else</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span>
 </pre></div>
 
   </div>
@@ -3230,6 +3394,9 @@ return x
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+        <span class="c1">#Copy to avoid stateful behaviour</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">:</span>
             <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
             <span class="c1"># merge state: borg pattern</span>
@@ -3343,6 +3510,8 @@ return x
   <div id="source-phi.dsl.RefManager.set_ref" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+    <span class="c1">#Copy to avoid stateful behaviour</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">:</span>
         <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
         <span class="c1"># merge state: borg pattern</span>
@@ -3363,8 +3532,12 @@ return x
       <p id="phi.dsl.With" class="name">class <span class="ident">With</span></p>
       
   
-    <div class="desc"><p>def With(context_manager, *body):</p>
-<p>where</p>
+    <div class="desc"><p><strong>With</strong></p>
+<div class="codehilite"><pre><span></span>def With(context_manager, *body):
+</pre></div>
+
+
+<p><strong>Arguments</strong></p>
 <ul>
 <li><strong>context_manager</strong>: a <a href="https://docs.python.org/2/reference/datamodel.html#context-managers">context manager</a> object or valid expression from the DSL that returns a context manager.</li>
 <li><strong>*body</strong>: any valid expression of the DSL to be evaluated inside the context. <code>*body</code> is interpreted as a tuple so all expression contained are composed.</li>
@@ -3393,10 +3566,11 @@ return x
   <div id="source-phi.dsl.With" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">With</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**With**</span>
 
 <span class="sd">    def With(context_manager, *body):</span>
 
-<span class="sd">where</span>
+<span class="sd">**Arguments**</span>
 
 <span class="sd">* **context_manager**: a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) object or valid expression from the DSL that returns a context manager.</span>
 <span class="sd">* ***body**: any valid expression of the DSL to be evaluated inside the context. `*body` is interpreted as a tuple so all expression contained are composed.</span>

@@ -496,10 +496,11 @@ Now lets image that we want to find the average value of the list, we could calc
 
 class With(Node):
     """
+**With**
 
     def With(context_manager, *body):
 
-where
+**Arguments**
 
 * **context_manager**: a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) object or valid expression from the DSL that returns a context manager.
 * ***body**: any valid expression of the DSL to be evaluated inside the context. `*body` is interpreted as a tuple so all expression contained are composed.
@@ -743,7 +744,7 @@ class If(Node):
 ### FUNCTIONS
 #######################
 
-def Compile(code, refs, ref_manager=True):
+def Compile(code, refs, create_ref_context=True):
     """
     Hola
     """
@@ -756,7 +757,7 @@ def Compile(code, refs, ref_manager=True):
         with RefManager(refs):
             return f(x)
 
-    return g if ref_manager else f
+    return g if create_ref_context else f
 
 
 def _parse(code, else_input=False):
