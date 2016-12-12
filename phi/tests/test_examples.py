@@ -247,6 +247,70 @@ class TestExamples(object):
         assert s == 5
         assert val == 10
 
+        #########################
+        #########################
+
+        from phi import P, Rec, Read, Write, Val, If
+
+        [result, s, val] = P.Pipe(
+            1.0,  #input 1
+            (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
+            dict(
+                x = P + 1  #2 + 1 == 3
+            ,
+                y = P * 3  #2 * 3 == 6
+            ),
+            [
+                Rec.x / Rec.y  #3 / 6 == 0.5
+            ,
+                Read.s + 3  # 2 + 3 == 5
+            ,
+                If( Rec.y > 7,
+                    Val(9) + 1  #input 9 and add 1, gives 10
+                ).Else(
+                    Val("Sorry, come back latter.")
+                )
+            ]
+        )
+
+        assert result == 0.5
+        assert s == 5
+        assert val == "Sorry, come back latter."
+
+
+        ######################################
+        #######################################
+
+        from phi import P, Rec, Read, Write, Val, If
+
+        f = P.Make(
+            (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
+            dict(
+                x = P + 1  #2 + 1 == 3
+            ,
+                y = P * 3  #2 * 3 == 6
+            ),
+            [
+                Rec.x / Rec.y  #3 / 6 == 0.5
+            ,
+                Read.s + 3  # 2 + 3 == 5
+            ,
+                If( Rec.y > 7,
+                    Val(9) + 1  #input 9 and add 1, gives 10
+                ).Else(
+                    Val("Sorry, come back latter.")
+                )
+            ]
+        )
+
+        [result, s, val] = f(1.0)
+
+        assert result == 0.5
+        assert s == 5
+        assert val == "Sorry, come back latter."
+
+
+
     def test_builder_NMake(self):
 
         from phi import P
@@ -286,6 +350,12 @@ class TestExamples(object):
             ),
             's'   # read s == 2, same context
         )
+
+
+        ################################
+        ################################
+
+
 
 
     def test_builder_NPipe(self):

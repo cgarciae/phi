@@ -1291,7 +1291,7 @@ table {
 
 
 <p>Add an input <code>Val</code> of 9 on a branch and add to it 1 just for the sake of it</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Val</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span>
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
@@ -1313,6 +1313,67 @@ table {
 <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
 <span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">5</span>
 <span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">10</span>
+</pre></div>
+
+
+<p>Do the previous only if <code>y &gt; 7</code> else return <code>"Sorry, come back latter."</code></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="p">,</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
+    <span class="p">),</span>
+    <span class="p">[</span>
+        <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
+    <span class="p">,</span>
+        <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
+    <span class="p">,</span>
+        <span class="n">If</span><span class="p">(</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="n">Val</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#input 9 and add 1, gives 10    </span>
+        <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Sorry, come back latter.&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
+<span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">5</span>
+<span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;Sorry, come back latter.&quot;</span>
+</pre></div>
+
+
+<p>Now, what you have to understand that everything you've done with these expression is to create and apply a single function. Using <code>Make</code> we can get the standalone function and then use it to get the same values as before</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="p">,</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
+    <span class="p">),</span>
+    <span class="p">[</span>
+        <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
+    <span class="p">,</span>
+        <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
+    <span class="p">,</span>
+        <span class="n">If</span><span class="p">(</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="n">Val</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#input 9 and add 1, gives 10    </span>
+        <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Sorry, come back latter.&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
+<span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">5</span>
+<span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;Sorry, come back latter.&quot;</span>
 </pre></div>
 
 
@@ -1541,9 +1602,9 @@ table {
 <span class="sd">hi.builder.Builder.Obj`</span>
 <span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
+    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 </pre></div>
 
   </div>

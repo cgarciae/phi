@@ -90,17 +90,23 @@ Here we called `Context` with no arguments to get the context back, however, sin
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html)
         """
 
-        if dsl.With.GLOBAL_CONTEXT is dsl._NO_VALUE:
+        if dsl.CompilationContextManager.WITH_GLOBAL_CONTEXT is dsl._NO_VALUE:
             raise Exception("Cannot use 'Context' outside of a 'With' block")
 
-        return dsl.With.GLOBAL_CONTEXT
+        return dsl.CompilationContextManager.WITH_GLOBAL_CONTEXT
 
     def With(self, *args, **kwargs):
         return self.NMake(dsl.With(*args, **kwargs))
     With.__doc__ = dsl.With.__doc__
 
-    Ref = dsl.Ref
-    If = dsl.If
+    def Ref(self, *args, **kwargs):
+        return self.NMake(dsl.Ref(*args, **kwargs))
+    Ref.__doc__ = dsl.Ref.__doc__
+
+
+    def If(self, *args, **kwargs):
+        return self.NMake(dsl.If(*args, **kwargs))
+    If.__doc__ = dsl.If.__doc__
 
     def Pipe(self, x, *code, **kwargs):
         """
