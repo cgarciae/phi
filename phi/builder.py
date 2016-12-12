@@ -95,7 +95,7 @@ Here we called `Context` with no arguments to get the context back, however, sin
 
         return dsl.With.GLOBAL_CONTEXT
 
-    def With(*args, **kwargs):
+    def With(self, *args, **kwargs):
         return self.NMake(dsl.With(*args, **kwargs))
     With.__doc__ = dsl.With.__doc__
 
