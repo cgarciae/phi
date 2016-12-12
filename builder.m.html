@@ -1055,11 +1055,13 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.__init__">__init__</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Context">Context</a></li>
     <li class="mono"><a href="#phi.builder.Builder.DoRegisterMethod">DoRegisterMethod</a></li>
+    <li class="mono"><a href="#phi.builder.Builder.If">If</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Make">Make</a></li>
     <li class="mono"><a href="#phi.builder.Builder.NMake">NMake</a></li>
     <li class="mono"><a href="#phi.builder.Builder.NPipe">NPipe</a></li>
     <li class="mono"><a href="#phi.builder.Builder.NRun">NRun</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Pipe">Pipe</a></li>
+    <li class="mono"><a href="#phi.builder.Builder.Ref">Ref</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Register0">Register0</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Register1">Register1</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Register2">Register2</a></li>
@@ -1260,17 +1262,23 @@ table {
 <span class="sd">* [dsl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 
     <span class="k">def</span> <span class="nf">With</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
     <span class="n">With</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">__doc__</span>
 
-    <span class="n">Ref</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span>
-    <span class="n">If</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">If</span>
+    <span class="k">def</span> <span class="nf">Ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="n">Ref</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="o">.</span><span class="n">__doc__</span>
+
+
+    <span class="k">def</span> <span class="nf">If</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="n">If</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">If</span><span class="o">.</span><span class="n">__doc__</span>
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2051,17 +2059,23 @@ table {
 <span class="sd">* [dsl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 
     <span class="k">def</span> <span class="nf">With</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
     <span class="n">With</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">__doc__</span>
 
-    <span class="n">Ref</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span>
-    <span class="n">If</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">If</span>
+    <span class="k">def</span> <span class="nf">Ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="n">Ref</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="o">.</span><span class="n">__doc__</span>
+
+
+    <span class="k">def</span> <span class="nf">If</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="n">If</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">If</span><span class="o">.</span><span class="n">__doc__</span>
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2711,27 +2725,6 @@ table {
           <li>phi.dsl.Node</li>
           <li>__builtin__.object</li>
           </ul>
-          <h3>Class variables</h3>
-            <div class="item">
-            <p id="phi.builder.Builder.If" class="name">var <span class="ident">If</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="phi.builder.Builder.Ref" class="name">var <span class="ident">Ref</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
           <h3>Instance variables</h3>
             <div class="item">
             <p id="phi.builder.Builder.Obj" class="name">var <span class="ident">Obj</span></p>
@@ -2885,9 +2878,9 @@ table {
 <span class="sd">hi.builder.Builder.Obj`</span>
 <span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
+    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 </pre></div>
 
   </div>
@@ -2898,7 +2891,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.DoRegisterMethod">
-    <p>def <span class="ident">DoRegisterMethod</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True)</p>
+    <p>def <span class="ident">DoRegisterMethod</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True)</p>
     </div>
     
 
@@ -2949,6 +2942,28 @@ table {
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Can&#39;t add method &#39;{0}&#39; because its on __core__&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
     <span class="n">fn</span> <span class="o">=</span> <span class="n">method_type</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
     <span class="nb">setattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.builder.Builder.If">
+    <p>def <span class="ident">If</span>(</p><p>self, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>docstring for If.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.If', this);">Show source &equiv;</a></p>
+  <div id="source-phi.builder.Builder.If" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">If</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -3445,8 +3460,30 @@ table {
   
             
   <div class="item">
+    <div class="name def" id="phi.builder.Builder.Ref">
+    <p>def <span class="ident">Ref</span>(</p><p>self, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>docstring for Ref.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.Ref', this);">Show source &equiv;</a></p>
+  <div id="source-phi.builder.Builder.Ref" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.builder.Builder.Register0">
-    <p>def <span class="ident">Register0</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register0</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3471,7 +3508,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register1">
-    <p>def <span class="ident">Register1</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register1</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3497,7 +3534,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register2">
-    <p>def <span class="ident">Register2</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register2</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3522,7 +3559,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register3">
-    <p>def <span class="ident">Register3</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register3</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3547,7 +3584,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register4">
-    <p>def <span class="ident">Register4</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register4</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3572,7 +3609,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.Register5">
-    <p>def <span class="ident">Register5</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">Register5</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3597,7 +3634,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction0">
-    <p>def <span class="ident">RegisterFunction0</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction0</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3631,7 +3668,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction1">
-    <p>def <span class="ident">RegisterFunction1</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction1</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3685,7 +3722,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction2">
-    <p>def <span class="ident">RegisterFunction2</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction2</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3719,7 +3756,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction3">
-    <p>def <span class="ident">RegisterFunction3</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction3</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3753,7 +3790,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction4">
-    <p>def <span class="ident">RegisterFunction4</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction4</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3787,7 +3824,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterFunction5">
-    <p>def <span class="ident">RegisterFunction5</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True, _return_type=None)</p>
+    <p>def <span class="ident">RegisterFunction5</span>(</p><p>cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True, _return_type=None)</p>
     </div>
     
 
@@ -3821,7 +3858,7 @@ table {
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.RegisterMethod">
-    <p>def <span class="ident">RegisterMethod</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7f397569f848&gt;, explain=True)</p>
+    <p>def <span class="ident">RegisterMethod</span>(</p><p>cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation=&#39;&#39;, method_type=&lt;function identity at 0x7ff5f9462848&gt;, explain=True)</p>
     </div>
     
 
