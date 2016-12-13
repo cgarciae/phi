@@ -1067,7 +1067,13 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.patch', this);">Show source &equiv;</a></p>
   <div id="source-phi.patch" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span><span class="o">,</span> <span class="nn">inspect</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+
+
+<span class="kn">import</span> <span class="nn">functools</span><span class="o">,</span> <span class="nn">inspect</span>
 
 <span class="n">_true</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">True</span>
 <span class="n">_false</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">False</span>
@@ -1139,7 +1145,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_0">
-    <p>def <span class="ident">builder_with_members_from_0</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_0</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f17702aae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f17703448c0&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f1771816488&gt;)</p>
     </div>
     
 
@@ -1164,7 +1170,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_1">
-    <p>def <span class="ident">builder_with_members_from_1</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_1</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f17702aae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f17703448c0&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f1771816488&gt;)</p>
     </div>
     
 
@@ -1189,7 +1195,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_2">
-    <p>def <span class="ident">builder_with_members_from_2</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_2</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f17702aae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f17703448c0&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f1771816488&gt;)</p>
     </div>
     
 
@@ -1214,7 +1220,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_3">
-    <p>def <span class="ident">builder_with_members_from_3</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_3</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f17702aae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f17703448c0&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f1771816488&gt;)</p>
     </div>
     
 
@@ -1239,7 +1245,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_4">
-    <p>def <span class="ident">builder_with_members_from_4</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_4</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f17702aae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f17703448c0&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f1771816488&gt;)</p>
     </div>
     
 
@@ -1264,7 +1270,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_5">
-    <p>def <span class="ident">builder_with_members_from_5</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_5</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f17702aae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f17703448c0&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f1771816488&gt;)</p>
     </div>
     
 

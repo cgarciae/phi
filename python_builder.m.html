@@ -1202,8 +1202,14 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder', this);">Show source &equiv;</a></p>
   <div id="source-phi.python_builder" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">builder</span> <span class="kn">import</span> <span class="n">Builder</span>
-<span class="kn">import</span> <span class="nn">utils</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+
+
+<span class="kn">from</span> <span class="nn">.builder</span> <span class="kn">import</span> <span class="n">Builder</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 
 <span class="k">class</span> <span class="nc">PythonBuilder</span><span class="p">(</span><span class="n">Builder</span><span class="p">):</span>
@@ -1243,10 +1249,10 @@ table {
 <span class="k">def</span> <span class="nf">Or</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="ow">or</span> <span class="n">y</span>
 
 <span class="nd">@PythonBuilder.Register</span><span class="p">(</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">First</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">First</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
 <span class="nd">@PythonBuilder.Register</span><span class="p">(</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">Last</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">def</span> <span class="nf">Last</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 
 <span class="c1"># __all__ = [&quot;PythonBuilder&quot;]</span>
@@ -1339,7 +1345,7 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.First', this);">Show source &equiv;</a></p>
   <div id="source-phi.python_builder.First" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@PythonBuilder.Register</span><span class="p">(</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">First</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">First</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1381,7 +1387,7 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.Last', this);">Show source &equiv;</a></p>
   <div id="source-phi.python_builder.Last" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@PythonBuilder.Register</span><span class="p">(</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">Last</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">def</span> <span class="nf">Last</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 
   </div>
