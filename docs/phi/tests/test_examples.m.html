@@ -1080,6 +1080,7 @@ table {
            <span class="n">text</span><span class="p">,</span>
            <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
            <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+           <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
            <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
        <span class="p">)</span>
        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
@@ -1088,6 +1089,7 @@ table {
            <span class="n">text</span><span class="p">,</span>
            <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
            <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+           <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
            <span class="n">Make</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
        <span class="p">)</span>
        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
@@ -1096,6 +1098,7 @@ table {
            <span class="n">text</span><span class="p">,</span>
            <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
            <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+           <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
            <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1">#6 / 3 == 2</span>
        <span class="p">)</span>
        <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
@@ -1103,6 +1106,7 @@ table {
            <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
            <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
            <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+           <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
            <span class="p">[</span>
                <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
            <span class="p">,</span>
@@ -1412,6 +1416,7 @@ table {
             <span class="n">text</span><span class="p">,</span>
             <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
             <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+            <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
             <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
         <span class="p">)</span>
 
@@ -1423,6 +1428,7 @@ table {
             <span class="n">text</span><span class="p">,</span>
             <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
             <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+            <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
             <span class="n">Make</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
         <span class="p">)</span>
 
@@ -1434,6 +1440,7 @@ table {
             <span class="n">text</span><span class="p">,</span>
             <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
             <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+            <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
             <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1">#6 / 3 == 2</span>
         <span class="p">)</span>
 
@@ -1444,6 +1451,7 @@ table {
             <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
             <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
             <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+            <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
             <span class="p">[</span>
                 <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
             <span class="p">,</span>
@@ -1931,6 +1939,7 @@ table {
         <span class="n">text</span><span class="p">,</span>
         <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
         <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+        <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
         <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
@@ -1939,6 +1948,7 @@ table {
         <span class="n">text</span><span class="p">,</span>
         <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
         <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+        <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
         <span class="n">Make</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span> <span class="c1">#6 / 3 == 2</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
@@ -1947,6 +1957,7 @@ table {
         <span class="n">text</span><span class="p">,</span>
         <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1">#[&#39;a&#39;, &#39;bb&#39;, &#39;ccc&#39;]</span>
         <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1">#[1, 2, 3]</span>
+        <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
         <span class="n">P</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1">#6 / 3 == 2</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">avg_word_length</span>
@@ -1954,6 +1965,7 @@ table {
         <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
         <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
         <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+        <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
         <span class="p">[</span>
             <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
         <span class="p">,</span>

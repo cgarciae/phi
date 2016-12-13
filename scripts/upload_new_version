@@ -1,6 +1,7 @@
 #! /bin/bash
 set -e
 
+scripts/gen_docs
 scripts/upload_test
 scripts/test_pypitest
 scripts/upload_live

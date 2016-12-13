@@ -289,7 +289,7 @@ assert val == "Sorry, come back latter."
     pip install git+https://github.com/cgarciae/phi.git@develop
 
 ## Status
-* Version: **0.3.2**.
+* Version: **0.3.3**.
 * Current effort: Documentation (> 60%). Please create an issue if documentation is unclear, its of great priority for this library.
 * Milestone: reach 1.0.0 after docs completed + feedback from the community.
 

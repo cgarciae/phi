@@ -1165,12 +1165,12 @@ table {
         <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">add2</span><span class="p">,</span> <span class="n">mul3</span><span class="p">)(</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">18</span>
 
     <span class="k">def</span> <span class="nf">test_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="s2">&quot;hello world&quot;</span><span class="p">,</span>
             <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
             <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">())</span>
-            <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span>
-            <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">First</span><span class="p">()</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -1273,6 +1273,7 @@ table {
             <span class="n">P</span>
             <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -1280,6 +1281,7 @@ table {
             <span class="n">P</span>
             <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
         <span class="p">)</span>
 
 
@@ -1492,7 +1494,7 @@ table {
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
             <span class="p">],</span>
             <span class="p">[</span>
-                <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
             <span class="p">,</span>
                 <span class="p">()</span>
             <span class="p">]</span>
@@ -1779,12 +1781,12 @@ table {
         <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">add2</span><span class="p">,</span> <span class="n">mul3</span><span class="p">)(</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">18</span>
 
     <span class="k">def</span> <span class="nf">test_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="s2">&quot;hello world&quot;</span><span class="p">,</span>
             <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
             <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">())</span>
-            <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span>
-            <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">First</span><span class="p">()</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -1887,6 +1889,7 @@ table {
             <span class="n">P</span>
             <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -1894,6 +1897,7 @@ table {
             <span class="n">P</span>
             <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
         <span class="p">)</span>
 
 
@@ -2106,7 +2110,7 @@ table {
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
             <span class="p">],</span>
             <span class="p">[</span>
-                <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
             <span class="p">,</span>
                 <span class="p">()</span>
             <span class="p">]</span>
@@ -2267,12 +2271,14 @@ table {
         <span class="n">P</span>
         <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
         <span class="n">P</span>
         <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -2448,7 +2454,7 @@ table {
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
         <span class="p">],</span>
         <span class="p">[</span>
-            <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
         <span class="p">,</span>
             <span class="p">()</span>
         <span class="p">]</span>
@@ -2473,12 +2479,12 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_builders.TestBuilder.test_methods', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_builders.TestBuilder.test_methods" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="s2">&quot;hello world&quot;</span><span class="p">,</span>
         <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">())</span>
-        <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span>
-        <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">First</span><span class="p">()</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
