@@ -1091,42 +1091,42 @@ table {
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction0</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register0</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">builder_with_members_from_1</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">_false</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">_true</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction1</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">builder_with_members_from_2</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">_false</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">_true</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">builder_with_members_from_3</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">_false</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">_true</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction3</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register3</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">builder_with_members_from_4</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">_false</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">_true</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction4</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register4</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">builder_with_members_from_5</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">_false</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">_true</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction5</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register5</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1139,7 +1139,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_0">
-    <p>def <span class="ident">builder_with_members_from_0</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3578&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3500&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7ff5fa934488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_0</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
     </div>
     
 
@@ -1153,7 +1153,7 @@ table {
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction0</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register0</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1164,7 +1164,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_1">
-    <p>def <span class="ident">builder_with_members_from_1</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3578&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3500&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7ff5fa934488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_1</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
     </div>
     
 
@@ -1178,7 +1178,7 @@ table {
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction1</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1189,7 +1189,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_2">
-    <p>def <span class="ident">builder_with_members_from_2</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3578&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3500&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7ff5fa934488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_2</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
     </div>
     
 
@@ -1203,7 +1203,7 @@ table {
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1214,7 +1214,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_3">
-    <p>def <span class="ident">builder_with_members_from_3</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3578&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3500&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7ff5fa934488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_3</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
     </div>
     
 
@@ -1228,7 +1228,7 @@ table {
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction3</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register3</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1239,7 +1239,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_4">
-    <p>def <span class="ident">builder_with_members_from_4</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3578&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3500&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7ff5fa934488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_4</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
     </div>
     
 
@@ -1253,7 +1253,7 @@ table {
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction4</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register4</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1264,7 +1264,7 @@ table {
       
   <div class="item">
     <div class="name def" id="phi.patch.builder_with_members_from_5">
-    <p>def <span class="ident">builder_with_members_from_5</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3578&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7ff5f93a3500&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7ff5fa934488&gt;)</p>
+    <p>def <span class="ident">builder_with_members_from_5</span>(</p><p>builder, module, module_alias=None, blacklist=&lt;function &lt;lambda&gt; at 0x7f935c5fae60&gt;, whitelist=&lt;function &lt;lambda&gt; at 0x7f935c686848&gt;, _return_type=None, getmembers_predicate=&lt;function isfunction at 0x7f935db58488&gt;)</p>
     </div>
     
 
@@ -1278,7 +1278,7 @@ table {
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">RegisterFunction5</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">Register5</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
   </div>
