@@ -14,9 +14,13 @@ Phi offers the following constructs/expressions, **try to read their documentati
 Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.
 """
 
-from utils import identity
-import utils
-import pprint
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+from .utils import identity
+from . import utils
 from abc import ABCMeta, abstractmethod
 from inspect import isclass
 import functools
@@ -331,9 +335,6 @@ Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lamb
 
         return function
 
-    def __str__(self):
-        return pprint.pformat(self.branches)
-
 
 class Composition(Node):
     """
@@ -478,7 +479,7 @@ Now lets image that we want to find the average value of the list, we could calc
     """
     def __init__(self, dict_code):
         super(Record, self).__init__()
-        self.nodes_dict = { key: _parse(code) for key, code in dict_code.iteritems() }
+        self.nodes_dict = { key: _parse(code) for key, code in dict_code.items() }
 
     @staticmethod
     def __parse__(dict_code):
@@ -487,13 +488,13 @@ Now lets image that we want to find the average value of the list, we could calc
     def __compile__(self):
         funs_dict = {}
 
-        for key, node in self.nodes_dict.iteritems():
+        for key, node in self.nodes_dict.items():
             f = node.__compile__()
 
             funs_dict[key] = f
 
         def function(x):
-            return _RecordObject(**{key: f(x) for key, f in funs_dict.iteritems() })
+            return _RecordObject(**{key: f(x) for key, f in funs_dict.items() })
 
         return function
 
@@ -754,7 +755,7 @@ def Compile(code, refs, create_ref_context=True):
     ast = _parse(code)
     f = ast.__compile__()
 
-    refs = { name: value if type(value) is Ref else Ref(name, value) for name, value in refs.iteritems() }
+    refs = { name: value if type(value) is Ref else Ref(name, value) for name, value in refs.items() }
 
     def g(x):
         with CompilationContextManager(refs, _NoValue):

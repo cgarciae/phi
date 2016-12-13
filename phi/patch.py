@@ -1,3 +1,9 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+
 import functools, inspect
 
 _true = lambda x: True
@@ -22,39 +28,39 @@ def builder_with_members_from_0(builder, module, module_alias=None, blacklist=_f
     patch_members = _get_patch_members(builder, module, blacklist=blacklist, whitelist=whitelist, getmembers_predicate=getmembers_predicate)
 
     for name, f in patch_members:
-        builder.RegisterFunction0(f, module_name, _return_type=_return_type)
+        builder.Register0(f, module_name, _return_type=_return_type)
 
 def builder_with_members_from_1(builder, module, module_alias=None, blacklist=_false, whitelist=_true, _return_type=None, getmembers_predicate=inspect.isfunction):
     module_name = module_alias if module_alias else module.__name__
     patch_members = _get_patch_members(builder, module, blacklist=blacklist, whitelist=whitelist, getmembers_predicate=getmembers_predicate)
 
     for name, f in patch_members:
-        builder.RegisterFunction1(f, module_name, _return_type=_return_type)
+        builder.Register(f, module_name, _return_type=_return_type)
 
 def builder_with_members_from_2(builder, module, module_alias=None, blacklist=_false, whitelist=_true, _return_type=None, getmembers_predicate=inspect.isfunction):
     module_name = module_alias if module_alias else module.__name__
     patch_members = _get_patch_members(builder, module, blacklist=blacklist, whitelist=whitelist, getmembers_predicate=getmembers_predicate)
 
     for name, f in patch_members:
-        builder.RegisterFunction2(f, module_name, _return_type=_return_type)
+        builder.Register2(f, module_name, _return_type=_return_type)
 
 def builder_with_members_from_3(builder, module, module_alias=None, blacklist=_false, whitelist=_true, _return_type=None, getmembers_predicate=inspect.isfunction):
     module_name = module_alias if module_alias else module.__name__
     patch_members = _get_patch_members(builder, module, blacklist=blacklist, whitelist=whitelist, getmembers_predicate=getmembers_predicate)
 
     for name, f in patch_members:
-        builder.RegisterFunction3(f, module_name, _return_type=_return_type)
+        builder.Register3(f, module_name, _return_type=_return_type)
 
 def builder_with_members_from_4(builder, module, module_alias=None, blacklist=_false, whitelist=_true, _return_type=None, getmembers_predicate=inspect.isfunction):
     module_name = module_alias if module_alias else module.__name__
     patch_members = _get_patch_members(builder, module, blacklist=blacklist, whitelist=whitelist, getmembers_predicate=getmembers_predicate)
 
     for name, f in patch_members:
-        builder.RegisterFunction4(f, module_name, _return_type=_return_type)
+        builder.Register4(f, module_name, _return_type=_return_type)
 
 def builder_with_members_from_5(builder, module, module_alias=None, blacklist=_false, whitelist=_true, _return_type=None, getmembers_predicate=inspect.isfunction):
     module_name = module_alias if module_alias else module.__name__
     patch_members = _get_patch_members(builder, module, blacklist=blacklist, whitelist=whitelist, getmembers_predicate=getmembers_predicate)
 
     for name, f in patch_members:
-        builder.RegisterFunction5(f, module_name, _return_type=_return_type)
+        builder.Register5(f, module_name, _return_type=_return_type)

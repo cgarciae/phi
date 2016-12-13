@@ -9,7 +9,7 @@ The `phi.builder.Builder` class exposes most of the API, you will normally use t
 To integrate existing code, the `phi.builder.Builder` class offers the following functionalities:
 
 * Create *special* partials useful for the DSL. See the `phi.builder.Builder.Then` method.
-* Register functions as methods of the `phi.builder.Builder` class. See the `*Register*` method family e.g. `phi.builder.Builder.Register1`.
+* Register functions as methods of the `phi.builder.Builder` class. See the `*Register*` method family e.g. `phi.builder.Builder.Register`.
 * Create functions that proxy methods from an object. See `phi.builder.Builder.Obj`.
 * Create functions that proxy fields from an object. See `phi.builder.Builder.Rec`.
 
@@ -26,13 +26,18 @@ If you want to create a library based on Phi, integrate an existing library, or 
 * [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)
 * [patch](https://cgarciae.github.io/phi/patch.m.html)
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 
 import inspect
-import utils
-from utils import identity
+from . import utils
+from .utils import identity
 import functools
-import dsl
-from lambdas import Lambda
+from . import dsl
+from .lambdas import Lambda
 
 #######################
 ### Applicative
@@ -99,10 +104,8 @@ Here we called `Context` with no arguments to get the context back, however, sin
         return self.NMake(dsl.With(*args, **kwargs))
     With.__doc__ = dsl.With.__doc__
 
-    def Ref(self, *args, **kwargs):
-        return self.NMake(dsl.Ref(*args, **kwargs))
-    Ref.__doc__ = dsl.Ref.__doc__
 
+    Ref = dsl.Ref
 
     def If(self, *args, **kwargs):
         return self.NMake(dsl.If(*args, **kwargs))
@@ -417,6 +420,7 @@ you can achieve what you want. Yet writting `create_ref_context=False` is a litt
 
     def ThenAt(self, n, expr, *args, **kwargs):
         _return_type = None
+        n -= 1
 
         if '_return_type' in kwargs:
             _return_type = kwargs['_return_type']
@@ -432,12 +436,12 @@ you can achieve what you want. Yet writting `create_ref_context=False` is a litt
     def Then0(self, expr, *args, **kwargs):
         """
         """
-        return self.ThenAt(-1, expr, *args, **kwargs)
+        return self.ThenAt(0, expr, *args, **kwargs)
 
     def Then(self, expr, *args, **kwargs):
         """
         """
-        return self.ThenAt(0, expr, *args, **kwargs)
+        return self.ThenAt(1, expr, *args, **kwargs)
 
     Then1 = Then
 
@@ -445,25 +449,25 @@ you can achieve what you want. Yet writting `create_ref_context=False` is a litt
         """
         """
         args = (arg1,) + args
-        return self.ThenAt(1, expr, *args, **kwargs)
+        return self.ThenAt(2, expr, *args, **kwargs)
 
     def Then3(self, expr, arg1, arg2, *args, **kwargs):
         """
         """
         args = (arg1, arg2) + args
-        return self.ThenAt(2, expr, *args, **kwargs)
+        return self.ThenAt(3, expr, *args, **kwargs)
 
     def Then4(self, expr, arg1, arg2, arg3, *args, **kwargs):
         """
         """
         args = (arg1, arg2, arg3) + args
-        return self.ThenAt(3, expr, *args, **kwargs)
+        return self.ThenAt(4, expr, *args, **kwargs)
 
     def Then5(self, expr, arg1, arg2, arg3, arg4, *args, **kwargs):
         """
         """
         args = (arg1, arg2, arg3, arg4) + args
-        return self.ThenAt(4, expr, *args, **kwargs)
+        return self.ThenAt(5, expr, *args, **kwargs)
 
 
     def Val(self, x):
@@ -497,30 +501,12 @@ you can achieve what you want. Yet writting `create_ref_context=False` is a litt
 
 
     @classmethod
-    def DoRegisterMethod(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True):
-        """
-        This method enables you to register any function `fn` that takes an Applicative as its first argument as a method of the Builder class.
-
-        **Arguments**
-
-        * `fn`: a function that atleast takes an Applicative as its first argument.
-        * `library_path`: the route of the librar from which this function was taken, used for documentation purposes.
-        * `alias`: allows you to specify the name of the method, it will take the name of the function if its `None`.
-        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based on the documentation of `fn`.
-
-        **Return**
-
-        `None`
-
-        **Examples**
-
-        """
-
+    def _RegisterMethod(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True):
         if wrapped:
             fn = functools.wraps(wrapped)(fn)
 
         fn_signature = utils.get_method_sig(fn)
-     	fn_docs = inspect.getdoc(fn)
+        fn_docs = inspect.getdoc(fn)
         name = alias if alias else fn.__name__
         original_name = fn.__name__ if wrapped else original_name if original_name else name
 
@@ -544,203 +530,84 @@ It accepts the same arguments as `{3}.{0}`. """ + explanation + """
         fn = method_type(fn)
         setattr(cls, name, fn)
 
-    @classmethod
-    def RegisterMethod(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True):
-        def register_decorator(fn):
-
-            cls.DoRegisterMethod(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain)
-
-            return fn
-        return register_decorator
-
 
     @classmethod
-    def RegisterFunction0(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        """
-        """
+    def RegisterMethod(cls, *args, **kwargs):
+        try:
+            fn, library_path = args
+            cls._RegisterMethod(fn, library_path, **kwargs)
+
+        except:
+            def register_decorator(fn):
+                library_path, = args
+                cls._RegisterMethod(fn, library_path, **kwargs)
+
+                return fn
+            return register_decorator
+
+
+    @classmethod
+    def _RegisterAt(cls, n, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
+
+        _wrapped = wrapped if wrapped else fn
+
         @functools.wraps(fn)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self.Then0(fn, *args, **kwargs)
+            return self.ThenAt(n, fn, *args, **kwargs)
 
-        explanation = """
-However, a partial with the arguments is returned which expects any argument `x` and complete ignores it, such that
-
-    {3}.{0}(*args, **kwargs)
-
-is equivalent to
-
-    builder.{1}(*args, **kwargs)(x)
-
-        """ + explanation if explain else ""
-
-        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain)
-
-    @classmethod
-    def RegisterFunction1(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        """
-        This method enables you to register any function `fn` that takes an object as its first argument as a method of the Builder and Applicative class.
-
-        **Arguments**
-
-        * `fn`: a function that atleast takes an Object as its first argument.
-        * `library_path`: the route of the librar from which this function was taken, used for documentation purposes.
-        * `alias`: allows you to specify the name of the method, it will take the name of the function if its `None`.
-        * `doc`: the documentation for the method, if `None` a predefied documentation will be generated based on the documentation of `fn`.
-
-        **Return**
-
-        `None`
-
-        **Examples**
-
-        """
-        @functools.wraps(fn)
-        def method(self, *args, **kwargs):
-            kwargs['_return_type'] = _return_type
-            return self.Then(fn, *args, **kwargs)
+        all_args, previous_args, last_arg = _make_args_strs(n)
 
         explanation = """
 However, the 1st argument is omitted, a partial with the rest of the arguments is returned which expects the 1st argument such that
 
-    {3}.{0}(x1, *args, **kwargs)
+    {3}.{0}("""+ all_args +"""*args, **kwargs)
 
 is equivalent to
 
-    builder.{1}(*args, **kwargs)(x1)
+    builder.{1}("""+ previous_args +"""*args, **kwargs)("""+ last_arg +""")
 
         """ + explanation  if explain else ""
 
-        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain)
-
-
-    @classmethod
-    def RegisterFunction2(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        """
-        """
-        @functools.wraps(fn)
-        def method(self, *args, **kwargs):
-            kwargs['_return_type'] = _return_type
-            return self.Then2(fn, *args, **kwargs)
-
-        explanation = """
-However, the 2nd argument is omitted, a partial with the rest of the arguments is returned which expects the 2nd argument such that
-
-    {3}.{0}(x1, x2, *args, **kwargs)
-
-is equivalent to
-
-    builder.{1}(x1, *args, **kwargs)(x2)
-        """ + explanation if explain else ""
-
-        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain)
+        cls.RegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain)
 
     @classmethod
-    def RegisterFunction3(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        """
-        """
-        @functools.wraps(fn)
-        def method(self, *args, **kwargs):
-            kwargs['_return_type'] = _return_type
-            return self.Then3(fn, *args, **kwargs)
+    def RegisterAt(cls, *args, **kwargs):
+        try:
+            n, fn, library_path = args
+            cls._RegisterAt(n, fn, library_path, **kwargs)
 
-        explanation = """
-However, the 3rd argument is omitted, a partial with the rest of the arguments is returned which expects the 3rd argument such that
+        except:
+            def register_decorator(fn):
+                n, library_path = args
+                cls._RegisterAt(n, fn, library_path, **kwargs)
 
-    {3}.{0}(x1, x2, x3, *args, **kwargs)
-
-is equivalent to
-
-    builder.{1}(x1, x2, *args, **kwargs)(x3)
-        """ + explanation if explain else ""
-
-        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain)
+                return fn
+            return register_decorator
 
     @classmethod
-    def RegisterFunction4(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        """
-        """
-        @functools.wraps(fn)
-        def method(self, *args, **kwargs):
-            kwargs['_return_type'] = _return_type
-            return self.Then4(fn, *args, **kwargs)
-
-        explanation = """
-However, the 4th argument is omitted, a partial with the rest of the arguments is returned which expects the 4th argument such that
-
-    {3}.{0}(x1, x2, x3, x4, *args, **kwargs)
-
-is equivalent to
-
-    builder.{1}(x1, x2, x3, *args, **kwargs)(x4)
-
-        """ + explanation if explain else ""
-
-        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain)
+    def Register0(cls, *args, **kwargs):
+        return cls.RegisterAt(0, *args, **kwargs)
 
     @classmethod
-    def RegisterFunction5(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        """
-        """
-        @functools.wraps(fn)
-        def method(self, *args, **kwargs):
-            kwargs['_return_type'] = _return_type
-            return self.Then5(fn, *args, **kwargs)
-
-        explanation = """
-However, the 5th argument is omitted, a partial with the rest of the arguments is returned which expects the 5th argument such that
-
-    {3}.{0}(x1, x2, x3, x4, x5, *args, **kwargs)
-
-is equivalent to
-
-    builder.{1}(x1, x2, x3, x4, *args, **kwargs)(x5)
-        """ + explanation if explain else ""
-
-        cls.DoRegisterMethod(method, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain, _return_type=_return_type)
+    def Register(cls, *args, **kwargs):
+        return cls.RegisterAt(1, *args, **kwargs)
 
     @classmethod
-    def Register0(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        def register_decorator(fn):
-            cls.RegisterFunction0(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain, _return_type=_return_type)
-            return fn
-        return register_decorator
+    def Register2(cls, *args, **kwargs):
+        return cls.RegisterAt(2, *args, **kwargs)
 
     @classmethod
-    def Register1(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        def register_decorator(fn):
-            _wrapped = wrapped if wrapped else fn
-            cls.RegisterFunction1(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=_wrapped, explanation=explanation, method_type=method_type, explain=explain, _return_type=_return_type)
-            return fn
-        return register_decorator
+    def Register3(cls, *args, **kwargs):
+        return cls.RegisterAt(3, *args, **kwargs)
 
     @classmethod
-    def Register2(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        def register_decorator(fn):
-            cls.RegisterFunction2(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain, _return_type=_return_type)
-            return fn
-        return register_decorator
+    def Register4(cls, *args, **kwargs):
+        return cls.RegisterAt(4, *args, **kwargs)
 
     @classmethod
-    def Register3(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        def register_decorator(fn):
-            cls.RegisterFunction3(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain, _return_type=_return_type)
-            return fn
-        return register_decorator
-
-    @classmethod
-    def Register4(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        def register_decorator(fn):
-            cls.RegisterFunction4(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain, _return_type=_return_type)
-            return fn
-        return register_decorator
-
-    @classmethod
-    def Register5(cls, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
-        def register_decorator(fn):
-            cls.RegisterFunction5(fn, library_path, alias=alias, original_name=original_name, doc=doc, wrapped=wrapped, explanation=explanation, method_type=method_type, explain=explain, _return_type=_return_type)
-            return fn
-        return register_decorator
+    def Register5(cls, *args, **kwargs):
+        return cls.RegisterAt(5, *args, **kwargs)
 
 
 Builder.__core__ = [ name for name, f in inspect.getmembers(Builder, inspect.ismethod) ]
@@ -807,3 +674,22 @@ class RecordProxy(object):
     def __getitem__(self, key):
         f = lambda x: x[key]
         return self.__builder__.__then__(f)
+
+
+#######################
+# Helper functions
+#######################
+
+def _make_args_strs(n):
+
+    if n == 0:
+        return "", "", "x"
+
+    n += 1
+    all_args = [ 'x' + str(i) for i in range(1, n) ]
+    last = all_args[n-2]
+    previous = all_args[:n-2]
+
+    return ", ".join(all_args + [""]), ", ".join(previous + [""]), last
+
+_make_args_strs(2)

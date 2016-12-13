@@ -1,15 +1,20 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 
-import builder
-import utils
-import dsl
-import lambdas
-import patch
 
-from dsl import With
+from . import builder
+from . import utils
+from . import dsl
+from . import lambdas
+from . import patch
+
+from .dsl import With
 
 #patches
-import python_builder
-from python_builder import PythonBuilder
+from . import python_builder
+from .python_builder import PythonBuilder
 
 P = PythonBuilder(utils.identity)
 
