@@ -9,7 +9,7 @@ get_list = lambda x: [1,2,3]
 a2_plus_b_minus_2c = lambda a, b, c: a ** 2 + b - 2*c
 
 
-@P.Register1("test.lib")
+@P.Register("test.lib")
 def add(a, b):
     """Some docs"""
     return a + b
@@ -47,12 +47,12 @@ class TestBuilder(object):
         assert P.Make(add2, mul3)(4) == 18
 
     def test_methods(self):
-        assert 5 == P.Pipe(
+        x = P.Pipe(
             "hello world",
             Obj.split(" ")
             .filter(P.Contains("w").Not())
-            .map(len),
-            P[0]
+            .map(len)
+            .First()
         )
 
         assert not P.Pipe(
@@ -155,6 +155,7 @@ class TestBuilder(object):
             P
             .Then2(map, P + 1)
             .Then2(filter, P % 2 == 0)
+            .list() #list only needed in Python 3
         )
 
         assert [2, 4] == P.Pipe(
@@ -162,6 +163,7 @@ class TestBuilder(object):
             P
             .Then2(map, P + 1)
             .Then2(filter, P % 2 == 0)
+            .list() #list only needed in Python 3
         )
 
 
@@ -374,7 +376,7 @@ class TestBuilder(object):
                 P * 2
             ],
             [
-                P.Then2(map, str)
+                P.Then2(map, str).list() #list only needed in Python 3
             ,
                 ()
             ]

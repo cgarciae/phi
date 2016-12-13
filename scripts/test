@@ -1,0 +1,11 @@
+#! /bin/bash
+set -e
+
+echo "TESTING PYTHON27"
+find . -name "*.pyc" -delete
+docker-compose run --rm test27
+
+
+echo "TESTING PYTHON35"
+find . -name "*.pyc" -delete
+docker-compose run --rm test35

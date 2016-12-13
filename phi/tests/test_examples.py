@@ -12,6 +12,7 @@ class TestExamples(object):
             text,
             Obj.split(" "), #['a', 'bb', 'ccc']
             P.map(len), #[1, 2, 3]
+            list, # python 3 only
             P.sum() / len #6 / 3 == 2
         )
 
@@ -23,6 +24,7 @@ class TestExamples(object):
             text,
             Obj.split(" "), #['a', 'bb', 'ccc']
             P.map(len), #[1, 2, 3]
+            list, # python 3 only
             Make(sum) / len #6 / 3 == 2
         )
 
@@ -34,6 +36,7 @@ class TestExamples(object):
             text,
             Obj.split(" "), #['a', 'bb', 'ccc']
             P.map(len), #[1, 2, 3]
+            list, # python 3 only
             P.sum() / P.len() #6 / 3 == 2
         )
 
@@ -44,6 +47,7 @@ class TestExamples(object):
             "1 22 333",
             Obj.split(' '), # ['1', '22', '333']
             P.map(len), # [1, 2, 3]
+            list, # python 3 only
             [
                 sum # 1 + 2 + 3 == 6
             ,
