@@ -7,15 +7,28 @@ services:
 
   docs:
     # update gh-pages => git subtree push --prefix docs/phi origin gh-pages
-    build: .
+    build:
+      context: ./docker
+      dockerfile: python27.dockerfile
     volumes:
       - ./:/phi
     working_dir: /phi
     command: ./scripts/gen_docs
 
-  test:
-    build: .
+  test27:
+    build:
+      context: ./docker
+      dockerfile: python27.dockerfile
     volumes:
       - ./:/phi
     working_dir: /phi
-    command: py.test
+    command: py.test -v -s
+
+  test35:
+    build:
+      context: ./docker
+      dockerfile: python35.dockerfile
+    volumes:
+      - ./:/phi
+    working_dir: /phi
+    command: py.test -v -s

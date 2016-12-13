@@ -14,9 +14,13 @@ Phi offers the following constructs/expressions, **try to read their documentati
 Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.
 """
 
-from utils import identity
-import utils
-import pprint
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+from .utils import identity
+from . import utils
 from abc import ABCMeta, abstractmethod
 from inspect import isclass
 import functools
@@ -52,36 +56,41 @@ class Ref(object):
         return x
 
 
-class RefManager(object):
+class CompilationContextManager(object):
 
-    CURRENT_REFS = None
+    COMPILATION_GLOBAL_REFS = None
+    WITH_GLOBAL_CONTEXT = _NO_VALUE
 
-    def __init__(self, next_refs={}):
-        self.previous_refs = RefManager.CURRENT_REFS
+    def __init__(self, next_refs, next_with_global_context):
+        self.previous_refs = CompilationContextManager.COMPILATION_GLOBAL_REFS
         self.next_refs = next_refs
 
+        self.previous_with_global_context = CompilationContextManager.WITH_GLOBAL_CONTEXT
+        self.next_with_global_context = next_with_global_context
+
     def __enter__(self):
-        RefManager.CURRENT_REFS = self.next_refs
-        return RefManager.CURRENT_REFS
+        CompilationContextManager.COMPILATION_GLOBAL_REFS = self.next_refs
+        CompilationContextManager.WITH_GLOBAL_CONTEXT = self.next_with_global_context
 
     def __exit__(self, *args):
-        RefManager.CURRENT_REFS = self.previous_refs
+        CompilationContextManager.COMPILATION_GLOBAL_REFS = self.previous_refs
+        CompilationContextManager.WITH_GLOBAL_CONTEXT = self.previous_with_global_context
 
     @classmethod
     def set_ref(cls, ref):
         #Copy to avoid stateful behaviour
-        cls.CURRENT_REFS = cls.CURRENT_REFS.copy()
+        cls.COMPILATION_GLOBAL_REFS = cls.COMPILATION_GLOBAL_REFS.copy()
 
-        if ref.name in cls.CURRENT_REFS:
-            other_ref = cls.CURRENT_REFS[ref.name]
+        if ref.name in cls.COMPILATION_GLOBAL_REFS:
+            other_ref = cls.COMPILATION_GLOBAL_REFS[ref.name]
             # merge state: borg pattern
             other_ref.__dict__.update(ref.__dict__)
         else:
-            cls.CURRENT_REFS[ref.name] = ref
+            cls.COMPILATION_GLOBAL_REFS[ref.name] = ref
 
     @classmethod
     def get_ref(cls, name):
-        return cls.CURRENT_REFS[name]
+        return cls.COMPILATION_GLOBAL_REFS[name]
 
 
 
@@ -326,9 +335,6 @@ Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lamb
 
         return function
 
-    def __str__(self):
-        return pprint.pformat(self.branches)
-
 
 class Composition(Node):
     """
@@ -473,7 +479,7 @@ Now lets image that we want to find the average value of the list, we could calc
     """
     def __init__(self, dict_code):
         super(Record, self).__init__()
-        self.nodes_dict = { key: _parse(code) for key, code in dict_code.iteritems() }
+        self.nodes_dict = { key: _parse(code) for key, code in dict_code.items() }
 
     @staticmethod
     def __parse__(dict_code):
@@ -482,13 +488,13 @@ Now lets image that we want to find the average value of the list, we could calc
     def __compile__(self):
         funs_dict = {}
 
-        for key, node in self.nodes_dict.iteritems():
+        for key, node in self.nodes_dict.items():
             f = node.__compile__()
 
             funs_dict[key] = f
 
         def function(x):
-            return _RecordObject(**{key: f(x) for key, f in funs_dict.iteritems() })
+            return _RecordObject(**{key: f(x) for key, f in funs_dict.items() })
 
         return function
 
@@ -529,8 +535,6 @@ The previous is equivalent to
 
     """
 
-    GLOBAL_CONTEXT = _NO_VALUE
-
     def __init__(self, scope_code, *body_code):
         super(With, self).__init__()
         self.scope = _parse(scope_code, else_input=True)
@@ -549,15 +553,15 @@ The previous is equivalent to
 
     def set_scope(self, new_scope):
         self.new_scope = new_scope
-        self.old_scope = With.GLOBAL_CONTEXT
+        self.old_scope = CompilationContextManager.WITH_GLOBAL_CONTEXT
 
         return self
 
     def __enter__(self):
-        With.GLOBAL_CONTEXT = self.new_scope
+        CompilationContextManager.WITH_GLOBAL_CONTEXT = self.new_scope
 
     def __exit__(self, *args):
-        With.GLOBAL_CONTEXT = self.old_scope
+        CompilationContextManager.WITH_GLOBAL_CONTEXT = self.old_scope
 
 
 class Read(Node):
@@ -640,7 +644,7 @@ every time there is a write expression inside a branch expression.
         self.name = name
 
     def __compile__(self):
-        f = lambda z: RefManager.get_ref(self.name).value
+        f = lambda z: CompilationContextManager.get_ref(self.name).value
         return f
 
 
@@ -670,7 +674,7 @@ class Write(Node):
             ref = Ref(self.ref, x) if type(self.ref) is str else self.ref
 
             ref.set(x)
-            RefManager.set_ref(ref)
+            CompilationContextManager.set_ref(ref)
 
             return x
 
@@ -751,10 +755,10 @@ def Compile(code, refs, create_ref_context=True):
     ast = _parse(code)
     f = ast.__compile__()
 
-    refs = { name: value if type(value) is Ref else Ref(name, value) for name, value in refs.iteritems() }
+    refs = { name: value if type(value) is Ref else Ref(name, value) for name, value in refs.items() }
 
     def g(x):
-        with RefManager(refs):
+        with CompilationContextManager(refs, _NoValue):
             return f(x)
 
     return g if create_ref_context else f

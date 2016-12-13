@@ -1057,6 +1057,17 @@ table {
 
         </li>
         <li class="mono">
+        <span class="class_name"><a href="#phi.dsl.CompilationContextManager">CompilationContextManager</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.dsl.CompilationContextManager.__init__">__init__</a></li>
+    <li class="mono"><a href="#phi.dsl.CompilationContextManager.get_ref">get_ref</a></li>
+    <li class="mono"><a href="#phi.dsl.CompilationContextManager.set_ref">set_ref</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#phi.dsl.Composition">Composition</a></span>
         
           
@@ -1126,17 +1137,6 @@ table {
 
         </li>
         <li class="mono">
-        <span class="class_name"><a href="#phi.dsl.RefManager">RefManager</a></span>
-        
-          
-  <ul>
-    <li class="mono"><a href="#phi.dsl.RefManager.__init__">__init__</a></li>
-    <li class="mono"><a href="#phi.dsl.RefManager.get_ref">get_ref</a></li>
-    <li class="mono"><a href="#phi.dsl.RefManager.set_ref">set_ref</a></li>
-  </ul>
-
-        </li>
-        <li class="mono">
         <span class="class_name"><a href="#phi.dsl.With">With</a></span>
         
           
@@ -1201,9 +1201,13 @@ table {
 <span class="sd">Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion&#39;s point of view all of its elements are just functions.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">identity</span>
-<span class="kn">import</span> <span class="nn">utils</span>
-<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">identity</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">isclass</span>
 <span class="kn">import</span> <span class="nn">functools</span>
@@ -1239,36 +1243,41 @@ table {
         <span class="k">return</span> <span class="n">x</span>
 
 
-<span class="k">class</span> <span class="nc">RefManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CompilationContextManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">COMPILATION_GLOBAL_REFS</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="n">_NO_VALUE</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="o">=</span><span class="p">{}):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="p">,</span> <span class="n">next_with_global_context</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span> <span class="o">=</span> <span class="n">next_refs</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_with_global_context</span> <span class="o">=</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_with_global_context</span> <span class="o">=</span> <span class="n">next_with_global_context</span>
+
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span>
-        <span class="k">return</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_with_global_context</span>
 
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_with_global_context</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
         <span class="c1">#Copy to avoid stateful behaviour</span>
-        <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">:</span>
-            <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">:</span>
+            <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
             <span class="c1"># merge state: borg pattern</span>
             <span class="n">other_ref</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span>
+            <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
 
 
@@ -1513,9 +1522,6 @@ table {
 
         <span class="k">return</span> <span class="n">function</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
-
 
 <span class="k">class</span> <span class="nc">Composition</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1660,7 +1666,7 @@ table {
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_code</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Record</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span><span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">dict_code</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span><span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">dict_code</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">dict_code</span><span class="p">):</span>
@@ -1669,13 +1675,13 @@ table {
     <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">funs_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
             <span class="n">funs_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
 
         <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">funs_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">})</span>
+            <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">funs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">})</span>
 
         <span class="k">return</span> <span class="n">function</span>
 
@@ -1716,8 +1722,6 @@ table {
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="n">_NO_VALUE</span>
-
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope_code</span><span class="p">,</span> <span class="o">*</span><span class="n">body_code</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">With</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">scope_code</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -1736,15 +1740,15 @@ table {
 
     <span class="k">def</span> <span class="nf">set_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_scope</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span> <span class="o">=</span> <span class="n">new_scope</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span>
 
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span>
 
 
 <span class="k">class</span> <span class="nc">Read</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
@@ -1827,7 +1831,7 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">get_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">get_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
         <span class="k">return</span> <span class="n">f</span>
 
 
@@ -1857,7 +1861,7 @@ table {
             <span class="n">ref</span> <span class="o">=</span> <span class="n">Ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span>
 
             <span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">RefManager</span><span class="o">.</span><span class="n">set_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+            <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">set_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">x</span>
 
@@ -1938,10 +1942,10 @@ table {
     <span class="n">ast</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
-    <span class="n">refs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Ref</span> <span class="k">else</span> <span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">refs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+    <span class="n">refs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Ref</span> <span class="k">else</span> <span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">refs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">RefManager</span><span class="p">(</span><span class="n">refs</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">CompilationContextManager</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">_NoValue</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">g</span> <span class="k">if</span> <span class="n">create_ref_context</span> <span class="k">else</span> <span class="n">f</span>
@@ -1996,10 +2000,10 @@ table {
     <span class="n">ast</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
-    <span class="n">refs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Ref</span> <span class="k">else</span> <span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">refs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+    <span class="n">refs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Ref</span> <span class="k">else</span> <span class="n">Ref</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">refs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">RefManager</span><span class="p">(</span><span class="n">refs</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">CompilationContextManager</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">_NoValue</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">g</span> <span class="k">if</span> <span class="n">create_ref_context</span> <span class="k">else</span> <span class="n">f</span>
@@ -2252,9 +2256,6 @@ table {
             <span class="k">return</span> <span class="p">[</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span> <span class="p">]</span>
 
         <span class="k">return</span> <span class="n">function</span>
-
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2295,6 +2296,201 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable_code</span><span class="p">):</span>
     <span class="n">branches</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">iterable_code</span> <span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">Branch</span><span class="o">.</span><span class="n">_reduce_branches</span><span class="p">,</span> <span class="n">branches</span><span class="p">,</span> <span class="p">[])</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="phi.dsl.CompilationContextManager" class="name">class <span class="ident">CompilationContextManager</span></p>
+      
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.CompilationContextManager', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.CompilationContextManager" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CompilationContextManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">COMPILATION_GLOBAL_REFS</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="n">_NO_VALUE</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="p">,</span> <span class="n">next_with_global_context</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span> <span class="o">=</span> <span class="n">next_refs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_with_global_context</span> <span class="o">=</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_with_global_context</span> <span class="o">=</span> <span class="n">next_with_global_context</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_with_global_context</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_with_global_context</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+        <span class="c1">#Copy to avoid stateful behaviour</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">:</span>
+            <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="c1"># merge state: borg pattern</span>
+            <span class="n">other_ref</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.dsl.CompilationContextManager">CompilationContextManager</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="phi.dsl.CompilationContextManager.COMPILATION_GLOBAL_REFS" class="name">var <span class="ident">COMPILATION_GLOBAL_REFS</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.dsl.CompilationContextManager.WITH_GLOBAL_CONTEXT" class="name">var <span class="ident">WITH_GLOBAL_CONTEXT</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.dsl.CompilationContextManager.next_refs" class="name">var <span class="ident">next_refs</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.dsl.CompilationContextManager.next_with_global_context" class="name">var <span class="ident">next_with_global_context</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.dsl.CompilationContextManager.previous_refs" class="name">var <span class="ident">previous_refs</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.dsl.CompilationContextManager.previous_with_global_context" class="name">var <span class="ident">previous_with_global_context</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.CompilationContextManager.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, next_refs, next_with_global_context)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.CompilationContextManager.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.CompilationContextManager.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="p">,</span> <span class="n">next_with_global_context</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span> <span class="o">=</span> <span class="n">next_refs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">previous_with_global_context</span> <span class="o">=</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">next_with_global_context</span> <span class="o">=</span> <span class="n">next_with_global_context</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.CompilationContextManager.get_ref">
+    <p>def <span class="ident">get_ref</span>(</p><p>cls, name)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.CompilationContextManager.get_ref', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.CompilationContextManager.get_ref" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">get_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.CompilationContextManager.set_ref">
+    <p>def <span class="ident">set_ref</span>(</p><p>cls, ref)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.CompilationContextManager.set_ref', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.CompilationContextManager.set_ref" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+    <span class="c1">#Copy to avoid stateful behaviour</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">:</span>
+        <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="c1"># merge state: borg pattern</span>
+        <span class="n">other_ref</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">COMPILATION_GLOBAL_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span>
 </pre></div>
 
   </div>
@@ -3060,7 +3256,7 @@ return x
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">get_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">get_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
         <span class="k">return</span> <span class="n">f</span>
 </pre></div>
 
@@ -3195,7 +3391,7 @@ return x
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_code</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Record</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span><span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">dict_code</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span><span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">dict_code</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__parse__</span><span class="p">(</span><span class="n">dict_code</span><span class="p">):</span>
@@ -3204,13 +3400,13 @@ return x
     <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">funs_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
             <span class="n">funs_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
 
         <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">funs_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">})</span>
+            <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">funs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">})</span>
 
         <span class="k">return</span> <span class="n">function</span>
 </pre></div>
@@ -3252,7 +3448,7 @@ return x
   <div id="source-phi.dsl.Record.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_code</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">Record</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span><span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">dict_code</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nodes_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span><span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">dict_code</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
 </pre></div>
 
   </div>
@@ -3371,164 +3567,6 @@ return x
       </div>
       
       <div class="item">
-      <p id="phi.dsl.RefManager" class="name">class <span class="ident">RefManager</span></p>
-      
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.RefManager', this);">Show source &equiv;</a></p>
-  <div id="source-phi.dsl.RefManager" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">RefManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
-    <span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">None</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="o">=</span><span class="p">{}):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span> <span class="o">=</span> <span class="n">next_refs</span>
-
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span>
-        <span class="k">return</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
-
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
-        <span class="c1">#Copy to avoid stateful behaviour</span>
-        <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">:</span>
-            <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
-            <span class="c1"># merge state: borg pattern</span>
-            <span class="n">other_ref</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-</pre></div>
-
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#phi.dsl.RefManager">RefManager</a></li>
-          <li>__builtin__.object</li>
-          </ul>
-          <h3>Class variables</h3>
-            <div class="item">
-            <p id="phi.dsl.RefManager.CURRENT_REFS" class="name">var <span class="ident">CURRENT_REFS</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="phi.dsl.RefManager.next_refs" class="name">var <span class="ident">next_refs</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="phi.dsl.RefManager.previous_refs" class="name">var <span class="ident">previous_refs</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="phi.dsl.RefManager.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, next_refs={})</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.RefManager.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-phi.dsl.RefManager.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="o">=</span><span class="p">{}):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">RefManager</span><span class="o">.</span><span class="n">CURRENT_REFS</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span> <span class="o">=</span> <span class="n">next_refs</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="phi.dsl.RefManager.get_ref">
-    <p>def <span class="ident">get_ref</span>(</p><p>cls, name)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.RefManager.get_ref', this);">Show source &equiv;</a></p>
-  <div id="source-phi.dsl.RefManager.get_ref" class="source">
-    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">get_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="phi.dsl.RefManager.set_ref">
-    <p>def <span class="ident">set_ref</span>(</p><p>cls, ref)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.RefManager.set_ref', this);">Show source &equiv;</a></p>
-  <div id="source-phi.dsl.RefManager.set_ref" class="source">
-    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">set_ref</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
-    <span class="c1">#Copy to avoid stateful behaviour</span>
-    <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">:</span>
-        <span class="n">other_ref</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
-        <span class="c1"># merge state: borg pattern</span>
-        <span class="n">other_ref</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">cls</span><span class="o">.</span><span class="n">CURRENT_REFS</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      </div>
-      </div>
-      
-      <div class="item">
       <p id="phi.dsl.With" class="name">class <span class="ident">With</span></p>
       
   
@@ -3599,8 +3637,6 @@ return x
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="n">_NO_VALUE</span>
-
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope_code</span><span class="p">,</span> <span class="o">*</span><span class="n">body_code</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">With</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">scope_code</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -3619,15 +3655,15 @@ return x
 
     <span class="k">def</span> <span class="nf">set_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_scope</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span> <span class="o">=</span> <span class="n">new_scope</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span>
 
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span>
+        <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span>
 </pre></div>
 
   </div>
@@ -3641,17 +3677,6 @@ return x
           <li><a href="#phi.dsl.Node">Node</a></li>
           <li>__builtin__.object</li>
           </ul>
-          <h3>Class variables</h3>
-            <div class="item">
-            <p id="phi.dsl.With.GLOBAL_CONTEXT" class="name">var <span class="ident">GLOBAL_CONTEXT</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
           <h3>Instance variables</h3>
             <div class="item">
             <p id="phi.dsl.With.body" class="name">var <span class="ident">body</span></p>
@@ -3711,7 +3736,7 @@ return x
   <div id="source-phi.dsl.With.set_scope" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_scope</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">new_scope</span> <span class="o">=</span> <span class="n">new_scope</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">old_scope</span> <span class="o">=</span> <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
     <span class="k">return</span> <span class="bp">self</span>
 </pre></div>
 
@@ -3835,7 +3860,7 @@ return x
             <span class="n">ref</span> <span class="o">=</span> <span class="n">Ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span>
 
             <span class="n">ref</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">RefManager</span><span class="o">.</span><span class="n">set_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+            <span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">set_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">x</span>
 

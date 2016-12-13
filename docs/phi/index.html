@@ -1291,7 +1291,7 @@ table {
 
 
 <p>Add an input <code>Val</code> of 9 on a branch and add to it 1 just for the sake of it</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Val</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span>
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
@@ -1316,6 +1316,67 @@ table {
 </pre></div>
 
 
+<p>Do the previous only if <code>y &gt; 7</code> else return <code>"Sorry, come back latter."</code></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="p">,</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
+    <span class="p">),</span>
+    <span class="p">[</span>
+        <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
+    <span class="p">,</span>
+        <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
+    <span class="p">,</span>
+        <span class="n">If</span><span class="p">(</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="n">Val</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#input 9 and add 1, gives 10    </span>
+        <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Sorry, come back latter.&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
+<span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">5</span>
+<span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;Sorry, come back latter.&quot;</span>
+</pre></div>
+
+
+<p>Now, what you have to understand that everything you've done with these expression is to create and apply a single function. Using <code>Make</code> we can get the standalone function and then use it to get the same values as before</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="p">,</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
+    <span class="p">),</span>
+    <span class="p">[</span>
+        <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
+    <span class="p">,</span>
+        <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
+    <span class="p">,</span>
+        <span class="n">If</span><span class="p">(</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="n">Val</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#input 9 and add 1, gives 10    </span>
+        <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Sorry, come back latter.&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
+<span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">5</span>
+<span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;Sorry, come back latter.&quot;</span>
+</pre></div>
+
+
 <h2>Installation</h2>
 <div class="codehilite"><pre><span></span>pip install phi
 </pre></div>
@@ -1328,7 +1389,7 @@ table {
 
 <h2>Status</h2>
 <ul>
-<li>Version: <strong>0.3.2</strong>.</li>
+<li>Version: <strong>0.3.3</strong>.</li>
 <li>Current effort: Documentation (&gt; 60%). Please create an issue if documentation is unclear, its of great priority for this library.</li>
 <li>Milestone: reach 1.0.0 after docs completed + feedback from the community.</li>
 </ul>
@@ -1347,61 +1408,81 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi', this);">Show source &equiv;</a></p>
   <div id="source-phi" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">mport</span> <span class="n">builder</span>
-<span class="n">mport</span> <span class="n">utils</span>
-<span class="n">mport</span> <span class="n">dsl</span>
-<span class="n">mport</span> <span class="n">lambdas</span>
-<span class="n">mport</span> <span class="n">patch</span>
-<span class="n">rom</span> <span class="n">dsl</span> <span class="kn">import</span> <span class="nn">With</span>
-<span class="n">patches</span>
-<span class="n">mport</span> <span class="n">python_builder</span>
-<span class="n">rom</span> <span class="n">python_builder</span> <span class="kn">import</span> <span class="nn">PythonBuilder</span>
- <span class="o">=</span> <span class="n">PythonBuilder</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">identity</span><span class="p">)</span>
- <span class="n">shortcuts</span>
-<span class="n">hen0</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then0</span>
-<span class="n">hen</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then</span>
-<span class="n">hen1</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then1</span>
-<span class="n">hen2</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then2</span>
-<span class="n">hen3</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then3</span>
-<span class="n">hen4</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then4</span>
-<span class="n">hen5</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then5</span>
-<span class="n">henAt</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">ThenAt</span>
-<span class="n">ead</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Read</span>
-<span class="n">rite</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Write</span>
-<span class="n">al</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Val</span>
-<span class="n">ipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span>
-<span class="n">ake</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span>
-<span class="n">un</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span>
-<span class="n">Make</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NMake</span>
-<span class="n">Pipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NPipe</span>
-<span class="n">Run</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NRun</span>
-<span class="n">bj</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span>
-<span class="n">ec</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Rec</span>
-<span class="n">ontext</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span>
- <span class="n">Directly</span> <span class="n">imported</span> <span class="kn">from</span> <span class="nn">DSL</span>
-<span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">If</span>
-<span class="c1">#######################</span>
- <span class="n">Documentation</span>
-<span class="c1">#######################</span>
-<span class="n">mport</span> <span class="n">os</span>
-<span class="nb">set</span> <span class="n">documentation</span>
-<span class="n">ef</span> <span class="n">_to_pdoc_markdown</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
-   <span class="n">indent</span> <span class="o">=</span> <span class="bp">False</span>
-   <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-   <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
-       <span class="k">if</span> <span class="s2">&quot;```&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-           <span class="n">indent</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">indent</span>
-           <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```python&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-           <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-       <span class="k">if</span> <span class="n">indent</span><span class="p">:</span>
-           <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">line</span>
-       <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-   <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
-<span class="n">ef</span> <span class="n">_read</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-   <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="n">fname</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">raw_docs</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;README-template.md&quot;</span><span class="p">)</span>
-<span class="n">_version__</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;version.txt&quot;</span><span class="p">)</span>
-<span class="n">_doc__</span> <span class="o">=</span> <span class="n">_to_pdoc_markdown</span><span class="p">(</span><span class="n">_raw_docs</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">builder</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dsl</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">lambdas</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">patch</span>
+
+<span class="kn">from</span> <span class="nn">.dsl</span> <span class="kn">import</span> <span class="n">With</span>
+
+<span class="c1">#patches</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">python_builder</span>
+<span class="kn">from</span> <span class="nn">.python_builder</span> <span class="kn">import</span> <span class="n">PythonBuilder</span>
+
+<span class="n">P</span> <span class="o">=</span> <span class="n">PythonBuilder</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">identity</span><span class="p">)</span>
+
+<span class="c1"># shortcuts</span>
+<span class="n">Then0</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then0</span>
+<span class="n">Then</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then</span>
+<span class="n">Then1</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then1</span>
+<span class="n">Then2</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then2</span>
+<span class="n">Then3</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then3</span>
+<span class="n">Then4</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then4</span>
+<span class="n">Then5</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then5</span>
+<span class="n">ThenAt</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">ThenAt</span>
+<span class="n">Read</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Read</span>
+<span class="n">Write</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Write</span>
+<span class="n">Val</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Val</span>
+<span class="n">Pipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span>
+<span class="n">Make</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span>
+<span class="n">Run</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span>
+<span class="n">NMake</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NMake</span>
+<span class="n">NPipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NPipe</span>
+<span class="n">NRun</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">NRun</span>
+<span class="n">Obj</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span>
+<span class="n">Rec</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Rec</span>
+<span class="n">Context</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span>
+
+<span class="c1"># Directly imported from DSL</span>
+<span class="n">If</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">If</span>
+
+<span class="c1">########################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">########################</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1">#set documentation</span>
+
+<span class="k">def</span> <span class="nf">_to_pdoc_markdown</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+    <span class="n">indent</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;```&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">indent</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">indent</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```python&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">indent</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">line</span>
+
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="n">fname</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">_raw_docs</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;README-template.md&quot;</span><span class="p">)</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="n">_read</span><span class="p">(</span><span class="s2">&quot;version.txt&quot;</span><span class="p">)</span>
+<span class="n">__doc__</span> <span class="o">=</span> <span class="n">_to_pdoc_markdown</span><span class="p">(</span><span class="n">_raw_docs</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1541,9 +1622,9 @@ table {
 <span class="sd">hi.builder.Builder.Obj`</span>
 <span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">GLOBAL_CONTEXT</span>
+    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 </pre></div>
 
   </div>
@@ -2174,7 +2255,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2197,7 +2278,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2220,7 +2301,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2244,7 +2325,7 @@ table {
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2268,7 +2349,7 @@ table {
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2292,7 +2373,7 @@ table {
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2316,7 +2397,7 @@ table {
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">,</span> <span class="n">arg4</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2338,6 +2419,7 @@ table {
   <div id="source-phi.ThenAt" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ThenAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">_return_type</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>

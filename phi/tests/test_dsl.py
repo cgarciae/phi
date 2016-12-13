@@ -1,4 +1,4 @@
-from phi import dsl, P
+from phi import dsl, P, If
 import pytest
 
 class TestDSL(object):
@@ -141,7 +141,10 @@ class TestDSL(object):
                 P * 2
             ],
             [
-                lambda l: map(str, l)
+            (
+                lambda l: map(str, l),
+                list
+            )
             ,
                 ()
             ]
@@ -265,7 +268,7 @@ class TestDSL(object):
     def test_if(self):
 
         f = P.Make(
-            P.If( P > 0,
+            If( P > 0,
                 P
             ).Else(
                 P.Val(0)

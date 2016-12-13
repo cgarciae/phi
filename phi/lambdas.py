@@ -134,8 +134,15 @@ The `Lambda` class takes much of its inspiration and code from [fn.py](https://g
 
 """
 
-import dsl
-import utils
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+
+
+from . import dsl
+from . import utils
 import operator
 
 def _fmap(opt):
@@ -230,7 +237,7 @@ class Lambda(dsl.Function):
     __or__ = _fmap(operator.or_)
     __xor__ = _fmap(operator.xor)
 
-    __div__ = _fmap(operator.div)
+    __div__ = _fmap(operator.truediv)
     __divmod__ = _fmap(divmod)
     __floordiv__ = _fmap(operator.floordiv)
     __truediv__ = _fmap(operator.truediv)
@@ -253,7 +260,7 @@ class Lambda(dsl.Function):
     __rsub__ = _fmap_flip(operator.sub)
     __rmod__ = _fmap_flip(operator.mod)
     __rpow__ = _fmap_flip(operator.pow)
-    __rdiv__ = _fmap_flip(operator.div)
+    __rdiv__ = _fmap_flip(operator.truediv)
     __rdivmod__ = _fmap_flip(divmod)
     __rtruediv__ = _fmap_flip(operator.truediv)
     __rfloordiv__ = _fmap_flip(operator.floordiv)
@@ -261,4 +268,3 @@ class Lambda(dsl.Function):
     __rand__ = _fmap_flip(operator.and_)
     __ror__ = _fmap_flip(operator.or_)
     __rxor__ = _fmap_flip(operator.xor)
-

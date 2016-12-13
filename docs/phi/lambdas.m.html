@@ -1350,8 +1350,15 @@ table {
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">dsl</span>
-<span class="kn">import</span> <span class="nn">utils</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dsl</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">import</span> <span class="nn">operator</span>
 
 <span class="k">def</span> <span class="nf">_fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
@@ -1446,7 +1453,7 @@ table {
     <span class="n">__or__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
     <span class="n">__xor__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
 
-    <span class="n">__div__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
+    <span class="n">__div__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
     <span class="n">__divmod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
     <span class="n">__floordiv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
     <span class="n">__truediv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
@@ -1469,7 +1476,7 @@ table {
     <span class="n">__rsub__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
     <span class="n">__rmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
     <span class="n">__rpow__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
-    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
+    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
     <span class="n">__rdivmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
     <span class="n">__rtruediv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
     <span class="n">__rfloordiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
@@ -1552,7 +1559,7 @@ table {
     <span class="n">__or__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
     <span class="n">__xor__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
 
-    <span class="n">__div__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
+    <span class="n">__div__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
     <span class="n">__divmod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
     <span class="n">__floordiv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
     <span class="n">__truediv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
@@ -1575,7 +1582,7 @@ table {
     <span class="n">__rsub__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
     <span class="n">__rmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
     <span class="n">__rpow__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
-    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">div</span><span class="p">)</span>
+    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
     <span class="n">__rdivmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
     <span class="n">__rtruediv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
     <span class="n">__rfloordiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
