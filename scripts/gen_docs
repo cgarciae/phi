@@ -1,4 +1,5 @@
 #! /bin/bash
+set -e
 
 find . -name "*.pyc" -delete
 echo "Generating docs"

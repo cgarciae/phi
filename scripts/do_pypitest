@@ -1,4 +1,5 @@
 #! /bin/bash
+set -e
 
 pip install -i https://testpypi.python.org/pypi phi
 echo
