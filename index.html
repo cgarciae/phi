@@ -2475,21 +2475,21 @@ table {
 
         <span class="n">Else</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Else&#39;</span><span class="p">,</span> <span class="p">())</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Predicate</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Then</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Then</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Predicate</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Predicate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Then</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Then</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Else</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__compile__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">Predicate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
-        <span class="n">Then</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Then</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
-        <span class="n">Else</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">Predicate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Predicate</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">Then</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Then</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
+        <span class="n">Else</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Else</span><span class="o">.</span><span class="n">__compile__</span><span class="p">()</span>
 
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Then</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">Else</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">f</span>
 
     <span class="k">def</span> <span class="nf">Else</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">Else</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Else</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 </pre></div>
 
@@ -2504,37 +2504,6 @@ table {
           <li><a href="dsl.m.html#phi.dsl.Node">phi.dsl.Node</a></li>
           <li>__builtin__.object</li>
           </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="phi.If.Else_" class="name">var <span class="ident">Else_</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="phi.If.Predicate" class="name">var <span class="ident">Predicate</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="phi.If.Then" class="name">var <span class="ident">Then</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
           <h3>Methods</h3>
             
   <div class="item">
@@ -2550,9 +2519,9 @@ table {
   <div id="source-phi.If.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">,</span> <span class="o">*</span><span class="n">Then</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">Else</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Else&#39;</span><span class="p">,</span> <span class="p">())</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Predicate</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Predicate</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Then</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Then</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_Predicate</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Predicate</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_Then</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Then</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_Else</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2573,7 +2542,7 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.If.Else', this);">Show source &equiv;</a></p>
   <div id="source-phi.If.Else" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Else</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">Else</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Else_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_Else</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">Else</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span>
 </pre></div>
 
