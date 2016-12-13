@@ -722,21 +722,21 @@ class If(Node):
 
         Else = kwargs.get('Else', ())
 
-        self.Predicate = _parse(Predicate)
-        self.Then = _parse(Then)
-        self.Else_ = _parse(Else)
+        self._Predicate = _parse(Predicate)
+        self._Then = _parse(Then)
+        self._Else = _parse(Else)
 
     def __compile__(self):
-        Predicate = self.Predicate.__compile__()
-        Then = self.Then.__compile__()
-        Else = self.Else_.__compile__()
+        Predicate = self._Predicate.__compile__()
+        Then = self._Then.__compile__()
+        Else = self._Else.__compile__()
 
         f = lambda x: Then(x) if Predicate(x) else Else(x)
 
         return f
 
     def Else(self, *Else):
-        self.Else_ = _parse(Else)
+        self._Else = _parse(Else)
         return self
 
 

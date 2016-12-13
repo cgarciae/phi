@@ -418,7 +418,94 @@ you can achieve what you want. Yet writting `create_ref_context=False` is a litt
         kwargs['create_ref_context'] = False
         return self.Make(*args, **kwargs)
 
-    def ThenAt(self, n, expr, *args, **kwargs):
+    def ThenAt(self, n, f, *args, **kwargs):
+        """
+`ThenAt` enables you to create a partially apply many arguments to a function, the returned partial expects a single arguments which will be applied at the `n`th position of the original function.
+
+**Arguments**
+
+* **n**: position at which the created partial will apply its awaited argument on the original function.
+* **f**: function which the partial will be created.
+* ***args & **kwargs**: all `*args` and `**kwargs` will be passed to the function `f`.
+* **_return_type=None**: type of the returned `builder`, if `None` it will return the same type of the current `builder`. This special kwarg will NOT be passed to `f`.
+
+You can think of `n` as the position that the value being piped down will pass through the `f`. Say you have the following expression
+
+    D == fun(A, B, C)
+
+all the following are equivalent
+
+    from phi import P, Pipe, ThenAt
+
+    D == Pipe(A, ThenAt(1, fun, B, C))
+    D == Pipe(B, ThenAt(2, fun, A, C))
+    D == Pipe(C, ThenAt(3, fun, A, B))
+
+you could also you the shortcuts `Then`, `Then2`,..., `Then5`, which are more readable
+
+    from phi import P, Pipe
+
+    D == Pipe(A, P.Then(fun, B, C))
+    D == Pipe(B, P.Then2(fun, A, C))
+    D == Pipe(C, P.Then3(fun, A, B))
+
+**Examples**
+
+Max of 6 and the argument:
+
+    from phi import P
+
+    assert 6 == P.Pipe(
+        2,
+        P.Then(max, 6)
+    )
+
+Previous is equivalent to
+
+    assert 6 == max(2, 6)
+
+Open a file in read (`r`) mode
+
+    from phi import P
+
+    f = P.Pipe(
+        "file.txt",
+        P.Then(open, 'r')
+    )
+
+Previous is equivalent to
+
+    f = open("file.txt", 'r')
+
+Split a string by ` ` and then get the length of each word
+
+    from phi import P
+
+    assert [5, 5, 5] == P.Pipe(
+        "Again hello world",
+        P.Then(str.split, ' ')
+        .Then2(map, len)
+    )
+
+Previous is equivalent to
+
+    x = "Again hello world"
+
+    x = str.split(x, ' ')
+    x = map(len, x)
+
+    assert [5, 5, 5] == x
+
+As you see, `Then2` was very useful because `map` accepts and `iterable` as its `2nd` parameter. You can rewrite the previous using the [PythonBuilder](https://cgarciae.github.io/phi/python_builder.m.html#phi.python_builder) and the `phi.builder.Builder.Obj` object
+
+    from phi import P, Obj
+
+    assert [5, 5, 5] == P.Pipe(
+        "Again hello world",
+        Obj.split(' '),
+        P.map(len)
+    )
+        """
         _return_type = None
         n -= 1
 
@@ -429,45 +516,45 @@ you can achieve what you want. Yet writting `create_ref_context=False` is a litt
         def _lambda(x):
             x = self(x)
             new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
-            return expr(*new_args, **kwargs)
+            return f(*new_args, **kwargs)
 
         return self.__unit__(_lambda, _return_type=_return_type)
 
-    def Then0(self, expr, *args, **kwargs):
+    def Then0(self, f, *args, **kwargs):
         """
         """
-        return self.ThenAt(0, expr, *args, **kwargs)
+        return self.ThenAt(0, f, *args, **kwargs)
 
-    def Then(self, expr, *args, **kwargs):
+    def Then(self, f, *args, **kwargs):
         """
         """
-        return self.ThenAt(1, expr, *args, **kwargs)
+        return self.ThenAt(1, f, *args, **kwargs)
 
     Then1 = Then
 
-    def Then2(self, expr, arg1, *args, **kwargs):
+    def Then2(self, f, arg1, *args, **kwargs):
         """
         """
         args = (arg1,) + args
-        return self.ThenAt(2, expr, *args, **kwargs)
+        return self.ThenAt(2, f, *args, **kwargs)
 
-    def Then3(self, expr, arg1, arg2, *args, **kwargs):
+    def Then3(self, f, arg1, arg2, *args, **kwargs):
         """
         """
         args = (arg1, arg2) + args
-        return self.ThenAt(3, expr, *args, **kwargs)
+        return self.ThenAt(3, f, *args, **kwargs)
 
-    def Then4(self, expr, arg1, arg2, arg3, *args, **kwargs):
+    def Then4(self, f, arg1, arg2, arg3, *args, **kwargs):
         """
         """
         args = (arg1, arg2, arg3) + args
-        return self.ThenAt(4, expr, *args, **kwargs)
+        return self.ThenAt(4, f, *args, **kwargs)
 
-    def Then5(self, expr, arg1, arg2, arg3, arg4, *args, **kwargs):
+    def Then5(self, f, arg1, arg2, arg3, arg4, *args, **kwargs):
         """
         """
         args = (arg1, arg2, arg3, arg4) + args
-        return self.ThenAt(5, expr, *args, **kwargs)
+        return self.ThenAt(5, f, *args, **kwargs)
 
 
     def Val(self, x):
