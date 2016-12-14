@@ -406,3 +406,33 @@ class TestExamples(object):
 
         #############################
         #############################
+
+    def test_not(self):
+
+        from phi import P
+
+        assert True == P.Pipe(
+            1,
+            P + 1,  # 1 + 1 == 2
+            P > 5,  # 2 > 5 == False
+            P.Not() # not False == True
+        )
+
+        ################################
+        ################################
+
+        from phi import P
+
+        assert True == P.Pipe(
+            1,
+            (P + 1 > 5).Not()  # not 1 + 1 > 5 == not 2 > 5 == not False == True
+        )
+
+        ############################
+        #############################
+
+        from phi import P
+
+        f = (P + 1 > 5).Not()
+
+        assert f(1) == True

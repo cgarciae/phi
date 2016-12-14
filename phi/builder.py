@@ -600,7 +600,7 @@ is equivalent to any of these
 * `phi.builder.Builder.Read`
 
         """
-        return WriteProxy(self)
+        return _WriteProxy(self)
 
 
     @property
@@ -625,7 +625,7 @@ is equivalent to any of these
 * `phi.builder.Builder.Rec`
 
         """
-        return ReadProxy(self)
+        return _ReadProxy(self)
 
     @property
     def Obj(self):
@@ -657,7 +657,7 @@ is equivalent to
 * [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)
 * `phi.builder.Builder.Write`
         """
-        return ObjectProxy(self)
+        return _ObjectProxy(self)
 
     @property
     def Rec(self):
@@ -698,8 +698,7 @@ is equivalent to
 * `phi.builder.Builder.Read`
 * `phi.builder.Builder.Write`
         """
-        return RecordProxy(self)
-
+        return _RecordProxy(self)
 
     @classmethod
     def _RegisterMethod(cls, f, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True):
@@ -715,15 +714,15 @@ is equivalent to
         f.__doc__ = doc if doc else ("""
 THIS METHOD IS AUTOMATICALLY GENERATED
 
-    builder.{1}(*args, **kwargs)
+    {builder_class}.{name}(*args, **kwargs)
 
-It accepts the same arguments as `{3}.{0}`. """ + explanation + """
+It accepts the same arguments as `{library_path}{original_name}`. """ + explanation + """
 
-**{3}.{0}**
+**{library_path}{original_name}**
 
-    {2}
+    {fn_docs}
 
-        """).format(original_name, name, fn_docs, library_path) if explain else fn_docs
+        """).format(original_name=original_name, name=name, fn_docs=fn_docs, library_path=library_path, builder_class=cls.__name__) if explain else fn_docs
 
         if name in cls.__core__:
             raise Exception("Can't add method '{0}' because its on __core__".format(name))
@@ -744,21 +743,133 @@ It accepts the same arguments as `{3}.{0}`. """ + explanation + """
 **Arguments**
 
 * **f** : the particular function being registered as a method
-* **library_path** : library from where `f` comes from
+* **library_path** : library from where `f` comes from, unless you pass an empty string, put a period `"."` at the end of the library name.
 * `alias=None` : alias for the name/method being registered
 * `original_name=None` : name of the original function, used for documentation purposes.
 * `doc=None` : complete documentation of the method being registered
-* `wrapped=None` : if you are registering a function which wraps around another function, pass this other function through `wrapped` to get better documentation. please include an `explanation` to tell how the actual function differs from the wrapped one.
-* `explanation=""` : especify any additional information for the documentation of the method being registered
+* `wrapped=None` : if you are registering a function which wraps around another function, pass this other function through `wrapped` to get better documentation, this is specially useful is you register a bunch of functions in a for loop. Please include an `explanation` to tell how the actual function differs from the wrapped one.
+* `explanation=""` : especify any additional information for the documentation of the method being registered, you can use any of the following format tags within this string and they will be replace latter on: `{original_name}`, `{name}`, `{fn_docs}`, `{library_path}`, `{builder_class}`.
 * `method_type=identity` : by default its applied but does nothing, you might also want to register functions as `property`, `classmethod`, `staticmethod`
-* `explain=True` : decide wether or not we should use any kind of documentation
+* `explain=True` : decide whether or not to show any kind of explanation, its useful to set it to `False` if you are using a `Register*` decorator and will only use the function as a registered method.
 
+A main feature of `phi` is that it enables you to integrate your library of even an existing library with the DSL. You can achieve three levels of integration
+
+1. Passing you functions to the DSL. This a very general machanism -since you could actually do everything with lamdas- but in practice functions often receive multiple parameters.
+2. Creating partials with `Then*` method family. With this you could integrate any function, but it will add a lot of noise if you use heavily on it.
+3. Registering functions as methods of a `Builder` derived class. This produces the most readable code and its the approach you should take if you want to create a Phi-based library or helper class.
+
+While point 3 is the most desirable it has a cost: you SHOULD NOT register functions to existing builders e.g. the `phi.builder.Builder` or [PythonBuilder](https://cgarciae.github.io/phi/builder.m.html#phi.python_builder.PythonBuilder) classes provided by phi because that would pollute the `P` object. Instead you should create a custom class that derives from `phi.builder.Builder`,  [PythonBuilder](https://cgarciae.github.io/phi/builder.m.html#phi.python_builder.PythonBuilder) or another custom builder depending on your needs and register your functions to that class.
+
+**Examples**
+
+Say you have a function on a library called `"my_lib"`
+
+    def some_fun(obj, arg1, arg2):
+        # code
+
+You could use it with the dsl like this
+
+    from phi import P, Then
+
+    P.Pipe(
+        input,
+        ...
+        Then(some_fun, arg1, arg2)
+        ...
+    )
+
+assuming the first parameter `obj` is being piped down. However if you do this very often or you are creating a library, you're better of creating a custom class derived from `Builder` or `PythonBuilder`
+
+    from phi import Builder #or PythonBuilder
+
+    class MyBuilder(Builder): # or PythonBuilder
+        pass
+
+and registering you function as a method, you could do this by directly passing the function to `phi.builder.Builder.Register`
+
+    MyBuilder.Register(some_fun, "my_lib.")
+
+or by using a decorator over the original function definition
+
+    @MyBuilder.Register("my_lib.")
+    def some_fun(obj, arg1, arg2):
+        # code
+
+Once done that you could create a custom global object e.g. `M` and use it instead of/along with `P`
+
+    M = MyBuilder(lambda x: x)
+
+    M.Pipe(
+        input,
+        ...
+        M.some_fun(arg1, args)
+        ...
+    )
+
+Note that if you have class e.g. `MyClass` with a method `some_method`
+
+    def MyClass(object):
+
+        def some_method(self, arg1, arg2):
+            # code
+
+you simply register it like this
+
+    MyBuilder.Register(MyClass.some_method, "my_lib.")
+
+or using the decorator
+
+    def MyClass(object):
+
+        @MyBuilder.Register("my_lib.")
+        def some_method(self, arg1, arg2):
+            # code
+
+And now you can use it in the DSL like this
+
+    my_class_obj = MyClass()
+
+    M.Pipe(
+        my_class_obj,
+        M.some_method(arg1, arg2)
+        ...
+    )
+
+**Wrapping functions**
+
+Sometimes you have an existing function that you would like to modify slightly so it plays nicely with the DSL, what you normally do is create a function that wraps around it and passes the arguments to it in a way that is convenient
+
+    import some_lib
+
+    @MyBuilder.Register("my_lib.")
+    def some_fun(a, n):
+        return some_lib.some_fun(a, n - 1) # forward the args slightly modified
+
+When you do this, as a side effect you loose the original documentation, to avoid this you can use the Registers `wrapped` argument along with the `explanation` argument to clarity the situation
+
+    import some_lib
+
+    some_fun_explanation = "However, it differs in that `n` is automatically subtracted `1`"
+
+    @MyBuilder.Register("my_lib.", wrapped=some_lib.some_fun, explanation=some_fun_explanation)
+    def some_fun(a, n):
+        return some_lib.some_fun(a, n - 1) # forward the args slightly modified
+
+Now the documentation for `MyBuilder.some_fun` will be a little bit nicer.
+
+Sometimes you want to wrap a dummy
         """
+        unpack_error = True
+
         try:
             f, library_path = args
+            unpack_error = False
             cls._RegisterMethod(f, library_path, **kwargs)
 
         except:
+            if not unpack_error:
+                raise
+
             def register_decorator(f):
                 library_path, = args
                 cls._RegisterMethod(f, library_path, **kwargs)
@@ -782,11 +893,11 @@ It accepts the same arguments as `{3}.{0}`. """ + explanation + """
         explanation = """
 However, the 1st argument is omitted, a partial with the rest of the arguments is returned which expects the 1st argument such that
 
-    {3}.{0}("""+ all_args +"""*args, **kwargs)
+    {library_path}{original_name}("""+ all_args +"""*args, **kwargs)
 
 is equivalent to
 
-    builder.{1}("""+ previous_args +"""*args, **kwargs)("""+ last_arg +""")
+    {builder_class}.{name}("""+ previous_args +"""*args, **kwargs)("""+ last_arg +""")
 
         """ + explanation  if explain else ""
 
@@ -794,11 +905,18 @@ is equivalent to
 
     @classmethod
     def RegisterAt(cls, *args, **kwargs):
+
+        unpack_error = True
+
         try:
             n, f, library_path = args
+            unpack_error = False
             cls._RegisterAt(n, f, library_path, **kwargs)
 
         except:
+            if not unpack_error:
+                raise
+
             def register_decorator(f):
                 n, library_path = args
                 cls._RegisterAt(n, f, library_path, **kwargs)
@@ -834,7 +952,7 @@ is equivalent to
 Builder.__core__ = [ name for name, f in inspect.getmembers(Builder, inspect.ismethod) ]
 
 
-class ObjectProxy(object):
+class _ObjectProxy(object):
     """docstring for Underscore."""
 
     def __init__(self, __builder__):
@@ -849,7 +967,7 @@ class ObjectProxy(object):
         return method_proxy
 
 
-class ReadProxy(object):
+class _ReadProxy(object):
     """docstring for Underscore."""
 
     def __init__(self, __builder__):
@@ -865,7 +983,7 @@ class ReadProxy(object):
         return self.__builder__.NMake(ref)
 
 
-class WriteProxy(object):
+class _WriteProxy(object):
     """docstring for Underscore."""
 
     def __init__(self, __builder__):
@@ -882,7 +1000,7 @@ class WriteProxy(object):
 
 
 
-class RecordProxy(object):
+class _RecordProxy(object):
     """docstring for RecClass."""
 
     def __init__(self, __builder__):

@@ -1049,6 +1049,7 @@ table {
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_builder_NPipe">test_builder_NPipe</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_example_1">test_example_1</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_getting_started">test_getting_started</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_not">test_not</a></li>
   </ul>
 
         </li>
@@ -1387,6 +1388,26 @@ table {
        <span class="p">)</span>
        <span class="c1">#############################</span>
        <span class="c1">#############################</span>
+   <span class="k">def</span> <span class="nf">test_not</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="k">assert</span> <span class="bp">True</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">1</span><span class="p">,</span>
+           <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># 1 + 1 == 2</span>
+           <span class="n">P</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1"># 2 &gt; 5 == False</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span> <span class="c1"># not False == True</span>
+       <span class="p">)</span>
+       <span class="c1">################################</span>
+       <span class="c1">################################</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="k">assert</span> <span class="bp">True</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">1</span><span class="p">,</span>
+           <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>  <span class="c1"># not 1 + 1 &gt; 5 == not 2 &gt; 5 == not False == True</span>
+       <span class="p">)</span>
+       <span class="c1">############################</span>
+       <span class="c1">#############################</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>
+       <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">True</span>
 </pre></div>
 
   </div>
@@ -1807,6 +1828,39 @@ table {
             <span class="p">),</span>
             <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
         <span class="p">)</span>
+
+        <span class="c1">#############################</span>
+        <span class="c1">#############################</span>
+
+    <span class="k">def</span> <span class="nf">test_not</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="k">assert</span> <span class="bp">True</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># 1 + 1 == 2</span>
+            <span class="n">P</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1"># 2 &gt; 5 == False</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span> <span class="c1"># not False == True</span>
+        <span class="p">)</span>
+
+        <span class="c1">################################</span>
+        <span class="c1">################################</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="k">assert</span> <span class="bp">True</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>  <span class="c1"># not 1 + 1 &gt; 5 == not 2 &gt; 5 == not False == True</span>
+        <span class="p">)</span>
+
+        <span class="c1">############################</span>
+        <span class="c1">#############################</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">True</span>
 </pre></div>
 
   </div>
@@ -2198,6 +2252,45 @@ table {
     <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
     <span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">5</span>
     <span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;Sorry, come back latter.&quot;</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_not">
+    <p>def <span class="ident">test_not</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_not', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_not" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_not</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="k">assert</span> <span class="bp">True</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># 1 + 1 == 2</span>
+        <span class="n">P</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1"># 2 &gt; 5 == False</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span> <span class="c1"># not False == True</span>
+    <span class="p">)</span>
+    <span class="c1">################################</span>
+    <span class="c1">################################</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="k">assert</span> <span class="bp">True</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>  <span class="c1"># not 1 + 1 &gt; 5 == not 2 &gt; 5 == not False == True</span>
+    <span class="p">)</span>
+    <span class="c1">############################</span>
+    <span class="c1">#############################</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">True</span>
 </pre></div>
 
   </div>
