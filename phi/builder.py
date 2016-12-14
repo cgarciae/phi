@@ -426,8 +426,8 @@ you can achieve what you want. Yet writting `create_ref_context=False` is a litt
 
 * **n**: position at which the created partial will apply its awaited argument on the original function.
 * **f**: function which the partial will be created.
-* ***args & **kwargs**: all `*args` and `**kwargs` will be passed to the function `f`.
-* **_return_type=None**: type of the returned `builder`, if `None` it will return the same type of the current `builder`. This special kwarg will NOT be passed to `f`.
+* **args & kwargs**: all `*args` and `**kwargs` will be passed to the function `f`.
+* `_return_type = None`: type of the returned `builder`, if `None` it will return the same type of the current `builder`. This special kwarg will NOT be passed to `f`.
 
 You can think of `n` as the position that the value being piped down will pass through the `f`. Say you have the following expression
 
@@ -441,13 +441,20 @@ all the following are equivalent
     D == Pipe(B, ThenAt(2, fun, A, C))
     D == Pipe(C, ThenAt(3, fun, A, B))
 
-you could also you the shortcuts `Then`, `Then2`,..., `Then5`, which are more readable
+you could also use the shortcuts `Then`, `Then2`,..., `Then5`, which are more readable
 
     from phi import P, Pipe
 
     D == Pipe(A, P.Then(fun, B, C))
     D == Pipe(B, P.Then2(fun, A, C))
     D == Pipe(C, P.Then3(fun, A, B))
+
+There is a special case not discussed above: `n = 0`. When this happens only the arguments given will be applied to `f`, this method it will return a partial that expects a single argument but completely ignores it
+
+    from phi import P
+
+    D == Pipe(None, P.ThenAt(0, fun, A, B, C))
+    D == Pipe(None, P.Then0(fun, A, B, C))
 
 **Examples**
 
@@ -464,7 +471,7 @@ Previous is equivalent to
 
     assert 6 == max(2, 6)
 
-Open a file in read (`r`) mode
+Open a file in read mode (`'r'`)
 
     from phi import P
 
@@ -477,7 +484,7 @@ Previous is equivalent to
 
     f = open("file.txt", 'r')
 
-Split a string by ` ` and then get the length of each word
+Split a string by whitespace and then get the length of each word
 
     from phi import P
 
@@ -496,7 +503,7 @@ Previous is equivalent to
 
     assert [5, 5, 5] == x
 
-As you see, `Then2` was very useful because `map` accepts and `iterable` as its `2nd` parameter. You can rewrite the previous using the [PythonBuilder](https://cgarciae.github.io/phi/python_builder.m.html#phi.python_builder) and the `phi.builder.Builder.Obj` object
+As you see, `Then2` was very useful because `map` accepts and `iterable` as its `2nd` parameter. You can rewrite the previous using the [PythonBuilder](https://cgarciae.github.io/phi/python_builder.m.html) and the `phi.builder.Builder.Obj` object
 
     from phi import P, Obj
 
@@ -505,6 +512,12 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
         Obj.split(' '),
         P.map(len)
     )
+
+**Also see**
+
+* `phi.builder.Builder.Obj`
+* [PythonBuilder](https://cgarciae.github.io/phi/python_builder.m.html)
+* `phi.builder.Builder.RegisterAt`
         """
         _return_type = None
         n -= 1
@@ -522,11 +535,13 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
 
     def Then0(self, f, *args, **kwargs):
         """
+`Then0(f, ...)` is equivalent to `ThenAt(0, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.
         """
         return self.ThenAt(0, f, *args, **kwargs)
 
     def Then(self, f, *args, **kwargs):
         """
+`Then(f, ...)` is equivalent to `ThenAt(1, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.
         """
         return self.ThenAt(1, f, *args, **kwargs)
 
@@ -534,49 +549,111 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
 
     def Then2(self, f, arg1, *args, **kwargs):
         """
+`Then2(f, ...)` is equivalent to `ThenAt(2, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.
         """
         args = (arg1,) + args
         return self.ThenAt(2, f, *args, **kwargs)
 
     def Then3(self, f, arg1, arg2, *args, **kwargs):
         """
+`Then3(f, ...)` is equivalent to `ThenAt(3, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.
         """
         args = (arg1, arg2) + args
         return self.ThenAt(3, f, *args, **kwargs)
 
     def Then4(self, f, arg1, arg2, arg3, *args, **kwargs):
         """
+`Then4(f, ...)` is equivalent to `ThenAt(4, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.
         """
         args = (arg1, arg2, arg3) + args
         return self.ThenAt(4, f, *args, **kwargs)
 
     def Then5(self, f, arg1, arg2, arg3, arg4, *args, **kwargs):
         """
+`Then5(f, ...)` is equivalent to `ThenAt(5, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.
         """
         args = (arg1, arg2, arg3, arg4) + args
         return self.ThenAt(5, f, *args, **kwargs)
 
 
     def Val(self, x):
-        """
-        """
         return self.__then__(lambda z: x)
+    Val.__doc__ = dsl.Input.__doc__
 
     @property
     def Write(self):
         """
+`Write` is a `property` that returns an object that defines the `__call__`, `__getattr__` and `__getitem__` methods which you can use to define a [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) expression. The following DSL expression
+
+    {`my_ref`}
+
+is equivalent to any of these
+
+    Write.my_ref
+    Write['my_ref']
+    Write('my_ref')
+
+**Also see**
+
+* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)
+* [dsl.Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read)
+* `phi.builder.Builder.Read`
+
         """
         return WriteProxy(self)
 
 
     @property
     def Read(self):
+        """
+`Read` is a `property` that returns an object that defines the `__call__`, `__getattr__` and `__getitem__` methods which you can use to define a [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) expression. The following DSL expression
 
+    `my_ref`
+
+is equivalent to any of these
+
+    Read.my_ref
+    Read['my_ref']
+    Read('my_ref')
+
+**Also see**
+
+* [dsl.Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read)
+* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)
+* `phi.builder.Builder.Write`
+
+        """
         return ReadProxy(self)
 
     @property
     def Obj(self):
         """
+`Obj` is a `property` that returns an object that defines the `__getattr__` method which when called helps you create a partial that emulates a method call. The following expression
+
+    Obj.some_method(x1, x2, ...)
+
+is equivalent to
+
+    lambda obj: obj.some_method(x1, x2, ...)
+
+**Examples**
+
+    from phi import P, Obj
+
+    assert "hello world" == P.Pipe(
+        "  HELLO HELLO {0}     ",
+        Obj.format("WORLD"),  # "   HELLO HELLO WORLD     "
+        Obj.strip(),          # "HELLO HELLO WORLD"
+        Obj.lower()           # "hello hello world"
+        Obj.split(' ')        # ["hello", "hello", "world"]
+        Obj.count("hello")    # 2
+    )
+
+**Also see**
+
+* [dsl.Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read)
+* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)
+* `phi.builder.Builder.Write`
         """
         return ObjectProxy(self)
 
