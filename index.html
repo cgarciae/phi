@@ -1420,10 +1420,12 @@ table {
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">lambdas</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">patch</span>
 
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">identity</span>
+
 <span class="kn">from</span> <span class="nn">.dsl</span> <span class="kn">import</span> <span class="n">With</span>
 
-<span class="c1">#patches</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">python_builder</span>
+<span class="kn">from</span> <span class="nn">.builder</span> <span class="kn">import</span> <span class="n">Builder</span>
 <span class="kn">from</span> <span class="nn">.python_builder</span> <span class="kn">import</span> <span class="n">PythonBuilder</span>
 
 <span class="n">P</span> <span class="o">=</span> <span class="n">PythonBuilder</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">identity</span><span class="p">)</span>
