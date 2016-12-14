@@ -743,15 +743,15 @@ It accepts the same arguments as `{3}.{0}`. """ + explanation + """
 
 **Arguments**
 
-* **f** :
-* **library_path** :
-* `alias=None` :
+* **f** : the particular function being registered as a method
+* **library_path** : library from where `f` comes from
+* `alias=None` : alias for the name/method being registered
 * `original_name=None` : name of the original function, used for documentation purposes.
 * `doc=None` : complete documentation of the method being registered
 * `wrapped=None` : if you are registering a function which wraps around another function, pass this other function through `wrapped` to get better documentation. please include an `explanation` to tell how the actual function differs from the wrapped one.
-* `explanation=""` : especify any additional information for the documentation
-* `method_type=identity` : 
-* `explain=True` :
+* `explanation=""` : especify any additional information for the documentation of the method being registered
+* `method_type=identity` : by default its applied but does nothing, you might also want to register functions as `property`, `classmethod`, `staticmethod`
+* `explain=True` : decide wether or not we should use any kind of documentation
 
         """
         try:
