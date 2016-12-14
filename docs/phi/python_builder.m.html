@@ -1486,6 +1486,36 @@ table {
 
             
   
+    <div class="desc"><p><code>Obj</code> is a <code>property</code> that returns an object that defines the <code>__getattr__</code> method which when called helps you create a partial that emulates a method call. The following expression</p>
+<div class="codehilite"><pre><span></span>Obj.some_method(x1, x2, ...)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda obj: obj.some_method(x1, x2, ...)
+</pre></div>
+
+
+<p><strong>Examples</strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
+
+<span class="k">assert</span> <span class="s2">&quot;hello world&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;  HELLO HELLO {0}     &quot;</span><span class="p">,</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;WORLD&quot;</span><span class="p">),</span>  <span class="c1"># &quot;   HELLO HELLO WORLD     &quot;</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>          <span class="c1"># &quot;HELLO HELLO WORLD&quot;</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>           <span class="c1"># &quot;hello hello world&quot;</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>        <span class="c1"># [&quot;hello&quot;, &quot;hello&quot;, &quot;world&quot;]</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>    <span class="c1"># 2</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><code>phi.builder.Builder.Rec</code></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">dsl.Write</a></li>
+<li><code>phi.builder.Builder.Write</code></li>
+</ul></div>
   <div class="source_cont">
 </div>
 
@@ -1513,6 +1543,8 @@ Read(&#39;my_ref&#39;)
 <li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">dsl.Read</a></li>
 <li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">dsl.Write</a></li>
 <li><code>phi.builder.Builder.Write</code></li>
+<li><code>phi.builder.Builder.Obj</code></li>
+<li><code>phi.builder.Builder.Rec</code></li>
 </ul></div>
   <div class="source_cont">
 </div>
@@ -1524,6 +1556,45 @@ Read(&#39;my_ref&#39;)
 
             
   
+    <div class="desc"><p><code>Rec</code> is a <code>property</code> that returns an object that defines the <code>__getattr__</code> and <code>__getitem__</code> methods which when called help you create a partial that emulates a field access. The following expression</p>
+<div class="codehilite"><pre><span></span>Rec.some_field
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda rec: rec.some_field
+</pre></div>
+
+
+<p><strong>Examples</strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Rec</span>
+
+<span class="k">class</span> <span class="nc">Point</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="k">def</span> <span class="nf">flip_cords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">y</span>
+
+<span class="k">assert</span> <span class="mi">4</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="n">Point</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>         <span class="c1"># point(x=1, y=2)</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">flip_cords</span><span class="p">(),</span>    <span class="c1"># point(x=2, y=1)</span>
+    <span class="n">Rec</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>               <span class="c1"># point.x = 2</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>                <span class="c1"># 2 * 2 = 4</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><code>phi.builder.Builder.Obj</code></li>
+<li><code>phi.builder.Builder.Read</code></li>
+<li><code>phi.builder.Builder.Write</code></li>
+</ul></div>
   <div class="source_cont">
 </div>
 

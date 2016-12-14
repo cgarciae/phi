@@ -621,6 +621,8 @@ is equivalent to any of these
 * [dsl.Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read)
 * [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)
 * `phi.builder.Builder.Write`
+* `phi.builder.Builder.Obj`
+* `phi.builder.Builder.Rec`
 
         """
         return ReadProxy(self)
@@ -651,7 +653,7 @@ is equivalent to
 
 **Also see**
 
-* [dsl.Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read)
+* `phi.builder.Builder.Rec`
 * [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)
 * `phi.builder.Builder.Write`
         """
@@ -660,22 +662,57 @@ is equivalent to
     @property
     def Rec(self):
         """
+`Rec` is a `property` that returns an object that defines the `__getattr__` and `__getitem__` methods which when called help you create a partial that emulates a field access. The following expression
+
+    Rec.some_field
+
+is equivalent to
+
+    lambda rec: rec.some_field
+
+**Examples**
+
+    from phi import P, Obj, Rec
+
+    class Point(object):
+
+        def __init__(self, x, y):
+            self.x = x
+            self.y = y
+
+        def flip_cords(self):
+            y = self.y
+            self.y = self.x
+            self.x = y
+
+    assert 4 == P.Pipe(
+        Point(1, 2),         # point(x=1, y=2)
+        Obj.flip_cords(),    # point(x=2, y=1)
+        Rec.x,               # point.x = 2
+        P * 2                # 2 * 2 = 4
+    )
+
+**Also see**
+
+* `phi.builder.Builder.Obj`
+* `phi.builder.Builder.Read`
+* `phi.builder.Builder.Write`
         """
         return RecordProxy(self)
 
 
     @classmethod
-    def _RegisterMethod(cls, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True):
+    def _RegisterMethod(cls, f, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True):
         if wrapped:
-            fn = functools.wraps(wrapped)(fn)
+            f = functools.wraps(wrapped)(f)
 
-        fn_signature = utils.get_method_sig(fn)
-        fn_docs = inspect.getdoc(fn)
-        name = alias if alias else fn.__name__
-        original_name = fn.__name__ if wrapped else original_name if original_name else name
+        fn_signature = utils.get_method_sig(f)
+        fn_docs = inspect.getdoc(f)
+        name = alias if alias else f.__name__
+        original_name = f.__name__ if wrapped else original_name if original_name else name
 
-        fn.__name__ = name
-        fn.__doc__ = doc if doc else ("""
+        f.__name__ = name
+        f.__doc__ = doc if doc else ("""
 THIS METHOD IS AUTOMATICALLY GENERATED
 
     builder.{1}(*args, **kwargs)
@@ -691,34 +728,54 @@ It accepts the same arguments as `{3}.{0}`. """ + explanation + """
         if name in cls.__core__:
             raise Exception("Can't add method '{0}' because its on __core__".format(name))
 
-        fn = method_type(fn)
-        setattr(cls, name, fn)
+        f = method_type(f)
+        setattr(cls, name, f)
 
 
     @classmethod
     def RegisterMethod(cls, *args, **kwargs):
+        """
+**RegisterMethod**
+
+    RegisterMethod(cls, f, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True)
+
+`classmethod` for registering functions as methods of this class.
+
+**Arguments**
+
+* **f** :
+* **library_path** :
+* `alias=None` :
+* `original_name=None` : name of the original function, used for documentation purposes.
+* `doc=None` : complete documentation of the method being registered
+* `wrapped=None` : if you are registering a function which wraps around another function, pass this other function through `wrapped` to get better documentation. please include an `explanation` to tell how the actual function differs from the wrapped one.
+* `explanation=""` : especify any additional information for the documentation
+* `method_type=identity` : 
+* `explain=True` :
+
+        """
         try:
-            fn, library_path = args
-            cls._RegisterMethod(fn, library_path, **kwargs)
+            f, library_path = args
+            cls._RegisterMethod(f, library_path, **kwargs)
 
         except:
-            def register_decorator(fn):
+            def register_decorator(f):
                 library_path, = args
-                cls._RegisterMethod(fn, library_path, **kwargs)
+                cls._RegisterMethod(f, library_path, **kwargs)
 
-                return fn
+                return f
             return register_decorator
 
 
     @classmethod
-    def _RegisterAt(cls, n, fn, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
+    def _RegisterAt(cls, n, f, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True, _return_type=None):
 
-        _wrapped = wrapped if wrapped else fn
+        _wrapped = wrapped if wrapped else f
 
-        @functools.wraps(fn)
+        @functools.wraps(f)
         def method(self, *args, **kwargs):
             kwargs['_return_type'] = _return_type
-            return self.ThenAt(n, fn, *args, **kwargs)
+            return self.ThenAt(n, f, *args, **kwargs)
 
         all_args, previous_args, last_arg = _make_args_strs(n)
 
@@ -738,15 +795,15 @@ is equivalent to
     @classmethod
     def RegisterAt(cls, *args, **kwargs):
         try:
-            n, fn, library_path = args
-            cls._RegisterAt(n, fn, library_path, **kwargs)
+            n, f, library_path = args
+            cls._RegisterAt(n, f, library_path, **kwargs)
 
         except:
-            def register_decorator(fn):
+            def register_decorator(f):
                 n, library_path = args
-                cls._RegisterAt(n, fn, library_path, **kwargs)
+                cls._RegisterAt(n, f, library_path, **kwargs)
 
-                return fn
+                return f
             return register_decorator
 
     @classmethod
