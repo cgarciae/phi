@@ -1786,6 +1786,8 @@ table {
 <span class="sd">* [dsl.Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read)</span>
 <span class="sd">* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)</span>
 <span class="sd">* `phi.builder.Builder.Write`</span>
+<span class="sd">* `phi.builder.Builder.Obj`</span>
+<span class="sd">* `phi.builder.Builder.Rec`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ReadProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -1793,18 +1795,82 @@ table {
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">`Obj` is a `property` that returns an object that defines the `__getattr__` method which when called helps you create a partial that emulates a method call. The following expression</span>
+
+<span class="sd">    Obj.some_method(x1, x2, ...)</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda obj: obj.some_method(x1, x2, ...)</span>
+
+<span class="sd">**Examples**</span>
+
+<span class="sd">    from phi import P, Obj</span>
+
+<span class="sd">    assert &quot;hello world&quot; == P.Pipe(</span>
+<span class="sd">        &quot;  HELLO HELLO {0}     &quot;,</span>
+<span class="sd">        Obj.format(&quot;WORLD&quot;),  # &quot;   HELLO HELLO WORLD     &quot;</span>
+<span class="sd">        Obj.strip(),          # &quot;HELLO HELLO WORLD&quot;</span>
+<span class="sd">        Obj.lower()           # &quot;hello hello world&quot;</span>
+<span class="sd">        Obj.split(&#39; &#39;)        # [&quot;hello&quot;, &quot;hello&quot;, &quot;world&quot;]</span>
+<span class="sd">        Obj.count(&quot;hello&quot;)    # 2</span>
+<span class="sd">    )</span>
+
+<span class="sd">**Also see**</span>
+
+<span class="sd">* `phi.builder.Builder.Rec`</span>
+<span class="sd">* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)</span>
+<span class="sd">* `phi.builder.Builder.Write`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ObjectProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Rec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">`Rec` is a `property` that returns an object that defines the `__getattr__` and `__getitem__` methods which when called help you create a partial that emulates a field access. The following expression</span>
+
+<span class="sd">    Rec.some_field</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda rec: rec.some_field</span>
+
+<span class="sd">**Examples**</span>
+
+<span class="sd">    from phi import P, Obj, Rec</span>
+
+<span class="sd">    class Point(object):</span>
+
+<span class="sd">        def __init__(self, x, y):</span>
+<span class="sd">            self.x = x</span>
+<span class="sd">            self.y = y</span>
+
+<span class="sd">        def flip_cords(self):</span>
+<span class="sd">            y = self.y</span>
+<span class="sd">            self.y = self.x</span>
+<span class="sd">            self.x = y</span>
+
+<span class="sd">    assert 4 == P.Pipe(</span>
+<span class="sd">        Point(1, 2),         # point(x=1, y=2)</span>
+<span class="sd">        Obj.flip_cords(),    # point(x=2, y=1)</span>
+<span class="sd">        Rec.x,               # point.x = 2</span>
+<span class="sd">        P * 2                # 2 * 2 = 4</span>
+<span class="sd">    )</span>
+
+<span class="sd">**Also see**</span>
+
+<span class="sd">* `phi.builder.Builder.Obj`</span>
+<span class="sd">* `phi.builder.Builder.Read`</span>
+<span class="sd">* `phi.builder.Builder.Write`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">RecordProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_RegisterMethod</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">library_path</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">original_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wrapped</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">explanation</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">method_type</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">wrapped</span><span class="p">:</span>
             <span class="n">fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)(</span><span class="n">fn</span><span class="p">)</span>
 
@@ -2602,6 +2668,8 @@ table {
 <span class="sd">* [dsl.Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read)</span>
 <span class="sd">* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)</span>
 <span class="sd">* `phi.builder.Builder.Write`</span>
+<span class="sd">* `phi.builder.Builder.Obj`</span>
+<span class="sd">* `phi.builder.Builder.Rec`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ReadProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -2609,18 +2677,82 @@ table {
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">`Obj` is a `property` that returns an object that defines the `__getattr__` method which when called helps you create a partial that emulates a method call. The following expression</span>
+
+<span class="sd">    Obj.some_method(x1, x2, ...)</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda obj: obj.some_method(x1, x2, ...)</span>
+
+<span class="sd">**Examples**</span>
+
+<span class="sd">    from phi import P, Obj</span>
+
+<span class="sd">    assert &quot;hello world&quot; == P.Pipe(</span>
+<span class="sd">        &quot;  HELLO HELLO {0}     &quot;,</span>
+<span class="sd">        Obj.format(&quot;WORLD&quot;),  # &quot;   HELLO HELLO WORLD     &quot;</span>
+<span class="sd">        Obj.strip(),          # &quot;HELLO HELLO WORLD&quot;</span>
+<span class="sd">        Obj.lower()           # &quot;hello hello world&quot;</span>
+<span class="sd">        Obj.split(&#39; &#39;)        # [&quot;hello&quot;, &quot;hello&quot;, &quot;world&quot;]</span>
+<span class="sd">        Obj.count(&quot;hello&quot;)    # 2</span>
+<span class="sd">    )</span>
+
+<span class="sd">**Also see**</span>
+
+<span class="sd">* `phi.builder.Builder.Rec`</span>
+<span class="sd">* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)</span>
+<span class="sd">* `phi.builder.Builder.Write`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ObjectProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Rec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">`Rec` is a `property` that returns an object that defines the `__getattr__` and `__getitem__` methods which when called help you create a partial that emulates a field access. The following expression</span>
+
+<span class="sd">    Rec.some_field</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda rec: rec.some_field</span>
+
+<span class="sd">**Examples**</span>
+
+<span class="sd">    from phi import P, Obj, Rec</span>
+
+<span class="sd">    class Point(object):</span>
+
+<span class="sd">        def __init__(self, x, y):</span>
+<span class="sd">            self.x = x</span>
+<span class="sd">            self.y = y</span>
+
+<span class="sd">        def flip_cords(self):</span>
+<span class="sd">            y = self.y</span>
+<span class="sd">            self.y = self.x</span>
+<span class="sd">            self.x = y</span>
+
+<span class="sd">    assert 4 == P.Pipe(</span>
+<span class="sd">        Point(1, 2),         # point(x=1, y=2)</span>
+<span class="sd">        Obj.flip_cords(),    # point(x=2, y=1)</span>
+<span class="sd">        Rec.x,               # point.x = 2</span>
+<span class="sd">        P * 2                # 2 * 2 = 4</span>
+<span class="sd">    )</span>
+
+<span class="sd">**Also see**</span>
+
+<span class="sd">* `phi.builder.Builder.Obj`</span>
+<span class="sd">* `phi.builder.Builder.Read`</span>
+<span class="sd">* `phi.builder.Builder.Write`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">RecordProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_RegisterMethod</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">library_path</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">original_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wrapped</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">explanation</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">method_type</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">wrapped</span><span class="p">:</span>
             <span class="n">fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)(</span><span class="n">fn</span><span class="p">)</span>
 
@@ -2760,6 +2892,36 @@ table {
 
             
   
+    <div class="desc"><p><code>Obj</code> is a <code>property</code> that returns an object that defines the <code>__getattr__</code> method which when called helps you create a partial that emulates a method call. The following expression</p>
+<div class="codehilite"><pre><span></span>Obj.some_method(x1, x2, ...)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda obj: obj.some_method(x1, x2, ...)
+</pre></div>
+
+
+<p><strong>Examples</strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
+
+<span class="k">assert</span> <span class="s2">&quot;hello world&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;  HELLO HELLO {0}     &quot;</span><span class="p">,</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;WORLD&quot;</span><span class="p">),</span>  <span class="c1"># &quot;   HELLO HELLO WORLD     &quot;</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>          <span class="c1"># &quot;HELLO HELLO WORLD&quot;</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>           <span class="c1"># &quot;hello hello world&quot;</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>        <span class="c1"># [&quot;hello&quot;, &quot;hello&quot;, &quot;world&quot;]</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>    <span class="c1"># 2</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><a href="#phi.builder.Builder.Rec"><code>Rec</code></a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">dsl.Write</a></li>
+<li><a href="#phi.builder.Builder.Write"><code>Write</code></a></li>
+</ul></div>
   <div class="source_cont">
 </div>
 
@@ -2787,6 +2949,8 @@ Read(&#39;my_ref&#39;)
 <li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">dsl.Read</a></li>
 <li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">dsl.Write</a></li>
 <li><a href="#phi.builder.Builder.Write"><code>Write</code></a></li>
+<li><a href="#phi.builder.Builder.Obj"><code>Obj</code></a></li>
+<li><a href="#phi.builder.Builder.Rec"><code>Rec</code></a></li>
 </ul></div>
   <div class="source_cont">
 </div>
@@ -2798,6 +2962,45 @@ Read(&#39;my_ref&#39;)
 
             
   
+    <div class="desc"><p><code>Rec</code> is a <code>property</code> that returns an object that defines the <code>__getattr__</code> and <code>__getitem__</code> methods which when called help you create a partial that emulates a field access. The following expression</p>
+<div class="codehilite"><pre><span></span>Rec.some_field
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda rec: rec.some_field
+</pre></div>
+
+
+<p><strong>Examples</strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Rec</span>
+
+<span class="k">class</span> <span class="nc">Point</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="k">def</span> <span class="nf">flip_cords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">y</span>
+
+<span class="k">assert</span> <span class="mi">4</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="n">Point</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>         <span class="c1"># point(x=1, y=2)</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">flip_cords</span><span class="p">(),</span>    <span class="c1"># point(x=2, y=1)</span>
+    <span class="n">Rec</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>               <span class="c1"># point.x = 2</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>                <span class="c1"># 2 * 2 = 4</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><a href="#phi.builder.Builder.Obj"><code>Obj</code></a></li>
+<li><a href="#phi.builder.Builder.Read"><code>Read</code></a></li>
+<li><a href="#phi.builder.Builder.Write"><code>Write</code></a></li>
+</ul></div>
   <div class="source_cont">
 </div>
 
