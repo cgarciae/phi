@@ -8,7 +8,6 @@ from . import builder
 from . import utils
 from . import dsl
 from . import lambdas
-from . import patch
 
 from .utils import identity
 

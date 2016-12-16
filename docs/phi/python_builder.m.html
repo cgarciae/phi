@@ -1059,6 +1059,7 @@ table {
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.NRun">NRun</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Not">Not</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Or">Or</a></li>
+    <li class="mono"><a href="#phi.python_builder.PythonBuilder.PatchAt">PatchAt</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Pipe">Pipe</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Register">Register</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Register0">Register0</a></li>
@@ -2184,6 +2185,129 @@ Write(&#39;my_ref&#39;)
   
             
   <div class="item">
+    <div class="name def" id="phi.python_builder.PythonBuilder.PatchAt">
+    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7fccf55b9938&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7fccf55b98c0&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7fccf55b9848&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7fccf55b9938&gt;, getmembers_predicate=&lt;function isfunction at 0x7fccf6b4d488&gt;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This classmethod lets you easily patch all of functions/callables from a module or class as methods a Builder class.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>n</strong> : the position the the object being piped will take in the arguments when the function being patched is applied. See <code>RegisterMethod</code> and <code>ThenAt</code>.</li>
+<li><strong>module</strong> : a module or class from which the functions/methods/callables will be taken.</li>
+<li><code>module_alias = None</code> : an optional alias for the module used for documentation purposes.</li>
+<li><code>method_name_modifier = lambda f_name: None</code> : a function that can modify the name of the method will take. If <code>None</code> the name of the function will be used.</li>
+<li><code>blacklist_predicate = lambda f_name: name[0] != "_"</code> : A predicate that determines which functions are banned given their name. By default it excludes all function whose name start with <code>'_'</code>. <code>blacklist_predicate</code> can also be of type list, in which case all names contained in this list will be banned.</li>
+<li><code>whitelist_predicate = lambda f_name: True</code> : A predicate that determines which functions are admitted given their name. By default it include any function. <code>whitelist_predicate</code> can also be of type list, in which case only names contained in this list will be admitted. You can use both <code>blacklist_predicate</code> and <code>whitelist_predicate</code> at the same time.</li>
+<li><code>return_type_predicate = lambda f_name: None</code> : a predicate that determines the <code>_return_type</code> of the Builder. By default it will always return <code>None</code>. See <code>phi.builder.Builder.ThenAt</code>.</li>
+<li><code>getmembers_predicate = inspect.isfunction</code> : a predicate that determines what type of elements/members will be fetched by the <code>inspect</code> module, defaults to <a href="https://docs.python.org/2/library/inspect.html#inspect.isfunction">inspect.isfunction</a>. See <a href="https://docs.python.org/2/library/inspect.html#inspect.getmembers">getmembers</a>.</li>
+</ul>
+<p><strong>Examples</strong></p>
+<p>Lets patch ALL the main functions from numpy into a custom builder!</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">PythonBuilder</span> <span class="c1">#or Builder</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">class</span> <span class="nc">NumpyBuilder</span><span class="p">(</span><span class="n">PythonBuilder</span><span class="p">):</span> <span class="c1">#or Builder</span>
+    <span class="s2">&quot;A Builder for numpy functions!&quot;</span>
+    <span class="k">pass</span>
+
+<span class="n">NumpyBuilder</span><span class="o">.</span><span class="n">PatchAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="p">)</span>
+
+<span class="n">N</span> <span class="o">=</span> <span class="n">NumpyBuilder</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Thats it! Although a serious patch would involve filtering out functions that don't take arrays. Another common task would be to use <code>NumpyBuilder.PatchAt(2, ...)</code> (<code>PatchAt(n, ..)</code> in general) when convenient to send the object being pipe to the relevant argument of the function. The previous is usually done with and a combination of <code>whitelist_predicate</code>s and <code>blacklist_predicate</code>s on <code>PatchAt(1, ...)</code> and <code>PatchAt(2, ...)</code> to filter or include the approriate functions on each kind of patch. Given the previous code we could now do</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="kp">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="kp">array</span><span class="p">([[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]])</span>
+
+<span class="n">z</span> <span class="o">=</span> <span class="n">N</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">N</span>
+    <span class="o">.</span><span class="kp">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="o">.</span><span class="kp">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="o">.</span><span class="kp">transpose</span><span class="p">()</span>
+    <span class="o">.</span><span class="kp">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>Which is strictly equivalent to</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="kp">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="kp">array</span><span class="p">([[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]])</span>
+
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="kp">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="kp">add</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="kp">transpose</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="kp">sum</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+
+<p>The thing to notice is that with the <code>NumpyBuilder</code> we avoid the repetitive and needless passing and reassigment of the <code>z</code> variable, this removes a lot of noise from our code.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.PythonBuilder.PatchAt', this);">Show source &equiv;</a></p>
+  <div id="source-phi.python_builder.PythonBuilder.PatchAt" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">PatchAt</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method_name_modifier</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">_False</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">_True</span><span class="p">,</span> <span class="n">return_type_predicate</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"> classmethod lets you easily patch all of functions/callables from a module or class as methods a Builder class.</span>
+<span class="sd">guments**</span>
+<span class="sd">n** : the position the the object being piped will take in the arguments when the function being patched is applied. See `RegisterMethod` and `ThenAt`.</span>
+<span class="sd">module** : a module or class from which the functions/methods/callables will be taken.</span>
+<span class="sd">odule_alias = None` : an optional alias for the module used for documentation purposes.</span>
+<span class="sd">ethod_name_modifier = lambda f_name: None` : a function that can modify the name of the method will take. If `None` the name of the function will be used.</span>
+<span class="sd">lacklist_predicate = lambda f_name: name[0] != &quot;_&quot;` : A predicate that determines which functions are banned given their name. By default it excludes all function whose name start with `&#39;_&#39;`. `blacklist_predicate` can also be of type list, in which case all names contained in this list will be banned.</span>
+<span class="sd">hitelist_predicate = lambda f_name: True` : A predicate that determines which functions are admitted given their name. By default it include any function. `whitelist_predicate` can also be of type list, in which case only names contained in this list will be admitted. You can use both `blacklist_predicate` and `whitelist_predicate` at the same time.</span>
+<span class="sd">eturn_type_predicate = lambda f_name: None` : a predicate that determines the `_return_type` of the Builder. By default it will always return `None`. See `phi.builder.Builder.ThenAt`.</span>
+<span class="sd">etmembers_predicate = inspect.isfunction` : a predicate that determines what type of elements/members will be fetched by the `inspect` module, defaults to [inspect.isfunction](https://docs.python.org/2/library/inspect.html#inspect.isfunction). See [getmembers](https://docs.python.org/2/library/inspect.html#inspect.getmembers).</span>
+<span class="sd">amples**</span>
+<span class="sd"> patch ALL the main functions from numpy into a custom builder!</span>
+<span class="sd">from phi import PythonBuilder #or Builder</span>
+<span class="sd">import numpy as np</span>
+<span class="sd">class NumpyBuilder(PythonBuilder): #or Builder</span>
+<span class="sd">    &quot;A Builder for numpy functions!&quot;</span>
+<span class="sd">    pass</span>
+<span class="sd">NumpyBuilder.PatchAt(1, np)</span>
+<span class="sd">N = NumpyBuilder(lambda x: x)</span>
+<span class="sd">s it! Although a serious patch would involve filtering out functions that don&#39;t take arrays. Another common task would be to use `NumpyBuilder.PatchAt(2, ...)` (`PatchAt(n, ..)` in general) when convenient to send the object being pipe to the relevant argument of the function. The previous is usually done with and a combination of `whitelist_predicate`s and `blacklist_predicate`s on `PatchAt(1, ...)` and `PatchAt(2, ...)` to filter or include the approriate functions on each kind of patch. Given the previous code we could now do</span>
+<span class="sd">import numpy as np</span>
+<span class="sd">x = np.array([[1,2],[3,4]])</span>
+<span class="sd">y = np.array([[5,6],[7,8]])</span>
+<span class="sd">z = N.Pipe(</span>
+<span class="sd">    x, N</span>
+<span class="sd">    .dot(y)</span>
+<span class="sd">    .add(x)</span>
+<span class="sd">    .transpose()</span>
+<span class="sd">    .sum(axis=1)</span>
+<span class="sd">)</span>
+<span class="sd">h is strictly equivalent to</span>
+<span class="sd">import numpy as np</span>
+<span class="sd">x = np.array([[1,2],[3,4]])</span>
+<span class="sd">y = np.array([[5,6],[7,8]])</span>
+<span class="sd">z = np.dot(x, y)</span>
+<span class="sd">z = np.add(z, x)</span>
+<span class="sd">z = np.transpose(z)</span>
+<span class="sd">z = np.sum(z, axis=1)</span>
+<span class="sd">thing to notice is that with the `NumpyBuilder` we avoid the repetitive and needless passing and reassigment of the `z` variable, this removes a lot of noise from our code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span>
+    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">blacklist_predicate</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">whitelist_predicate</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">RegisterAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">return_type_predicate</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">),</span> <span class="n">alias</span><span class="o">=</span><span class="n">method_name_modifier</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.python_builder.PythonBuilder.Pipe">
     <p>def <span class="ident">Pipe</span>(</p><p>self, x, *code, **kwargs)</p>
     </div>
@@ -2692,10 +2816,10 @@ M.Pipe(
 </pre></div>
 
 
-<p>Now the documentation for <code>MyBuilder.some_fun</code> will be a little bit nicer since it includes the original documentation from <code>some_lib.some_fun</code>. This behaviour is specially useful if you are wrapping an entire 3rd party library, you usually automate the process iterating over all the funcitions in a for loop. The <a href="https://cgarciae.github.io/phi/patch.m.html">phi.patch</a> module includes some helper function that help you register and entire module using a few lines of code, however, something you have to do thing more manually and do the iteration yourself.</p>
+<p>Now the documentation for <code>MyBuilder.some_fun</code> will be a little bit nicer since it includes the original documentation from <code>some_lib.some_fun</code>. This behaviour is specially useful if you are wrapping an entire 3rd party library, you usually automate the process iterating over all the funcitions in a for loop. The <code>phi.builder.Builder.PatchAt</code> method lets you register and entire module using a few lines of code, however, something you have to do thing more manually and do the iteration yourself.</p>
 <p><strong>See Also</strong></p>
 <ul>
-<li><a href="https://cgarciae.github.io/phi/patch.m.html">patch</a></li>
+<li><code>phi.builder.Builder.PatchAt</code></li>
 <li><code>phi.builder.Builder.RegisterAt</code></li>
 </ul></div>
   <div class="source_cont">
@@ -2774,9 +2898,9 @@ M.Pipe(
 <span class="sd">@MyBuilder.Register(&quot;some_lib.&quot;, wrapped=some_lib.some_fun, explanation=some_fun_explanation)</span>
 <span class="sd">def some_fun(a, n):</span>
 <span class="sd">    return some_lib.some_fun(a, n - 1) # forward the args, n slightly modified</span>
-<span class="sd">the documentation for `MyBuilder.some_fun` will be a little bit nicer since it includes the original documentation from `some_lib.some_fun`. This behaviour is specially useful if you are wrapping an entire 3rd party library, you usually automate the process iterating over all the funcitions in a for loop. The [phi.patch](https://cgarciae.github.io/phi/patch.m.html) module includes some helper function that help you register and entire module using a few lines of code, however, something you have to do thing more manually and do the iteration yourself.</span>
+<span class="sd">the documentation for `MyBuilder.some_fun` will be a little bit nicer since it includes the original documentation from `some_lib.some_fun`. This behaviour is specially useful if you are wrapping an entire 3rd party library, you usually automate the process iterating over all the funcitions in a for loop. The `phi.builder.Builder.PatchAt` method lets you register and entire module using a few lines of code, however, something you have to do thing more manually and do the iteration yourself.</span>
 <span class="sd">e Also**</span>
-<span class="sd">atch](https://cgarciae.github.io/phi/patch.m.html)</span>
+<span class="sd">hi.builder.Builder.PatchAt`</span>
 <span class="sd">hi.builder.Builder.RegisterAt`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">unpack_error</span> <span class="o">=</span> <span class="bp">True</span>

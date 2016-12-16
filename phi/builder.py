@@ -24,7 +24,7 @@ If you want to create a library based on Phi, integrate an existing library, or 
 * [python_builder](https://cgarciae.github.io/phi/python_builder.m.html)
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html)
 * [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)
-* [patch](https://cgarciae.github.io/phi/patch.m.html)
+* `phi.builder.Builder.PatchAt`
 """
 from __future__ import absolute_import
 from __future__ import division
@@ -39,8 +39,17 @@ import functools
 from . import dsl
 from .lambdas import Lambda
 
+######################
+# Helpers
+######################
+
+_True = lambda x: True
+_False = lambda x: False
+_None = lambda x: None
+_NoLeadingUnderscore = lambda name: name[0] != "_"
+
 #######################
-### Applicative
+### Builder
 #######################
 
 class Builder(Lambda):
@@ -843,11 +852,11 @@ When you do this -as a side effect- you loose the original documentation, to avo
     def some_fun(a, n):
         return some_lib.some_fun(a, n - 1) # forward the args, n slightly modified
 
-Now the documentation for `MyBuilder.some_fun` will be a little bit nicer since it includes the original documentation from `some_lib.some_fun`. This behaviour is specially useful if you are wrapping an entire 3rd party library, you usually automate the process iterating over all the funcitions in a for loop. The [phi.patch](https://cgarciae.github.io/phi/patch.m.html) module includes some helper function that help you register and entire module using a few lines of code, however, something you have to do thing more manually and do the iteration yourself.
+Now the documentation for `MyBuilder.some_fun` will be a little bit nicer since it includes the original documentation from `some_lib.some_fun`. This behaviour is specially useful if you are wrapping an entire 3rd party library, you usually automate the process iterating over all the funcitions in a for loop. The `phi.builder.Builder.PatchAt` method lets you register and entire module using a few lines of code, however, something you have to do thing more manually and do the iteration yourself.
 
 **See Also**
 
-* [patch](https://cgarciae.github.io/phi/patch.m.html)
+* `phi.builder.Builder.PatchAt`
 * `phi.builder.Builder.RegisterAt`
         """
         unpack_error = True
@@ -1016,6 +1025,72 @@ For this case you can just use `Register` which is a shortcut for `RegisterAt(1,
         """
         return cls.RegisterAt(5, *args, **kwargs)
 
+    @classmethod
+    def PatchAt(cls, n, module, module_alias=None, method_name_modifier=_None, blacklist_predicate=_False, whitelist_predicate=_True, return_type_predicate=_None, getmembers_predicate=inspect.isfunction):
+        """
+This classmethod lets you easily patch all of functions/callables from a module or class as methods a Builder class.
+
+**Arguments**
+
+* **n** : the position the the object being piped will take in the arguments when the function being patched is applied. See `RegisterMethod` and `ThenAt`.
+* **module** : a module or class from which the functions/methods/callables will be taken.
+* `module_alias = None` : an optional alias for the module used for documentation purposes.
+* `method_name_modifier = lambda f_name: None` : a function that can modify the name of the method will take. If `None` the name of the function will be used.
+* `blacklist_predicate = lambda f_name: name[0] != "_"` : A predicate that determines which functions are banned given their name. By default it excludes all function whose name start with `'_'`. `blacklist_predicate` can also be of type list, in which case all names contained in this list will be banned.
+* `whitelist_predicate = lambda f_name: True` : A predicate that determines which functions are admitted given their name. By default it include any function. `whitelist_predicate` can also be of type list, in which case only names contained in this list will be admitted. You can use both `blacklist_predicate` and `whitelist_predicate` at the same time.
+* `return_type_predicate = lambda f_name: None` : a predicate that determines the `_return_type` of the Builder. By default it will always return `None`. See `phi.builder.Builder.ThenAt`.
+* `getmembers_predicate = inspect.isfunction` : a predicate that determines what type of elements/members will be fetched by the `inspect` module, defaults to [inspect.isfunction](https://docs.python.org/2/library/inspect.html#inspect.isfunction). See [getmembers](https://docs.python.org/2/library/inspect.html#inspect.getmembers).
+
+**Examples**
+
+Lets patch ALL the main functions from numpy into a custom builder!
+
+    from phi import PythonBuilder #or Builder
+    import numpy as np
+
+    class NumpyBuilder(PythonBuilder): #or Builder
+        "A Builder for numpy functions!"
+        pass
+
+    NumpyBuilder.PatchAt(1, np)
+
+    N = NumpyBuilder(lambda x: x)
+
+Thats it! Although a serious patch would involve filtering out functions that don't take arrays. Another common task would be to use `NumpyBuilder.PatchAt(2, ...)` (`PatchAt(n, ..)` in general) when convenient to send the object being pipe to the relevant argument of the function. The previous is usually done with and a combination of `whitelist_predicate`s and `blacklist_predicate`s on `PatchAt(1, ...)` and `PatchAt(2, ...)` to filter or include the approriate functions on each kind of patch. Given the previous code we could now do
+
+    import numpy as np
+
+    x = np.array([[1,2],[3,4]])
+    y = np.array([[5,6],[7,8]])
+
+    z = N.Pipe(
+        x, N
+        .dot(y)
+        .add(x)
+        .transpose()
+        .sum(axis=1)
+    )
+
+Which is strictly equivalent to
+
+    import numpy as np
+
+    x = np.array([[1,2],[3,4]])
+    y = np.array([[5,6],[7,8]])
+
+    z = np.dot(x, y)
+    z = np.add(z, x)
+    z = np.transpose(z)
+    z = np.sum(z, axis=1)
+
+The thing to notice is that with the `NumpyBuilder` we avoid the repetitive and needless passing and reassigment of the `z` variable, this removes a lot of noise from our code.
+        """
+        module_name = module_alias if module_alias else module.__name__ + '.'
+        patch_members = _get_patch_members(builder, module, blacklist_predicate=blacklist_predicate, whitelist_predicate=whitelist_predicate, getmembers_predicate=getmembers_predicate)
+
+        for name, f in patch_members:
+            cls.RegisterAt(n, f, module_name, _return_type=return_type_predicate(f.__name__), alias=method_name_modifier(f.__name__))
+
 
 Builder.__core__ = [ name for name, f in inspect.getmembers(Builder, inspect.ismethod) ]
 
@@ -1099,4 +1174,18 @@ def _make_args_strs(n):
 
     return ", ".join(all_args + [""]), ", ".join(previous + [""]), last
 
-_make_args_strs(2)
+def _get_patch_members(builder, module, blacklist_predicate=_NoLeadingUnderscore, whitelist_predicate=_True, _return_type=None, getmembers_predicate=inspect.isfunction):
+
+    if type(whitelist_predicate) is list:
+        whitelist = whitelist_predicate
+        whitelist_predicate = lambda x: x in whitelist
+
+    if type(blacklist_predicate) is list:
+        blacklist = blacklist_predicate
+        blacklist_predicate = lambda x: x in blacklist
+
+    return [
+        (name, f) for (name, f) in inspect.getmembers(module, getmembers_predicate) if whitelist_predicate(name) and not blacklist_predicate(name)
+    ]
+
+
