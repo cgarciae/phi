@@ -9,7 +9,8 @@ Phi offers the following constructs/expressions, **try to read their documentati
 * **`phi.dsl.Input`**: allows you to specify an input value, compiles to a (constant) function that returns the same value no matter the input
 * **`phi.dsl.With`**: lets you to specify a context manager for the expresion (uses the `with` statemente)
 * **`phi.dsl.Record`**: lets to create a branched computation with named branches that returns a record-like structure with the results of each branch
-* **`phi.dsl.Read` & `phi.dsl.Write`**: allow you to create a reference to the value at some point and read it latter on.F
+* **`phi.dsl.Read` & `phi.dsl.Write`**: allow you to create a reference to the value at some point and read it latter on.
+* **`phi.dsl.If`**: allows you to create conditional computation
 
 Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.
 """
@@ -38,43 +39,57 @@ class _NoValue(object):
 _NO_VALUE = _NoValue()
 
 class Ref(object):
-    """docstring for Ref."""
+    """
+This class manages references inside the DSL, these are created, written, and read from during the `phi.dsl.Read` and `phi.dsl.Write` operations.
+    """
     def __init__(self, name, value=_NO_VALUE):
         super(Ref, self).__init__()
         self.name = name
+        """
+The reference name. Can be though a key in a dictionary.
+        """
         self.value = value
+        """
+The value of the reference. Can be though a value in a dictionary.
+        """
 
     def __call__(self, *optional):
+        """
+Returns the value of the reference. Any number of arguments can be passed, they will all be ignored.
+        """
         if self.value is _NO_VALUE:
             raise Exception("Trying to read Ref('{0}') before assignment".format(self.name))
 
         return self.value
 
     def set(self, x):
+        """
+Sets the value of the reference equal to the input argument `x`. Its also an identity function since it returns `x`.
+        """
         self.value = x
 
         return x
 
 
-class CompilationContextManager(object):
+class _CompilationContextManager(object):
 
     COMPILATION_GLOBAL_REFS = None
     WITH_GLOBAL_CONTEXT = _NO_VALUE
 
     def __init__(self, next_refs, next_with_global_context):
-        self.previous_refs = CompilationContextManager.COMPILATION_GLOBAL_REFS
+        self.previous_refs = _CompilationContextManager.COMPILATION_GLOBAL_REFS
         self.next_refs = next_refs
 
-        self.previous_with_global_context = CompilationContextManager.WITH_GLOBAL_CONTEXT
+        self.previous_with_global_context = _CompilationContextManager.WITH_GLOBAL_CONTEXT
         self.next_with_global_context = next_with_global_context
 
     def __enter__(self):
-        CompilationContextManager.COMPILATION_GLOBAL_REFS = self.next_refs
-        CompilationContextManager.WITH_GLOBAL_CONTEXT = self.next_with_global_context
+        _CompilationContextManager.COMPILATION_GLOBAL_REFS = self.next_refs
+        _CompilationContextManager.WITH_GLOBAL_CONTEXT = self.next_with_global_context
 
     def __exit__(self, *args):
-        CompilationContextManager.COMPILATION_GLOBAL_REFS = self.previous_refs
-        CompilationContextManager.WITH_GLOBAL_CONTEXT = self.previous_with_global_context
+        _CompilationContextManager.COMPILATION_GLOBAL_REFS = self.previous_refs
+        _CompilationContextManager.WITH_GLOBAL_CONTEXT = self.previous_with_global_context
 
     @classmethod
     def set_ref(cls, ref):
@@ -161,7 +176,9 @@ class _RecordObject(dict):
 ###############################
 
 class Node(object):
-    """docstring for Node."""
+    """
+Base class for any DSL AST object.
+    """
 
     __metaclass__ = ABCMeta
 
@@ -553,15 +570,15 @@ The previous is equivalent to
 
     def set_scope(self, new_scope):
         self.new_scope = new_scope
-        self.old_scope = CompilationContextManager.WITH_GLOBAL_CONTEXT
+        self.old_scope = _CompilationContextManager.WITH_GLOBAL_CONTEXT
 
         return self
 
     def __enter__(self):
-        CompilationContextManager.WITH_GLOBAL_CONTEXT = self.new_scope
+        _CompilationContextManager.WITH_GLOBAL_CONTEXT = self.new_scope
 
     def __exit__(self, *args):
-        CompilationContextManager.WITH_GLOBAL_CONTEXT = self.old_scope
+        _CompilationContextManager.WITH_GLOBAL_CONTEXT = self.old_scope
 
 
 class Read(Node):
@@ -644,12 +661,11 @@ every time there is a write expression inside a branch expression.
         self.name = name
 
     def __compile__(self):
-        f = lambda z: CompilationContextManager.get_ref(self.name).value
+        f = lambda z: _CompilationContextManager.get_ref(self.name).value
         return f
 
 
 class Write(Node):
-
     __doc__ = Read.__doc__
 
     def __init__(self, ref):
@@ -674,7 +690,7 @@ class Write(Node):
             ref = Ref(self.ref, x) if type(self.ref) is str else self.ref
 
             ref.set(x)
-            CompilationContextManager.set_ref(ref)
+            _CompilationContextManager.set_ref(ref)
 
             return x
 
@@ -717,7 +733,46 @@ Here we just made a lamda that took in the argument `z` but it was completely ig
 
 
 class If(Node):
-    """docstring for If."""
+    """
+**If**
+
+    If(Predicate, *Then, Else=())
+
+Having conditionals expressions a necesity in every language, Phi includes the `If` expression for such a purpose.
+
+**Arguments**
+
+* **Predicate** : a predicate expression uses to determine if the `Then` or `Else` branches should be used.
+* ***Then** : an expression to be excecuted if the `Predicate` yields `True`, since this parameter is variadic you can stack expression and they will be interpreted as a tuple `phi.dsl.Composition`.
+* `Else = ()` : the expression to be excecuted if the `Predicate` yields `False`, its the identity `()` by default, since this is NOT a variadic parameter make sure to include the tuple parenthesis `(...)` if you want to create a `phi.dsl.Composition`.
+
+This object includes the `Else` method which makes things more readable, however, as a special case `phi.If` and `P.If` dont have the same behaviour in that `P.If` doesn't have the `Else` method. With `P.If` you can write
+
+    from phi import P, Val
+
+    assert "Less or equal to 10" == P.Pipe(
+        5,
+        P.If(P > 10,
+            Val("Greater than 10"),
+        Else = (
+            Val("Less or equal to 10")
+        ))
+    )
+
+however with `phi.If` its a little nicer
+
+    from phi import P, Val, If
+
+    assert "Less or equal to 10" == P.Pipe(
+        5,
+        If(P > 10,
+            Val("Greater than 10")
+        )
+        .Else(
+            Val("Less or equal to 10")
+        )
+    )
+    """
     def __init__(self, Predicate, *Then, **kwargs):
 
         Else = kwargs.get('Else', ())
@@ -758,7 +813,7 @@ Publically exposed as [Builder.Make](https://cgarciae.github.io/phi/builder.m.ht
     refs = { name: value if type(value) is Ref else Ref(name, value) for name, value in refs.items() }
 
     def g(x):
-        with CompilationContextManager(refs, _NoValue):
+        with _CompilationContextManager(refs, _NoValue):
             return f(x)
 
     return g if create_ref_context else f

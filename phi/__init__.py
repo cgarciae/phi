@@ -39,6 +39,7 @@ NPipe = P.NPipe
 NRun = P.NRun
 Obj = P.Obj
 Rec = P.Rec
+Ref = P.Ref
 Context = P.Context
 
 # Directly imported from DSL

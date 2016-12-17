@@ -38,6 +38,19 @@ class TestDSL(object):
 
         assert [600, 3, 6] == f(2)
 
+        r = P.Ref('r')
+        code = (
+            P + 1, {'a'},
+            P * 2, {'b'},
+            P * 100, {'c', r },
+            ['c', 'a', 'b']
+        )
+
+        f = dsl.Compile(code, {})
+
+        assert [600, 3, 6] == f(2)
+        assert r() == 600
+
     def test_write_tree(self):
 
         code = (

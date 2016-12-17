@@ -1,4 +1,6 @@
-
+"""
+`PythonBuilder` helps you integrate Python's built-in functions and keywords into the DSL and it also includes a bunch of useful helpers for common stuff. `phi`'s global `P` object is an instance of this class.
+"""
 
 from __future__ import absolute_import
 from __future__ import division

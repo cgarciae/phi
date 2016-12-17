@@ -104,17 +104,59 @@ Here we called `Context` with no arguments to get the context back, however, sin
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html)
         """
 
-        if dsl.CompilationContextManager.WITH_GLOBAL_CONTEXT is dsl._NO_VALUE:
+        if dsl._CompilationContextManager.WITH_GLOBAL_CONTEXT is dsl._NO_VALUE:
             raise Exception("Cannot use 'Context' outside of a 'With' block")
 
-        return dsl.CompilationContextManager.WITH_GLOBAL_CONTEXT
+        return dsl._CompilationContextManager.WITH_GLOBAL_CONTEXT
 
     def With(self, *args, **kwargs):
         return self.NMake(dsl.With(*args, **kwargs))
     With.__doc__ = dsl.With.__doc__
 
 
-    Ref = dsl.Ref
+    @property
+    def Ref(self):
+        """
+Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).
+
+**Creating Refences**
+
+You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) or [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) expression. Here is a contrived example
+
+    from phi import P
+
+    r = P.Ref('r')
+
+    assert [600, 3, 6] == P.Pipe(
+        2,
+        P + 1, {'a'},  # a = 2 + 1 = 3
+        P * 2, {'b'},  # b = 3 * 2 = 6
+        P * 100, {'c', r },  # c = r = 6 * 100 = 600
+        ['c', 'a', 'b']
+    )
+
+    assert r() == 600
+
+**Reading Refences from the Current Context**
+
+While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.
+
+    Read.x(None) <=> Ref.x
+
+As an example
+
+    from phi import P, Obj, Ref
+
+    assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
+        "a b c", Obj
+        .split(' ').Write.keys  # keys = ['a', 'b', 'c']
+        .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
+        lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
+        dict   # {'a': 97, 'b': 98, 'c': 99}
+    )
+
+        """
+        return _RefProxyInstance
 
     def If(self, *args, **kwargs):
         return self.NMake(dsl.If(*args, **kwargs))
@@ -1141,6 +1183,19 @@ class _ObjectProxy(object):
 
         return method_proxy
 
+class _RefProxy(object):
+    """docstring for _ReadProxy."""
+
+    def __getitem__(self, name):
+        return dsl._CompilationContextManager.get_ref(name).value
+
+    def __getattr__(self, name):
+        return dsl._CompilationContextManager.get_ref(name).value
+
+    def __call__(self, *args, **kwargs):
+        return dsl.Ref(*args, **kwargs)
+
+_RefProxyInstance = _RefProxy()
 
 class _ReadProxy(object):
     """docstring for _ReadProxy."""

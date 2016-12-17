@@ -433,7 +433,7 @@ class TestExamples(object):
 
         from phi import P
 
-        f = (P + 1 > 5).Not()
+        f = (P + 1 > 5).Not()   #lambda x: not x + 1 > 5
 
         assert f(1) == True
 
@@ -445,4 +445,44 @@ class TestExamples(object):
             [1,2,3,4],
             P.filter(P % 2 != 0)   #[1, 3], keeps odds
             .Contains(4)   #4 in [1, 3] == False
+        )
+
+    def test_ref(self):
+
+        from phi import P, Obj, Ref
+
+        assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
+            "a b c", Obj
+            .split(' ').Write['keys']  # keys = ['a', 'b', 'c']
+            .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
+            lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
+            dict   # {'a': 97, 'b': 98, 'c': 99}
+        )
+
+    def test_if(self):
+
+        from phi import P, Val
+
+        assert "Less or equal to 10" == P.Pipe(
+            5,
+            P.If(P > 10,
+                Val("Greater than 10"),
+            Else = (
+                Val("Less or equal to 10")
+            ))
+        )
+
+        #########################
+        #########################
+
+        from phi import P, Val, If
+
+        assert "Less or equal to 10" == P.Pipe(
+            5,
+            If(P > 10,
+                Val("Greater than 10")
+            )
+            .Else(
+                Val("Less or equal to 10")
+            )
         )
