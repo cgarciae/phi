@@ -750,7 +750,7 @@ class If(Node):
 
 def Compile(code, refs, create_ref_context=True):
     """
-    Hola
+Publically exposed as [Builder.Make](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder.Make).
     """
     ast = _parse(code)
     f = ast.__compile__()

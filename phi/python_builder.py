@@ -38,11 +38,11 @@ for _name, f in _functions_2:
 
 #custom methods
 @PythonBuilder.Register("phi.python_builder.", explain=False)
-def Not(x):
+def Not(a):
     """
 **Not**
 
-    Not() <=> lambda x: not x
+    Not() <=> lambda a: not a
 
 Returns a function that negates the input argument.
 
@@ -74,25 +74,91 @@ or just
 
     assert f(1) == True
     """
-    return not x
+    return not a
 
 @PythonBuilder.Register("phi.python_builder.", explain=False)
-def Contains(x, y): return y in x
+def Contains(a, b):
+    """
+**Contains**
+
+    Contains(b) <=> lambda a: b in a
+
+Returns a partial function which when executed determines whether the argument partially applied is contained in the value being passed down.
+
+** Examples **
+
+    from phi import P
+
+    assert False == P.Pipe(
+        [1,2,3,4], P
+        .filter(P % 2 != 0)   #[1, 3], keeps odds
+        .Contains(4)   #4 in [1, 3] == False
+    )
+    """
+    return b in a
 
 @PythonBuilder.Register("phi.python_builder.", explain=False)
-def In(x, y): return x in y
+def In(a, b):
+    """
+**In**
+
+    In(b) <=> lambda a: a in b
+
+Returns a partial function which when executed determines whether the argument partially applied contains the value being passed down.
+
+** Examples **
+
+    from phi import P
+
+    assert False == P.Pipe(
+        3,
+        P * 2,   #3 * 2 == 6
+        P.In([1,2,3,4])   #6 in [1,2,3,4] == False
+    )
+    """
+    return a in b
 
 @PythonBuilder.Register("phi.python_builder.", explain=False)
-def And(x, y): return x and y
+def First(a):
+    """
+**First**
+
+    First() <=> lambda a: a[0]
+
+Returns a function which when executed returns the first element of the iterable being passed.
+
+** Examples **
+
+    from phi import P
+
+    assert 3 == P.Pipe(
+        range(1, 10), P  #[1, 2, ..., 8, 9]
+        .filter(P % 3 == 0)   #[3, 6, 9]
+        .First()   # [3, 6, 9][0] == 3
+    )
+    """
+    return next(iter(a))
 
 @PythonBuilder.Register("phi.python_builder.", explain=False)
-def Or(x, y): return x or y
+def Last(a):
+    """
+**Last**
 
-@PythonBuilder.Register("phi.python_builder.", explain=False)
-def First(x): return next(iter(x))
+    Last() <=> lambda a: a[-1]
 
-@PythonBuilder.Register("phi.python_builder.", explain=False)
-def Last(x): return list(x)[-1]
+Returns a function which when executed returns the last element of the iterable being passed.
+
+** Examples **
+
+    from phi import P
+
+    assert 3 == P.Pipe(
+        range(1, 10), P  #[1, 2, ..., 8, 9]
+        .filter(P % 3 == 0)   #[3, 6, 9]
+        .Last()   # [3, 6, 9][-1] == 9
+    )
+    """
+    return list(a)[-1]
 
 
 __all__ = ["PythonBuilder"]

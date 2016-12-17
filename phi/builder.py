@@ -304,15 +304,47 @@ Here the `Val` statemente drops the `None` and introduces its own constants. Giv
 
     def Make(self, *code, **kwargs):
         """
-The `Make` method takes an expression from the DSL and compiles it to a function.
+**Make**
+
+    Make(code*, refs={}, flatten=False, create_ref_context=True, _return_type=None)
+
+`Make` takes an expression from the DSL and compiles it to a function.
 
 **Arguments**
 
 * ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).
-* *flatten = False*: if `flatten` is True and the argument being returned by the compiled function is a `list` it will instead return a flattened list.
-* *_return_type = None*: By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the returned contianer. This is useful if the custom builder has specialized methods.
-* *create_ref_context = True*: determines if a reference manager should be created on compilation. See [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile).
-* *refs = True*: external/default values for references passed during compilation. See [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile).
+* `refs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need of an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.
+* `flatten = False` : if `flatten` is True and the argument being returned by the compiled function is a `list` it will flatten the list. This is useful if you have nested branches in the last computation.
+* `create_ref_context = True` : determines if a reference manager should be created on compilation. See `phi.builder.Builder.NMake` for more information on what happens when its set to `False`.
+* `_return_type = None` : By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the return contianer. This is useful if the custom builder has specialized methods.
+
+While `Pipe` is might be an nicer since it makes the initial value being piped explicit, it has the overhead of having to "compile" the expression into a function every time. If you have something like
+
+    from phi import P
+
+    xs = []
+
+    for i in xrange(10000000000):
+        x = P.Pipe(
+            i,
+            some_dsl_expression
+        )
+
+        xs.append(x)
+
+you are better of using `Make` to compile that DSL expression in advanced
+
+    from phi import P
+
+    xs = []
+    f = P.Make(some_dsl_expression)
+
+    for i in xrange(10000000000):
+        x = f(i)
+        xs.append(x)
+
+This reduces the overhead of parsing the expressions and creating the function.
+
 
 **Examples**
 
@@ -1111,7 +1143,7 @@ class _ObjectProxy(object):
 
 
 class _ReadProxy(object):
-    """docstring for Underscore."""
+    """docstring for _ReadProxy."""
 
     def __init__(self, __builder__):
         self.__builder__ = __builder__
@@ -1127,7 +1159,7 @@ class _ReadProxy(object):
 
 
 class _WriteProxy(object):
-    """docstring for Underscore."""
+    """docstring for _WriteProxy."""
 
     def __init__(self, __builder__):
         self.__builder__ = __builder__
@@ -1144,7 +1176,7 @@ class _WriteProxy(object):
 
 
 class _RecordProxy(object):
-    """docstring for RecClass."""
+    """docstring for _RecordProxy."""
 
     def __init__(self, __builder__):
         self.__builder__ = __builder__

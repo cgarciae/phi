@@ -436,3 +436,13 @@ class TestExamples(object):
         f = (P + 1 > 5).Not()
 
         assert f(1) == True
+
+    def test_contains(self):
+
+        from phi import P
+
+        assert False == P.Pipe(
+            [1,2,3,4],
+            P.filter(P % 2 != 0)   #[1, 3], keeps odds
+            .Contains(4)   #4 in [1, 3] == False
+        )
