@@ -1,0 +1,8 @@
+#! /bin/bash
+set -e
+
+tasks/gen_docs
+tasks/upload_test
+tasks/test_pypitest
+tasks/upload_live
+tasks/update_gh_pages

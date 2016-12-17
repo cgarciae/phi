@@ -1,7 +1,8 @@
 #! /bin/bash
+set -e
 
 pip install -i https://testpypi.python.org/pypi phi
 echo
 echo "Testing Library:"
 echo
-python -c "import phi; print 'Hello from python. Phi version:', phi.__version__"
+python -c "import phi; print('Hello from python. Phi version:', phi.__version__)"

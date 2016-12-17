@@ -8,12 +8,13 @@ from . import builder
 from . import utils
 from . import dsl
 from . import lambdas
-from . import patch
+
+from .utils import identity
 
 from .dsl import With
 
-#patches
 from . import python_builder
+from .builder import Builder
 from .python_builder import PythonBuilder
 
 P = PythonBuilder(utils.identity)
@@ -38,6 +39,7 @@ NPipe = P.NPipe
 NRun = P.NRun
 Obj = P.Obj
 Rec = P.Rec
+Ref = P.Ref
 Context = P.Context
 
 # Directly imported from DSL

@@ -1,0 +1,5 @@
+#! /bin/bash
+set -e
+
+docker run -it -v ${PWD}:/code -w /code python:2.7 tasks/do_pypitest
+docker run -it -v ${PWD}:/code -w /code python:3.5 tasks/do_pypitest

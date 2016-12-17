@@ -13,7 +13,7 @@ services:
     volumes:
       - ./:/phi
     working_dir: /phi
-    command: ./scripts/gen_docs
+    command: ./tasks/gen_docs
 
   test27:
     build:

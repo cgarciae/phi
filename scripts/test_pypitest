@@ -1,3 +1,0 @@
-#! /bin/bash
-
-docker run -it -v ${PWD}:/code -w /code python:2.7 scripts/do_pypitest
