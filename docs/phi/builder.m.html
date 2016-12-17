@@ -1234,17 +1234,59 @@ table {
 <span class="sd">* [dsl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 
     <span class="k">def</span> <span class="nf">With</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
     <span class="n">With</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">__doc__</span>
 
 
-    <span class="n">Ref</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">Ref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).</span>
+
+<span class="sd">**Creating Refences**</span>
+
+<span class="sd">You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) or [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) expression. Here is a contrived example</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    r = P.Ref(&#39;r&#39;)</span>
+
+<span class="sd">    assert [600, 3, 6] == P.Pipe(</span>
+<span class="sd">        2,</span>
+<span class="sd">        P + 1, {&#39;a&#39;},  # a = 2 + 1 = 3</span>
+<span class="sd">        P * 2, {&#39;b&#39;},  # b = 3 * 2 = 6</span>
+<span class="sd">        P * 100, {&#39;c&#39;, r },  # c = r = 6 * 100 = 600</span>
+<span class="sd">        [&#39;c&#39;, &#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">    )</span>
+
+<span class="sd">    assert r() == 600</span>
+
+<span class="sd">**Reading Refences from the Current Context**</span>
+
+<span class="sd">While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.</span>
+
+<span class="sd">    Read.x(None) &lt;=&gt; Ref.x</span>
+
+<span class="sd">As an example</span>
+
+<span class="sd">    from phi import P, Obj, Ref</span>
+
+<span class="sd">    assert {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99} == P.Pipe(</span>
+<span class="sd">        &quot;a b c&quot;, Obj</span>
+<span class="sd">        .split(&#39; &#39;).Write.keys  # keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+<span class="sd">        .map(ord),  # [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
+<span class="sd">        lambda it: zip(Ref.keys, it),  # [(&#39;a&#39;, 97), (&#39;b&#39;, 98), (&#39;c&#39;, 99)]</span>
+<span class="sd">        dict   # {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99}</span>
+<span class="sd">    )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_RefProxyInstance</span>
 
     <span class="k">def</span> <span class="nf">If</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
@@ -1443,7 +1485,7 @@ table {
 <span class="sd">**Arguments**</span>
 
 <span class="sd">* ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).</span>
-<span class="sd">* `refs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need or an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.</span>
+<span class="sd">* `refs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need of an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.</span>
 <span class="sd">* `flatten = False` : if `flatten` is True and the argument being returned by the compiled function is a `list` it will flatten the list. This is useful if you have nested branches in the last computation.</span>
 <span class="sd">* `create_ref_context = True` : determines if a reference manager should be created on compilation. See `phi.builder.Builder.NMake` for more information on what happens when its set to `False`.</span>
 <span class="sd">* `_return_type = None` : By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the return contianer. This is useful if the custom builder has specialized methods.</span>
@@ -2271,6 +2313,19 @@ table {
 
         <span class="k">return</span> <span class="n">method_proxy</span>
 
+<span class="k">class</span> <span class="nc">_RefProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for _ReadProxy.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">get_ref</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">get_ref</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="n">_RefProxyInstance</span> <span class="o">=</span> <span class="n">_RefProxy</span><span class="p">()</span>
 
 <span class="k">class</span> <span class="nc">_ReadProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for _ReadProxy.&quot;&quot;&quot;</span>
@@ -2429,17 +2484,59 @@ table {
 <span class="sd">* [dsl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
+        <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 
     <span class="k">def</span> <span class="nf">With</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
     <span class="n">With</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">With</span><span class="o">.</span><span class="n">__doc__</span>
 
 
-    <span class="n">Ref</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Ref</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">Ref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).</span>
+
+<span class="sd">**Creating Refences**</span>
+
+<span class="sd">You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) or [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) expression. Here is a contrived example</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    r = P.Ref(&#39;r&#39;)</span>
+
+<span class="sd">    assert [600, 3, 6] == P.Pipe(</span>
+<span class="sd">        2,</span>
+<span class="sd">        P + 1, {&#39;a&#39;},  # a = 2 + 1 = 3</span>
+<span class="sd">        P * 2, {&#39;b&#39;},  # b = 3 * 2 = 6</span>
+<span class="sd">        P * 100, {&#39;c&#39;, r },  # c = r = 6 * 100 = 600</span>
+<span class="sd">        [&#39;c&#39;, &#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">    )</span>
+
+<span class="sd">    assert r() == 600</span>
+
+<span class="sd">**Reading Refences from the Current Context**</span>
+
+<span class="sd">While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.</span>
+
+<span class="sd">    Read.x(None) &lt;=&gt; Ref.x</span>
+
+<span class="sd">As an example</span>
+
+<span class="sd">    from phi import P, Obj, Ref</span>
+
+<span class="sd">    assert {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99} == P.Pipe(</span>
+<span class="sd">        &quot;a b c&quot;, Obj</span>
+<span class="sd">        .split(&#39; &#39;).Write.keys  # keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+<span class="sd">        .map(ord),  # [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
+<span class="sd">        lambda it: zip(Ref.keys, it),  # [(&#39;a&#39;, 97), (&#39;b&#39;, 98), (&#39;c&#39;, 99)]</span>
+<span class="sd">        dict   # {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99}</span>
+<span class="sd">    )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_RefProxyInstance</span>
 
     <span class="k">def</span> <span class="nf">If</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NMake</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
@@ -2638,7 +2735,7 @@ table {
 <span class="sd">**Arguments**</span>
 
 <span class="sd">* ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).</span>
-<span class="sd">* `refs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need or an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.</span>
+<span class="sd">* `refs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need of an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.</span>
 <span class="sd">* `flatten = False` : if `flatten` is True and the argument being returned by the compiled function is a `list` it will flatten the list. This is useful if you have nested branches in the last computation.</span>
 <span class="sd">* `create_ref_context = True` : determines if a reference manager should be created on compilation. See `phi.builder.Builder.NMake` for more information on what happens when its set to `False`.</span>
 <span class="sd">* `_return_type = None` : By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the return contianer. This is useful if the custom builder has specialized methods.</span>
@@ -3462,17 +3559,6 @@ table {
           <li>phi.dsl.Node</li>
           <li>__builtin__.object</li>
           </ul>
-          <h3>Class variables</h3>
-            <div class="item">
-            <p id="phi.builder.Builder.Ref" class="name">var <span class="ident">Ref</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
           <h3>Instance variables</h3>
             <div class="item">
             <p id="phi.builder.Builder.Obj" class="name">var <span class="ident">Obj</span></p>
@@ -3589,6 +3675,52 @@ Read(&#39;my_ref&#39;)
 <li><a href="#phi.builder.Builder.Read"><code>Read</code></a></li>
 <li><a href="#phi.builder.Builder.Write"><code>Write</code></a></li>
 </ul></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.builder.Builder.Ref" class="name">var <span class="ident">Ref</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Returns an object that helps you to inmediatly create and <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">read</a> <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref">references</a>.</p>
+<p><strong>Creating Refences</strong></p>
+<p>You can manually create a <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref">Ref</a> outside the DSL using <code>Ref</code> and then pass to as/to a <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">Read</a> or <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">Write</a> expression. Here is a contrived example</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>  <span class="c1"># a = 2 + 1 = 3</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>  <span class="c1"># b = 3 * 2 = 6</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>  <span class="c1"># c = r = 6 * 100 = 600</span>
+    <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">r</span><span class="p">()</span> <span class="o">==</span> <span class="mi">600</span>
+</pre></div>
+
+
+<p><strong>Reading Refences from the Current Context</strong></p>
+<p>While the expression <code>Read.a</code> with return a function that will discard its argument and return the value of the reference <code>x</code> in the current context, the expression <code>Ref.x</code> will return the value inmediatly, this is useful when using it inside pyton lambdas.</p>
+<div class="codehilite"><pre><span></span>Read.x(None) &lt;=&gt; Ref.x
+</pre></div>
+
+
+<p>As an example</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Ref</span>
+
+<span class="k">assert</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">98</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">99</span><span class="p">}</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;a b c&quot;</span><span class="p">,</span> <span class="n">Obj</span>
+    <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="o">.</span><span class="n">keys</span>  <span class="c1"># keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">ord</span><span class="p">),</span>  <span class="c1"># [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
+    <span class="k">lambda</span> <span class="n">it</span><span class="p">:</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Ref</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="n">it</span><span class="p">),</span>  <span class="c1"># [(&#39;a&#39;, 97), (&#39;b&#39;, 98), (&#39;c&#39;, 99)]</span>
+    <span class="nb">dict</span>   <span class="c1"># {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99}</span>
+<span class="p">)</span>
+</pre></div></div>
   <div class="source_cont">
 </div>
 
@@ -3733,9 +3865,9 @@ Write(&#39;my_ref&#39;)
 <span class="sd">hi.builder.Builder.Obj`</span>
 <span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
+    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 </pre></div>
 
   </div>
@@ -3752,7 +3884,45 @@ Write(&#39;my_ref&#39;)
 
     
   
-    <div class="desc"><p>docstring for If.</p></div>
+    <div class="desc"><p><strong>If</strong></p>
+<div class="codehilite"><pre><span></span>If(Predicate, *Then, Else=())
+</pre></div>
+
+
+<p>Having conditionals expressions a necesity in every language, Phi includes the <code>If</code> expression for such a purpose.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>Predicate</strong> : a predicate expression uses to determine if the <code>Then</code> or <code>Else</code> branches should be used.</li>
+<li><strong>*Then</strong> : an expression to be excecuted if the <code>Predicate</code> yields <code>True</code>, since this parameter is variadic you can stack expression and they will be interpreted as a tuple <code>phi.dsl.Composition</code>.</li>
+<li><code>Else = ()</code> : the expression to be excecuted if the <code>Predicate</code> yields <code>False</code>, its the identity <code>()</code> by default, since this is NOT a variadic parameter make sure to include the tuple parenthesis <code>(...)</code> if you want to create a <code>phi.dsl.Composition</code>.</li>
+</ul>
+<p>This object includes the <code>Else</code> method which makes things more readable, however, as a special case <code>phi.If</code> and <code>P.If</code> dont have the same behaviour in that <code>P.If</code> doesn't have the <code>Else</code> method. With <code>P.If</code> you can write</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span>
+
+<span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">5</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">),</span>
+    <span class="n">Else</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+    <span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>however with <code>phi.If</code> its a little nicer</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+
+<span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">5</span><span class="p">,</span>
+    <span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+        <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.If', this);">Show source &equiv;</a></p>
   <div id="source-phi.builder.Builder.If" class="source">
@@ -3783,7 +3953,7 @@ Write(&#39;my_ref&#39;)
 <p><strong>Arguments</strong></p>
 <ul>
 <li><strong>*code</strong>: any expression from the DSL.<code>code</code> is implicitly a <code>tuple</code> since that is what Python gives you when you declare a <a href="https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists">Variadic Function</a>, therefore, according to the rules of the DSL, all expressions inside of <code>code</code> will be composed together. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition">Composition</a>.</li>
-<li><code>refs = {}</code>: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">Read</a> without the need or an explicit <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">Write</a> operation. You might also consider using <a href="#phi.builder.Builder.Val"><code>Val</code></a> instead of this.</li>
+<li><code>refs = {}</code>: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">Read</a> without the need of an explicit <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">Write</a> operation. You might also consider using <a href="#phi.builder.Builder.Val"><code>Val</code></a> instead of this.</li>
 <li><code>flatten = False</code> : if <code>flatten</code> is True and the argument being returned by the compiled function is a <code>list</code> it will flatten the list. This is useful if you have nested branches in the last computation.</li>
 <li><code>create_ref_context = True</code> : determines if a reference manager should be created on compilation. See <a href="#phi.builder.Builder.NMake"><code>NMake</code></a> for more information on what happens when its set to <code>False</code>.</li>
 <li><code>_return_type = None</code> : By default <code>Make</code> returns an object of the same class e.g. <code>Builder</code>, however you can pass in a custom class that inherits from <code>Builder</code> as the return contianer. This is useful if the custom builder has specialized methods.</li>
@@ -3865,7 +4035,7 @@ Write(&#39;my_ref&#39;)
 <span class="sd">e` takes an expression from the DSL and compiles it to a function.</span>
 <span class="sd">guments**</span>
 <span class="sd">*code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).</span>
-<span class="sd">efs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need or an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.</span>
+<span class="sd">efs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need of an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.</span>
 <span class="sd">latten = False` : if `flatten` is True and the argument being returned by the compiled function is a `list` it will flatten the list. This is useful if you have nested branches in the last computation.</span>
 <span class="sd">reate_ref_context = True` : determines if a reference manager should be created on compilation. See `phi.builder.Builder.NMake` for more information on what happens when its set to `False`.</span>
 <span class="sd">return_type = None` : By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the return contianer. This is useful if the custom builder has specialized methods.</span>
@@ -4211,7 +4381,7 @@ Write(&#39;my_ref&#39;)
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.PatchAt">
-    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7f7f38c74938&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7f7f38c748c0&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7f7f38c74848&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7f7f38c74938&gt;, getmembers_predicate=&lt;function isfunction at 0x7f7f3a208488&gt;)</p>
+    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7f01f8496938&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7f01f84968c0&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7f01f8496848&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7f01f8496938&gt;, getmembers_predicate=&lt;function isfunction at 0x7f01f9a2a488&gt;)</p>
     </div>
     
 

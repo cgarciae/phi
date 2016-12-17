@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>phi.python_builder API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="`PythonBuilder` helps you integrate Python's built-in functions and keywords into the DSL and it als..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1046,7 +1046,6 @@ table {
           
   <ul>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.__init__">__init__</a></li>
-    <li class="mono"><a href="#phi.python_builder.PythonBuilder.And">And</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Contains">Contains</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Context">Context</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.First">First</a></li>
@@ -1058,7 +1057,6 @@ table {
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.NPipe">NPipe</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.NRun">NRun</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Not">Not</a></li>
-    <li class="mono"><a href="#phi.python_builder.PythonBuilder.Or">Or</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.PatchAt">PatchAt</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Pipe">Pipe</a></li>
     <li class="mono"><a href="#phi.python_builder.PythonBuilder.Register">Register</a></li>
@@ -1177,76 +1175,176 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">phi.python_builder</span> module</h1>
-  
+  <p><code>PythonBuilder</code> helps you integrate Python's built-in functions and keywords into the DSL and it also includes a bunch of useful helpers for common stuff. <code>phi</code>'s global <code>P</code> object is an instance of this class.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder', this);">Show source &equiv;</a></p>
   <div id="source-phi.python_builder" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">rom</span> <span class="n">__future__</span> <span class="kn">import</span> <span class="nn">absolute_import</span>
-<span class="n">rom</span> <span class="n">__future__</span> <span class="kn">import</span> <span class="nn">division</span>
-<span class="n">rom</span> <span class="n">__future__</span> <span class="kn">import</span> <span class="nn">print_function</span>
-<span class="n">rom</span> <span class="n">__future__</span> <span class="kn">import</span> <span class="nn">unicode_literals</span>
-<span class="n">rom</span> <span class="o">.</span><span class="n">builder</span> <span class="kn">import</span> <span class="nn">Builder</span>
-<span class="n">rom</span> <span class="o">.</span> <span class="kn">import</span> <span class="nn">utils</span>
-<span class="n">mport</span> <span class="n">inspect</span>
-<span class="n">lass</span> <span class="n">PythonBuilder</span><span class="p">(</span><span class="n">Builder</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">his class has two types of methods:</span>
-<span class="sd">. Methods that start with a lowercase letter are core python functions automatically registered as methods (e.g. `phi.python_builder.PythonBuilder.map` or `phi.python_builder.PythonBuilder.sum`).</span>
-<span class="sd">. Methods that start with a capytal letter like `phi.python_builder.PythonBuilder.And`, `phi.python_builder.PythonBuilder.Not`, `phi.python_builder.PythonBuilder.Contains`, this is done because some mimimic keywords (`and`, `or`, `not`, etc) and its ilegal to give them these lowercase names, however, methods like `phi.python_builder.PythonBuilder.Contains` that could use lowercase are left capitalized to maintain uniformity.</span>
-<span class="sd">   &quot;&quot;&quot;</span>
- <span class="n">built</span> <span class="ow">in</span> <span class="n">functions</span>
-<span class="n">function_2_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;map&quot;</span><span class="p">,</span> <span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="s2">&quot;reduce&quot;</span><span class="p">]</span>
-<span class="n">functions_2</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="n">_name</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">_name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">__builtins__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">_name</span> <span class="ow">in</span> <span class="n">_function_2_names</span> <span class="p">]</span>
-<span class="ow">or</span> <span class="n">_name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">__builtins__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-   <span class="k">try</span><span class="p">:</span>
-       <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;_&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">and</span> <span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_function_2_names</span><span class="p">:</span>
-           <span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">_name</span><span class="p">)</span>
-   <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-       <span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-<span class="ow">or</span> <span class="n">_name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_functions_2</span><span class="p">:</span>
-   <span class="c1"># import ipdb</span>
-   <span class="c1"># ipdb.set_trace()  ######### Break Point ###########</span>
-   <span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-<span class="n">custom</span> <span class="n">methods</span>
-<span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">ef</span> <span class="n">Not</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">*Not**</span>
-<span class="sd">   Not() &lt;=&gt; lambda x: not x</span>
-<span class="sd">eturns a function that negates the input argument.</span>
-<span class="sd">* Examples **</span>
-<span class="sd">   from phi import P</span>
-<span class="sd">   assert True == P.Pipe(</span>
-<span class="sd">       1,</span>
-<span class="sd">       P + 1,  # 1 + 1 == 2</span>
-<span class="sd">       P &gt; 5,  # 2 &gt; 5 == False</span>
-<span class="sd">       P.Not() # not False == True</span>
-<span class="sd">   )</span>
-<span class="sd">r shorter</span>
-<span class="sd">   from phi import P</span>
-<span class="sd">   assert True == P.Pipe(</span>
-<span class="sd">       1,</span>
-<span class="sd">       (P + 1 &gt; 5).Not()  # not 1 + 1 &gt; 5 == not 2 &gt; 5 == not False == True</span>
-<span class="sd">   )</span>
-<span class="sd">r just</span>
-<span class="sd">   from phi import P</span>
-<span class="sd">   f = (P + 1 &gt; 5).Not()</span>
-<span class="sd">   assert f(1) == True</span>
-<span class="sd">   &quot;&quot;&quot;</span>
-   <span class="k">return</span> <span class="ow">not</span> <span class="n">x</span>
-<span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">ef</span> <span class="n">Contains</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="k">return</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span>
-<span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">ef</span> <span class="n">In</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span>
-<span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">ef</span> <span class="n">And</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">y</span>
-<span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">ef</span> <span class="n">Or</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="ow">or</span> <span class="n">y</span>
-<span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">ef</span> <span class="n">First</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-<span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">ef</span> <span class="n">Last</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">_all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PythonBuilder&quot;</span><span class="p">]</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">`PythonBuilder` helps you integrate Python&#39;s built-in functions and keywords into the DSL and it also includes a bunch of useful helpers for common stuff. `phi`&#39;s global `P` object is an instance of this class.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+
+
+<span class="kn">from</span> <span class="nn">.builder</span> <span class="kn">import</span> <span class="n">Builder</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+
+<span class="k">class</span> <span class="nc">PythonBuilder</span><span class="p">(</span><span class="n">Builder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This class has two types of methods:</span>
+
+<span class="sd">1. Methods that start with a lowercase letter are core python functions automatically registered as methods (e.g. `phi.python_builder.PythonBuilder.map` or `phi.python_builder.PythonBuilder.sum`).</span>
+<span class="sd">2. Methods that start with a capytal letter like `phi.python_builder.PythonBuilder.And`, `phi.python_builder.PythonBuilder.Not`, `phi.python_builder.PythonBuilder.Contains`, this is done because some mimimic keywords (`and`, `or`, `not`, etc) and its ilegal to give them these lowercase names, however, methods like `phi.python_builder.PythonBuilder.Contains` that could use lowercase are left capitalized to maintain uniformity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="c1"># built in functions</span>
+<span class="n">_function_2_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;map&quot;</span><span class="p">,</span> <span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="s2">&quot;reduce&quot;</span><span class="p">]</span>
+<span class="n">_functions_2</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="n">_name</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">_name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">__builtins__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">_name</span> <span class="ow">in</span> <span class="n">_function_2_names</span> <span class="p">]</span>
+
+<span class="k">for</span> <span class="n">_name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">__builtins__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;_&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">and</span> <span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_function_2_names</span><span class="p">:</span>
+            <span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">_name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_functions_2</span><span class="p">:</span>
+    <span class="c1"># import ipdb</span>
+    <span class="c1"># ipdb.set_trace()  ######### Break Point ###########</span>
+
+    <span class="n">PythonBuilder</span><span class="o">.</span><span class="n">Register2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1">#custom methods</span>
+<span class="nd">@PythonBuilder.Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">Not</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**Not**</span>
+
+<span class="sd">    Not() &lt;=&gt; lambda a: not a</span>
+
+<span class="sd">Returns a function that negates the input argument.</span>
+
+<span class="sd">** Examples **</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    assert True == P.Pipe(</span>
+<span class="sd">        1,</span>
+<span class="sd">        P + 1,  # 1 + 1 == 2</span>
+<span class="sd">        P &gt; 5,  # 2 &gt; 5 == False</span>
+<span class="sd">        P.Not() # not False == True</span>
+<span class="sd">    )</span>
+
+<span class="sd">or shorter</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    assert True == P.Pipe(</span>
+<span class="sd">        1,</span>
+<span class="sd">        (P + 1 &gt; 5).Not()  # not 1 + 1 &gt; 5 == not 2 &gt; 5 == not False == True</span>
+<span class="sd">    )</span>
+
+<span class="sd">or just</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    f = (P + 1 &gt; 5).Not()</span>
+
+<span class="sd">    assert f(1) == True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">a</span>
+
+<span class="nd">@PythonBuilder.Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">Contains</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**Contains**</span>
+
+<span class="sd">    Contains(b) &lt;=&gt; lambda a: b in a</span>
+
+<span class="sd">Returns a partial function which when executed determines whether the argument partially applied is contained in the value being passed down.</span>
+
+<span class="sd">** Examples **</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    assert False == P.Pipe(</span>
+<span class="sd">        [1,2,3,4], P</span>
+<span class="sd">        .filter(P % 2 != 0)   #[1, 3], keeps odds</span>
+<span class="sd">        .Contains(4)   #4 in [1, 3] == False</span>
+<span class="sd">    )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">a</span>
+
+<span class="nd">@PythonBuilder.Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">In</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**In**</span>
+
+<span class="sd">    In(b) &lt;=&gt; lambda a: a in b</span>
+
+<span class="sd">Returns a partial function which when executed determines whether the argument partially applied contains the value being passed down.</span>
+
+<span class="sd">** Examples **</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    assert False == P.Pipe(</span>
+<span class="sd">        3,</span>
+<span class="sd">        P * 2,   #3 * 2 == 6</span>
+<span class="sd">        P.In([1,2,3,4])   #6 in [1,2,3,4] == False</span>
+<span class="sd">    )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">b</span>
+
+<span class="nd">@PythonBuilder.Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">First</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**First**</span>
+
+<span class="sd">    First() &lt;=&gt; lambda a: a[0]</span>
+
+<span class="sd">Returns a function which when executed returns the first element of the iterable being passed.</span>
+
+<span class="sd">** Examples **</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    assert 3 == P.Pipe(</span>
+<span class="sd">        range(1, 10), P  #[1, 2, ..., 8, 9]</span>
+<span class="sd">        .filter(P % 3 == 0)   #[3, 6, 9]</span>
+<span class="sd">        .First()   # [3, 6, 9][0] == 3</span>
+<span class="sd">    )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+
+<span class="nd">@PythonBuilder.Register</span><span class="p">(</span><span class="s2">&quot;phi.python_builder.&quot;</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">Last</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**Last**</span>
+
+<span class="sd">    Last() &lt;=&gt; lambda a: a[-1]</span>
+
+<span class="sd">Returns a function which when executed returns the last element of the iterable being passed.</span>
+
+<span class="sd">** Examples **</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    assert 3 == P.Pipe(</span>
+<span class="sd">        range(1, 10), P  #[1, 2, ..., 8, 9]</span>
+<span class="sd">        .filter(P % 3 == 0)   #[3, 6, 9]</span>
+<span class="sd">        .Last()   # [3, 6, 9][-1] == 9</span>
+<span class="sd">    )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PythonBuilder&quot;</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -1265,7 +1363,7 @@ table {
     <div class="desc"><p>This class has two types of methods:</p>
 <ol>
 <li>Methods that start with a lowercase letter are core python functions automatically registered as methods (e.g. <a href="#phi.python_builder.PythonBuilder.map"><code>map</code></a> or <a href="#phi.python_builder.PythonBuilder.sum"><code>sum</code></a>).</li>
-<li>Methods that start with a capytal letter like <a href="#phi.python_builder.PythonBuilder.And"><code>And</code></a>, <a href="#phi.python_builder.PythonBuilder.Not"><code>Not</code></a>, <a href="#phi.python_builder.PythonBuilder.Contains"><code>Contains</code></a>, this is done because some mimimic keywords (<code>and</code>, <code>or</code>, <code>not</code>, etc) and its ilegal to give them these lowercase names, however, methods like <a href="#phi.python_builder.PythonBuilder.Contains"><code>Contains</code></a> that could use lowercase are left capitalized to maintain uniformity.</li>
+<li>Methods that start with a capytal letter like <code>phi.python_builder.PythonBuilder.And</code>, <a href="#phi.python_builder.PythonBuilder.Not"><code>Not</code></a>, <a href="#phi.python_builder.PythonBuilder.Contains"><code>Contains</code></a>, this is done because some mimimic keywords (<code>and</code>, <code>or</code>, <code>not</code>, etc) and its ilegal to give them these lowercase names, however, methods like <a href="#phi.python_builder.PythonBuilder.Contains"><code>Contains</code></a> that could use lowercase are left capitalized to maintain uniformity.</li>
 </ol></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.PythonBuilder', this);">Show source &equiv;</a></p>
@@ -1293,17 +1391,6 @@ table {
           <li>phi.dsl.Node</li>
           <li>__builtin__.object</li>
           </ul>
-          <h3>Class variables</h3>
-            <div class="item">
-            <p id="phi.python_builder.PythonBuilder.Ref" class="name">var <span class="ident">Ref</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
           <h3>Instance variables</h3>
             <div class="item">
             <p id="phi.python_builder.PythonBuilder.Obj" class="name">var <span class="ident">Obj</span></p>
@@ -1425,6 +1512,52 @@ Read(&#39;my_ref&#39;)
 
             </div>
             <div class="item">
+            <p id="phi.python_builder.PythonBuilder.Ref" class="name">var <span class="ident">Ref</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Returns an object that helps you to inmediatly create and <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">read</a> <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref">references</a>.</p>
+<p><strong>Creating Refences</strong></p>
+<p>You can manually create a <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref">Ref</a> outside the DSL using <code>Ref</code> and then pass to as/to a <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">Read</a> or <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">Write</a> expression. Here is a contrived example</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>  <span class="c1"># a = 2 + 1 = 3</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>  <span class="c1"># b = 3 * 2 = 6</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>  <span class="c1"># c = r = 6 * 100 = 600</span>
+    <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">r</span><span class="p">()</span> <span class="o">==</span> <span class="mi">600</span>
+</pre></div>
+
+
+<p><strong>Reading Refences from the Current Context</strong></p>
+<p>While the expression <code>Read.a</code> with return a function that will discard its argument and return the value of the reference <code>x</code> in the current context, the expression <code>Ref.x</code> will return the value inmediatly, this is useful when using it inside pyton lambdas.</p>
+<div class="codehilite"><pre><span></span>Read.x(None) &lt;=&gt; Ref.x
+</pre></div>
+
+
+<p>As an example</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Ref</span>
+
+<span class="k">assert</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">98</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">99</span><span class="p">}</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;a b c&quot;</span><span class="p">,</span> <span class="n">Obj</span>
+    <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="o">.</span><span class="n">keys</span>  <span class="c1"># keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">ord</span><span class="p">),</span>  <span class="c1"># [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
+    <span class="k">lambda</span> <span class="n">it</span><span class="p">:</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Ref</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="n">it</span><span class="p">),</span>  <span class="c1"># [(&#39;a&#39;, 97), (&#39;b&#39;, 98), (&#39;c&#39;, 99)]</span>
+    <span class="nb">dict</span>   <span class="c1"># {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99}</span>
+<span class="p">)</span>
+</pre></div></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="phi.python_builder.PythonBuilder.Write" class="name">var <span class="ident">Write</span></p>
             
 
@@ -1477,29 +1610,6 @@ Write(&#39;my_ref&#39;)
   
             
   <div class="item">
-    <div class="name def" id="phi.python_builder.PythonBuilder.And">
-    <p>def <span class="ident">And</span>(</p><p>self, *args, **kwargs)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.PythonBuilder.And', this);">Show source &equiv;</a></p>
-  <div id="source-phi.python_builder.PythonBuilder.And" class="source">
-    <div class="codehilite"><pre><span></span><span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="phi.python_builder.PythonBuilder.Contains">
     <p>def <span class="ident">Contains</span>(</p><p>self, *args, **kwargs)</p>
     </div>
@@ -1507,6 +1617,21 @@ Write(&#39;my_ref&#39;)
 
     
   
+    <div class="desc"><p><strong>Contains</strong></p>
+<div class="codehilite"><pre><span></span>Contains(b) &lt;=&gt; lambda a: b in a
+</pre></div>
+
+
+<p>Returns a partial function which when executed determines whether the argument partially applied is contained in the value being passed down.</p>
+<p><strong> Examples </strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="bp">False</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="n">P</span>
+    <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1">#[1, 3], keeps odds</span>
+    <span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>   <span class="c1">#4 in [1, 3] == False</span>
+<span class="p">)</span>
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.PythonBuilder.Contains', this);">Show source &equiv;</a></p>
   <div id="source-phi.python_builder.PythonBuilder.Contains" class="source">
@@ -1610,9 +1735,9 @@ Write(&#39;my_ref&#39;)
 <span class="sd">hi.builder.Builder.Obj`</span>
 <span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_NO_VALUE</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
+    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">_CompilationContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 </pre></div>
 
   </div>
@@ -1629,6 +1754,21 @@ Write(&#39;my_ref&#39;)
 
     
   
+    <div class="desc"><p><strong>First</strong></p>
+<div class="codehilite"><pre><span></span>First() &lt;=&gt; lambda a: a[0]
+</pre></div>
+
+
+<p>Returns a function which when executed returns the first element of the iterable being passed.</p>
+<p><strong> Examples </strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">P</span>  <span class="c1">#[1, 2, ..., 8, 9]</span>
+    <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1">#[3, 6, 9]</span>
+    <span class="o">.</span><span class="n">First</span><span class="p">()</span>   <span class="c1"># [3, 6, 9][0] == 3</span>
+<span class="p">)</span>
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.PythonBuilder.First', this);">Show source &equiv;</a></p>
   <div id="source-phi.python_builder.PythonBuilder.First" class="source">
@@ -1652,7 +1792,45 @@ Write(&#39;my_ref&#39;)
 
     
   
-    <div class="desc"><p>docstring for If.</p></div>
+    <div class="desc"><p><strong>If</strong></p>
+<div class="codehilite"><pre><span></span>If(Predicate, *Then, Else=())
+</pre></div>
+
+
+<p>Having conditionals expressions a necesity in every language, Phi includes the <code>If</code> expression for such a purpose.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>Predicate</strong> : a predicate expression uses to determine if the <code>Then</code> or <code>Else</code> branches should be used.</li>
+<li><strong>*Then</strong> : an expression to be excecuted if the <code>Predicate</code> yields <code>True</code>, since this parameter is variadic you can stack expression and they will be interpreted as a tuple <code>phi.dsl.Composition</code>.</li>
+<li><code>Else = ()</code> : the expression to be excecuted if the <code>Predicate</code> yields <code>False</code>, its the identity <code>()</code> by default, since this is NOT a variadic parameter make sure to include the tuple parenthesis <code>(...)</code> if you want to create a <code>phi.dsl.Composition</code>.</li>
+</ul>
+<p>This object includes the <code>Else</code> method which makes things more readable, however, as a special case <code>phi.If</code> and <code>P.If</code> dont have the same behaviour in that <code>P.If</code> doesn't have the <code>Else</code> method. With <code>P.If</code> you can write</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span>
+
+<span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">5</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">),</span>
+    <span class="n">Else</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+    <span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>however with <code>phi.If</code> its a little nicer</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+
+<span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">5</span><span class="p">,</span>
+    <span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+        <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.PythonBuilder.If', this);">Show source &equiv;</a></p>
   <div id="source-phi.python_builder.PythonBuilder.If" class="source">
@@ -1674,6 +1852,21 @@ Write(&#39;my_ref&#39;)
 
     
   
+    <div class="desc"><p><strong>In</strong></p>
+<div class="codehilite"><pre><span></span>In(b) &lt;=&gt; lambda a: a in b
+</pre></div>
+
+
+<p>Returns a partial function which when executed determines whether the argument partially applied contains the value being passed down.</p>
+<p><strong> Examples </strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="bp">False</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">3</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>   <span class="c1">#3 * 2 == 6</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">In</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>   <span class="c1">#6 in [1,2,3,4] == False</span>
+<span class="p">)</span>
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.PythonBuilder.In', this);">Show source &equiv;</a></p>
   <div id="source-phi.python_builder.PythonBuilder.In" class="source">
@@ -1697,6 +1890,21 @@ Write(&#39;my_ref&#39;)
 
     
   
+    <div class="desc"><p><strong>Last</strong></p>
+<div class="codehilite"><pre><span></span>Last() &lt;=&gt; lambda a: a[-1]
+</pre></div>
+
+
+<p>Returns a function which when executed returns the last element of the iterable being passed.</p>
+<p><strong> Examples </strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">P</span>  <span class="c1">#[1, 2, ..., 8, 9]</span>
+    <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1">#[3, 6, 9]</span>
+    <span class="o">.</span><span class="n">Last</span><span class="p">()</span>   <span class="c1"># [3, 6, 9][-1] == 9</span>
+<span class="p">)</span>
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.PythonBuilder.Last', this);">Show source &equiv;</a></p>
   <div id="source-phi.python_builder.PythonBuilder.Last" class="source">
@@ -1729,7 +1937,7 @@ Write(&#39;my_ref&#39;)
 <p><strong>Arguments</strong></p>
 <ul>
 <li><strong>*code</strong>: any expression from the DSL.<code>code</code> is implicitly a <code>tuple</code> since that is what Python gives you when you declare a <a href="https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists">Variadic Function</a>, therefore, according to the rules of the DSL, all expressions inside of <code>code</code> will be composed together. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition">Composition</a>.</li>
-<li><code>refs = {}</code>: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">Read</a> without the need or an explicit <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">Write</a> operation. You might also consider using <code>phi.builder.Builder.Val</code> instead of this.</li>
+<li><code>refs = {}</code>: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">Read</a> without the need of an explicit <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">Write</a> operation. You might also consider using <code>phi.builder.Builder.Val</code> instead of this.</li>
 <li><code>flatten = False</code> : if <code>flatten</code> is True and the argument being returned by the compiled function is a <code>list</code> it will flatten the list. This is useful if you have nested branches in the last computation.</li>
 <li><code>create_ref_context = True</code> : determines if a reference manager should be created on compilation. See <code>phi.builder.Builder.NMake</code> for more information on what happens when its set to <code>False</code>.</li>
 <li><code>_return_type = None</code> : By default <code>Make</code> returns an object of the same class e.g. <code>Builder</code>, however you can pass in a custom class that inherits from <code>Builder</code> as the return contianer. This is useful if the custom builder has specialized methods.</li>
@@ -1811,7 +2019,7 @@ Write(&#39;my_ref&#39;)
 <span class="sd">e` takes an expression from the DSL and compiles it to a function.</span>
 <span class="sd">guments**</span>
 <span class="sd">*code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).</span>
-<span class="sd">efs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need or an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.</span>
+<span class="sd">efs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need of an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.</span>
 <span class="sd">latten = False` : if `flatten` is True and the argument being returned by the compiled function is a `list` it will flatten the list. This is useful if you have nested branches in the last computation.</span>
 <span class="sd">reate_ref_context = True` : determines if a reference manager should be created on compilation. See `phi.builder.Builder.NMake` for more information on what happens when its set to `False`.</span>
 <span class="sd">return_type = None` : By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the return contianer. This is useful if the custom builder has specialized methods.</span>
@@ -2164,7 +2372,7 @@ Write(&#39;my_ref&#39;)
     
   
     <div class="desc"><p><strong>Not</strong></p>
-<div class="codehilite"><pre><span></span>Not() &lt;=&gt; lambda x: not x
+<div class="codehilite"><pre><span></span>Not() &lt;=&gt; lambda a: not a
 </pre></div>
 
 
@@ -2214,31 +2422,8 @@ Write(&#39;my_ref&#39;)
   
             
   <div class="item">
-    <div class="name def" id="phi.python_builder.PythonBuilder.Or">
-    <p>def <span class="ident">Or</span>(</p><p>self, *args, **kwargs)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.python_builder.PythonBuilder.Or', this);">Show source &equiv;</a></p>
-  <div id="source-phi.python_builder.PythonBuilder.Or" class="source">
-    <div class="codehilite"><pre><span></span><span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="phi.python_builder.PythonBuilder.PatchAt">
-    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7f7f38c74938&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7f7f38c748c0&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7f7f38c74848&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7f7f38c74938&gt;, getmembers_predicate=&lt;function isfunction at 0x7f7f3a208488&gt;)</p>
+    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7f01f8496938&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7f01f84968c0&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7f01f8496848&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7f01f8496938&gt;, getmembers_predicate=&lt;function isfunction at 0x7f01f9a2a488&gt;)</p>
     </div>
     
 
