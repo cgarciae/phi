@@ -1720,15 +1720,48 @@ Write(&#39;my_ref&#39;)
 
     
   
-    <div class="desc"><p>The <code>Make</code> method takes an expression from the DSL and compiles it to a function.</p>
+    <div class="desc"><p><strong>Make</strong></p>
+<div class="codehilite"><pre><span></span>Make(code*, refs={}, flatten=False, create_ref_context=True, _return_type=None)
+</pre></div>
+
+
+<p><code>Make</code> takes an expression from the DSL and compiles it to a function.</p>
 <p><strong>Arguments</strong></p>
 <ul>
 <li><strong>*code</strong>: any expression from the DSL.<code>code</code> is implicitly a <code>tuple</code> since that is what Python gives you when you declare a <a href="https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists">Variadic Function</a>, therefore, according to the rules of the DSL, all expressions inside of <code>code</code> will be composed together. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition">Composition</a>.</li>
-<li><em>flatten = False</em>: if <code>flatten</code> is True and the argument being returned by the compiled function is a <code>list</code> it will instead return a flattened list.</li>
-<li><em>_return_type = None</em>: By default <code>Make</code> returns an object of the same class e.g. <code>Builder</code>, however you can pass in a custom class that inherits from <code>Builder</code> as the returned contianer. This is useful if the custom builder has specialized methods.</li>
-<li><em>create_ref_context = True</em>: determines if a reference manager should be created on compilation. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a>.</li>
-<li><em>refs = True</em>: external/default values for references passed during compilation. See <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a>.</li>
+<li><code>refs = {}</code>: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">Read</a> without the need or an explicit <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write">Write</a> operation. You might also consider using <code>phi.builder.Builder.Val</code> instead of this.</li>
+<li><code>flatten = False</code> : if <code>flatten</code> is True and the argument being returned by the compiled function is a <code>list</code> it will flatten the list. This is useful if you have nested branches in the last computation.</li>
+<li><code>create_ref_context = True</code> : determines if a reference manager should be created on compilation. See <code>phi.builder.Builder.NMake</code> for more information on what happens when its set to <code>False</code>.</li>
+<li><code>_return_type = None</code> : By default <code>Make</code> returns an object of the same class e.g. <code>Builder</code>, however you can pass in a custom class that inherits from <code>Builder</code> as the return contianer. This is useful if the custom builder has specialized methods.</li>
 </ul>
+<p>While <code>Pipe</code> is might be an nicer since it makes the initial value being piped explicit, it has the overhead of having to "compile" the expression into a function every time. If you have something like</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">xs</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">10000000000</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">i</span><span class="p">,</span>
+        <span class="n">some_dsl_expression</span>
+    <span class="p">)</span>
+
+    <span class="n">xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+
+<p>you are better of using <code>Make</code> to compile that DSL expression in advanced</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">xs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">some_dsl_expression</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">10000000000</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+
+<p>This reduces the overhead of parsing the expressions and creating the function.</p>
 <p><strong>Examples</strong></p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
@@ -1773,13 +1806,32 @@ Write(&#39;my_ref&#39;)
   <div id="source-phi.python_builder.PythonBuilder.Make" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">code</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">`Make` method takes an expression from the DSL and compiles it to a function.</span>
+<span class="sd">ke**</span>
+<span class="sd">Make(code*, refs={}, flatten=False, create_ref_context=True, _return_type=None)</span>
+<span class="sd">e` takes an expression from the DSL and compiles it to a function.</span>
 <span class="sd">guments**</span>
 <span class="sd">*code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).</span>
-<span class="sd">latten = False*: if `flatten` is True and the argument being returned by the compiled function is a `list` it will instead return a flattened list.</span>
-<span class="sd">return_type = None*: By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the returned contianer. This is useful if the custom builder has specialized methods.</span>
-<span class="sd">reate_ref_context = True*: determines if a reference manager should be created on compilation. See [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile).</span>
-<span class="sd">efs = True*: external/default values for references passed during compilation. See [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile).</span>
+<span class="sd">efs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need or an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.</span>
+<span class="sd">latten = False` : if `flatten` is True and the argument being returned by the compiled function is a `list` it will flatten the list. This is useful if you have nested branches in the last computation.</span>
+<span class="sd">reate_ref_context = True` : determines if a reference manager should be created on compilation. See `phi.builder.Builder.NMake` for more information on what happens when its set to `False`.</span>
+<span class="sd">return_type = None` : By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the return contianer. This is useful if the custom builder has specialized methods.</span>
+<span class="sd">e `Pipe` is might be an nicer since it makes the initial value being piped explicit, it has the overhead of having to &quot;compile&quot; the expression into a function every time. If you have something like</span>
+<span class="sd">from phi import P</span>
+<span class="sd">xs = []</span>
+<span class="sd">for i in xrange(10000000000):</span>
+<span class="sd">    x = P.Pipe(</span>
+<span class="sd">        i,</span>
+<span class="sd">        some_dsl_expression</span>
+<span class="sd">    )</span>
+<span class="sd">    xs.append(x)</span>
+<span class="sd">are better of using `Make` to compile that DSL expression in advanced</span>
+<span class="sd">from phi import P</span>
+<span class="sd">xs = []</span>
+<span class="sd">f = P.Make(some_dsl_expression)</span>
+<span class="sd">for i in xrange(10000000000):</span>
+<span class="sd">    x = f(i)</span>
+<span class="sd">    xs.append(x)</span>
+<span class="sd"> reduces the overhead of parsing the expressions and creating the function.</span>
 <span class="sd">amples**</span>
 <span class="sd">from phi import P</span>
 <span class="sd">def add1(x): return x + 1</span>
@@ -2186,7 +2238,7 @@ Write(&#39;my_ref&#39;)
             
   <div class="item">
     <div class="name def" id="phi.python_builder.PythonBuilder.PatchAt">
-    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7fccf55b9938&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7fccf55b98c0&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7fccf55b9848&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7fccf55b9938&gt;, getmembers_predicate=&lt;function isfunction at 0x7fccf6b4d488&gt;)</p>
+    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7f7f38c74938&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7f7f38c748c0&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7f7f38c74848&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7f7f38c74938&gt;, getmembers_predicate=&lt;function isfunction at 0x7f7f3a208488&gt;)</p>
     </div>
     
 
