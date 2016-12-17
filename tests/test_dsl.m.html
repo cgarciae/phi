@@ -1123,6 +1123,19 @@ table {
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
+        <span class="n">r</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>
+            <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">r</span><span class="p">()</span> <span class="o">==</span> <span class="mi">600</span>
+
     <span class="k">def</span> <span class="nf">test_write_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
@@ -1417,6 +1430,19 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>
+            <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">r</span><span class="p">()</span> <span class="o">==</span> <span class="mi">600</span>
 
     <span class="k">def</span> <span class="nf">test_write_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -2134,6 +2160,16 @@ table {
     <span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">},</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">},</span>
+        <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">dsl</span><span class="o">.</span><span class="n">Compile</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">r</span><span class="p">()</span> <span class="o">==</span> <span class="mi">600</span>
 </pre></div>
 
   </div>

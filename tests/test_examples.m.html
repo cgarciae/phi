@@ -1047,9 +1047,12 @@ table {
   <ul>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_builder_NMake">test_builder_NMake</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_builder_NPipe">test_builder_NPipe</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_contains">test_contains</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_example_1">test_example_1</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_getting_started">test_getting_started</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_if">test_if</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_not">test_not</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_ref">test_ref</a></li>
   </ul>
 
         </li>
@@ -1406,8 +1409,46 @@ table {
        <span class="c1">############################</span>
        <span class="c1">#############################</span>
        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
-       <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>
+       <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>   <span class="c1">#lambda x: not x + 1 &gt; 5</span>
        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">True</span>
+   <span class="k">def</span> <span class="nf">test_contains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+       <span class="k">assert</span> <span class="bp">False</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1">#[1, 3], keeps odds</span>
+           <span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>   <span class="c1">#4 in [1, 3] == False</span>
+       <span class="p">)</span>
+   <span class="k">def</span> <span class="nf">test_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Ref</span>
+       <span class="k">assert</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">98</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">99</span><span class="p">}</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="s2">&quot;a b c&quot;</span><span class="p">,</span> <span class="n">Obj</span>
+           <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">[</span><span class="s1">&#39;keys&#39;</span><span class="p">]</span>  <span class="c1"># keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+           <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">ord</span><span class="p">),</span>  <span class="c1"># [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
+           <span class="k">lambda</span> <span class="n">it</span><span class="p">:</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Ref</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="n">it</span><span class="p">),</span>  <span class="c1"># [(&#39;a&#39;, 97), (&#39;b&#39;, 98), (&#39;c&#39;, 99)]</span>
+           <span class="nb">dict</span>   <span class="c1"># {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99}</span>
+       <span class="p">)</span>
+   <span class="k">def</span> <span class="nf">test_if</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span>
+       <span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">5</span><span class="p">,</span>
+           <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+               <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">),</span>
+           <span class="n">Else</span> <span class="o">=</span> <span class="p">(</span>
+               <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+           <span class="p">))</span>
+       <span class="p">)</span>
+       <span class="c1">#########################</span>
+       <span class="c1">#########################</span>
+       <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+       <span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+           <span class="mi">5</span><span class="p">,</span>
+           <span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+               <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">)</span>
+           <span class="p">)</span>
+           <span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+               <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+           <span class="p">)</span>
+       <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1858,9 +1899,59 @@ table {
 
         <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
-        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>   <span class="c1">#lambda x: not x + 1 &gt; 5</span>
 
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">test_contains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+        <span class="k">assert</span> <span class="bp">False</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1">#[1, 3], keeps odds</span>
+            <span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>   <span class="c1">#4 in [1, 3] == False</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Ref</span>
+
+        <span class="k">assert</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">98</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">99</span><span class="p">}</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="s2">&quot;a b c&quot;</span><span class="p">,</span> <span class="n">Obj</span>
+            <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">[</span><span class="s1">&#39;keys&#39;</span><span class="p">]</span>  <span class="c1"># keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+            <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">ord</span><span class="p">),</span>  <span class="c1"># [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
+            <span class="k">lambda</span> <span class="n">it</span><span class="p">:</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Ref</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="n">it</span><span class="p">),</span>  <span class="c1"># [(&#39;a&#39;, 97), (&#39;b&#39;, 98), (&#39;c&#39;, 99)]</span>
+            <span class="nb">dict</span>   <span class="c1"># {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99}</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_if</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span>
+
+        <span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">5</span><span class="p">,</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">),</span>
+            <span class="n">Else</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+            <span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="c1">#########################</span>
+        <span class="c1">#########################</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+
+        <span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">5</span><span class="p">,</span>
+            <span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+                <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1967,6 +2058,32 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">}</span>   <span class="c1">#write s == 2, same context</span>
         <span class="p">),</span>
         <span class="s1">&#39;s&#39;</span>   <span class="c1"># read s == 2, same context</span>
+    <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_contains">
+    <p>def <span class="ident">test_contains</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_contains', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_contains" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_contains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+    <span class="k">assert</span> <span class="bp">False</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1">#[1, 3], keeps odds</span>
+        <span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>   <span class="c1">#4 in [1, 3] == False</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -2261,6 +2378,47 @@ table {
   
             
   <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_if">
+    <p>def <span class="ident">test_if</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_if', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_if" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_if</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span>
+    <span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">5</span><span class="p">,</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">),</span>
+        <span class="n">Else</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+        <span class="p">))</span>
+    <span class="p">)</span>
+    <span class="c1">#########################</span>
+    <span class="c1">#########################</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+    <span class="k">assert</span> <span class="s2">&quot;Less or equal to 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">5</span><span class="p">,</span>
+        <span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Greater than 10&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Less or equal to 10&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.tests.test_examples.TestExamples.test_not">
     <p>def <span class="ident">test_not</span>(</p><p>self)</p>
     </div>
@@ -2289,8 +2447,36 @@ table {
     <span class="c1">############################</span>
     <span class="c1">#############################</span>
     <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>   <span class="c1">#lambda x: not x + 1 &gt; 5</span>
     <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">True</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_ref">
+    <p>def <span class="ident">test_ref</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_ref', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_ref" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Ref</span>
+    <span class="k">assert</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">98</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">99</span><span class="p">}</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="s2">&quot;a b c&quot;</span><span class="p">,</span> <span class="n">Obj</span>
+        <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">[</span><span class="s1">&#39;keys&#39;</span><span class="p">]</span>  <span class="c1"># keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+        <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">ord</span><span class="p">),</span>  <span class="c1"># [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
+        <span class="k">lambda</span> <span class="n">it</span><span class="p">:</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Ref</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="n">it</span><span class="p">),</span>  <span class="c1"># [(&#39;a&#39;, 97), (&#39;b&#39;, 98), (&#39;c&#39;, 99)]</span>
+        <span class="nb">dict</span>   <span class="c1"># {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99}</span>
+    <span class="p">)</span>
 </pre></div>
 
   </div>
