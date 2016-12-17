@@ -1,10 +1,16 @@
 # Phi
-Python is a very nice language that favors readability but its not very strong at functional programming and this often leads to repetitive code. Phi intends to remove as much of the pain as possible from your functional programming experience in Python by providing the following modules
+Phi library for [fluent](https://en.wikipedia.org/wiki/Fluent_interface) functional programming in Python that intends to remove as much of the pain as possible from your functional programming experience in Python by providing the following modules
 
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html): a small DSL that helps you compose computations in various ways & more.
 * [lambdas](https://cgarciae.github.io/phi/lambdas.m.html): easy way to create quick lambdas with a mathematical flavor.
-* [builder](https://cgarciae.github.io/phi/builder.m.html): an extensible class that enables you to integrate other libraries into the DSL through a [fluent](https://en.wikipedia.org/wiki/Fluent_interface) API.
-* [patch](https://cgarciae.github.io/phi/patch.m.html): this module contains some helpers that enable you to integrate a complete existing module or class into the DSL be registering its methods/functions into a [Builder](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder).
+* [builder](https://cgarciae.github.io/phi/builder.m.html): an extensible class that enables you to integrate other libraries into the DSL as a fluent API, to do it lets you [register](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder.RegisterMethod) functions as methods or even [patch](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder.PatchAt) an entire module with a few lines of code.
+
+### Libraries
+Phi currently powers the following libraries:
+
+* [PythonBuilder](https://cgarciae.github.io/phi/python_builder.m.html) : helps you integrate Python's built-in functions and keywords into the phi DSL and it also includes a bunch of useful helpers for common stuff. `phi`'s global `P` object is an instance of this class. [Shipped with Phi]
+* [TensorBuilder](https://github.com/cgarciae/tensorbuilder): a TensorFlow library enables you to easily create complex deep neural networks by leveraging the phi DSL to help define their structure.
+* NumpyBuilder: Comming soon!
 
 ## Documentation
 Check out the [complete documentation](https://cgarciae.github.io/phi/).
@@ -277,23 +283,7 @@ assert result == 0.5
 assert s == 5
 assert val == "Sorry, come back latter."
 ```
-
-
-## Installation
-
-    pip install phi
-
-
-#### Bleeding Edge
-
-    pip install git+https://github.com/cgarciae/phi.git@develop
-
-## Status
-* Version: **0.3.3**.
-* Current effort: Documentation (> 60%). Please create an issue if documentation is unclear, its of great priority for this library.
-* Milestone: reach 1.0.0 after docs completed + feedback from the community.
-
-## Nice Examples
+### Other Examples
 
 ```python
 from phi import P, Obj
@@ -307,3 +297,39 @@ avg_word_length = P.Pipe(
 
 assert 2 == avg_word_length
 ```
+
+```python
+from phi import P
+
+assert False == P.Pipe(
+    [1,2,3,4],
+    P.filter(P % 2 != 0)   #[1, 3], keeps odds
+    .Contains(4)   #4 in [1, 3] == False
+)
+```
+
+```python
+from phi import P, Obj, Ref
+
+assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
+    "a b c", Obj
+    .split(' ').Write.keys  # keys = ['a', 'b', 'c']
+    .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
+    lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
+    dict   # {'a': 97, 'b': 98, 'c': 99}
+)
+```
+
+## Installation
+
+    pip install phi
+
+
+#### Bleeding Edge
+
+    pip install git+https://github.com/cgarciae/phi.git@develop
+
+## Status
+* Version: **0.4.0**.
+* Documentation coverage: 100%. Please create an issue if documentation is unclear, its of great priority for this library.
+* Milestone: reach 1.0.0 after feedback from the community.

@@ -320,7 +320,6 @@ assert {{'a': 97, 'b': 98, 'c': 99}} == P.Pipe(
 )
 ```
 
-
 ## Installation
 
     pip install phi
@@ -332,7 +331,5 @@ assert {{'a': 97, 'b': 98, 'c': 99}} == P.Pipe(
 
 ## Status
 * Version: **{0}**.
-* Current effort: Documentation (> 60%). Please create an issue if documentation is unclear, its of great priority for this library.
-* Milestone: reach 1.0.0 after docs completed + feedback from the community.
-
-
+* Documentation coverage: 100%. Please create an issue if documentation is unclear, its of great priority for this library.
+* Milestone: reach 1.0.0 after feedback from the community.
