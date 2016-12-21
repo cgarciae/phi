@@ -309,7 +309,7 @@ class Expression(Lambda):
 
     def With(self, context_manager, *body, **kwargs):
         context_f = _parse(context_manager, else_input=True)._f
-        body_f = _parse(body)._f
+        body_f = E.Seq(*body)._f
 
         def g(x):
             with context_f(x) as scope:
@@ -349,7 +349,7 @@ class Expression(Lambda):
 
     def If(self, condition, *then, **kwargs):
         cond_f = _parse(condition)._f
-        then_f = _parse(then)._f
+        then_f = E.Seq(*then)._f
         else_f = _parse(kwargs.pop("Else", utils.identity))._f
 
         g = lambda x: then_f(x) if cond_f(x) else else_f(x)
@@ -361,8 +361,8 @@ class Expression(Lambda):
 
         return expr
 
-    def Else(self, Else, **kwargs):
-        kwargs["Else"] = Else
+    def Else(self, *Else, **kwargs):
+        kwargs["Else"] = E.Seq(*Else)
 
         expr = self.__unit__(self._previous_f).If(self._cond_f, self._then_f, **kwargs)
         del expr._cond_f
@@ -385,11 +385,14 @@ class Expression(Lambda):
         return _CompilationContextManager.WITH_GLOBAL_CONTEXT
 
 
+
+E = Expression()
+
 #######################
 ### FUNCTIONS
 #######################
 
-def Compile(code, refs, create_ref_context=True):
+def Compile(code, refs, ref_context=True):
     """
 Publically exposed as [Builder.Make](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder.Make).
     """
@@ -401,7 +404,7 @@ Publically exposed as [Builder.Make](https://cgarciae.github.io/phi/builder.m.ht
         with _CompilationContextManager(refs, utils.NO_VALUE):
             return f(x)
 
-    return g if create_ref_context else f
+    return g if ref_context else f
 
 
 def _parse(code, else_input=False):
@@ -410,17 +413,7 @@ def _parse(code, else_input=False):
         return code
     elif hasattr(code, '__call__') or isclass(code):
         return Expression(code)
-    elif type(code) is str or type(code) is Ref:
-        return Expression().Read(code)
-    elif type(code) is set:
-        return Expression().Write(*code)
-    elif type(code) is tuple:
-        return Expression().Seq(*code)
-    elif type(code) is dict:
-        return Expression().Rec(**code)
-    elif hasattr(code, '__iter__') and not isclass(code): #leave last
-        return Expression().Branch(*list(code)) #its iterable
-    elif else_input:
-        return Expression().Val(code)
+    elif type(code) is Ref:
+        return E.Read(code)
     else:
-        raise Exception("Parse Error: Element not part of the DSL. Got: {0} of type {1}".format(code, type(code)))
+        return E.Val(code)

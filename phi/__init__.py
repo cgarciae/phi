@@ -32,15 +32,14 @@ Write = P.Write
 Val = P.Val
 Pipe = P.Pipe
 Make = P.Make
-Run = P.Run
-NMake = P.NMake
-NPipe = P.NPipe
-NRun = P.NRun
 Obj = P.Obj
 Rec = P.Rec
 Ref = P.Ref
 Context = P.Context
 With = P.With
+
+Branch = P.Branch
+Seq = P.Seq
 
 # Directly imported from DSL
 If = P.If

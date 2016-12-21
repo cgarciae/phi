@@ -1,4 +1,4 @@
-from phi import P, Rec, Obj, Val
+from phi import P, Rec, Obj, Val, Branch, Seq
 
 class TestLambdas(object):
     """docstring for TestLambdas."""
@@ -65,26 +65,26 @@ class TestLambdas(object):
 
         assert 3 == P.Pipe(
             0,
-            [
+            Branch(
                 P + 1
             ,
                 P + 2
-            ],
+            ),
             P[0] + P[1]
         )
 
-        assert 3 == P.Run(
-            dict(
-                a = Val(1),
-                b = Val(2)
+        assert 3 == P.Pipe(
+            Rec(
+                a = 1,
+                b = 2
             ),
             Rec.a + Rec.b
         )
 
-        assert 5 == P.Run(
-            dict(
-                a = Val(10),
-                b = Val(2)
+        assert 5 == P.Pipe(
+            Rec(
+                a = 10,
+                b = 2
             ),
             Rec.a / Rec.b
         )

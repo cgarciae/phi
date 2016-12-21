@@ -1,5 +1,5 @@
 
-from phi import P, Obj, Rec, Make
+from phi import P, Obj, Rec, Make, Branch, Read, Write, Seq, Ref
 
 
 class TestExamples(object):
@@ -48,11 +48,11 @@ class TestExamples(object):
             Obj.split(' '), # ['1', '22', '333']
             P.map(len), # [1, 2, 3]
             list, # python 3 only
-            [
+            Branch(
                 sum # 1 + 2 + 3 == 6
             ,
                 len # len([1, 2, 3]) == 3
-            ],
+            ),
             P[0] / P[1] # sum / len == 6 / 3 == 2
         )
 
@@ -88,15 +88,15 @@ class TestExamples(object):
         ################
         ################
 
-        from phi import P
+        from phi import P, Branch
 
         [x, y] = P.Pipe(
             1.0,  #input 1
-            [
+            Branch(
                 P + 1  #1 + 1 == 2
             ,
                 P * 3  #1 * 3 == 3
-            ]
+            )
         )
 
         assert x == 2
@@ -105,16 +105,16 @@ class TestExamples(object):
         ################
         ################
 
-        from phi import P
+        from phi import P, Branch
 
         [x, y] = P.Pipe(
             1.0,  #input 1
             P * 2,  #1 * 2 == 2
-            [
+            Branch(
                 P + 1  #2 + 1 == 3
             ,
                 P * 3  #2 * 3 == 6
-            ]
+            )
         )
 
         assert x == 3
@@ -123,12 +123,12 @@ class TestExamples(object):
         ################
         ################
 
-        from phi import P
+        from phi import P, Rec
 
         result = P.Pipe(
             1.0,  #input 1
             P * 2,  #1 * 2 == 2
-            dict(
+            Rec(
                 x = P + 1  #2 + 1 == 3
             ,
                 y = P * 3  #2 * 3 == 6
@@ -146,7 +146,7 @@ class TestExamples(object):
         result = P.Pipe(
             1.0,  #input 1
             P * 2,  #1 * 2 == 2
-            dict(
+            Rec(
                 x = P + 1  #2 + 1 == 3
             ,
                 y = P * 3  #2 * 3 == 6
@@ -159,21 +159,21 @@ class TestExamples(object):
         ################
         ################
 
-        from phi import P, Rec
+        from phi import P, Rec, Branch, Write, Read
 
         [result, s] = P.Pipe(
             1.0,  #input 1
-            P * 2, {'s'},  #2 * 1 == 2, saved as 's'
-            dict(
+            P * 2, Write('s'),  #2 * 1 == 2, saved as 's'
+            Rec(
                 x = P + 1  #2 + 1 == 3
             ,
                 y = P * 3  #2 * 3 == 6
             ),
-            [
+            Branch(
                 Rec.x / Rec.y  #3 / 6 == 0.5
             ,
-                's'  #load 's' == 2
-            ]
+                Read('s')  #load 's' == 2
+            )
         )
 
         assert result == 0.5
@@ -182,21 +182,21 @@ class TestExamples(object):
         ################
         ################
 
-        from phi import P, Rec, Read
+        from phi import P, Rec, Write, Read, Branch
 
         [result, s] = P.Pipe(
             1.0,  #input 1
-            P * 2, {'s'},  #2 * 1 == 2, saved as 's'
-            dict(
+            P * 2, Write('s'),  #2 * 1 == 2, saved as 's'
+            Rec(
                 x = P + 1  #2 + 1 == 3
             ,
                 y = P * 3  #2 * 3 == 6
             ),
-            [
+            Branch(
                 Rec.x / Rec.y  #3 / 6 == 0.5
             ,
                 Read.s + 3  # 2 + 3 == 5
-            ]
+            )
         )
 
         assert result == 0.5
@@ -210,16 +210,16 @@ class TestExamples(object):
         [result, s] = P.Pipe(
             1.0,  #input 1
             P * 2, Write.s,  #2 * 1 == 2, saved as 's'
-            dict(
+            Rec(
                 x = P + 1  #2 + 1 == 3
             ,
                 y = P * 3  #2 * 3 == 6
             ),
-            [
+            Branch(
                 Rec.x / Rec.y  #3 / 6 == 0.5
             ,
                 Read.s + 3  # 2 + 3 == 5
-            ]
+            )
         )
 
         assert result == 0.5
@@ -233,18 +233,18 @@ class TestExamples(object):
         [result, s, val] = P.Pipe(
             1.0,  #input 1
             P * 2, Write.s,  #2 * 1 == 2, saved as 's'
-            dict(
+            Rec(
                 x = P + 1  #2 + 1 == 3
             ,
                 y = P * 3  #2 * 3 == 6
             ),
-            [
+            Branch(
                 Rec.x / Rec.y  #3 / 6 == 0.5
             ,
                 Read.s + 3  # 2 + 3 == 5
             ,
                 Val(9) + 1  #input 9 and add 1, gives 10
-            ]
+            )
         )
 
         assert result == 0.5
@@ -259,12 +259,12 @@ class TestExamples(object):
         [result, s, val] = P.Pipe(
             1.0,  #input 1
             (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
-            dict(
+            Rec(
                 x = P + 1  #2 + 1 == 3
             ,
                 y = P * 3  #2 * 3 == 6
             ),
-            [
+            Branch(
                 Rec.x / Rec.y  #3 / 6 == 0.5
             ,
                 Read.s + 3  # 2 + 3 == 5
@@ -272,9 +272,9 @@ class TestExamples(object):
                 If( Rec.y > 7,
                     Val(9) + 1  #input 9 and add 1, gives 10
                 ).Else(
-                    Val("Sorry, come back latter.")
+                    "Sorry, come back latter."
                 )
-            ]
+            )
         )
 
         assert result == 0.5
@@ -289,12 +289,12 @@ class TestExamples(object):
 
         f = P.Make(
             (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
-            dict(
+            Rec(
                 x = P + 1  #2 + 1 == 3
             ,
                 y = P * 3  #2 * 3 == 6
             ),
-            [
+            Branch(
                 Rec.x / Rec.y  #3 / 6 == 0.5
             ,
                 Read.s + 3  # 2 + 3 == 5
@@ -302,9 +302,9 @@ class TestExamples(object):
                 If( Rec.y > 7,
                     Val(9) + 1  #input 9 and add 1, gives 10
                 ).Else(
-                    Val("Sorry, come back latter.")
+                    "Sorry, come back latter."
                 )
-            ]
+            )
         )
 
         [result, s, val] = f(1.0)
@@ -315,16 +315,16 @@ class TestExamples(object):
 
 
 
-    def test_builder_NMake(self):
+    def test_builder_MakeRefContext(self):
 
         from phi import P
 
         assert 1 == P.Pipe(
-            1, {'s'}, # write s == 1, outer context
+            1, Write('s'), # write s == 1, outer context
             P.Make(
-                P + 1, {'s'} # write s == 2, inner context
+                P + 1, Write('s') # write s == 2, inner context
             ),
-            's'  # read s == 1, outer context
+            Read('s')  # read s == 1, outer context
         )
 
         #############################
@@ -333,12 +333,12 @@ class TestExamples(object):
         from phi import P
 
         assert 2 == P.Pipe(
-            1, {'s'},   #write s == 1, same context
+            1, Write('s'),   #write s == 1, same context
             P.Make(
-                P + 1, {'s'},   #write s == 2, same context
-                create_ref_context=False
+                P + 1, Write('s'),   #write s == 2, same context
+                ref_context=False
             ),
-            's'   # read s == 2, same context
+            Read('s')   # read s == 2, same context
         )
 
 
@@ -348,11 +348,11 @@ class TestExamples(object):
         from phi import P
 
         assert 2 == P.Pipe(
-            1, {'s'},   #write s == 1, same context
-            P.NMake(
-                P + 1, {'s'}   #write s == 2, same context
+            1, Write('s'),   #write s == 1, same context
+            Seq(
+                P + 1, Write('s')   #write s == 2, same context
             ),
-            's'   # read s == 2, same context
+            Read('s')   # read s == 2, same context
         )
 
 
@@ -367,12 +367,12 @@ class TestExamples(object):
         from phi import P
 
         assert 1 == P.Pipe(
-            1, {'s'}, # write s == 1, outer context
+            1, Write('s'), # write s == 1, outer context
             lambda x: P.Pipe(
                 x,
-                P + 1, {'s'} # write s == 2, inner context
+                P + 1, Write('s') # write s == 2, inner context
             ),
-            's'  # read s == 1, outer context
+            Read('s')  # read s == 1, outer context
         )
 
         #############################
@@ -381,13 +381,13 @@ class TestExamples(object):
         from phi import P
 
         assert 2 == P.Pipe(
-            1, {'s'},   #write s == 1, same context
+            1, Write('s'),   #write s == 1, same context
             lambda x: P.Pipe(
                 x,
-                P + 1, {'s'},   #write s == 2, same context
-                create_ref_context=False
+                P + 1, Write('s'),   #write s == 2, same context
+                ref_context=False
             ),
-            's'   # read s == 2, same context
+            Read('s')   # read s == 2, same context
         )
 
         #############################
@@ -396,12 +396,12 @@ class TestExamples(object):
         from phi import P
 
         assert 2 == P.Pipe(
-            1, {'s'},   #write s == 1, same context
+            1, Write('s'),   #write s == 1, same context
             lambda x: P.NPipe(
                 x,
-                P + 1, {'s'}   #write s == 2, same context
+                P + 1, Write('s'),   #write s == 2, same context
             ),
-            's'   # read s == 2, same context
+            Read('s')   # read s == 2, same context
         )
 
         #############################
@@ -466,9 +466,9 @@ class TestExamples(object):
         assert "Less or equal to 10" == P.Pipe(
             5,
             P.If(P > 10,
-                Val("Greater than 10"),
+                "Greater than 10",
             Else = (
-                Val("Less or equal to 10")
+                "Less or equal to 10"
             ))
         )
 
@@ -480,9 +480,9 @@ class TestExamples(object):
         assert "Less or equal to 10" == P.Pipe(
             5,
             If(P > 10,
-                Val("Greater than 10")
+                "Greater than 10"
             )
             .Else(
-                Val("Less or equal to 10")
+                "Less or equal to 10"
             )
         )

@@ -24,10 +24,10 @@ class TestNoDSL(object):
 
         f = P.Branch(
             P + 2,
-            (
+            P.Seq(
                 P + 1,
                 P * 2
             )
         )
-        
+
         assert [5, 8] == f(3)

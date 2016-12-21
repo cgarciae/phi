@@ -33,9 +33,6 @@ for _name, f in __builtins__.items():
         print(e)
 
 for _name, f in _functions_2:
-    # import ipdb
-    # ipdb.set_trace()  ######### Break Point ###########
-
     PythonBuilder.Register2(f, "")
 
 #custom methods

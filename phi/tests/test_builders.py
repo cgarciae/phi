@@ -1,4 +1,4 @@
-from phi import P, Obj, Val, Rec, Context, Read, Write
+from phi import P, Obj, Val, Rec, Context, Read, Write, Seq, Branch
 import math
 import pytest
 # from phi import tb
@@ -92,15 +92,15 @@ class TestBuilder(object):
     def test_compose_list(self):
         f = P.Make(
             P + 1,
-            P * 2, {'x'},
+            P * 2, Write('x'),
             P + 4,
-            [
+            Branch(
                 P + 2
             ,
                 P / 2
             ,
-                'x'
-            ]
+                Read('x')
+            )
         )
 
         assert [12, 5, 6] == f(2)
@@ -109,13 +109,13 @@ class TestBuilder(object):
             P + 1,
             P * 2,
             P + 4,
-            [
+            Branch(
                 (P + 2).Write('x')
             ,
                 P / 2
             ,
-                'x'
-            ]
+                Read('x')
+            )
         )
 
         assert [12, 5, 12] == f(2)
@@ -125,11 +125,11 @@ class TestBuilder(object):
             P + 1,
             P * 2,
             P + 4,
-            [
+            Branch(
                 P + 2
             ,
                 P / 2
-            ],
+            ),
             sum
         )
 
@@ -192,90 +192,90 @@ class TestBuilder(object):
 
         assert [18, 14] == P.Pipe(
             4,
-            [
-            (
-                add2,
-                mul3
-            )
-            ,
-            (
-                mul3,
-                add2
-            )
-            ]
-        )
-
-        assert [18, 18, 15, 16] == P.Pipe(
-            4,
-            [
-                (
+            Branch(
+                Seq(
                     add2,
                     mul3
                 )
             ,
-                [
-                    (
+                Seq(
+                    mul3,
+                    add2
+                )
+            )
+        )
+
+        assert [18, 18, 15, 16] == P.Pipe(
+            4,
+            Branch(
+                Seq(
+                    add2,
+                    mul3
+                )
+            ,
+                Branch(
+                    Seq(
                         add2,
                         mul3
                     )
                 ,
-                    (
+                    Seq(
                         mul3,
                         add2,
-                        [
+                        Branch(
                             P + 1,
                             P + 2
-                        ]
+                        )
                     )
-                ]
-            ],
+                )
+            ),
             flatten=True
         )
 
         assert [18, [18, 14, get_list(None)]] == P.Pipe(
             4,
-            [
-            (
-                add2,
-                mul3
-            )
-            ,
-                [
-                (
+            Branch(
+                Seq(
                     add2,
                     mul3
                 )
+            ,
+                Branch(
+                    Seq(
+                        add2,
+                        mul3
+                    )
                 ,
-                (
-                    mul3,
-                    add2
-                )
+                    Seq(
+                        mul3,
+                        add2
+                    )
                 ,
                     get_list
-                ]
-            ]
+                )
+            )
         )
 
         [a, [b, c]] = P.Pipe(
             4,
-            [
-            (
-                add2,
-                mul3
-            )
-            ,
-                [
-                (
+            Branch(
+                Seq(
                     add2,
                     mul3
                 )
+            ,
+                Branch(
+                    Seq(
+                        add2,
+                        mul3
+                    )
                 ,
-                (
-                    mul3,
-                    add2
+                    Seq(
+                        mul3,
+                        add2
+                    )
                 )
-                ]
-            ]
+            )
         )
 
         assert a == 18 and b == 18 and c == 14
@@ -287,7 +287,7 @@ class TestBuilder(object):
             "phi/tests/test.txt",
             P.With( open,
                 Context,
-                Obj.read(), { y },
+                Obj.read(), Write(y),
                 len
             )
         )
@@ -328,11 +328,11 @@ class TestBuilder(object):
             add2, a.set,
             add2, b.set,
             add2,
-            [
-                (),
+            Branch(
+                Seq(),
                 a,
                 b
-            ]
+            )
         )
 
     def test_scope_property(self):
@@ -340,12 +340,10 @@ class TestBuilder(object):
         assert "some random text" == P.Pipe(
             "some ",
             P.With( DummyContext("random "),
-            (
                 P + P.Context,
                 P.With( DummyContext("text"),
                     P + P.Context
                 )
-            )
             )
         )
 
@@ -360,9 +358,9 @@ class TestBuilder(object):
         assert 5 == P.Pipe(
             1,
             P + 4,
-            P.Write(y),
+            Write(y),
             P * 10,
-            'y'
+            Read.y
         )
 
         assert 5 == P.Pipe(
@@ -370,7 +368,7 @@ class TestBuilder(object):
             P + 4,
             P.Write(y),
             P * 10,
-            'y'
+            Read.y
         )
 
         assert 5 == P.Pipe(
@@ -378,51 +376,51 @@ class TestBuilder(object):
             P + 4,
             P.Write('y'),
             P * 10,
-            'y'
+            Read.y
         )
 
     def test_list(self):
 
         assert [['4', '6'], [4, 6]] == P.Pipe(
             3,
-            [
+            Branch(
                 P + 1
             ,
                 P * 2
-            ],
-            [
+            ),
+            Branch(
                 P.Then2(map, str).list() #list only needed in Python 3
             ,
-                ()
-            ]
+                Seq()
+            )
         )
 
     def test_read_method(self):
 
         assert 1 == P.Pipe(
             1,
-            P + 1, {'s'},
+            P + 1, Write('s'),
             P * 100,
-            's', P - 1
+            Read('s'), P - 1
         )
 
         assert 1 == P.Pipe(
             1,
-            P + 1, {'s'},
+            P + 1, Write('s'),
             P * 100,
             Read('s') - 1
         )
 
         assert 1 == P.Pipe(
             1,
-            P + 1, {'s'},
+            P + 1, Write.s,
             P * 100,
             Read.s - 1
         )
 
         assert 1 == P.Pipe(
             1,
-            P + 1, {'s'},
+            P + 1, Write.s,
             P * 100,
             Read['s'] - 1
         )

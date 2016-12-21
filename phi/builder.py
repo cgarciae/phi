@@ -37,6 +37,7 @@ from . import utils
 from .utils import identity
 import functools
 from . import dsl
+import ipdb
 
 ######################
 # Helpers
@@ -56,7 +57,7 @@ class Builder(dsl.Expression):
     All the core methods of the `Builder` class start with a capital letter (e.g. `phi.builder.Builder.Pipe` or `phi.builder.Builder.Make`) on purpose to avoid name chashes with methods that libraries might register."""
 
 
-    def Pipe(self, x, *code, **kwargs):
+    def Pipe(self, *code, **kwargs):
         """
 `Pipe` is method that takes an input argument plus an expression from the DSL, it compiles the expression and applies the resulting function to the input. Its highly inspired by Elixir's [|> (pipe)](https://hexdocs.pm/elixir/Kernel.html#%7C%3E/2) operator.
 
@@ -96,28 +97,21 @@ The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to c
 **Also see**
 
 * `phi.builder.Builder.Make`
-* `phi.builder.Builder.Run`
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html)
 * [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)
 * [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)
         """
-        return self.Make(*code, **kwargs)(x)
+        return self.Make(*code, **kwargs)(None)
 
-    def NPipe(self, x, *code, **kwargs):
+    def NPipe(self, *code, **kwargs):
         """
 `NPipe` is shortcut for `Pipe(..., create_ref_context=False)`, its full name should be *NoCreateRefContextPipe* but its impractically long. Normally methods that [compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile) DSL expressions like `phi.builder.Builder.Make` or `phi.builder.Builder.Pipe` create a reference context unless especified, these contexts encapsulate references (see [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) or [write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)) and prevent them from leaking, which is good. There are times however when you consciously want a sub-Make or sub-Pipe expression to read or write references from the main Make or Pipe expression, for this you need to set `create_ref_context` to `False`.
-
 **Arguments**
-
 * Same arguments as `phi.builder.Builder.Pipe` but...
 * **create_ref_context** is hardcoded to `False`
-
 **Examples**
-
 If you compile a sub expression as a function for another expression e.g.
-
     from phi import P
-
     assert 1 == P.Pipe(
         1, {'s'}, # write s == 1, outer context
         lambda x: P.Pipe(
@@ -126,11 +120,8 @@ If you compile a sub expression as a function for another expression e.g.
         ),
         's'  # read s == 1, outer context
     )
-
 you find that references are not shared. However if you avoid the creation of a new reference context via a keyword arguments
-
     from phi import P
-
     assert 2 == P.Pipe(
         1, {'s'},   #write s == 1, same context
         lambda x: P.Pipe(
@@ -140,11 +131,8 @@ you find that references are not shared. However if you avoid the creation of a 
         ),
         's'   # read s == 2, same context
     )
-
 you can achieve what you want. Yet writting `create_ref_context=False` is a little cumbersome, so to make things nicer we just use a shortcut by appending an `N` at the beggining of the `NPipe` method
-
     from phi import P
-
     assert 2 == P.Pipe(
         1, {'s'},   #write s == 1, same context
         lambda x: P.NPipe(
@@ -153,96 +141,21 @@ you can achieve what you want. Yet writting `create_ref_context=False` is a litt
         ),
         's'   # read s == 2, same context
     )
-
 **Also see**
-
 * `phi.builder.Builder.Pipe`
 * `phi.builder.Builder.NMake`
 * `phi.builder.Builder.NRun`
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html)
 * [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)
         """
-        return self.NMake(*code, **kwargs)(x)
-
-    def Run(self, *code, **kwargs):
-        """
-`Run(*code, **kwargs)` is equivalent to `Pipe(None, *code, **kwargs)`, that is, it compiles the code and applies in a `None` value.
-
-**Arguments**
-
-* Same as `phi.builder.Builder.Make`.
-
-**Examples**
-
-You might create code that totally ignores its input argument e.g.
-
-    from phi import P
-
-    result = P.Pipe(
-        None,
-        dict(
-            x = (
-                Val(10),
-                P + 1
-            ),
-            y = (
-                Val(5),
-                P * 5
-            )
-        )
-    )
-
-    assert result.x == 9
-    assert result.y == 25
-
-Here the `Val` statemente drops the `None` and introduces its own constants. Given this its more suitable to use `Run`
-
-    from phi import P
-
-    result = P.Run(
-        dict(
-            x = (
-                Val(10),
-                P + 1
-            ),
-            y = (
-                Val(5),
-                P * 5
-            )
-        )
-    )
-
-    assert result.x == 9
-    assert result.y == 25
-
-**Also see**
-
-* `phi.builder.Builder.Make`
-* `phi.builder.Builder.Pipe`
-* [dsl](https://cgarciae.github.io/phi/dsl.m.html)
-* [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)
-        """
-        return self.Pipe(None, *code, **kwargs)
-
-    def NRun(self, *code, **kwargs):
-        """
-`NRun` is shortcut for `Run(..., create_ref_context=False)`, its full name should be *NoCreateRefContextRun* but its impractically long.
-
-**Also see**
-
-* `phi.builder.Builder.Run`
-* `phi.builder.Builder.NMake`
-* `phi.builder.Builder.NPipe`
-* [dsl](https://cgarciae.github.io/phi/dsl.m.html)
-* [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)
-        """
-        return self.NPipe(None, *code, **kwargs)
+        kwargs["ref_context"] = False
+        return self.Pipe(*code, **kwargs)
 
     def Make(self, *code, **kwargs):
         """
 **Make**
 
-    Make(code*, refs={}, flatten=False, create_ref_context=True, _return_type=None)
+    Make(code*, refs={}, flatten=False, ref_context=True, _return_type=None)
 
 `Make` takes an expression from the DSL and compiles it to a function.
 
@@ -251,7 +164,7 @@ Here the `Val` statemente drops the `None` and introduces its own constants. Giv
 * ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Seq](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Seq).
 * `refs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need of an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.
 * `flatten = False` : if `flatten` is True and the argument being returned by the compiled function is a `list` it will flatten the list. This is useful if you have nested branches in the last computation.
-* `create_ref_context = True` : determines if a reference manager should be created on compilation. See `phi.builder.Builder.NMake` for more information on what happens when its set to `False`.
+* `ref_context = True` : determines if a reference manager should be created on compilation.
 * `_return_type = None` : By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the return contianer. This is useful if the custom builder has specialized methods.
 
 While `Pipe` is might be an nicer since it makes the initial value being piped explicit, it has the overhead of having to "compile" the expression into a function every time. If you have something like
@@ -325,75 +238,15 @@ The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.ht
         _return_type = kwargs.get('_return_type', None)
         flatten = kwargs.get('flatten', False)
         refs = kwargs.get('refs', {})
-        create_ref_context = kwargs.get('create_ref_context', True)
-
-        # code = (self, code)
+        ref_context = kwargs.get('ref_context', True)
 
         if flatten:
-            code = (code, lambda x: utils.flatten_list(x) if type(x) is list else x)
+            code = code + (lambda x: utils.flatten_list(x) if type(x) is list else x,)
 
-        f = dsl.Compile(code, refs, create_ref_context=create_ref_context)
+        code = dsl.E.Seq(*code)
+        f = dsl.Compile(code, refs, ref_context=ref_context)
 
         return self.__then__(f, _return_type=_return_type)
-
-    def NMake(self, *args, **kwargs):
-        """
-`NMake` is shortcut for `Make(..., create_ref_context=False)`, its full name should be *NoCreateRefContextMake* but its impractically long. Normally methods that [compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile) DSL expressions like `phi.builder.Builder.Make` or `phi.builder.Builder.Pipe` create a reference context unless especified, these contexts encapsulate references (see [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) or [write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)) and prevent them from leaking, which is good. There are times however when you consciously want a sub-Make or sub-Pipe expression to read or write references from the main Make or Pipe expression, for this you need to set `create_ref_context` to `False`.
-
-**Arguments**
-
-* Same arguments as `phi.builder.Builder.Make` but...
-* **create_ref_context** is hardcoded to `False`
-
-**Examples**
-
-If you compile a sub expression as a function for another expression e.g.
-
-    from phi import P
-
-    assert 1 == P.Pipe(
-        1, {'s'}, # write s == 1, outer context
-        P.Make(
-            P + 1, {'s'} # write s == 2, inner context
-        ),
-        's'  # read s == 1, outer context
-    )
-
-you find that references are not shared. However if you avoid the creation of a new reference context via a keyword arguments
-
-    from phi import P
-
-    assert 2 == P.Pipe(
-        1, {'s'},   #write s == 1, same context
-        P.Make(
-            P + 1, {'s'},   #write s == 2, same context
-            create_ref_context=False
-        ),
-        's'   # read s == 2, same context
-    )
-
-you can achieve what you want. Yet writting `create_ref_context=False` is a little cumbersome, so to make things nicer we just use a shortcut by appending an `N` at the beggining of the `NMake` method
-
-    from phi import P
-
-    assert 2 == P.Pipe(
-        1, {'s'},   #write s == 1, same context
-        P.NMake(
-            P + 1, {'s'}   #write s == 2, same context
-        ),
-        's'   # read s == 2, same context
-    )
-
-**Also see**
-
-* `phi.builder.Builder.Make`
-* `phi.builder.Builder.NPipe`
-* `phi.builder.Builder.NRun`
-* [dsl](https://cgarciae.github.io/phi/dsl.m.html)
-* [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)
-        """
-        kwargs['create_ref_context'] = False
-        return self.Make(*args, **kwargs)
 
     def ThenAt(self, n, f, *args, **kwargs):
         """

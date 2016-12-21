@@ -1,11 +1,12 @@
-from phi import dsl, P, If
+import ipdb
+from phi import dsl, P, If, Seq, Branch, Rec, Obj, Ref, Read, Write
 import pytest
 
 class TestDSL(object):
     """docstring for TestDSL."""
 
     def test_compile(self):
-        code = (P + 1, P * 2)
+        code = Seq(P + 1, P * 2)
         f = dsl.Compile(code, {})
         assert f(2) == 6
 
@@ -17,9 +18,9 @@ class TestDSL(object):
 
     def test_read(self):
         refs = dict(
-            x=dsl.Ref('x', 10)
+            x = Ref('x', 10)
         )
-        code = ('x',)
+        code = Read('x')
         f = dsl.Compile(code, refs)
 
         assert refs == refs #read doesnt modify
@@ -27,23 +28,23 @@ class TestDSL(object):
 
     def test_write(self):
         r = dsl.Ref('r')
-        code = (
-            P + 1, {'a'},
-            P * 2, {'b'},
-            P * 100, {'c', r },
-            ['c', 'a', 'b']
+        code = Seq(
+            P + 1, Write.a,
+            P * 2, Write.b,
+            P * 100, Write('c', r ),
+            Branch(Read.c, Read.a, Read.b)
         )
 
         f = dsl.Compile(code, {})
 
         assert [600, 3, 6] == f(2)
 
-        r = P.Ref('r')
-        code = (
-            P + 1, {'a'},
-            P * 2, {'b'},
-            P * 100, {'c', r },
-            ['c', 'a', 'b']
+        r = Ref('r')
+        code = Seq(
+            P + 1, Write.a,
+            P * 2, Write.b,
+            P * 100, Write('c', r),
+            Branch(Read.c, Read.a, Read.b)
         )
 
         f = dsl.Compile(code, {})
@@ -53,16 +54,16 @@ class TestDSL(object):
 
     def test_write_tree(self):
 
-        code = (
+        code = Seq(
             P + 1,
             P * 2,
-            [
-                P * 100, {'c'}
+            Branch(
+                (P * 100).Write("c")
             ,
                 P - 3
             ,
-                'c'
-            ]
+                Read.c
+            )
         )
 
         f = dsl.Compile(code, {})
@@ -71,18 +72,18 @@ class TestDSL(object):
 
     def test_write_tree(self):
 
-        code = (
+        code = Seq(
             P + 1,
             P * 2,
-            [
+            Branch(
                 P * 100
             ,
-                P.Write('c')
+                Write('c')
             ,
                 P - 3
             ,
-                'c'
-            ]
+                Read('c')
+            )
         )
 
         f = dsl.Compile(code, {})
@@ -90,19 +91,19 @@ class TestDSL(object):
         assert [600, 6, 3, 6] == f(2)
 
     def test_input(self):
-        code = (
-            {'a'},
+        code = Seq(
+            Write('a'),
             P + 1,
-            [
-            (
-                P.Val(10),
-                P * 2
+            Branch(
+                Seq(
+                    10,
+                    P * 2
+                )
+            ,
+                Read('a')
+            ,
+                P
             )
-            ,
-                'a'
-            ,
-                ()
-            ]
         )
 
         f = dsl.Compile(code, {})
@@ -111,10 +112,10 @@ class TestDSL(object):
 
     def test_identities(self):
 
-        code = [
-            (),
-            []
-        ]
+        code = Branch(
+            Seq(),
+            Branch()
+        )
 
         f = dsl.Compile(code, {})
 
@@ -122,10 +123,10 @@ class TestDSL(object):
 
     def test_single_functions(self):
 
-        code = [
-            (P * 2),
-            [P + 1]
-        ]
+        code = Branch(
+            P * 2,
+            Branch(P + 1)
+        )
 
         f = dsl.Compile(code, {})
 
@@ -133,7 +134,7 @@ class TestDSL(object):
 
     def test_class(self):
 
-        code = (
+        code = Seq(
             str,
             P + '0',
             int
@@ -147,40 +148,40 @@ class TestDSL(object):
         assert type(ast) is dsl.Expression
 
     def test_list(self):
-        code = (
-            [
+        code = Seq(
+            Branch(
                 P + 1
             ,
                 P * 2
-            ],
-            [
-            (
-                lambda l: map(str, l),
-                list
-            )
+            ),
+            Branch(
+                Seq(
+                    lambda l: map(str, l),
+                    list
+                )
             ,
-                ()
-            ]
+                P
+            )
         )
 
         f = dsl.Compile(code, {})
         assert [['4', '6'], [4, 6]] == f(3)
 
     def test_dict(self):
-        code = (
-            dict(
-                original = (),
-                upper = P.Obj.upper(),
+        code = Seq(
+            Rec(
+                original = P,
+                upper = Obj.upper(),
                 len = len
             ),
-            [
-                ()
+            Branch(
+                P
             ,
-            (
-                P.Rec.len,
-                P * 2
+                Seq(
+                    Rec.len,
+                    P * 2
+                )
             )
-            ]
         )
 
         f = dsl.Compile(code, {})
@@ -195,14 +196,14 @@ class TestDSL(object):
 
         assert "hola" == P.Pipe(
             "HOLA",
-            P.Obj.lower()
+            Obj.lower()
         )
 
     def test_record_object(self):
 
         x = P.Pipe(
             [1,2,3],
-            dict(
+            Rec(
                 sum = sum
             ,
                 len = len
@@ -219,14 +220,14 @@ class TestDSL(object):
 
         x = P.Pipe(
             [1,2,3],
-            dict(
+            Rec(
                 sum = sum
             ,
                 len = len
             ,
-                x = 'x'
+                x = Read.x
             ,
-                z = P.Read('y') + 2
+                z = Read('y') + 2
             ),
             refs = dict(
                 x = 10,
@@ -246,15 +247,15 @@ class TestDSL(object):
 
         #############################
 
+
         f = P.Make(
-            P.If( P > 2,
-                {'s'}
+            If( P > 2,
+                Write('s')
             ),
-            's'
+            Read('s')
         )
 
         assert f(3) == 3
-
 
         with pytest.raises(Exception):
             f(1)
@@ -263,19 +264,19 @@ class TestDSL(object):
     def test_nested_compiles(self):
 
         assert 1 == P.Pipe(
-            1, {'s'},
+            1, Write('s'),
             P.Make(
-                P + 1, {'s'}
+                P + 1, Write('s')
             ),
-            's'
+            Read('s')
         )
 
         assert 2 == P.Pipe(
-            1, {'s'},
-            P.NMake(
-                P + 1, {'s'}
+            1, Write('s'),
+            Seq(
+                P + 1, Write('s')
             ),
-            's'
+            Write('s')
         )
 
     def test_if(self):
@@ -284,7 +285,7 @@ class TestDSL(object):
             If( P > 0,
                 P
             ).Else(
-                P.Val(0)
+                0
             )
         )
 
