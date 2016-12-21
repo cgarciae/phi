@@ -1,6 +1,4 @@
-
-from phi import P, Obj, Rec, Make, Branch, Read, Write, Seq, Ref
-
+from phi.api import *
 
 class TestExamples(object):
     """docstring for TestExamples."""

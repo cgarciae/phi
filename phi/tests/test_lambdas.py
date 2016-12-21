@@ -1,4 +1,4 @@
-from phi import P, Rec, Obj, Val, Branch, Seq
+from phi.api import *
 
 class TestLambdas(object):
     """docstring for TestLambdas."""

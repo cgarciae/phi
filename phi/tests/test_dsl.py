@@ -1,5 +1,6 @@
 import ipdb
-from phi import dsl, P, If, Seq, Branch, Rec, Obj, Ref, Read, Write
+from phi.api import *
+from phi import dsl
 import pytest
 
 class TestDSL(object):
