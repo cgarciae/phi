@@ -144,7 +144,7 @@ class TestDSL(object):
 
 
         ast = dsl._parse(str)
-        assert type(ast) is dsl.Function
+        assert type(ast) is dsl.Expression
 
     def test_list(self):
         code = (
@@ -290,4 +290,3 @@ class TestDSL(object):
 
         assert f(5) == 5
         assert f(-3) == 0
-

@@ -35,9 +35,9 @@ Naturally `a $ b` returns also returns Lambda so operations can be chained. When
 
 is reinterpreted as this so it does what you expect
 
-    a $ Input(b)
+    a $ Val(b)
 
-where `Input` derives from `Node`. For more information see [dsl](https://cgarciae.github.io/phi/dsl.m.html). Also, reverse methods like `__radd__` (reverse for `__add__`) are also implemented so that expressions like `1 + P` -where `1` is not a Lambda- work as expected.
+where `Val` derives from `Node`. For more information see [dsl](https://cgarciae.github.io/phi/dsl.m.html). Also, reverse methods like `__radd__` (reverse for `__add__`) are also implemented so that expressions like `1 + P` -where `1` is not a Lambda- work as expected.
 
 
 ## __call__
@@ -70,9 +70,9 @@ is NOT equivalent to
 
     f(x) = g(x) >> h(x)
 
-Instead it represents Composition from the [dsl](https://cgarciae.github.io/phi/dsl.m.html) or function application depending on the context
+Instead it represents Seq from the [dsl](https://cgarciae.github.io/phi/dsl.m.html) or function application depending on the context
 
-### Composition
+### Seq
 The expression
 
     g >> h
@@ -106,7 +106,7 @@ is equivalent to
 ## <<
 The special method `__lshift__` (left shift) behaves as a reversed form of `>>` in the sense that the order of operations on excecution is done backwards
 
-### Composition Comparison
+### Seq Comparison
 
 * `f >> g` is equivalent to `lambda x: g(f(x))`. `f` is executed first then `g`. Reads left to right.
 * `f << g` is equivalent to `lambda x: f(g(x))`. `g` is executed first then `f`. Reads right to left.
@@ -141,7 +141,6 @@ from __future__ import unicode_literals
 from __future__ import division
 
 
-from . import dsl
 from . import utils
 import operator
 
@@ -181,11 +180,10 @@ def _unary_fmap(opt):
 
     return method
 
-class Lambda(dsl.Function):
+class Lambda(object):
     """docstring for Lambda."""
 
-    def __init__(self, f):
-        super(Lambda, self).__init__(f)
+    def __init__(self, f=utils.identity):
         self._f = f
 
     def __unit__(self, f, _return_type=None):
@@ -196,10 +194,12 @@ class Lambda(dsl.Function):
             return self.__class__(f)
 
     def __then__(self, other, **kwargs):
+        f = self._f
+        g = other
 
-        f = utils.forward_compose2(self, other)
+        h = lambda x: g(f(x))
 
-        return self.__unit__(f, **kwargs)
+        return self.__unit__(h, **kwargs)
 
     ## Override operators
     def __call__(self, x, flatten=False):

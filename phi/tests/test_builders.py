@@ -105,6 +105,21 @@ class TestBuilder(object):
 
         assert [12, 5, 6] == f(2)
 
+        f = P.Make(
+            P + 1,
+            P * 2,
+            P + 4,
+            [
+                (P + 2).Write('x')
+            ,
+                P / 2
+            ,
+                'x'
+            ]
+        )
+
+        assert [12, 5, 12] == f(2)
+
     def test_compose_list_reduce(self):
         f = P.Make(
             P + 1,

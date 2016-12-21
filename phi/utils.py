@@ -19,6 +19,13 @@ def merge(dict_a, dict_b):
     return dict(dict_a, **dict_b)
 
 
+class _NoValue(object):
+    def __repr__(self):
+        return "NoValue"
+
+NO_VALUE = _NoValue()
+
+
 DefaultArgSpec = namedtuple('DefaultArgSpec', 'has_default default_value')
 
 def _get_default_arg(args, defaults, arg_index):

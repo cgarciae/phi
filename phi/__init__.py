@@ -11,7 +11,6 @@ from . import lambdas
 
 from .utils import identity
 
-from .dsl import With
 
 from . import python_builder
 from .builder import Builder
@@ -41,9 +40,10 @@ Obj = P.Obj
 Rec = P.Rec
 Ref = P.Ref
 Context = P.Context
+With = P.With
 
 # Directly imported from DSL
-If = dsl.If
+If = P.If
 
 ########################
 # Documentation

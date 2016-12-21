@@ -37,7 +37,6 @@ from . import utils
 from .utils import identity
 import functools
 from . import dsl
-from .lambdas import Lambda
 
 ######################
 # Helpers
@@ -52,115 +51,10 @@ _NoLeadingUnderscore = lambda name: name[0] != "_"
 ### Builder
 #######################
 
-class Builder(Lambda):
+class Builder(dsl.Expression):
     """
     All the core methods of the `Builder` class start with a capital letter (e.g. `phi.builder.Builder.Pipe` or `phi.builder.Builder.Make`) on purpose to avoid name chashes with methods that libraries might register."""
 
-    @classmethod
-    def Context(cls, *args):
-        """
-**Builder Core**. Also available as a global function as `phi.Context`.
-
-Returns the context object of the current `dsl.With` statemente.
-
-**Arguments**
-
-* ***args**: By design `Context` accepts any number of arguments and completely ignores them.
-
-This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:
-
-    from phi import P, Context, Obj
-
-    def read_file(z):
-        f = Context()
-        return f.read()
-
-    lines = P.Pipe(
-        "text.txt",
-        P.With( open,
-            read_file,
-            Obj.split("\\n")
-        )
-    )
-
-Here we called `Context` with no arguments to get the context back, however, since you can also give this function an argument (which it will ignore) it can be passed to the DSL so we can rewrite the previous as:
-
-    from phi import P, Context, Obj
-
-    lines = P.Pipe(
-        "text.txt",
-        P.With( open,
-            Context, # f
-            Obj.read()
-            Obj.split("\\n")
-        )
-    )
-
-`Context` yields an exception when used outside of a `With` block.
-
-**Also see**
-
-* `phi.builder.Builder.Obj`
-* [dsl](https://cgarciae.github.io/phi/dsl.m.html)
-        """
-
-        if dsl._CompilationContextManager.WITH_GLOBAL_CONTEXT is dsl._NO_VALUE:
-            raise Exception("Cannot use 'Context' outside of a 'With' block")
-
-        return dsl._CompilationContextManager.WITH_GLOBAL_CONTEXT
-
-    def With(self, *args, **kwargs):
-        return self.NMake(dsl.With(*args, **kwargs))
-    With.__doc__ = dsl.With.__doc__
-
-
-    @property
-    def Ref(self):
-        """
-Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).
-
-**Creating Refences**
-
-You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) or [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) expression. Here is a contrived example
-
-    from phi import P
-
-    r = P.Ref('r')
-
-    assert [600, 3, 6] == P.Pipe(
-        2,
-        P + 1, {'a'},  # a = 2 + 1 = 3
-        P * 2, {'b'},  # b = 3 * 2 = 6
-        P * 100, {'c', r },  # c = r = 6 * 100 = 600
-        ['c', 'a', 'b']
-    )
-
-    assert r() == 600
-
-**Reading Refences from the Current Context**
-
-While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.
-
-    Read.x(None) <=> Ref.x
-
-As an example
-
-    from phi import P, Obj, Ref
-
-    assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
-        "a b c", Obj
-        .split(' ').Write.keys  # keys = ['a', 'b', 'c']
-        .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
-        lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
-        dict   # {'a': 97, 'b': 98, 'c': 99}
-    )
-
-        """
-        return _RefProxyInstance
-
-    def If(self, *args, **kwargs):
-        return self.NMake(dsl.If(*args, **kwargs))
-    If.__doc__ = dsl.If.__doc__
 
     def Pipe(self, x, *code, **kwargs):
         """
@@ -169,7 +63,7 @@ As an example
 **Arguments**
 
 * **x**: any input object
-* ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).
+* ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Seq](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Seq).
 * ****kwargs**: `Pipe` forwards all `kwargs` to `phi.builder.Builder.Make`, visit its documentation for more info.
 
 **Examples**
@@ -354,7 +248,7 @@ Here the `Val` statemente drops the `None` and introduces its own constants. Giv
 
 **Arguments**
 
-* ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Composition](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Composition).
+* ***code**: any expression from the DSL.`code` is implicitly a `tuple` since that is what Python gives you when you declare a [Variadic Function](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists), therefore, according to the rules of the DSL, all expressions inside of `code` will be composed together. See [Seq](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Seq).
 * `refs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) without the need of an explicit [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) operation. You might also consider using `phi.builder.Builder.Val` instead of this.
 * `flatten = False` : if `flatten` is True and the argument being returned by the compiled function is a `list` it will flatten the list. This is useful if you have nested branches in the last computation.
 * `create_ref_context = True` : determines if a reference manager should be created on compilation. See `phi.builder.Builder.NMake` for more information on what happens when its set to `False`.
@@ -657,131 +551,6 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
         """
         args = (arg1, arg2, arg3, arg4) + args
         return self.ThenAt(5, f, *args, **kwargs)
-
-
-    def Val(self, x):
-        return self.__then__(lambda z: x)
-    Val.__doc__ = dsl.Input.__doc__
-
-    @property
-    def Write(self):
-        """
-`Write` is a `property` that returns an object that defines the `__call__`, `__getattr__` and `__getitem__` methods which you can use to define a [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) expression. The following DSL expression
-
-    {`my_ref`}
-
-is equivalent to any of these
-
-    Write.my_ref
-    Write['my_ref']
-    Write('my_ref')
-
-**Also see**
-
-* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)
-* [dsl.Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read)
-* `phi.builder.Builder.Read`
-
-        """
-        return _WriteProxy(self)
-
-
-    @property
-    def Read(self):
-        """
-`Read` is a `property` that returns an object that defines the `__call__`, `__getattr__` and `__getitem__` methods which you can use to define a [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) expression. The following DSL expression
-
-    `my_ref`
-
-is equivalent to any of these
-
-    Read.my_ref
-    Read['my_ref']
-    Read('my_ref')
-
-**Also see**
-
-* [dsl.Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read)
-* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)
-* `phi.builder.Builder.Write`
-* `phi.builder.Builder.Obj`
-* `phi.builder.Builder.Rec`
-
-        """
-        return _ReadProxy(self)
-
-    @property
-    def Obj(self):
-        """
-`Obj` is a `property` that returns an object that defines the `__getattr__` method which when called helps you create a partial that emulates a method call. The following expression
-
-    Obj.some_method(x1, x2, ...)
-
-is equivalent to
-
-    lambda obj: obj.some_method(x1, x2, ...)
-
-**Examples**
-
-    from phi import P, Obj
-
-    assert "hello world" == P.Pipe(
-        "  HELLO HELLO {0}     ",
-        Obj.format("WORLD"),  # "   HELLO HELLO WORLD     "
-        Obj.strip(),          # "HELLO HELLO WORLD"
-        Obj.lower()           # "hello hello world"
-        Obj.split(' ')        # ["hello", "hello", "world"]
-        Obj.count("hello")    # 2
-    )
-
-**Also see**
-
-* `phi.builder.Builder.Rec`
-* [dsl.Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write)
-* `phi.builder.Builder.Write`
-        """
-        return _ObjectProxy(self)
-
-    @property
-    def Rec(self):
-        """
-`Rec` is a `property` that returns an object that defines the `__getattr__` and `__getitem__` methods which when called help you create a partial that emulates a field access. The following expression
-
-    Rec.some_field
-
-is equivalent to
-
-    lambda rec: rec.some_field
-
-**Examples**
-
-    from phi import P, Obj, Rec
-
-    class Point(object):
-
-        def __init__(self, x, y):
-            self.x = x
-            self.y = y
-
-        def flip_cords(self):
-            y = self.y
-            self.y = self.x
-            self.x = y
-
-    assert 4 == P.Pipe(
-        Point(1, 2),         # point(x=1, y=2)
-        Obj.flip_cords(),    # point(x=2, y=1)
-        Rec.x,               # point.x = 2
-        P * 2                # 2 * 2 = 4
-    )
-
-**Also see**
-
-* `phi.builder.Builder.Obj`
-* `phi.builder.Builder.Read`
-* `phi.builder.Builder.Write`
-        """
-        return _RecordProxy(self)
 
     @classmethod
     def _RegisterMethod(cls, f, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True):
@@ -1169,80 +938,8 @@ The thing to notice is that with the `NumpyBuilder` we avoid the repetitive and 
 Builder.__core__ = [ name for name, f in inspect.getmembers(Builder, inspect.ismethod) ]
 
 
-class _ObjectProxy(object):
-    """docstring for Underscore."""
-
-    def __init__(self, __builder__):
-        self.__builder__ = __builder__
-
-    def __getattr__(self, name):
-
-        def method_proxy(*args, **kwargs):
-            f = lambda x: getattr(x, name)(*args, **kwargs)
-            return self.__builder__.__then__(f)
-
-        return method_proxy
-
-class _RefProxy(object):
-    """docstring for _ReadProxy."""
-
-    def __getitem__(self, name):
-        return dsl._CompilationContextManager.get_ref(name).value
-
-    def __getattr__(self, name):
-        return dsl._CompilationContextManager.get_ref(name).value
-
-    def __call__(self, *args, **kwargs):
-        return dsl.Ref(*args, **kwargs)
-
-_RefProxyInstance = _RefProxy()
-
-class _ReadProxy(object):
-    """docstring for _ReadProxy."""
-
-    def __init__(self, __builder__):
-        self.__builder__ = __builder__
-
-    def __getitem__(self, name):
-        return self.__builder__.NMake(name)
-
-    def __getattr__(self, name):
-        return self.__builder__.NMake(name)
-
-    def __call__ (self, ref):
-        return self.__builder__.NMake(ref)
 
 
-class _WriteProxy(object):
-    """docstring for _WriteProxy."""
-
-    def __init__(self, __builder__):
-        self.__builder__ = __builder__
-
-    def __getitem__(self, ref):
-        return self.__builder__.NMake({ref})
-
-    def __getattr__ (self, ref):
-        return self.__builder__.NMake({ref})
-
-    def __call__ (self, ref):
-        return self.__builder__.NMake({ref})
-
-
-
-class _RecordProxy(object):
-    """docstring for _RecordProxy."""
-
-    def __init__(self, __builder__):
-        self.__builder__ = __builder__
-
-    def __getattr__ (self, attr):
-        f = lambda x: getattr(x, attr)
-        return self.__builder__.__then__(f)
-
-    def __getitem__(self, key):
-        f = lambda x: x[key]
-        return self.__builder__.__then__(f)
 
 
 #######################
@@ -1274,5 +971,3 @@ def _get_patch_members(builder, module, blacklist_predicate=_NoLeadingUnderscore
     return [
         (name, f) for (name, f) in inspect.getmembers(module, getmembers_predicate) if whitelist_predicate(name) and not blacklist_predicate(name)
     ]
-
-
