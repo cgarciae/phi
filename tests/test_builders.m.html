@@ -1116,7 +1116,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_builders', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_builders" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="c1"># from phi import tb</span>
@@ -1210,29 +1210,44 @@ table {
     <span class="k">def</span> <span class="nf">test_compose_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
             <span class="p">,</span>
-                <span class="s1">&#39;x&#39;</span>
-            <span class="p">]</span>
+                <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="p">,</span>
+                <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_compose_list_reduce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
-            <span class="p">],</span>
+            <span class="p">),</span>
             <span class="nb">sum</span>
         <span class="p">)</span>
 
@@ -1295,90 +1310,90 @@ table {
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="n">add2</span><span class="p">,</span>
-                <span class="n">mul3</span>
-            <span class="p">)</span>
-            <span class="p">,</span>
-            <span class="p">(</span>
-                <span class="n">mul3</span><span class="p">,</span>
-                <span class="n">add2</span>
-            <span class="p">)</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-
-        <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-            <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
-                <span class="p">(</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
             <span class="p">,</span>
-                <span class="p">[</span>
-                    <span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
+                    <span class="n">mul3</span><span class="p">,</span>
+                    <span class="n">add2</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">4</span><span class="p">,</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
+                    <span class="n">add2</span><span class="p">,</span>
+                    <span class="n">mul3</span>
+                <span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">Branch</span><span class="p">(</span>
+                    <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">add2</span><span class="p">,</span>
                         <span class="n">mul3</span>
                     <span class="p">)</span>
                 <span class="p">,</span>
-                    <span class="p">(</span>
+                    <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">mul3</span><span class="p">,</span>
                         <span class="n">add2</span><span class="p">,</span>
-                        <span class="p">[</span>
+                        <span class="n">Branch</span><span class="p">(</span>
                             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
-                        <span class="p">]</span>
+                        <span class="p">)</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
-            <span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">),</span>
             <span class="n">flatten</span><span class="o">=</span><span class="bp">True</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="n">get_list</span><span class="p">(</span><span class="bp">None</span><span class="p">)]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="n">add2</span><span class="p">,</span>
-                <span class="n">mul3</span>
-            <span class="p">)</span>
-            <span class="p">,</span>
-                <span class="p">[</span>
-                <span class="p">(</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">Branch</span><span class="p">(</span>
+                    <span class="n">Seq</span><span class="p">(</span>
+                        <span class="n">add2</span><span class="p">,</span>
+                        <span class="n">mul3</span>
+                    <span class="p">)</span>
                 <span class="p">,</span>
-                <span class="p">(</span>
-                    <span class="n">mul3</span><span class="p">,</span>
-                    <span class="n">add2</span>
-                <span class="p">)</span>
+                    <span class="n">Seq</span><span class="p">(</span>
+                        <span class="n">mul3</span><span class="p">,</span>
+                        <span class="n">add2</span>
+                    <span class="p">)</span>
                 <span class="p">,</span>
                     <span class="n">get_list</span>
-                <span class="p">]</span>
-            <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="n">add2</span><span class="p">,</span>
-                <span class="n">mul3</span>
-            <span class="p">)</span>
-            <span class="p">,</span>
-                <span class="p">[</span>
-                <span class="p">(</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">Branch</span><span class="p">(</span>
+                    <span class="n">Seq</span><span class="p">(</span>
+                        <span class="n">add2</span><span class="p">,</span>
+                        <span class="n">mul3</span>
+                    <span class="p">)</span>
                 <span class="p">,</span>
-                <span class="p">(</span>
-                    <span class="n">mul3</span><span class="p">,</span>
-                    <span class="n">add2</span>
+                    <span class="n">Seq</span><span class="p">(</span>
+                        <span class="n">mul3</span><span class="p">,</span>
+                        <span class="n">add2</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-                <span class="p">]</span>
-            <span class="p">]</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">18</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">18</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">14</span>
@@ -1390,7 +1405,7 @@ table {
             <span class="s2">&quot;phi/tests/test.txt&quot;</span><span class="p">,</span>
             <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="nb">open</span><span class="p">,</span>
                 <span class="n">Context</span><span class="p">,</span>
-                <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="p">{</span> <span class="n">y</span> <span class="p">},</span>
+                <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
                 <span class="nb">len</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -1431,11 +1446,11 @@ table {
             <span class="n">add2</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">set</span><span class="p">,</span>
             <span class="n">add2</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">set</span><span class="p">,</span>
             <span class="n">add2</span><span class="p">,</span>
-            <span class="p">[</span>
-                <span class="p">(),</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(),</span>
                 <span class="n">a</span><span class="p">,</span>
                 <span class="n">b</span>
-            <span class="p">]</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_scope_property</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1443,12 +1458,10 @@ table {
         <span class="k">assert</span> <span class="s2">&quot;some random text&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="s2">&quot;some &quot;</span><span class="p">,</span>
             <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="n">DummyContext</span><span class="p">(</span><span class="s2">&quot;random &quot;</span><span class="p">),</span>
-            <span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
                 <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="n">DummyContext</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">),</span>
                     <span class="n">P</span> <span class="o">+</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
@@ -1463,9 +1476,9 @@ table {
         <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
-            <span class="s1">&#39;y&#39;</span>
+            <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -1473,7 +1486,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
             <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
-            <span class="s1">&#39;y&#39;</span>
+            <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -1481,51 +1494,51 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
             <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
-            <span class="s1">&#39;y&#39;</span>
+            <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">3</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
+            <span class="p">),</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
             <span class="p">,</span>
-                <span class="p">()</span>
-            <span class="p">]</span>
+                <span class="n">Seq</span><span class="p">()</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_read_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
-            <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">P</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span> <span class="n">P</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
@@ -1826,29 +1839,44 @@ table {
     <span class="k">def</span> <span class="nf">test_compose_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
             <span class="p">,</span>
-                <span class="s1">&#39;x&#39;</span>
-            <span class="p">]</span>
+                <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="p">,</span>
+                <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_compose_list_reduce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
-            <span class="p">],</span>
+            <span class="p">),</span>
             <span class="nb">sum</span>
         <span class="p">)</span>
 
@@ -1911,90 +1939,90 @@ table {
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="n">add2</span><span class="p">,</span>
-                <span class="n">mul3</span>
-            <span class="p">)</span>
-            <span class="p">,</span>
-            <span class="p">(</span>
-                <span class="n">mul3</span><span class="p">,</span>
-                <span class="n">add2</span>
-            <span class="p">)</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-
-        <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-            <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
-                <span class="p">(</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
             <span class="p">,</span>
-                <span class="p">[</span>
-                    <span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
+                    <span class="n">mul3</span><span class="p">,</span>
+                    <span class="n">add2</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">4</span><span class="p">,</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
+                    <span class="n">add2</span><span class="p">,</span>
+                    <span class="n">mul3</span>
+                <span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">Branch</span><span class="p">(</span>
+                    <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">add2</span><span class="p">,</span>
                         <span class="n">mul3</span>
                     <span class="p">)</span>
                 <span class="p">,</span>
-                    <span class="p">(</span>
+                    <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">mul3</span><span class="p">,</span>
                         <span class="n">add2</span><span class="p">,</span>
-                        <span class="p">[</span>
+                        <span class="n">Branch</span><span class="p">(</span>
                             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
-                        <span class="p">]</span>
+                        <span class="p">)</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
-            <span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">),</span>
             <span class="n">flatten</span><span class="o">=</span><span class="bp">True</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="n">get_list</span><span class="p">(</span><span class="bp">None</span><span class="p">)]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="n">add2</span><span class="p">,</span>
-                <span class="n">mul3</span>
-            <span class="p">)</span>
-            <span class="p">,</span>
-                <span class="p">[</span>
-                <span class="p">(</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">Branch</span><span class="p">(</span>
+                    <span class="n">Seq</span><span class="p">(</span>
+                        <span class="n">add2</span><span class="p">,</span>
+                        <span class="n">mul3</span>
+                    <span class="p">)</span>
                 <span class="p">,</span>
-                <span class="p">(</span>
-                    <span class="n">mul3</span><span class="p">,</span>
-                    <span class="n">add2</span>
-                <span class="p">)</span>
+                    <span class="n">Seq</span><span class="p">(</span>
+                        <span class="n">mul3</span><span class="p">,</span>
+                        <span class="n">add2</span>
+                    <span class="p">)</span>
                 <span class="p">,</span>
                     <span class="n">get_list</span>
-                <span class="p">]</span>
-            <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="n">add2</span><span class="p">,</span>
-                <span class="n">mul3</span>
-            <span class="p">)</span>
-            <span class="p">,</span>
-                <span class="p">[</span>
-                <span class="p">(</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
+            <span class="p">,</span>
+                <span class="n">Branch</span><span class="p">(</span>
+                    <span class="n">Seq</span><span class="p">(</span>
+                        <span class="n">add2</span><span class="p">,</span>
+                        <span class="n">mul3</span>
+                    <span class="p">)</span>
                 <span class="p">,</span>
-                <span class="p">(</span>
-                    <span class="n">mul3</span><span class="p">,</span>
-                    <span class="n">add2</span>
+                    <span class="n">Seq</span><span class="p">(</span>
+                        <span class="n">mul3</span><span class="p">,</span>
+                        <span class="n">add2</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-                <span class="p">]</span>
-            <span class="p">]</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">18</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">18</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">14</span>
@@ -2006,7 +2034,7 @@ table {
             <span class="s2">&quot;phi/tests/test.txt&quot;</span><span class="p">,</span>
             <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="nb">open</span><span class="p">,</span>
                 <span class="n">Context</span><span class="p">,</span>
-                <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="p">{</span> <span class="n">y</span> <span class="p">},</span>
+                <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
                 <span class="nb">len</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -2047,11 +2075,11 @@ table {
             <span class="n">add2</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">set</span><span class="p">,</span>
             <span class="n">add2</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">set</span><span class="p">,</span>
             <span class="n">add2</span><span class="p">,</span>
-            <span class="p">[</span>
-                <span class="p">(),</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(),</span>
                 <span class="n">a</span><span class="p">,</span>
                 <span class="n">b</span>
-            <span class="p">]</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_scope_property</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2059,12 +2087,10 @@ table {
         <span class="k">assert</span> <span class="s2">&quot;some random text&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="s2">&quot;some &quot;</span><span class="p">,</span>
             <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="n">DummyContext</span><span class="p">(</span><span class="s2">&quot;random &quot;</span><span class="p">),</span>
-            <span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
                 <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="n">DummyContext</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">),</span>
                     <span class="n">P</span> <span class="o">+</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
@@ -2079,9 +2105,9 @@ table {
         <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
-            <span class="s1">&#39;y&#39;</span>
+            <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -2089,7 +2115,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
             <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
-            <span class="s1">&#39;y&#39;</span>
+            <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -2097,51 +2123,51 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
             <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
-            <span class="s1">&#39;y&#39;</span>
+            <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">3</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
+            <span class="p">),</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
             <span class="p">,</span>
-                <span class="p">()</span>
-            <span class="p">]</span>
+                <span class="n">Seq</span><span class="p">()</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_read_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
-            <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">P</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span> <span class="n">P</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
@@ -2352,17 +2378,30 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_compose_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">},</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="p">[</span>
+        <span class="n">Branch</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="p">,</span>
-            <span class="s1">&#39;x&#39;</span>
-        <span class="p">]</span>
+            <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">Branch</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+        <span class="p">,</span>
+            <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="p">,</span>
+            <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2387,11 +2426,11 @@ table {
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="p">[</span>
+        <span class="n">Branch</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
-        <span class="p">],</span>
+        <span class="p">),</span>
         <span class="nb">sum</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">17</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -2420,7 +2459,7 @@ table {
         <span class="s2">&quot;phi/tests/test.txt&quot;</span><span class="p">,</span>
         <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="nb">open</span><span class="p">,</span>
             <span class="n">Context</span><span class="p">,</span>
-            <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="p">{</span> <span class="n">y</span> <span class="p">},</span>
+            <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
             <span class="nb">len</span>
         <span class="p">)</span>
     <span class="p">)</span>
@@ -2448,16 +2487,16 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">assert</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">3</span><span class="p">,</span>
-        <span class="p">[</span>
+        <span class="n">Branch</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
-        <span class="p">],</span>
-        <span class="p">[</span>
+        <span class="p">),</span>
+        <span class="n">Branch</span><span class="p">(</span>
             <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
         <span class="p">,</span>
-            <span class="p">()</span>
-        <span class="p">]</span>
+            <span class="n">Seq</span><span class="p">()</span>
+        <span class="p">)</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -2520,87 +2559,87 @@ table {
     <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">add2</span><span class="p">,</span> <span class="n">mul3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">18</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">4</span><span class="p">,</span>
-        <span class="p">[</span>
-        <span class="p">(</span>
-            <span class="n">add2</span><span class="p">,</span>
-            <span class="n">mul3</span>
-        <span class="p">)</span>
-        <span class="p">,</span>
-        <span class="p">(</span>
-            <span class="n">mul3</span><span class="p">,</span>
-            <span class="n">add2</span>
-        <span class="p">)</span>
-        <span class="p">]</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-        <span class="mi">4</span><span class="p">,</span>
-        <span class="p">[</span>
-            <span class="p">(</span>
+        <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">Seq</span><span class="p">(</span>
                 <span class="n">add2</span><span class="p">,</span>
                 <span class="n">mul3</span>
             <span class="p">)</span>
         <span class="p">,</span>
-            <span class="p">[</span>
-                <span class="p">(</span>
+            <span class="n">Seq</span><span class="p">(</span>
+                <span class="n">mul3</span><span class="p">,</span>
+                <span class="n">add2</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">4</span><span class="p">,</span>
+        <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">Seq</span><span class="p">(</span>
+                <span class="n">add2</span><span class="p">,</span>
+                <span class="n">mul3</span>
+            <span class="p">)</span>
+        <span class="p">,</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
             <span class="p">,</span>
-                <span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">mul3</span><span class="p">,</span>
                     <span class="n">add2</span><span class="p">,</span>
-                    <span class="p">[</span>
+                    <span class="n">Branch</span><span class="p">(</span>
                         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                         <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
-                    <span class="p">]</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="p">]</span>
-        <span class="p">],</span>
+            <span class="p">)</span>
+        <span class="p">),</span>
         <span class="n">flatten</span><span class="o">=</span><span class="bp">True</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="n">get_list</span><span class="p">(</span><span class="bp">None</span><span class="p">)]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">4</span><span class="p">,</span>
-        <span class="p">[</span>
-        <span class="p">(</span>
-            <span class="n">add2</span><span class="p">,</span>
-            <span class="n">mul3</span>
-        <span class="p">)</span>
-        <span class="p">,</span>
-            <span class="p">[</span>
-            <span class="p">(</span>
+        <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">Seq</span><span class="p">(</span>
                 <span class="n">add2</span><span class="p">,</span>
                 <span class="n">mul3</span>
             <span class="p">)</span>
+        <span class="p">,</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
+                    <span class="n">add2</span><span class="p">,</span>
+                    <span class="n">mul3</span>
+                <span class="p">)</span>
             <span class="p">,</span>
-            <span class="p">(</span>
-                <span class="n">mul3</span><span class="p">,</span>
-                <span class="n">add2</span>
-            <span class="p">)</span>
+                <span class="n">Seq</span><span class="p">(</span>
+                    <span class="n">mul3</span><span class="p">,</span>
+                    <span class="n">add2</span>
+                <span class="p">)</span>
             <span class="p">,</span>
                 <span class="n">get_list</span>
-            <span class="p">]</span>
-        <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
     <span class="p">)</span>
     <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">4</span><span class="p">,</span>
-        <span class="p">[</span>
-        <span class="p">(</span>
-            <span class="n">add2</span><span class="p">,</span>
-            <span class="n">mul3</span>
-        <span class="p">)</span>
-        <span class="p">,</span>
-            <span class="p">[</span>
-            <span class="p">(</span>
+        <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">Seq</span><span class="p">(</span>
                 <span class="n">add2</span><span class="p">,</span>
                 <span class="n">mul3</span>
             <span class="p">)</span>
+        <span class="p">,</span>
+            <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">Seq</span><span class="p">(</span>
+                    <span class="n">add2</span><span class="p">,</span>
+                    <span class="n">mul3</span>
+                <span class="p">)</span>
             <span class="p">,</span>
-            <span class="p">(</span>
-                <span class="n">mul3</span><span class="p">,</span>
-                <span class="n">add2</span>
+                <span class="n">Seq</span><span class="p">(</span>
+                    <span class="n">mul3</span><span class="p">,</span>
+                    <span class="n">add2</span>
+                <span class="p">)</span>
             <span class="p">)</span>
-            <span class="p">]</span>
-        <span class="p">]</span>
+        <span class="p">)</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">18</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">18</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">14</span>
 </pre></div>
@@ -2651,25 +2690,25 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_read_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">P</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span> <span class="n">P</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
@@ -2715,23 +2754,23 @@ table {
     <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="s1">&#39;y&#39;</span>
+        <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="s1">&#39;y&#39;</span>
+        <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="s1">&#39;y&#39;</span>
+        <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -2760,11 +2799,11 @@ table {
         <span class="n">add2</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">set</span><span class="p">,</span>
         <span class="n">add2</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">set</span><span class="p">,</span>
         <span class="n">add2</span><span class="p">,</span>
-        <span class="p">[</span>
-            <span class="p">(),</span>
+        <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">Seq</span><span class="p">(),</span>
             <span class="n">a</span><span class="p">,</span>
             <span class="n">b</span>
-        <span class="p">]</span>
+        <span class="p">)</span>
     <span class="p">)</span>
 </pre></div>
 
@@ -2870,12 +2909,10 @@ table {
     <span class="k">assert</span> <span class="s2">&quot;some random text&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="s2">&quot;some &quot;</span><span class="p">,</span>
         <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="n">DummyContext</span><span class="p">(</span><span class="s2">&quot;random &quot;</span><span class="p">),</span>
-        <span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
             <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="n">DummyContext</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">),</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span>
             <span class="p">)</span>
-        <span class="p">)</span>
         <span class="p">)</span>
     <span class="p">)</span>
     <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
