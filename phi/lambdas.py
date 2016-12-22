@@ -202,9 +202,8 @@ class Lambda(object):
         return self.__unit__(h, **kwargs)
 
     ## Override operators
-    def __call__(self, x, flatten=False):
-        y = self._f(x)
-        return utils.flatten_list(y) if flatten else y
+    def __call__(self, x):
+        return self._f(x)
 
 
     def __getitem__(self, key):

@@ -269,6 +269,8 @@ class TestExamples(object):
             ,
                 If( Rec.y > 7,
                     Val(9) + 1  #input 9 and add 1, gives 10
+                ).Elif( Rec.y < 4,
+                    "Yes"
                 ).Else(
                     "Sorry, come back latter."
                 )
@@ -461,26 +463,17 @@ class TestExamples(object):
 
         from phi import P, Val
 
-        assert "Less or equal to 10" == P.Pipe(
+        assert "Between 2 and 10" == P.Pipe(
             5,
             P.If(P > 10,
-                "Greater than 10",
-            Else = (
-                "Less or equal to 10"
-            ))
-        )
-
-        #########################
-        #########################
-
-        from phi import P, Val, If
-
-        assert "Less or equal to 10" == P.Pipe(
-            5,
-            If(P > 10,
                 "Greater than 10"
-            )
-            .Else(
-                "Less or equal to 10"
+            ).Elif(P < 2,
+                "Less than 2"
+            ).Else(
+                "Between 2 and 10"
             )
         )
+
+    def test_pipe_branch(self):
+
+        assert [11, 12] == 10 >> Branch( P + 1, P + 2)

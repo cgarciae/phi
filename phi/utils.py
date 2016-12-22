@@ -1,3 +1,6 @@
+"""
+"""
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -24,7 +27,6 @@ class _NoValue(object):
         return "NoValue"
 
 NO_VALUE = _NoValue()
-
 
 DefaultArgSpec = namedtuple('DefaultArgSpec', 'has_default default_value')
 

@@ -1072,7 +1072,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_lambdas" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Val</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="k">class</span> <span class="nc">TestLambdas</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for TestLambdas.&quot;&quot;&quot;</span>
@@ -1139,26 +1139,26 @@ table {
 
         <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">0</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
-            <span class="p">],</span>
+            <span class="p">),</span>
             <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">Rec</span><span class="p">(</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="p">),</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
         <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">Rec</span><span class="p">(</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="p">),</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
         <span class="p">)</span>
@@ -1251,26 +1251,26 @@ table {
 
         <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">0</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">Branch</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
-            <span class="p">],</span>
+            <span class="p">),</span>
             <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">Rec</span><span class="p">(</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="p">),</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
         <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">Rec</span><span class="p">(</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="p">),</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
         <span class="p">)</span>
@@ -1307,24 +1307,24 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_lambda_opt_lambda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">0</span><span class="p">,</span>
-        <span class="p">[</span>
+        <span class="n">Branch</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
-        <span class="p">],</span>
+        <span class="p">),</span>
         <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="p">)</span>
-    <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-        <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="p">),</span>
         <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
     <span class="p">)</span>
-    <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-        <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="p">),</span>
         <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
     <span class="p">)</span>

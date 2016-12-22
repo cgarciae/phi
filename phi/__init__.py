@@ -4,13 +4,12 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
-from . import builder
 from . import utils
+from . import builder
 from . import dsl
 from . import lambdas
 
 from .utils import identity
-
 
 from . import python_builder
 from .builder import Builder

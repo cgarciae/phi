@@ -3,6 +3,7 @@ set -e
 
 find . -name "*.pyc" -delete
 echo "Generating docs"
+rm -fr docs
 PYTHONPATH=./phi pdoc --html-dir=docs --html --all-submodules --overwrite phi
 echo "Making README.md"
 python tasks/create_readme.py
