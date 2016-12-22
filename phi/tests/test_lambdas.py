@@ -20,12 +20,12 @@ class TestLambdas(object):
         f = lambda x: x * 3
         g = lambda x: x + 2
 
-        h = f >> P.Make(g)
+        h = f >> P.Seq(g)
 
         assert 11 == h(3)
 
 
-        h = P.Make(f) >> g
+        h = P.Seq(f) >> g
         assert 11 == h(3)
 
 
@@ -46,12 +46,12 @@ class TestLambdas(object):
         f = lambda x: x * 3
         g = lambda x: x + 2
 
-        h = g << P.Make(f)
+        h = g << P.Seq(f)
 
         assert 11 == h(3)
 
 
-        h = P.Make(g) << f
+        h = P.Seq(g) << f
 
         assert 11 == h(3)
 

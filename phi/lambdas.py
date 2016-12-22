@@ -87,7 +87,7 @@ which is equivalent to
 
 Note that atleast one of `g` or `h` has to be a `Lambda` for this operator to work. An easy way create a Lambda from any function `f` is to do
 
-    P.Make(f)
+    P.Seq(f)
 
 ### Application
 Given `a` and `g` where
@@ -150,12 +150,23 @@ def _fmap(opt):
         other = (lambda z: b) if not hasattr(b, '__call__') else b
 
         if not isinstance(other, Lambda):
+            other = utils.lift(other)
             other = self.__class__(other)
 
-        f = lambda x: opt( self(x), other(x) )
+        f = self._f
+        g = other._f
+
+        def h(x, state):
+            y1, state1 = f(x, state)
+            y2, state2 = g(x, state)
+
+            y_out = opt(y1, y2)
+            state_out = utils.merge(state1, state2)
+
+            return y_out, state_out
 
 
-        return self.__unit__(f)
+        return self.__unit__(h)
 
     return method
 
@@ -165,25 +176,36 @@ def _fmap_flip(opt):
         other = (lambda z: b) if not hasattr(b, '__call__') else b
 
         if not isinstance(other, Lambda):
+            other = utils.lift(other)
             other = self.__class__(other)
 
-        f = lambda x: opt( other(x), self(x) )
+        f = self._f
+        g = other
+
+        def h(x, state):
+            y1, state1 = f(x, state)
+            y2, state2 = g(x, state)
+
+            y_out = opt(y2, y1)
+            state_out = utils.merge(state2, state1)
+
+            return y_out, state_out
 
 
-        return self.__unit__(f)
+        return self.__unit__(h)
 
     return method
 
 def _unary_fmap(opt):
     def method(self):
-        return self.__then__(opt)
+        return self.__then__(utils.lift(opt))
 
     return method
 
 class Lambda(object):
     """docstring for Lambda."""
 
-    def __init__(self, f=utils.identity):
+    def __init__(self, f=lambda x, state: (x, state)):
         self._f = f
 
     def __unit__(self, f, _return_type=None):
@@ -197,13 +219,23 @@ class Lambda(object):
         f = self._f
         g = other
 
-        h = lambda x: g(f(x))
+        h = lambda x, state: g(*f(x, state))
 
         return self.__unit__(h, **kwargs)
 
     ## Override operators
-    def __call__(self, x):
-        return self._f(x)
+    def __call__(self, x, *return_state, **state):
+        global CALL_COUNT
+        CALL_COUNT += 1
+
+        if len(return_state) == 1 and type(return_state[0]) is not bool:
+            raise Exception("Invalid return state condition, got {return_state}".format(return_state=return_state))
+
+        y, next_state = self._f(x, state)
+
+        return (y, next_state) if len(return_state) >= 1 and return_state[0] else y
+
+
 
 
     def __getitem__(self, key):
@@ -267,3 +299,5 @@ class Lambda(object):
     __rand__ = _fmap_flip(operator.and_)
     __ror__ = _fmap_flip(operator.or_)
     __rxor__ = _fmap_flip(operator.xor)
+
+CALL_COUNT = 0

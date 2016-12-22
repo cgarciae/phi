@@ -21,6 +21,9 @@ def forward_compose2(f, g):
 def merge(dict_a, dict_b):
     return dict(dict_a, **dict_b)
 
+def lift(f):
+    return lambda x, state: (f(x), state)
+
 
 class _NoValue(object):
     def __repr__(self):

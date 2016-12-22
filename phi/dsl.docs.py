@@ -5,7 +5,7 @@ All basic/terminal elements of this language are callables (implement `__call__`
 ### Examples
 Compiling a function just returns back the function
 
-Make(f) == f
+Seq(f) == f
 
 and piping through a function is just the same a applying the function
 
@@ -153,7 +153,7 @@ k(x) = x
 
 from phi import P
 
-f = Make(
+f = Seq(
     lambda x: x * 2,
     lambda x: x + 1,
     lambda x: x ** 2
@@ -161,7 +161,7 @@ f = Make(
 
 assert f(1) == 9 # ((1 * 2) + 1) ** 2
 
-As you see, `Make`s `*args` are interpreted as a tuple which means all expressions contained are composed. The previous example using `P.Pipe`
+As you see, `Seq`s `*args` are interpreted as a tuple which means all expressions contained are composed. The previous example using `P.Pipe`
 
 from phi import P
 

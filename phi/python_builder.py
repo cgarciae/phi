@@ -159,5 +159,10 @@ Returns a function which when executed returns the last element of the iterable 
     """
     return list(a)[-1]
 
+@PythonBuilder.Register("phi.python_builder.", explain=False)
+def Flatten(a):
+    return utils.flatten(a)
+
+
 
 __all__ = ["PythonBuilder"]

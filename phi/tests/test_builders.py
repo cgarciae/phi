@@ -19,8 +19,8 @@ def pow(a, b):
     return a ** b
 
 @P.RegisterMethod("test.lib")
-def get_function_name(self):
-    return self._f.__name__
+def give_me_1000(self):
+    return 1000
 
 class DummyContext:
     def __init__(self, value):
@@ -42,9 +42,6 @@ class TestBuilder(object):
     def test_C_1(self):
         assert P.Then(add2)(4) == 6
         assert P.Then(add2).Then(mul3)(4) == 18
-
-        assert P.Make(add2)(4) == 6
-        assert P.Make(add2, mul3)(4) == 18
 
     def test_methods(self):
         x = P.Pipe(
@@ -71,7 +68,7 @@ class TestBuilder(object):
         )
 
     def test_rrshift(self):
-        builder = P.Make(
+        builder = P.Seq(
             P + 1,
             P * 2,
             P + 4
@@ -80,7 +77,7 @@ class TestBuilder(object):
         assert 10 == 2 >> builder
 
     def test_compose(self):
-        f = P.Make(
+        f = P.Seq(
             P + 1,
             P * 2,
             P + 4
@@ -90,7 +87,7 @@ class TestBuilder(object):
 
 
     def test_compose_list(self):
-        f = P.Make(
+        f = P.Seq(
             P + 1,
             P * 2, Write('x'),
             P + 4,
@@ -105,7 +102,7 @@ class TestBuilder(object):
 
         assert [12, 5, 6] == f(2)
 
-        f = P.Make(
+        f = P.Seq(
             P + 1,
             P * 2,
             P + 4,
@@ -121,7 +118,7 @@ class TestBuilder(object):
         assert [12, 5, 12] == f(2)
 
     def test_compose_list_reduce(self):
-        f = P.Make(
+        f = P.Seq(
             P + 1,
             P * 2,
             P + 4,
@@ -152,7 +149,7 @@ class TestBuilder(object):
 
         time.sleep(0.01)
 
-        t1 = 2 >> P.Make(
+        t1 = 2 >> P.Seq(
             P + 1,
             P.Then0(datetime.now)
         )
@@ -160,13 +157,13 @@ class TestBuilder(object):
         assert t1 > t0
 
     def test_1(self):
-        assert 9 == 2 >> P.Make(
+        assert 9 == 2 >> P.Seq(
             P + 1,
             P.Then(math.pow, 2)
         )
 
     def test_2(self):
-        assert [2, 4] == [1, 2, 3] >> P.Make(
+        assert [2, 4] == [1, 2, 3] >> P.Seq(
             P
             .Then2(map, P + 1)
             .Then2(filter, P % 2 == 0)
@@ -228,9 +225,10 @@ class TestBuilder(object):
                         )
                     )
                 )
-            ),
-            flatten=True
+            )
+            .Flatten()
         )
+
 
         assert [18, [18, 14, get_list(None)]] == P.Pipe(
             4,
@@ -287,7 +285,7 @@ class TestBuilder(object):
             "phi/tests/test.txt",
             P.With( open,
                 Context,
-                Obj.read(), Write(y),
+                Obj.read(), y.write,
                 len
             )
         )
@@ -310,12 +308,12 @@ class TestBuilder(object):
         )
 
         #RegisterMethod
-        assert "identity" == P.get_function_name()
+        assert P.give_me_1000() == 1000
 
     def test_reference(self):
         add_ref = P.Ref('add_ref')
 
-        assert 8 == 3 >> P.Make(P.add(2).Write(add_ref).add(3))
+        assert 8 == 3 >> P.Seq(P.add(2), add_ref.write, P.add(3))
         assert 5 == add_ref()
 
     def test_ref_props(self):
@@ -325,8 +323,8 @@ class TestBuilder(object):
 
         assert [7, 3, 5] == P.Pipe(
             1,
-            add2, a.set,
-            add2, b.set,
+            add2, a.write,
+            add2, b.write,
             add2,
             Branch(
                 Seq(),
@@ -358,17 +356,17 @@ class TestBuilder(object):
         assert 5 == P.Pipe(
             1,
             P + 4,
-            Write(y),
+            y.write,
             P * 10,
-            Read.y
+            y
         )
 
         assert 5 == P.Pipe(
             1,
             P + 4,
-            P.Write(y),
+            y.write,
             P * 10,
-            Read.y
+            y
         )
 
         assert 5 == P.Pipe(

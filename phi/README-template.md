@@ -252,12 +252,12 @@ assert s == 5
 assert val == "Sorry, come back latter."
 ```
 
-Now, what you have to understand that everything you've done with these expression is to create and apply a single function. Using `Make` we can get the standalone function and then use it to get the same values as before
+Now, what you have to understand that everything you've done with these expression is to create and apply a single function. Using `Seq` we can get the standalone function and then use it to get the same values as before
 
 ```python
 from phi import P, Rec, Read, Write, Val, If
 
-f = P.Make(
+f = P.Seq(
     (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
     dict(
         x = P + 1  #2 + 1 == 3

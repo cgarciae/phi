@@ -23,7 +23,7 @@ class TestExamples(object):
             Obj.split(" "), #['a', 'bb', 'ccc']
             P.map(len), #[1, 2, 3]
             list, # python 3 only
-            Make(sum) / len #6 / 3 == 2
+            Seq(sum) / len #6 / 3 == 2
         )
 
         assert 2 == avg_word_length
@@ -287,7 +287,7 @@ class TestExamples(object):
 
         from phi import P, Rec, Read, Write, Val, If
 
-        f = P.Make(
+        f = P.Seq(
             (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
             Rec(
                 x = P + 1  #2 + 1 == 3
@@ -321,7 +321,7 @@ class TestExamples(object):
 
         assert 1 == P.Pipe(
             1, Write('s'), # write s == 1, outer context
-            P.Make(
+            P.Seq(
                 P + 1, Write('s') # write s == 2, inner context
             ),
             Read('s')  # read s == 1, outer context
@@ -334,7 +334,7 @@ class TestExamples(object):
 
         assert 2 == P.Pipe(
             1, Write('s'),   #write s == 1, same context
-            P.Make(
+            P.Seq(
                 P + 1, Write('s'),   #write s == 2, same context
                 ref_context=False
             ),

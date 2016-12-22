@@ -15,10 +15,8 @@ Read = P.Read
 Write = P.Write
 Val = P.Val
 Pipe = P.Pipe
-Make = P.Make
 Obj = P.Obj
 Rec = P.Rec
-Ref = P.Ref
 Context = P.Context
 With = P.With
 

@@ -1,5 +1,5 @@
 """
-The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Make` or applied to a value using `P.Pipe`.
+The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Seq` or applied to a value using `P.Pipe`.
 
 Phi offers the following constructs, **try to read their documentation in order**:
 
@@ -48,10 +48,8 @@ class _ReadProxy(object):
         return self.__do__(name)
 
     def __do__(self, name):
-        if type(name) is Ref:
-            name = name.name
 
-        g = lambda z: _CompilationContextManager.get_ref(name).value
+        g = lambda z, state: (state[name], state)
 
         return self.__builder__.__then__(g)
 
@@ -72,14 +70,12 @@ class _WriteProxy(object):
         return self.__do__(refs)
 
     def __do__(self, refs):
-        refs = [ Ref(ref) if type(ref) is str else ref for ref in refs ]
 
-        def g(x):
-            for ref in refs:
-                ref.set(x)
-                _CompilationContextManager.set_ref(ref)
+        def g(x, state):
+            update = {ref: x for ref in refs}
+            next_state = utils.merge(state, update)
 
-            return x
+            return x, next_state
 
         return self.__builder__.__then__(g)
 
@@ -93,23 +89,9 @@ class _ObjectProxy(object):
 
         def method_proxy(*args, **kwargs):
             f = lambda x: getattr(x, name)(*args, **kwargs)
-            return self.__builder__.__then__(f)
+            return self.__builder__.__then__(utils.lift(f))
 
         return method_proxy
-
-class _RefProxy(object):
-    """docstring for _ReadProxy."""
-
-    def __getitem__(self, name):
-        return _CompilationContextManager.get_ref(name).value
-
-    def __getattr__(self, name):
-        return _CompilationContextManager.get_ref(name).value
-
-    def __call__(self, *args, **kwargs):
-        return Ref(*args, **kwargs)
-
-_RefProxyInstance = _RefProxy()
 
 class _RecordProxy(object):
     """docstring for _RecordProxy."""
@@ -120,6 +102,7 @@ class _RecordProxy(object):
     def __call__(self, **branches):
         gs = { key : _parse(value)._f for key, value in branches.items() }
 
+        @utils.lift
         def h(x):
             return _RecordObject(**{key: g(x) for key, g in gs.items() })
 
@@ -127,16 +110,53 @@ class _RecordProxy(object):
 
     def __getattr__ (self, attr):
         f = lambda x: getattr(x, attr)
-        return self.__builder__.__then__(f)
+        return self.__builder__.__then__(utils.lift(f))
 
     def __getitem__(self, key):
         f = lambda x: x[key]
-        return self.__builder__.__then__(f)
+        return self.__builder__.__then__(utils.lift(f))
 
 
 class Ref(object):
     """
-This class manages references inside the DSL, these are created, written, and read from during the `phi.dsl.Read` and `phi.dsl.Write` operations.
+Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).
+
+**Creating Refences**
+
+You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a `phi.dsl.Expression.Read` or `phi.dsl.Expression.Write` expression. Here is a contrived example
+
+from phi import P, Ref
+
+r = Ref('r')
+
+assert [600, 3, 6] == P.Pipe(
+    2,
+    P + 1, {'a'},  # a = 2 + 1 = 3
+    P * 2, {'b'},  # b = 3 * 2 = 6
+    P * 100, {'c', r },  # c = r = 6 * 100 = 600
+    ['c', 'a', 'b']
+)
+
+assert r() == 600
+
+**Reading Refences from the Current Context**
+
+While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.
+
+Read.x(None) <=> Ref.x
+
+As an example
+
+from phi import P, Obj, Ref
+
+assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
+    "a b c", Obj
+    .split(' ').Write.keys  # keys = ['a', 'b', 'c']
+    .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
+    lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
+    dict   # {'a': 97, 'b': 98, 'c': 99}
+)
+
     """
     def __init__(self, name, value=utils.NO_VALUE):
         super(Ref, self).__init__()
@@ -158,52 +178,13 @@ Returns the value of the reference. Any number of arguments can be passed, they 
 
         return self.value
 
-    def set(self, x):
+    def write(self, x):
         """
 Sets the value of the reference equal to the input argument `x`. Its also an identity function since it returns `x`.
         """
         self.value = x
 
         return x
-
-
-class _CompilationContextManager(object):
-
-    COMPILATION_GLOBAL_REFS = None
-    WITH_GLOBAL_CONTEXT = utils.NO_VALUE
-
-    def __init__(self, next_refs, next_with_global_context):
-        self.previous_refs = _CompilationContextManager.COMPILATION_GLOBAL_REFS
-        self.next_refs = next_refs
-
-        self.previous_with_global_context = _CompilationContextManager.WITH_GLOBAL_CONTEXT
-        self.next_with_global_context = next_with_global_context
-
-    def __enter__(self):
-        _CompilationContextManager.COMPILATION_GLOBAL_REFS = self.next_refs
-        _CompilationContextManager.WITH_GLOBAL_CONTEXT = self.next_with_global_context
-
-    def __exit__(self, *args):
-        _CompilationContextManager.COMPILATION_GLOBAL_REFS = self.previous_refs
-        _CompilationContextManager.WITH_GLOBAL_CONTEXT = self.previous_with_global_context
-
-    @classmethod
-    def set_ref(cls, ref):
-        #Copy to avoid stateful behaviour
-        cls.COMPILATION_GLOBAL_REFS = cls.COMPILATION_GLOBAL_REFS.copy()
-
-        if ref.name in cls.COMPILATION_GLOBAL_REFS:
-            other_ref = cls.COMPILATION_GLOBAL_REFS[ref.name]
-            # merge state: borg pattern
-            other_ref.__dict__.update(ref.__dict__)
-        else:
-            cls.COMPILATION_GLOBAL_REFS[ref.name] = ref
-
-    @classmethod
-    def get_ref(cls, name):
-        return cls.COMPILATION_GLOBAL_REFS[name]
-
-
 
 class _RecordObject(dict):
     """docstring for DictObject."""
@@ -269,15 +250,17 @@ class _RecordObject(dict):
 
 class _WithContextManager(object):
 
+    WITH_GLOBAL_CONTEXT = utils.NO_VALUE
+
     def __init__(self, new_scope):
         self.new_scope = new_scope
-        self.old_scope = _CompilationContextManager.WITH_GLOBAL_CONTEXT
+        self.old_scope = _WithContextManager.WITH_GLOBAL_CONTEXT
 
     def __enter__(self):
-        _CompilationContextManager.WITH_GLOBAL_CONTEXT = self.new_scope
+        _WithContextManager.WITH_GLOBAL_CONTEXT = self.new_scope
 
     def __exit__(self, *args):
-        _CompilationContextManager.WITH_GLOBAL_CONTEXT = self.old_scope
+        _WithContextManager.WITH_GLOBAL_CONTEXT = self.old_scope
 ###############################
 # DSL Elements
 ###############################
@@ -292,7 +275,7 @@ All elements of this language are callables (implement `__call__`) of arity 1.
 
 Compiling a function just returns back the function
 
-    Make(f) == f
+    Seq(f) == f
 
 and piping through a function is just the same a applying the function
 
@@ -306,7 +289,7 @@ and piping through a function is just the same a applying the function
 **Arguments**
 
 * ***sequence**: any variable amount of expressions. All expressions inside of `sequence` will be composed together using `phi.dsl.Expression.Seq`.
-* ****kwargs**: `Pipe` forwards all `kwargs` to `phi.builder.Builder.Make`, visit its documentation for more info.
+* ****kwargs**: `Pipe` forwards all `kwargs` to `phi.builder.Builder.Seq`, visit its documentation for more info.
 
 The expression
 
@@ -314,7 +297,7 @@ The expression
 
 is equivalent to
 
-    Make(*sequence, **kwargs)(None)
+    Seq(*sequence, **kwargs)(None)
 
 Normally the first argument or `Pipe` is a value, that is reinterpreted as a `phi.dsl.Expression.Val`, therfore, the input `None` is discarded.
 
@@ -347,166 +330,12 @@ The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to c
 
 **Also see**
 
-* `phi.builder.Builder.Make`
+* `phi.builder.Builder.Seq`
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html)
 * [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)
 * [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)
         """
-        return self.Make(*sequence, **kwargs)(None)
-
-    def NPipe(self, *sequence, **kwargs):
-        """
-`NPipe` is shortcut for `Pipe(..., create_ref_context=False)`, its full name should be *NoCreateRefContextPipe* but its impractically long. `phi.builder.Builder.Make` (used by `Pipe`) internally uses `phi.dsl.Compile` to create a reference context unless this behaviour is disabled. These contexts encapsulate references (see `phi.dsl.Expression.Read`) and prevent them from leaking, which is good. There are times however when you consciously want a sub-Pipe expression to read or write references from the main Make or Pipe expression, for this you need to set `create_ref_context` to `False`.
-
-**Arguments**
-
-* Same arguments as `phi.builder.Builder.Pipe` but...
-* **create_ref_context** is hardcoded to `False`
-**Examples**
-If you compile a sub expression as a function for another expression e.g.
-
-    from phi import P
-
-    assert 1 == P.Pipe(
-        1, {'s'}, # write s == 1, outer context
-        lambda x: P.Pipe(
-            x,
-            P + 1, {'s'} # write s == 2, inner context
-        ),
-        's'  # read s == 1, outer context
-    )
-
-you find that references are not shared. However if you avoid the creation of a new reference context via a keyword arguments
-
-    from phi import P
-
-    assert 2 == P.Pipe(
-        1, {'s'},   #write s == 1, same context
-        lambda x: P.Pipe(
-            x,
-            P + 1, {'s'},   #write s == 2, same context
-            create_ref_context=False
-        ),
-        's'   # read s == 2, same context
-    )
-
-you can achieve what you want. Yet writting `create_ref_context=False` is a little cumbersome, so to make things nicer we just use a shortcut by appending an `N` at the beggining of the `NPipe` method
-
-    from phi import P
-    assert 2 == P.Pipe(
-        1, {'s'},   #write s == 1, same context
-        lambda x: P.NPipe(
-            x,
-            P + 1, {'s'}   #write s == 2, same context
-        ),
-        's'   # read s == 2, same context
-    )
-
-**Also see**
-
-* `phi.dsl.Expression.Pipe`
-* `phi.dsl.Expression.Make`
-* `phi.dsl.Compile`
-        """
-        kwargs["ref_context"] = False
-        return self.Pipe(*sequence, **kwargs)
-
-    def Make(self, *sequence, **kwargs):
-        """
-**Make**
-
-    Make(sequence*, refs={}, flatten=False, ref_context=True, _return_type=None)
-
-`Make` takes a sequence of expressions and composes them using `phi.dsl.Expression.Seq`. However, the main difference from just using `Seq` is that `Make` creates a `Reference Context` so that nested `phi.dsl.Expression.Read` and `phi.dsl.Expression.Write` operations can safely manage their references without them intefearing with possible nested calls. This might 
-
-**Arguments**
-
-* ***sequence**: all expressions inside of `sequence` will be composed together using `phi.dsl.Expression.Seq`.
-* `refs = {}`: dictionary of external/default values for references passed during compilation. By default its empty, it might be useful if you want to inject values and `phi.dsl.Expression.Read` without the need of an explicit `phi.dsl.Expression.Write` operation. You might also consider using `phi.builder.Builder.Val` instead of this.
-* `flatten = False` : if `flatten` is True and the argument being returned by the compiled function is a `list` it will flatten the list. This is useful if you have nested branches in the last computation.
-* `ref_context = True` : determines if a reference manager should be created on compilation.
-* `_return_type = None` : By default `Make` returns an object of the same class e.g. `Builder`, however you can pass in a custom class that inherits from `Builder` as the return contianer. This is useful if the custom builder has specialized methods.
-
-While `Pipe` is might be an nicer since it makes the initial value being piped explicit, it has the overhead of having to "compile" the expression into a function every time. If you have something like
-
-    from phi import P
-
-    xs = []
-
-    for i in xrange(10000000000):
-        x = P.Pipe(
-            i,
-            some_dsl_expression
-        )
-
-        xs.append(x)
-
-you are better of using `Make` to compile that DSL expression in advanced
-
-    from phi import P
-
-    xs = []
-    f = P.Make(some_dsl_expression)
-
-    for i in xrange(10000000000):
-        x = f(i)
-        xs.append(x)
-
-This reduces the overhead of parsing the expressions and creating the function.
-
-
-**Examples**
-
-    from phi import P
-
-    def add1(x): return x + 1
-    def mul3(x): return x * 3
-
-    f = P.Make(
-        add1,
-        mul3
-    )
-
-    assert f(1) == 6
-
-Here `f` is equivalent to
-
-def f(x):
-    x = add1(x)
-    x = mul3(x)
-    return x
-
-The previous example using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions
-
-    from phi import P
-
-    f = P.Make(
-        P + 1,
-        P * 3
-    )
-
-    assert f(1) == 6
-
-**Also see**
-
-* [dsl](https://cgarciae.github.io/phi/dsl.m.html)
-* [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)
-* [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)
-**
-        """
-
-        _return_type = kwargs.get('_return_type', None)
-        flatten = kwargs.get('flatten', False)
-        refs = kwargs.get('refs', {})
-        ref_context = kwargs.get('ref_context', True)
-
-        if flatten:
-            sequence = sequence + (lambda x: utils.flatten_list(x) if type(x) is list else x,)
-
-        sequence = E.Seq(*sequence)
-        f = Compile(sequence, refs, ref_context=ref_context)
-
-        return self.__then__(f, _return_type=_return_type)
+        return self.Seq(*sequence, **kwargs)(None)
 
     def ThenAt(self, n, f, *args, **kwargs):
         """
@@ -616,12 +445,13 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-        def _lambda(x):
-            x = self(x)
+
+        @utils.lift
+        def g(x):
             new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
             return f(*new_args, **kwargs)
 
-        return self.__unit__(_lambda, _return_type=_return_type)
+        return self.__then__(g, _return_type=_return_type)
 
     def Then0(self, f, *args, **kwargs):
         """
@@ -768,8 +598,13 @@ Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lamb
         """
         gs = [ _parse(code)._f for code in branches ]
 
-        def h(x):
-            return [ g(x) for g in gs ]
+        def h(x, state):
+            ys = []
+            for g in gs:
+                y, state = g(x, state)
+                ys.append(y)
+
+            return (ys, state)
 
         return self.__then__(h, **kwargs)
 
@@ -839,8 +674,8 @@ The previous example using `P.Pipe`
         """
         fs = [ _parse(elem)._f for elem in sequence ]
 
-        def g(x):
-            return functools.reduce(lambda x, f: f(x), fs, x)
+        def g(x, state):
+            return functools.reduce(lambda args, f: f(*args), fs, (x, state))
 
         return self.__then__(g, **kwargs)
 
@@ -925,10 +760,11 @@ The previous is equivalent to
         context_f = _parse(context_manager, else_input=True)._f
         body_f = E.Seq(*body)._f
 
-        def g(x):
-            with context_f(x) as scope:
+        def g(x, state):
+            context, state = context_f(x, state)
+            with context as scope:
                 with _WithContextManager(scope):
-                    return body_f(x)
+                    return body_f(x, state)
 
         return self.__then__(g, **kwargs)
 
@@ -955,7 +791,7 @@ This is equivalent to a sort of function like this
 where the input is totally ignored and a hypothetical `read` function is given the reference name and it should return its stored value (internally its not implemented like this).
 
 ** IMPORTANT **
-`Read` and `Write` only work property inside a `phi.dsl.Expression.Make` or `phi.dsl.Expression.Pipe` expression. This is done because `Ref`s need to be defined a specific context or else value might be leaked between different calls or even nested functions that might happen to be using Phi, therefore, Make and Pipe a given the task to defined this context.
+`Read` and `Write` only work property inside a `phi.dsl.Expression.Seq` or `phi.dsl.Expression.Pipe` expression. This is done because `Ref`s need to be defined a specific context or else value might be leaked between different calls or even nested functions that might happen to be using Phi, therefore, Seq and Pipe a given the task to defined this context.
 
 ### Example
 Lets see a common situation where you would use this
@@ -1068,49 +904,7 @@ is equivalent to
         """
         return _ObjectProxy(self)
 
-    @property
-    def Ref(self):
-        """
-Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).
-
-**Creating Refences**
-
-You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a `phi.dsl.Expression.Read` or `phi.dsl.Expression.Write` expression. Here is a contrived example
-
-    from phi import P, Ref
-
-    r = Ref('r')
-
-    assert [600, 3, 6] == P.Pipe(
-        2,
-        P + 1, {'a'},  # a = 2 + 1 = 3
-        P * 2, {'b'},  # b = 3 * 2 = 6
-        P * 100, {'c', r },  # c = r = 6 * 100 = 600
-        ['c', 'a', 'b']
-    )
-
-    assert r() == 600
-
-**Reading Refences from the Current Context**
-
-While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.
-
-    Read.x(None) <=> Ref.x
-
-As an example
-
-    from phi import P, Obj, Ref
-
-    assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
-        "a b c", Obj
-        .split(' ').Write.keys  # keys = ['a', 'b', 'c']
-        .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
-        lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
-        dict   # {'a': 97, 'b': 98, 'c': 99}
-    )
-
-        """
-        return _RefProxyInstance
+    Ref = Ref
 
 
     def Val(self, val, **kwargs):
@@ -1133,7 +927,7 @@ is equivalent to
 
 The previous expression as a whole is a constant function since it will return `2` no matter what input you give it.
         """
-        f = lambda z: val
+        f = utils.lift(lambda z: val)
 
         return self.__then__(f, **kwargs)
 
@@ -1270,10 +1064,10 @@ Here we called `Context` with no arguments to get the context back, however, sin
 * `phi.builder.Builder.Obj`
 * [dsl](https://cgarciae.github.io/phi/dsl.m.html)
         """
-        if _CompilationContextManager.WITH_GLOBAL_CONTEXT is utils.NO_VALUE:
+        if _WithContextManager.WITH_GLOBAL_CONTEXT is utils.NO_VALUE:
             raise Exception("Cannot use 'Context' outside of a 'With' block")
 
-        return _CompilationContextManager.WITH_GLOBAL_CONTEXT
+        return _WithContextManager.WITH_GLOBAL_CONTEXT
 
 E = Expression()
 
@@ -1281,7 +1075,6 @@ def _add_else(ast, next_else):
 
     if hasattr(ast, "__call__"):
         return next_else
-
 
     cond, then, Else = ast
 
@@ -1303,28 +1096,12 @@ def _compile_if(ast):
 ### FUNCTIONS
 #######################
 
-def Compile(code, refs, ref_context=True):
-    """
-Publically exposed as [Builder.Make](https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder.Make).
-    """
-    f = _parse(code)._f
-
-    refs = { name: value if type(value) is Ref else Ref(name, value) for name, value in refs.items() }
-
-    def g(x):
-        with _CompilationContextManager(refs, utils.NO_VALUE):
-            return f(x)
-
-    return g if ref_context else f
-
 
 def _parse(code, else_input=False):
     #if type(code) is tuple:
     if isinstance(code, Expression):
         return code
     elif hasattr(code, '__call__') or isclass(code):
-        return Expression(code)
-    elif type(code) is Ref:
-        return E.Read(code)
+        return Expression(utils.lift(code))
     else:
         return E.Val(code)

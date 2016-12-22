@@ -248,7 +248,7 @@ class TestDSL(object):
         #############################
 
 
-        f = P.Make(
+        f = P.Seq(
             If( P > 2,
                 Write('s')
             ),
@@ -265,7 +265,7 @@ class TestDSL(object):
 
         assert 1 == P.Pipe(
             1, Write('s'),
-            P.Make(
+            P.Seq(
                 P + 1, Write('s')
             ),
             Read('s')
@@ -281,7 +281,7 @@ class TestDSL(object):
 
     def test_if(self):
 
-        f = P.Make(
+        f = P.Seq(
             If( P > 0,
                 P
             ).Else(
