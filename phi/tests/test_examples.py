@@ -319,24 +319,10 @@ class TestExamples(object):
 
         from phi import P
 
-        assert 1 == P.Pipe(
-            1, Write('s'), # write s == 1, outer context
-            P.Seq(
-                P + 1, Write('s') # write s == 2, inner context
-            ),
-            Read('s')  # read s == 1, outer context
-        )
-
-        #############################
-        #############################
-
-        from phi import P
-
         assert 2 == P.Pipe(
             1, Write('s'),   #write s == 1, same context
             P.Seq(
                 P + 1, Write('s'),   #write s == 2, same context
-                ref_context=False
             ),
             Read('s')   # read s == 2, same context
         )
@@ -373,35 +359,6 @@ class TestExamples(object):
                 P + 1, Write('s') # write s == 2, inner context
             ),
             Read('s')  # read s == 1, outer context
-        )
-
-        #############################
-        #############################
-
-        from phi import P
-
-        assert 2 == P.Pipe(
-            1, Write('s'),   #write s == 1, same context
-            lambda x: P.Pipe(
-                x,
-                P + 1, Write('s'),   #write s == 2, same context
-                ref_context=False
-            ),
-            Read('s')   # read s == 2, same context
-        )
-
-        #############################
-        #############################
-
-        from phi import P
-
-        assert 2 == P.Pipe(
-            1, Write('s'),   #write s == 1, same context
-            lambda x: P.NPipe(
-                x,
-                P + 1, Write('s'),   #write s == 2, same context
-            ),
-            Read('s')   # read s == 2, same context
         )
 
         #############################
@@ -453,7 +410,7 @@ class TestExamples(object):
 
         assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
             "a b c", Obj
-            .split(' ').Write['keys']  # keys = ['a', 'b', 'c']
+            .split(' ').Write('keys')  # keys = ['a', 'b', 'c']
             .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
             lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
             dict   # {'a': 97, 'b': 98, 'c': 99}
@@ -477,3 +434,13 @@ class TestExamples(object):
     def test_pipe_branch(self):
 
         assert [11, 12] == 10 >> Branch( P + 1, P + 2)
+
+
+    def test_state(self):
+
+        f = Read("a") + 5 >> Write("a")
+        assert f(None, True, a=0) == (5, {"a": 5})
+
+
+        f = Read.a + 5 >> Write.a
+        assert f(None, True, a=0) == (5, {"a": 5})

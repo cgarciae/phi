@@ -1305,10 +1305,10 @@ table {
 </pre></div>
 
 
-<p>Now, what you have to understand that everything you've done with these expression is to create and apply a single function. Using <code>Make</code> we can get the standalone function and then use it to get the same values as before</p>
+<p>Now, what you have to understand that everything you've done with these expression is to create and apply a single function. Using <code>Seq</code> we can get the standalone function and then use it to get the same values as before</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span>
     <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
@@ -1461,26 +1461,25 @@ table {
       <p class="name"><a href="builder.m.html">phi.builder</a></p>
       
   
-    <div class="desc"><p>The <a href="builder.m.html#phi.builder.Builder"><code>phi.builder.Builder</code></a> class exposes most of the API, you will normally use the <code>phi.P</code> object instance (or any equivalent object provided by a Phi-based library) to do most of the work. This module 4 main goals:</p>
-<ol>
-<li>Exposing a public API for the <a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>. ...</li>
-</ol></div>
+    <div class="desc"><p>The <a href="builder.m.html#phi.builder.Builder"><code>phi.builder.Builder</code></a> extends the <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Expression">Expression</a> class and adds methods that enable you to register external functions as methods. You should NOT register functions on the <code>Builder</code> or [PythonBuilder](https://cgarciae.github.io/phi/pyth...</p></div>
 
       </div>
       <div class="item">
       <p class="name"><a href="dsl.m.html">phi.dsl</a></p>
       
   
-    <div class="desc"><p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Make</code> or applied to a value using <code>P.Pipe</code>.</p>
-<p>Phi offers the following co...</p></div>
+    <div class="desc"><p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Seq</code> or applied to a value using <code>P.Pipe</code>.</p>
+<p>Phi offers the following con...</p></div>
 
       </div>
       <div class="item">
       <p class="name"><a href="lambdas.m.html">phi.lambdas</a></p>
       
   
-    <div class="desc"><h1>Lambdas</h1>
-<p>Phi's <code>Lambda</code> class allows you to create quick lambdas that are much more readable and compact than Python's <code>lambda</code> keyword. You probably will not use an object of type <code>Lambda</code> directly but rather one of type <code>Builder</code> or type derived from <code>Builder</code>. These types have the following hier...</p></div>
+    <div class="desc"><p>Phi's <code>Lambda</code> class allows you to create quick lambdas that are much more readable and compact than Python's <code>lambda</code> keyword. The <code>P</code> object</p>
+<p><strong> Operations </strong>
+<code>Lambda</code> overrides all operators plus the <code>__getitem__</code> and <code>__call__</code> special methods. Using operator overloading you can do things like</p>
+<p>...</p></div>
 
       </div>
       <div class="item">

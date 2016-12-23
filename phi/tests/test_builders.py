@@ -420,7 +420,7 @@ class TestBuilder(object):
             1,
             P + 1, Write.s,
             P * 100,
-            Read['s'] - 1
+            Read('s') - 1
         )
 
         assert 1 == P.Pipe(
@@ -439,7 +439,7 @@ class TestBuilder(object):
 
         assert 1 == P.Pipe(
             1,
-            P + 1, Write['s'],
+            P + 1, Write('s'),
             P * 100,
             Read.s - 1
         )

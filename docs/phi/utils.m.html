@@ -1054,7 +1054,9 @@ table {
     <li class="mono"><a href="#phi.utils.get_instance_methods">get_instance_methods</a></li>
     <li class="mono"><a href="#phi.utils.get_method_sig">get_method_sig</a></li>
     <li class="mono"><a href="#phi.utils.identity">identity</a></li>
+    <li class="mono"><a href="#phi.utils.lift">lift</a></li>
     <li class="mono"><a href="#phi.utils.merge">merge</a></li>
+    <li class="mono"><a href="#phi.utils.state_identity">state_identity</a></li>
   </ul>
 
     </li>
@@ -1098,6 +1100,9 @@ table {
 <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span>
 
+<span class="k">def</span> <span class="nf">state_identity</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span>
+
 <span class="k">def</span> <span class="nf">compose2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
@@ -1106,6 +1111,9 @@ table {
 
 <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">dict_a</span><span class="p">,</span> <span class="n">dict_b</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">dict_a</span><span class="p">,</span> <span class="o">**</span><span class="n">dict_b</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">lift</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">state</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_NoValue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -1398,6 +1406,27 @@ eg: "my_method(first_argArg, second_arg=42, third_arg='something')"</p></div>
   
       
   <div class="item">
+    <div class="name def" id="phi.utils.lift">
+    <p>def <span class="ident">lift</span>(</p><p>f)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.lift', this);">Show source &equiv;</a></p>
+  <div id="source-phi.utils.lift" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">lift</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">state</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="phi.utils.merge">
     <p>def <span class="ident">merge</span>(</p><p>dict_a, dict_b)</p>
     </div>
@@ -1410,6 +1439,27 @@ eg: "my_method(first_argArg, second_arg=42, third_arg='something')"</p></div>
   <div id="source-phi.utils.merge" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">dict_a</span><span class="p">,</span> <span class="n">dict_b</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">dict_a</span><span class="p">,</span> <span class="o">**</span><span class="n">dict_b</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.utils.state_identity">
+    <p>def <span class="ident">state_identity</span>(</p><p>x, state)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.utils.state_identity', this);">Show source &equiv;</a></p>
+  <div id="source-phi.utils.state_identity" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">state_identity</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span>
 </pre></div>
 
   </div>

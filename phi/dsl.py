@@ -26,7 +26,7 @@ from . import utils
 from abc import ABCMeta, abstractmethod
 from inspect import isclass
 import functools
-from .lambdas import Lambda
+from .lambdas import Lambda, Ref, _RefProxyInstance, _StateContextManager
 
 
 ###############################
@@ -37,9 +37,6 @@ class _ReadProxy(object):
 
     def __init__(self, __builder__):
         self.__builder__ = __builder__
-
-    def __getitem__(self, name):
-        return self.__do__(name)
 
     def __getattr__(self, name):
         return self.__do__(name)
@@ -60,9 +57,6 @@ class _WriteProxy(object):
     def __init__(self, __builder__):
         self.__builder__ = __builder__
 
-    def __getitem__(self, ref):
-        return self.__do__([ref])
-
     def __getattr__ (self, ref):
         return self.__do__([ref])
 
@@ -73,11 +67,15 @@ class _WriteProxy(object):
 
         def g(x, state):
             update = {ref: x for ref in refs}
-            next_state = utils.merge(state, update)
+            state = utils.merge(state, update)
 
-            return x, next_state
+            #side effect for convenience
+            _StateContextManager.REFS.update(state)
+
+            return x, state
 
         return self.__builder__.__then__(g)
+
 
 class _ObjectProxy(object):
     """docstring for Underscore."""
@@ -102,9 +100,14 @@ class _RecordProxy(object):
     def __call__(self, **branches):
         gs = { key : _parse(value)._f for key, value in branches.items() }
 
-        @utils.lift
-        def h(x):
-            return _RecordObject(**{key: g(x) for key, g in gs.items() })
+        def h(x, state):
+            ys = {}
+
+            for key, g in gs.items():
+                y, state = g(x, state)
+                ys[key] = y
+
+            return _RecordObject(**ys), state
 
         return self.__builder__.__then__(h)
 
@@ -117,74 +120,7 @@ class _RecordProxy(object):
         return self.__builder__.__then__(utils.lift(f))
 
 
-class Ref(object):
-    """
-Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).
 
-**Creating Refences**
-
-You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a `phi.dsl.Expression.Read` or `phi.dsl.Expression.Write` expression. Here is a contrived example
-
-from phi import P, Ref
-
-r = Ref('r')
-
-assert [600, 3, 6] == P.Pipe(
-    2,
-    P + 1, {'a'},  # a = 2 + 1 = 3
-    P * 2, {'b'},  # b = 3 * 2 = 6
-    P * 100, {'c', r },  # c = r = 6 * 100 = 600
-    ['c', 'a', 'b']
-)
-
-assert r() == 600
-
-**Reading Refences from the Current Context**
-
-While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.
-
-Read.x(None) <=> Ref.x
-
-As an example
-
-from phi import P, Obj, Ref
-
-assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
-    "a b c", Obj
-    .split(' ').Write.keys  # keys = ['a', 'b', 'c']
-    .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
-    lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
-    dict   # {'a': 97, 'b': 98, 'c': 99}
-)
-
-    """
-    def __init__(self, name, value=utils.NO_VALUE):
-        super(Ref, self).__init__()
-        self.name = name
-        """
-The reference name. Can be though a key in a dictionary.
-        """
-        self.value = value
-        """
-The value of the reference. Can be though a value in a dictionary.
-        """
-
-    def __call__(self, *optional):
-        """
-Returns the value of the reference. Any number of arguments can be passed, they will all be ignored.
-        """
-        if self.value is utils.NO_VALUE:
-            raise Exception("Trying to read Ref('{0}') before assignment".format(self.name))
-
-        return self.value
-
-    def write(self, x):
-        """
-Sets the value of the reference equal to the input argument `x`. Its also an identity function since it returns `x`.
-        """
-        self.value = x
-
-        return x
 
 class _RecordObject(dict):
     """docstring for DictObject."""
@@ -335,7 +271,8 @@ The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to c
 * [Compile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)
 * [lambdas](https://cgarciae.github.io/phi/lambdas.m.html)
         """
-        return self.Seq(*sequence, **kwargs)(None)
+        state = kwargs.pop("refs", {})
+        return self.Seq(*sequence, **kwargs)(None, **state)
 
     def ThenAt(self, n, f, *args, **kwargs):
         """
@@ -446,10 +383,13 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
             del kwargs['_return_type']
 
 
-        @utils.lift
-        def g(x):
-            new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
-            return f(*new_args, **kwargs)
+        if n == 1 and isinstance(f, Lambda):
+            g = f._f
+        else:
+            @utils.lift
+            def g(x):
+                new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
+                return f(*new_args, **kwargs)
 
         return self.__then__(g, _return_type=_return_type)
 
@@ -904,7 +844,49 @@ is equivalent to
         """
         return _ObjectProxy(self)
 
-    Ref = Ref
+    @property
+    def Ref(self):
+        """
+Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).
+
+**Creating Refences**
+
+You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a [Read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) or [Write](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Write) expression. Here is a contrived example
+
+    from phi import P
+
+    r = P.Ref('r')
+
+    assert [600, 3, 6] == P.Pipe(
+        2,
+        P + 1, {'a'},  # a = 2 + 1 = 3
+        P * 2, {'b'},  # b = 3 * 2 = 6
+        P * 100, {'c', r },  # c = r = 6 * 100 = 600
+        ['c', 'a', 'b']
+    )
+
+    assert r() == 600
+
+**Reading Refences from the Current Context**
+
+While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.
+
+    Read.x(None) <=> Ref.x
+
+As an example
+
+    from phi import P, Obj, Ref
+
+    assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
+        "a b c", Obj
+        .split(' ').Write.keys  # keys = ['a', 'b', 'c']
+        .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
+        lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
+        dict   # {'a': 97, 'b': 98, 'c': 99}
+    )
+
+        """
+        return _RefProxyInstance
 
 
     def Val(self, val, **kwargs):
@@ -969,7 +951,7 @@ This class also includes the `Elif` and `Else` methods which let you write branc
         """
         cond_f = _parse(condition)._f
         then_f = E.Seq(*then)._f
-        else_f = utils.identity
+        else_f = utils.state_identity
 
         ast = (cond_f, then_f, else_f)
 
@@ -986,7 +968,7 @@ This class also includes the `Elif` and `Else` methods which let you write branc
         root = self._root
         ast = self._ast
 
-        next_else = E.Seq(*Else)
+        next_else = E.Seq(*Else)._f
         ast = _add_else(ast, next_else)
 
         g = _compile_if(ast)
@@ -1001,7 +983,7 @@ This class also includes the `Elif` and `Else` methods which let you write branc
 
         cond_f = _parse(condition)._f
         then_f = E.Seq(*then)._f
-        else_f = utils.identity
+        else_f = utils.state_identity
 
         next_else = (cond_f, then_f, else_f)
         ast = _add_else(ast, next_else)
@@ -1090,7 +1072,12 @@ def _compile_if(ast):
 
     Else = _compile_if(Else)
 
-    return lambda x: then(x) if cond(x) else Else(x)
+    def g(x, state):
+        y_cond, state = cond(x, state)
+
+        return then(x, state) if y_cond else Else(x, state)
+
+    return g
 
 #######################
 ### FUNCTIONS
