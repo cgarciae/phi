@@ -198,16 +198,10 @@ from . import utils
 import operator
 
 def _fmap(opt):
-    def method(self, b):
-
-        other = (lambda z: b) if not hasattr(b, '__call__') else b
-
-        if not isinstance(other, Lambda):
-            other = utils.lift(other)
-            other = self.__class__(other)
+    def method(self, other):
 
         f = self._f
-        g = other._f
+        g = _parse(other)._f
 
         def h(x, state):
             y1, state1 = f(x, state)
@@ -294,29 +288,6 @@ class Lambda(object):
     def __getitem__(self, key):
         f = utils.lift(lambda x: x[key])
         return self.__then__(f)
-
-
-    def __rrshift__(self, prev):
-
-        if hasattr(prev, '__call__'):
-            if not isinstance(prev, Lambda):
-                prev = self.__class__(utils.lift(prev))
-
-            return prev.__then__(self._f)
-        else: #apply
-            return self(prev)
-
-    def __rshift__(self, other):
-        if hasattr(other, '__call__'):
-            if not isinstance(other, Lambda):
-                other = self.__class__(utils.lift(other))
-
-            return self.__then__(other._f)
-        else: #apply
-            return self(other)
-
-    __rlshift__ = __rshift__
-    __lshift__ = __rrshift__
 
 
 

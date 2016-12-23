@@ -313,7 +313,7 @@ class TestBuilder(object):
     def test_reference(self):
         add_ref = P.Ref('add_ref')
 
-        assert 8 == 3 >> P.Seq(P.add(2), add_ref.write, P.add(3))
+        assert 8 == P.Pipe(3 >> P.add(2) >> add_ref.write >> P.add(3))
         assert 5 == add_ref()
 
     def test_ref_props(self):

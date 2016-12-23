@@ -26,12 +26,158 @@ from . import utils
 from abc import ABCMeta, abstractmethod
 from inspect import isclass
 import functools
-from .lambdas import Lambda, Ref, _RefProxyInstance, _StateContextManager
+import operator
 
+###############################
+# Lambda Helpers
+###############################
+
+def _fmap(opt):
+    def method(self, other):
+
+        f = self._f
+        g = _parse(other)._f
+
+        def h(x, state):
+            y1, state1 = f(x, state)
+            y2, state2 = g(x, state)
+
+            y_out = opt(y1, y2)
+            state_out = utils.merge(state1, state2)
+
+            return y_out, state_out
+
+
+        return self.__unit__(h)
+
+    return method
+
+def _fmap_flip(opt):
+    def method(self, other):
+
+        f = self._f
+        g = _parse(other)._f
+
+        def h(x, state):
+            y2, state = g(x, state)
+            y1, state = f(x, state)
+
+            y_out = opt(y2, y1)
+
+            return y_out, state
+
+
+        return self.__unit__(h)
+
+    return method
+
+def _unary_fmap(opt):
+    def method(self):
+        return self.__then__(utils.lift(opt))
+
+    return method
 
 ###############################
 # Helpers
 ###############################
+class _RefProxy(object):
+    """docstring for _ReadProxy."""
+
+    def __getattr__(self, name):
+        return _StateContextManager.REFS[name]
+
+    def __getitem__(self, name):
+        return _StateContextManager.REFS[name]
+
+    def __call__(self, *args, **kwargs):
+        return Ref(*args, **kwargs)
+
+_RefProxyInstance = _RefProxy()
+
+class _StateContextManager(object):
+
+    REFS = None
+
+    def __init__(self, next_refs):
+        self.previous_refs = _StateContextManager.REFS
+        self.next_refs = next_refs
+
+    def __enter__(self):
+        _StateContextManager.REFS = self.next_refs
+
+    def __exit__(self, *args):
+        _StateContextManager.REFS = self.previous_refs
+
+
+class Ref(object):
+    """
+Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).
+
+**Creating Refences**
+
+You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a `phi.dsl.Expression.Read` or `phi.dsl.Expression.Write` expression. Here is a contrived example
+
+from phi import P, Ref
+
+r = Ref('r')
+
+assert [600, 3, 6] == P.Pipe(
+    2,
+    P + 1, {'a'},  # a = 2 + 1 = 3
+    P * 2, {'b'},  # b = 3 * 2 = 6
+    P * 100, {'c', r },  # c = r = 6 * 100 = 600
+    ['c', 'a', 'b']
+)
+
+assert r() == 600
+
+**Reading Refences from the Current Context**
+
+While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.
+
+Read.x(None) <=> Ref.x
+
+As an example
+
+from phi import P, Obj, Ref
+
+assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
+    "a b c", Obj
+    .split(' ').Write.keys  # keys = ['a', 'b', 'c']
+    .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
+    lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
+    dict   # {'a': 97, 'b': 98, 'c': 99}
+)
+
+    """
+    def __init__(self, name, value=utils.NO_VALUE):
+        super(Ref, self).__init__()
+        self.name = name
+        """
+The reference name. Can be though a key in a dictionary.
+        """
+        self.value = value
+        """
+The value of the reference. Can be though a value in a dictionary.
+        """
+
+    def __call__(self, *optional):
+        """
+Returns the value of the reference. Any number of arguments can be passed, they will all be ignored.
+        """
+        if self.value is utils.NO_VALUE:
+            raise Exception("Trying to read Ref('{0}') before assignment".format(self.name))
+
+        return self.value
+
+    def write(self, x):
+        """
+Sets the value of the reference equal to the input argument `x`. Its also an identity function since it returns `x`.
+        """
+        self.value = x
+
+        return x
+
 class _ReadProxy(object):
     """docstring for _ReadProxy."""
 
@@ -149,7 +295,7 @@ class _WithContextManager(object):
 
 
 
-class Expression(Lambda):
+class Expression(object):
     """
 All elements of this language are callables (implement `__call__`) of arity 1.
 
@@ -163,6 +309,39 @@ and piping through a function is just the same a applying the function
 
     Pipe(x, f) == f(x)
     """
+
+    def __init__(self, f=lambda x, state: (x, state)):
+        self._f = f
+
+    def __unit__(self, f, _return_type=None):
+        "Monadic unit, also known as `return`"
+        if _return_type:
+            return _return_type(f)
+        else:
+            return self.__class__(f)
+
+    def __then__(self, other, **kwargs):
+        f = self._f
+        g = other
+
+        h = lambda x, state: g(*f(x, state))
+
+        return self.__unit__(h, **kwargs)
+
+    ## Override operators
+    def __call__(self, __x__, *__return_state__, **state):
+        x = __x__
+        return_state = __return_state__
+
+        if len(return_state) == 1 and type(return_state[0]) is not bool:
+            raise Exception("Invalid return state condition, got {return_state}".format(return_state=return_state))
+
+        with _StateContextManager(state):
+            y, next_state = self._f(x, state)
+
+        return (y, next_state) if len(return_state) >= 1 and return_state[0] else y
+
+
 
     def Pipe(self, *sequence, **kwargs):
         """
@@ -329,7 +508,7 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
             del kwargs['_return_type']
 
 
-        if n == 1 and isinstance(f, Lambda):
+        if n == 1 and isinstance(f, Expression):
             g = f._f
         else:
             @utils.lift
@@ -471,7 +650,7 @@ works for a couple of reasons
 
 1. The previous expression returns a list
 2. In general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`
-3. The class `Lambda` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression
+3. The class `Expression` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression
 
     (P * 2) / (P + 1)
 
@@ -494,6 +673,11 @@ Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lamb
 
         return self.__then__(h, **kwargs)
 
+    def Tuple(self, *expressions, **kwargs):
+        return E.Branch(*expressions) >> tuple
+
+    def Set(self, *expressions, **kwargs):
+        return E.Branch(*expressions) >> set
 
     def Seq(self, *sequence, **kwargs):
         """
@@ -643,7 +827,7 @@ The previous is equivalent to
         text = f.read()
 
         """
-        context_f = _parse(context_manager, else_input=True)._f
+        context_f = _parse(context_manager)._f
         body_f = E.Seq(*body)._f
 
         def g(x, state):
@@ -956,7 +1140,7 @@ Returns the context object of the current `dsl.With` statemente.
 
 * ***args**: By design `Context` accepts any number of arguments and completely ignores them.
 
-This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:
+This is a classmethod and it doesnt return a `Builder`/`Expression` by design so it can be called directly:
 
     from phi import P, Context, Obj
 
@@ -997,6 +1181,108 @@ Here we called `Context` with no arguments to get the context back, however, sin
 
         return _WithContextManager.WITH_GLOBAL_CONTEXT
 
+
+    ###############
+    ## Operators
+    ###############
+
+    def __rshift__(self, other):
+        f = _parse(other)._f
+        return self.__then__(f)
+
+    def __rrshift__(self, prev):
+        prev = _parse(prev)
+        return prev.__then__(self._f)
+
+    __rlshift__ = __rshift__
+    __lshift__ = __rrshift__
+
+
+    ## The Rest
+
+    def __unit__(self, f, _return_type=None):
+        "Monadic unit, also known as `return`"
+        if _return_type:
+            return _return_type(f)
+        else:
+            return self.__class__(f)
+
+    def __then__(self, other, **kwargs):
+        f = self._f
+        g = other
+
+        h = lambda x, state: g(*f(x, state))
+
+        return self.__unit__(h, **kwargs)
+
+    ## Override operators
+    def __call__(self, __x__, *__return_state__, **state):
+        x = __x__
+        return_state = __return_state__
+
+        if len(return_state) == 1 and type(return_state[0]) is not bool:
+            raise Exception("Invalid return state condition, got {return_state}".format(return_state=return_state))
+
+        with _StateContextManager(state):
+            y, next_state = self._f(x, state)
+
+        return (y, next_state) if len(return_state) >= 1 and return_state[0] else y
+
+
+
+
+    def __getitem__(self, key):
+        f = utils.lift(lambda x: x[key])
+        return self.__then__(f)
+
+
+
+    __add__ = _fmap(operator.add)
+    __mul__ = _fmap(operator.mul)
+    __sub__ = _fmap(operator.sub)
+    __mod__ = _fmap(operator.mod)
+    __pow__ = _fmap(operator.pow)
+
+    __and__ = _fmap(operator.and_)
+    __or__ = _fmap(operator.or_)
+    __xor__ = _fmap(operator.xor)
+
+    __div__ = _fmap(operator.truediv)
+    __divmod__ = _fmap(divmod)
+    __floordiv__ = _fmap(operator.floordiv)
+    __truediv__ = _fmap(operator.truediv)
+
+    __contains__ = _fmap(operator.contains)
+
+    __lt__ = _fmap(operator.lt)
+    __le__ = _fmap(operator.le)
+    __gt__ = _fmap(operator.gt)
+    __ge__ = _fmap(operator.ge)
+    __eq__ = _fmap(operator.eq)
+    __ne__ = _fmap(operator.ne)
+
+    __neg__ = _unary_fmap(operator.neg)
+    __pos__ = _unary_fmap(operator.pos)
+    __invert__ = _unary_fmap(operator.invert)
+
+    __radd__ = _fmap_flip(operator.add)
+    __rmul__ = _fmap_flip(operator.mul)
+    __rsub__ = _fmap_flip(operator.sub)
+    __rmod__ = _fmap_flip(operator.mod)
+    __rpow__ = _fmap_flip(operator.pow)
+    __rdiv__ = _fmap_flip(operator.truediv)
+    __rdivmod__ = _fmap_flip(divmod)
+    __rtruediv__ = _fmap_flip(operator.truediv)
+    __rfloordiv__ = _fmap_flip(operator.floordiv)
+
+    __rand__ = _fmap_flip(operator.and_)
+    __ror__ = _fmap_flip(operator.or_)
+    __rxor__ = _fmap_flip(operator.xor)
+
+    ###############
+    ## End
+    ###############
+
 E = Expression()
 
 def _add_else(ast, next_else):
@@ -1030,7 +1316,7 @@ def _compile_if(ast):
 #######################
 
 
-def _parse(code, else_input=False):
+def _parse(code):
     #if type(code) is tuple:
     if isinstance(code, Expression):
         return code
