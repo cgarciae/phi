@@ -260,3 +260,30 @@ class TestDSL(object):
 
         assert f(5) == 5
         assert f(-3) == 0
+
+    def test_right_hand(self):
+
+        f = Seq(
+            P + 1,
+            [ P, 2, 3 ]
+        )
+        assert f(0) == [ 1, 2, 3 ]
+
+        f = Seq(
+            P + 1,
+            ( P, 2, 3 )
+        )
+        assert f(0) == ( 1, 2, 3 )
+
+        f = Seq(
+            P + 1,
+            { P, 2, 3 }
+        )
+        assert f(0) == { 1, 2, 3 }
+
+
+        f = Seq(
+            P + 1,
+            {"a": P, "b": 2, "c": 3 }
+        )
+        assert f(0) == {"a": 1, "b": 2, "c": 3 }
