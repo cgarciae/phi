@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>phi.tests API documentation</title>
+    <title>phi.tests.test_state API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1038,18 +1038,20 @@ table {
     <ul id="index">
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="test_builders.m.html">phi.tests.test_builders</a></li>
-        <li class="mono"><a href="test_dsl.m.html">phi.tests.test_dsl</a></li>
-        <li class="mono"><a href="test_dummy.m.html">phi.tests.test_dummy</a></li>
-        <li class="mono"><a href="test_examples.m.html">phi.tests.test_examples</a></li>
-        <li class="mono"><a href="test_lambdas.m.html">phi.tests.test_lambdas</a></li>
-        <li class="mono"><a href="test_nodsl.m.html">phi.tests.test_nodsl</a></li>
-        <li class="mono"><a href="test_state.m.html">phi.tests.test_state</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.tests.test_state.TestState">TestState</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.tests.test_state.TestState.test_seq">test_seq</a></li>
+  </ul>
+
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1061,59 +1063,84 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">phi.tests</span> module</h1>
+  <h1 class="title"><span class="name">phi.tests.test_state</span> module</h1>
   
   
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_state', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_state" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">class</span> <span class="nc">TestState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">test_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+  </div>
 
   </header>
 
   <section id="section-items">
 
 
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p class="name"><a href="test_builders.m.html">phi.tests.test_builders</a></p>
+      <p id="phi.tests.test_state.TestState" class="name">class <span class="ident">TestState</span></p>
       
   
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_state.TestState', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_state.TestState" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="test_dsl.m.html">phi.tests.test_dsl</a></p>
-      
+    <span class="k">def</span> <span class="nf">test_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.tests.test_state.TestState">TestState</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_state.TestState.test_seq">
+    <p>def <span class="ident">test_seq</span>(</p><p>self)</p>
+    </div>
+    
+
+    
   
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_state.TestState.test_seq', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_state.TestState.test_seq" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="test_dummy.m.html">phi.tests.test_dummy</a></p>
-      
+  </div>
+</div>
+
+  </div>
   
-
       </div>
-      <div class="item">
-      <p class="name"><a href="test_examples.m.html">phi.tests.test_examples</a></p>
-      
-  
-
       </div>
-      <div class="item">
-      <p class="name"><a href="test_lambdas.m.html">phi.tests.test_lambdas</a></p>
-      
-  
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="test_nodsl.m.html">phi.tests.test_nodsl</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="test_state.m.html">phi.tests.test_state</a></p>
-      
-  
-
-      </div>
   </section>
 
     </article>
