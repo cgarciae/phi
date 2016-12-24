@@ -342,6 +342,9 @@ and piping through a function is just the same a applying the function
         return (y, next_state) if len(return_state) >= 1 and return_state[0] else y
 
 
+    def __hash__(self):
+        return hash(self._f)
+
 
     def Pipe(self, *sequence, **kwargs):
         """

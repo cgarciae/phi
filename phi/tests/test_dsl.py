@@ -26,7 +26,7 @@ class TestDSL(object):
         f = Seq(
             P + 1, Write.a,
             P * 2, Write.b,
-            P * 100, Write('c', r ),
+            P * 100, Write('c'),
             Branch(Read.c, Read.a, Read.b)
         )
 
@@ -288,4 +288,4 @@ class TestDSL(object):
         )
         assert f(0) == {"a": 1, "b": 2, "c": 3 }
 
-        
+

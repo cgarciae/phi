@@ -22,7 +22,7 @@ services:
     volumes:
       - ./:/phi
     working_dir: /phi
-    command: py.test -v -s
+    command: py.test -v -s -x --pdb
 
   test35:
     build:
@@ -31,4 +31,4 @@ services:
     volumes:
       - ./:/phi
     working_dir: /phi
-    command: py.test -v -s
+    command: py.test -v -s -x --pdb
