@@ -327,12 +327,12 @@ Check out the [complete documentation](https://cgarciae.github.io/phi/).
 The global `phi.P` object exposes most of the API and preferably should be imported directly. The most simple thing the DSL does is function composition:
 
 ```python
-from phi import P
+from phi.api import *
 
 def add1(x): return x + 1
 def mul3(x): return x * 3
 
-x = P.Pipe(
+x = Pipe(
     1.0,     #input 1
     add1,  #1 + 1 == 2
     mul3   #2 * 3 == 6
@@ -344,9 +344,9 @@ assert x == 6
 Use phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions
 
 ```python
-from phi import P
+from phi.api import *
 
-x = P.Pipe(
+x = Pipe(
     1.0,      #input 1
     P + 1,  #1 + 1 == 2
     P * 3   #2 * 3 == 6
@@ -358,9 +358,9 @@ assert x == 6
 Create a branched computation instead
 
 ```python
-from phi import P
+from phi.api import *
 
-[x, y] = P.Pipe(
+[x, y] = Pipe(
     1.0,  #input 1
     [
         P + 1  #1 + 1 == 2
@@ -376,9 +376,9 @@ assert y == 3
 Compose it with a function equivalent to `f(x) = (x + 3) / (x + 1)`
 
 ```python
-from phi import P
+from phi.api import *
 
-[x, y] = P.Pipe(
+[x, y] = Pipe(
     1.0,  #input 1
     (P + 3) / (P + 1),  #(1 + 3) / (1 + 1) == 4 / 2 == 2
     [
@@ -395,9 +395,9 @@ assert y == 6
 Give names to the branches
 
 ```python
-from phi import P
+from phi.api import *
 
-result = P.Pipe(
+result = Pipe(
     1.0,  #input 1
     (P + 3) / (P + 1),  #(1 + 3) / (1 + 1) == 4 / 2 == 2
     dict(
@@ -414,9 +414,9 @@ assert result.y == 6
 Divide the `x` by the `y`.
 
 ```python
-from phi import P, Rec
+from phi.api import *
 
-result = P.Pipe(
+result = Pipe(
     1.0,  #input 1
     (P + 3) / (P + 1),  #(1 + 3) / (1 + 1) == 4 / 2 == 2
     dict(
@@ -433,11 +433,12 @@ assert result == 0.5
 Save the value from the `(P + 3) / (P + 1)` computation as `s` and load it at the end in a branch
 
 ```python
-from phi import P, Rec
+from phi.api import *
 
-[result, s] = P.Pipe(
+[result, s] = Pipe(
     1.0,  #input 1
-    (P + 3) / (P + 1), {{'s'}},  #4 / 2 == 2, saved as 's'
+    (P + 3) / (P + 1), #4 / 2 == 2
+    Write('s'),  #s = 2
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -446,7 +447,7 @@ from phi import P, Rec
     [
         Rec.x / Rec.y  #3 / 6 == 0.5
     ,
-        's'  #load 's' == 2
+        Read('s')  #s == 2
     ]
 )
 
@@ -457,11 +458,12 @@ assert s == 2
 Add 3 to the loaded `s` for fun and profit
 
 ```python
-from phi import P, Rec, Read
+from phi.api import *
 
-[result, s] = P.Pipe(
+[result, s] = Pipe(
     1.0,  #input 1
-    (P + 3) / (P + 1), {{'s'}},  #4 / 2 == 2, saved as 's'
+    (P + 3) / (P + 1), #4 / 2 == 2
+    Write('s'),  #s = 2
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -470,7 +472,7 @@ from phi import P, Rec, Read
     [
         Rec.x / Rec.y  #3 / 6 == 0.5
     ,
-        Read.s + 3  # 2 + 3 == 5
+        Read('s') + 3  # 2 + 3 == 5
     ]
 )
 
@@ -478,14 +480,15 @@ assert result == 0.5
 assert s == 5
 ```
 
-Use the `Write` object instead of `{{...}}` just because
+Use the `Read` and `Write` field access lambda style just because
 
 ```python
-from phi import P, Rec, Read, Write
+from phi.api import *
 
-[result, s] = P.Pipe(
+[result, s] = Pipe(
     1.0,  #input 1
-    (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
+    (P + 3) / (P + 1), #4 / 2 == 2
+    Write.s,  #s = 2
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -505,9 +508,9 @@ assert s == 5
 Add an input `Val` of 9 on a branch and add to it 1 just for the sake of it
 
 ```python
-from phi import P, Rec, Read, Write, Val
+from phi.api import *
 
-[result, s, val] = P.Pipe(
+[result, s, val] = Pipe(
     1.0,  #input 1
     (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
     dict(
@@ -532,9 +535,9 @@ assert val == 10
 Do the previous only if `y > 7` else return `"Sorry, come back latter."`
 
 ```python
-from phi import P, Rec, Read, Write, Val, If
+from phi.api import *
 
-[result, s, val] = P.Pipe(
+[result, s, val] = Pipe(
     1.0,  #input 1
     (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
     dict(
@@ -550,7 +553,7 @@ from phi import P, Rec, Read, Write, Val, If
         If( Rec.y > 7,
             Val(9) + 1  #input 9 and add 1, gives 10    
         ).Else(
-            Val("Sorry, come back latter.")
+            "Sorry, come back latter."
         )
     ]
 )
@@ -563,9 +566,9 @@ assert val == "Sorry, come back latter."
 Now, what you have to understand that everything you've done with these expression is to create and apply a single function. Using `Seq` we can get the standalone function and then use it to get the same values as before
 
 ```python
-from phi import P, Rec, Read, Write, Val, If
+from phi.api import *
 
-f = P.Seq(
+f = Seq(
     (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
     dict(
         x = P + 1  #2 + 1 == 3
@@ -580,7 +583,7 @@ f = P.Seq(
         If( Rec.y > 7,
             Val(9) + 1  #input 9 and add 1, gives 10    
         ).Else(
-            Val("Sorry, come back latter.")
+            "Sorry, come back latter."
         )
     ]
 )
@@ -594,9 +597,9 @@ assert val == "Sorry, come back latter."
 ### Even More Examples
 
 ```python
-from phi import P, Obj
+from phi.api import *
 
-avg_word_length = P.Pipe(
+avg_word_length = Pipe(
     "1 22 333",
     Obj.split(" "), # ['1', '22', '333']
     P.map(len), # [1, 2, 3]
@@ -607,19 +610,19 @@ assert 2 == avg_word_length
 ```
 
 ```python
-from phi import P
+from phi.api import *
 
-assert False == P.Pipe(
-    [1,2,3,4],
-    P.filter(P % 2 != 0)   #[1, 3], keeps odds
+assert False == Pipe(
+    [1,2,3,4], P
+    .filter(P % 2 != 0)   #[1, 3], keeps odds
     .Contains(4)   #4 in [1, 3] == False
 )
 ```
 
 ```python
-from phi import P, Obj, Ref
+from phi.api import *
 
-assert {{'a': 97, 'b': 98, 'c': 99}} == P.Pipe(
+assert {{'a': 97, 'b': 98, 'c': 99}} == Pipe(
     "a b c", Obj
     .split(' ').Write.keys  # keys = ['a', 'b', 'c']
     .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]

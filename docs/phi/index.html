@@ -1390,12 +1390,12 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 <p>Check out the <a href="https://cgarciae.github.io/phi/">complete documentation</a>.</p>
 <h2>More Examples</h2>
 <p>The global <code>phi.P</code> object exposes most of the API and preferably should be imported directly. The most simple thing the DSL does is function composition:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="k">def</span> <span class="nf">add1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="k">def</span> <span class="nf">mul3</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>     <span class="c1">#input 1</span>
     <span class="n">add1</span><span class="p">,</span>  <span class="c1">#1 + 1 == 2</span>
     <span class="n">mul3</span>   <span class="c1">#2 * 3 == 6</span>
@@ -1406,9 +1406,9 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Use phi <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a> to create the functions</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>      <span class="c1">#input 1</span>
     <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1">#1 + 1 == 2</span>
     <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>   <span class="c1">#2 * 3 == 6</span>
@@ -1419,9 +1419,9 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Create a branched computation instead</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
     <span class="p">[</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#1 + 1 == 2</span>
@@ -1436,9 +1436,9 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Compose it with a function equivalent to <code>f(x) = (x + 3) / (x + 1)</code></p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
     <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1">#(1 + 3) / (1 + 1) == 4 / 2 == 2</span>
     <span class="p">[</span>
@@ -1454,9 +1454,9 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Give names to the branches</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
     <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1">#(1 + 3) / (1 + 1) == 4 / 2 == 2</span>
     <span class="nb">dict</span><span class="p">(</span>
@@ -1472,9 +1472,9 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Divide the <code>x</code> by the <code>y</code>.</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
     <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1">#(1 + 3) / (1 + 1) == 4 / 2 == 2</span>
     <span class="nb">dict</span><span class="p">(</span>
@@ -1490,11 +1490,12 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Save the value from the <code>(P + 3) / (P + 1)</code> computation as <code>s</code> and load it at the end in a branch</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="c1">#4 / 2 == 2</span>
+    <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#s = 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1503,7 +1504,7 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
     <span class="p">[</span>
         <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
     <span class="p">,</span>
-        <span class="s1">&#39;s&#39;</span>  <span class="c1">#load &#39;s&#39; == 2</span>
+        <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1">#s == 2</span>
     <span class="p">]</span>
 <span class="p">)</span>
 
@@ -1513,11 +1514,12 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Add 3 to the loaded <code>s</code> for fun and profit</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">},</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="c1">#4 / 2 == 2</span>
+    <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#s = 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1526,7 +1528,7 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
     <span class="p">[</span>
         <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
     <span class="p">,</span>
-        <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
+        <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
     <span class="p">]</span>
 <span class="p">)</span>
 
@@ -1535,12 +1537,13 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 </pre></div>
 
 
-<p>Use the <code>Write</code> object instead of <code>{...}</code> just because</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span>
+<p>Use the <code>Read</code> and <code>Write</code> field access lambda style just because</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
+    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="c1">#4 / 2 == 2</span>
+    <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#s = 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1559,9 +1562,9 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Add an input <code>Val</code> of 9 on a branch and add to it 1 just for the sake of it</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
     <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
     <span class="nb">dict</span><span class="p">(</span>
@@ -1585,9 +1588,9 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Do the previous only if <code>y &gt; 7</code> else return <code>"Sorry, come back latter."</code></p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
     <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
     <span class="nb">dict</span><span class="p">(</span>
@@ -1603,7 +1606,7 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
         <span class="n">If</span><span class="p">(</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">,</span>
             <span class="n">Val</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#input 9 and add 1, gives 10    </span>
         <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
-            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Sorry, come back latter.&quot;</span><span class="p">)</span>
+            <span class="s2">&quot;Sorry, come back latter.&quot;</span>
         <span class="p">)</span>
     <span class="p">]</span>
 <span class="p">)</span>
@@ -1615,9 +1618,9 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <p>Now, what you have to understand that everything you've done with these expression is to create and apply a single function. Using <code>Seq</code> we can get the standalone function and then use it to get the same values as before</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
     <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
@@ -1632,7 +1635,7 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
         <span class="n">If</span><span class="p">(</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">,</span>
             <span class="n">Val</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#input 9 and add 1, gives 10    </span>
         <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
-            <span class="n">Val</span><span class="p">(</span><span class="s2">&quot;Sorry, come back latter.&quot;</span><span class="p">)</span>
+            <span class="s2">&quot;Sorry, come back latter.&quot;</span>
         <span class="p">)</span>
     <span class="p">]</span>
 <span class="p">)</span>
@@ -1646,9 +1649,9 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 <h3>Even More Examples</h3>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
     <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
     <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
@@ -1659,19 +1662,19 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 
 
-<span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+<span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="k">assert</span> <span class="bp">False</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
-    <span class="n">P</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1">#[1, 3], keeps odds</span>
+<span class="k">assert</span> <span class="bp">False</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="n">P</span>
+    <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1">#[1, 3], keeps odds</span>
     <span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>   <span class="c1">#4 in [1, 3] == False</span>
 <span class="p">)</span>
 
 
 
-<span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Ref</span>
+<span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="k">assert</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">98</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">99</span><span class="p">}</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+<span class="k">assert</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">98</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">99</span><span class="p">}</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="s2">&quot;a b c&quot;</span><span class="p">,</span> <span class="n">Obj</span>
     <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="o">.</span><span class="n">keys</span>  <span class="c1"># keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
     <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">ord</span><span class="p">),</span>  <span class="c1"># [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
