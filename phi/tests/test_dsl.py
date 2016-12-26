@@ -27,7 +27,7 @@ class TestDSL(object):
             P + 1, Write.a,
             P * 2, Write.b,
             P * 100, Write('c'),
-            Branch(Read.c, Read.a, Read.b)
+            List(Read.c, Read.a, Read.b)
         )
 
         assert [600, 3, 6] == f(2)
@@ -37,7 +37,7 @@ class TestDSL(object):
             P + 1, Write.a,
             P * 2, Write.b,
             P * 100, Write('c'), r.write,
-            Branch(Read.c, Read.a, Read.b)
+            List(Read.c, Read.a, Read.b)
         )
 
         assert [600, 3, 6] == f(2)
@@ -48,7 +48,7 @@ class TestDSL(object):
         f = Seq(
             P + 1,
             P * 2,
-            Branch(
+            List(
                 (P * 100).Write("c")
             ,
                 P - 3
@@ -64,7 +64,7 @@ class TestDSL(object):
         f = Seq(
             P + 1,
             P * 2,
-            Branch(
+            List(
                 P * 100
             ,
                 Write('c')
@@ -81,7 +81,7 @@ class TestDSL(object):
         f = Seq(
             Write('a'),
             P + 1,
-            Branch(
+            List(
                 Seq(
                     10,
                     P * 2
@@ -97,18 +97,18 @@ class TestDSL(object):
 
     def test_identities(self):
 
-        f = Branch(
+        f = List(
             Seq(),
-            Branch()
+            List()
         )
 
         assert [4, []] == f(4)
 
     def test_single_functions(self):
 
-        f = Branch(
+        f = List(
             P * 2,
-            Branch(P + 1)
+            List(P + 1)
         )
 
         assert [2, [2]] == f(1)
@@ -128,12 +128,12 @@ class TestDSL(object):
 
     def test_list(self):
         f = Seq(
-            Branch(
+            List(
                 P + 1
             ,
                 P * 2
             ),
-            Branch(
+            List(
                 Seq(
                     lambda l: map(str, l),
                     list
@@ -147,12 +147,12 @@ class TestDSL(object):
 
     def test_dict(self):
         f = Seq(
-            Rec(
+            Dict(
                 original = P,
                 upper = Obj.upper(),
                 len = len
             ),
-            Branch(
+            List(
                 P
             ,
                 Seq(
@@ -180,7 +180,7 @@ class TestDSL(object):
 
         x = P.Pipe(
             [1,2,3],
-            Rec(
+            Dict(
                 sum = sum
             ,
                 len = len
@@ -197,7 +197,7 @@ class TestDSL(object):
 
         x = P.Pipe(
             [1,2,3],
-            Rec(
+            Dict(
                 sum = sum
             ,
                 len = len

@@ -91,7 +91,7 @@ class TestBuilder(object):
             P + 1,
             P * 2, Write('x'),
             P + 4,
-            Branch(
+            List(
                 P + 2
             ,
                 P / 2
@@ -106,7 +106,7 @@ class TestBuilder(object):
             P + 1,
             P * 2,
             P + 4,
-            Branch(
+            List(
                 (P + 2).Write('x')
             ,
                 P / 2
@@ -122,7 +122,7 @@ class TestBuilder(object):
             P + 1,
             P * 2,
             P + 4,
-            Branch(
+            List(
                 P + 2
             ,
                 P / 2
@@ -189,7 +189,7 @@ class TestBuilder(object):
 
         assert [18, 14] == P.Pipe(
             4,
-            Branch(
+            List(
                 Seq(
                     add2,
                     mul3
@@ -204,13 +204,13 @@ class TestBuilder(object):
 
         assert [18, 18, 15, 16] == P.Pipe(
             4,
-            Branch(
+            List(
                 Seq(
                     add2,
                     mul3
                 )
             ,
-                Branch(
+                List(
                     Seq(
                         add2,
                         mul3
@@ -219,7 +219,7 @@ class TestBuilder(object):
                     Seq(
                         mul3,
                         add2,
-                        Branch(
+                        List(
                             P + 1,
                             P + 2
                         )
@@ -232,13 +232,13 @@ class TestBuilder(object):
 
         assert [18, [18, 14, get_list(None)]] == P.Pipe(
             4,
-            Branch(
+            List(
                 Seq(
                     add2,
                     mul3
                 )
             ,
-                Branch(
+                List(
                     Seq(
                         add2,
                         mul3
@@ -256,13 +256,13 @@ class TestBuilder(object):
 
         [a, [b, c]] = P.Pipe(
             4,
-            Branch(
+            List(
                 Seq(
                     add2,
                     mul3
                 )
             ,
-                Branch(
+                List(
                     Seq(
                         add2,
                         mul3
@@ -326,7 +326,7 @@ class TestBuilder(object):
             add2, a.write,
             add2, b.write,
             add2,
-            Branch(
+            List(
                 Seq(),
                 a,
                 b
@@ -381,12 +381,12 @@ class TestBuilder(object):
 
         assert [['4', '6'], [4, 6]] == P.Pipe(
             3,
-            Branch(
+            List(
                 P + 1
             ,
                 P * 2
             ),
-            Branch(
+            List(
                 P.Then2(map, str).list() #list only needed in Python 3
             ,
                 Seq()

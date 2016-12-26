@@ -1069,6 +1069,7 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.RegisterAt">RegisterAt</a></li>
     <li class="mono"><a href="#phi.builder.Builder.RegisterMethod">RegisterMethod</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Seq">Seq</a></li>
+    <li class="mono"><a href="#phi.builder.Builder.Set">Set</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Then">Then</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Then0">Then0</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Then1">Then1</a></li>
@@ -1077,6 +1078,7 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.Then4">Then4</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Then5">Then5</a></li>
     <li class="mono"><a href="#phi.builder.Builder.ThenAt">ThenAt</a></li>
+    <li class="mono"><a href="#phi.builder.Builder.Tuple">Tuple</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Val">Val</a></li>
     <li class="mono"><a href="#phi.builder.Builder.With">With</a></li>
   </ul>
@@ -1143,7 +1145,7 @@ table {
 
 <span class="k">class</span> <span class="nc">Builder</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">Expression</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    All the public methods of the `Builder`, `Expression` and `Lambda` classes start with a capital letter on purpose to avoid name chashes with methods that you might register.&quot;&quot;&quot;</span>
+<span class="sd">    All the public methods of the `Builder`, `Expression` and `Expression` classes start with a capital letter on purpose to avoid name chashes with methods that you might register.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_RegisterMethod</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">library_path</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">original_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wrapped</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">explanation</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">method_type</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
@@ -1532,9 +1534,6 @@ table {
 
 
 
-
-
-
 <span class="c1">#######################</span>
 <span class="c1"># Helper functions</span>
 <span class="c1">#######################</span>
@@ -1588,13 +1587,13 @@ table {
       <p id="phi.builder.Builder" class="name">class <span class="ident">Builder</span></p>
       
   
-    <div class="desc"><p>All the public methods of the <code>Builder</code>, <code>Expression</code> and <code>Lambda</code> classes start with a capital letter on purpose to avoid name chashes with methods that you might register.</p></div>
+    <div class="desc"><p>All the public methods of the <code>Builder</code>, <code>Expression</code> and <code>Expression</code> classes start with a capital letter on purpose to avoid name chashes with methods that you might register.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder', this);">Show source &equiv;</a></p>
   <div id="source-phi.builder.Builder" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Builder</span><span class="p">(</span><span class="n">dsl</span><span class="o">.</span><span class="n">Expression</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    All the public methods of the `Builder`, `Expression` and `Lambda` classes start with a capital letter on purpose to avoid name chashes with methods that you might register.&quot;&quot;&quot;</span>
+<span class="sd">    All the public methods of the `Builder`, `Expression` and `Expression` classes start with a capital letter on purpose to avoid name chashes with methods that you might register.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_RegisterMethod</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">library_path</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">original_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wrapped</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">explanation</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">method_type</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
@@ -1988,7 +1987,6 @@ table {
           <ul class="class_list">
           <li><a href="#phi.builder.Builder">Builder</a></li>
           <li>phi.dsl.Expression</li>
-          <li>phi.lambdas.Lambda</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Static methods</h3>
@@ -2007,7 +2005,7 @@ table {
 <ul>
 <li><strong>*args</strong>: By design <code>Context</code> accepts any number of arguments and completely ignores them.</li>
 </ul>
-<p>This is a classmethod and it doesnt return a <code>Builder</code>/<code>Lambda</code> by design so it can be called directly:</p>
+<p>This is a classmethod and it doesnt return a <code>Builder</code>/<code>Expression</code> by design so it can be called directly:</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Obj</span>
 
 <span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
@@ -2054,7 +2052,7 @@ table {
 <span class="sd">rns the context object of the current `dsl.With` statemente.</span>
 <span class="sd">guments**</span>
 <span class="sd">*args**: By design `Context` accepts any number of arguments and completely ignores them.</span>
-<span class="sd"> is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:</span>
+<span class="sd"> is a classmethod and it doesnt return a `Builder`/`Expression` by design so it can be called directly:</span>
 <span class="sd">from phi import P, Context, Obj</span>
 <span class="sd">def read_file(z):</span>
 <span class="sd">    f = Context()</span>
@@ -2305,7 +2303,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x00000000047AC978&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7f5087703668&gt;)</p>
     </div>
     
 
@@ -2426,7 +2424,7 @@ result = [
 <li>The previous expression returns a list</li>
 <li>In general the expression <code>P[x]</code> compiles to a function with the form <code>lambda obj: obj[x]</code></li>
 <li>
-<p>The class <code>Lambda</code> (the class from which the object <code>P</code> inherits) overrides most operators to create functions easily. For example, the expression</p>
+<p>The class <code>Expression</code> (the class from which the object <code>P</code> inherits) overrides most operators to create functions easily. For example, the expression</p>
 <p>(P * 2) / (P + 1)</p>
 </li>
 </ol>
@@ -2495,7 +2493,7 @@ result = [
 <span class="sd">s for a couple of reasons</span>
 <span class="sd">he previous expression returns a list</span>
 <span class="sd">n general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`</span>
-<span class="sd">he class `Lambda` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
+<span class="sd">he class `Expression` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
 <span class="sd">(P * 2) / (P + 1)</span>
 <span class="sd">ile to a function of the form</span>
 <span class="sd">lambda x: (x * 2) / (x + 1)</span>
@@ -2667,7 +2665,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.PatchAt">
-    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x00000000047CFB38&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x00000000047CFAC8&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x00000000047CFA58&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x00000000047CFB38&gt;, getmembers_predicate=&lt;function isfunction at 0x0000000003A09128&gt;)</p>
+    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7f5087707848&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7f50877077d0&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7f5087707758&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7f5087707848&gt;, getmembers_predicate=&lt;function isfunction at 0x7f5088c26488&gt;)</p>
     </div>
     
 
@@ -3546,6 +3544,27 @@ M.Pipe(
   
             
   <div class="item">
+    <div class="name def" id="phi.builder.Builder.Set">
+    <p>def <span class="ident">Set</span>(</p><p>self, *expressions, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.Set', this);">Show source &equiv;</a></p>
+  <div id="source-phi.builder.Builder.Set" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.builder.Builder.Then">
     <p>def <span class="ident">Then</span>(</p><p>self, f, *args, **kwargs)</p>
     </div>
@@ -3913,7 +3932,7 @@ assert [5, 5, 5] == x
     <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
         <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">_f</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nd">@utils.lift</span>
@@ -3921,6 +3940,27 @@ assert [5, 5, 5] == x
             <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
             <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.builder.Builder.Tuple">
+    <p>def <span class="ident">Tuple</span>(</p><p>self, *expressions, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.Tuple', this);">Show source &equiv;</a></p>
+  <div id="source-phi.builder.Builder.Tuple" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
 </pre></div>
 
   </div>
@@ -4045,7 +4085,7 @@ assert [5, 5, 5] == x
 <span class="sd">with open(&quot;text.txt&quot;) as f:</span>
 <span class="sd">    text = f.read()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">context_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">context_manager</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+    <span class="n">context_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">context_manager</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
     <span class="n">body_f</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
     <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="n">context</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">context_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>

@@ -1060,6 +1060,7 @@ table {
     <li class="mono"><a href="#phi.dsl.Expression.If">If</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Pipe">Pipe</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Seq">Seq</a></li>
+    <li class="mono"><a href="#phi.dsl.Expression.Set">Set</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Then">Then</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Then0">Then0</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Then1">Then1</a></li>
@@ -1068,8 +1069,19 @@ table {
     <li class="mono"><a href="#phi.dsl.Expression.Then4">Then4</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Then5">Then5</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.ThenAt">ThenAt</a></li>
+    <li class="mono"><a href="#phi.dsl.Expression.Tuple">Tuple</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Val">Val</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.With">With</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#phi.dsl.Ref">Ref</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#phi.dsl.Ref.__init__">__init__</a></li>
+    <li class="mono"><a href="#phi.dsl.Ref.write">write</a></li>
   </ul>
 
         </li>
@@ -1133,12 +1145,158 @@ table {
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">isclass</span>
 <span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">from</span> <span class="nn">.lambdas</span> <span class="kn">import</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">Ref</span><span class="p">,</span> <span class="n">_RefProxyInstance</span><span class="p">,</span> <span class="n">_StateContextManager</span>
+<span class="kn">import</span> <span class="nn">operator</span>
 
+<span class="c1">###############################</span>
+<span class="c1"># Expression Helpers</span>
+<span class="c1">###############################</span>
+
+<span class="k">def</span> <span class="nf">_fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+
+        <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+            <span class="n">y1</span><span class="p">,</span> <span class="n">state1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+            <span class="n">y2</span><span class="p">,</span> <span class="n">state2</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+            <span class="n">y_out</span> <span class="o">=</span> <span class="n">opt</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
+            <span class="n">state_out</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">state1</span><span class="p">,</span> <span class="n">state2</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">y_out</span><span class="p">,</span> <span class="n">state_out</span>
+
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">method</span>
+
+<span class="k">def</span> <span class="nf">_fmap_flip</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+
+        <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+            <span class="n">y2</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+            <span class="n">y1</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+            <span class="n">y_out</span> <span class="o">=</span> <span class="n">opt</span><span class="p">(</span><span class="n">y2</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">y_out</span><span class="p">,</span> <span class="n">state</span>
+
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">method</span>
+
+<span class="k">def</span> <span class="nf">_unary_fmap</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="n">opt</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">method</span>
 
 <span class="c1">###############################</span>
 <span class="c1"># Helpers</span>
 <span class="c1">###############################</span>
+<span class="k">class</span> <span class="nc">_RefProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for _ReadProxy.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Ref</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="n">_RefProxyInstance</span> <span class="o">=</span> <span class="n">_RefProxy</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">_StateContextManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">REFS</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_refs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span> <span class="o">=</span> <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span> <span class="o">=</span> <span class="n">next_refs</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_refs</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_refs</span>
+
+
+<span class="k">class</span> <span class="nc">Ref</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).</span>
+
+<span class="sd">**Creating Refences**</span>
+
+<span class="sd">You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a `phi.dsl.Expression.Read` or `phi.dsl.Expression.Write` expression. Here is a contrived example</span>
+
+<span class="sd">from phi import P, Ref</span>
+
+<span class="sd">r = Ref(&#39;r&#39;)</span>
+
+<span class="sd">assert [600, 3, 6] == P.Pipe(</span>
+<span class="sd">    2,</span>
+<span class="sd">    P + 1, {&#39;a&#39;},  # a = 2 + 1 = 3</span>
+<span class="sd">    P * 2, {&#39;b&#39;},  # b = 3 * 2 = 6</span>
+<span class="sd">    P * 100, {&#39;c&#39;, r },  # c = r = 6 * 100 = 600</span>
+<span class="sd">    [&#39;c&#39;, &#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">)</span>
+
+<span class="sd">assert r() == 600</span>
+
+<span class="sd">**Reading Refences from the Current Context**</span>
+
+<span class="sd">While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.</span>
+
+<span class="sd">Read.x(None) &lt;=&gt; Ref.x</span>
+
+<span class="sd">As an example</span>
+
+<span class="sd">from phi import P, Obj, Ref</span>
+
+<span class="sd">assert {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99} == P.Pipe(</span>
+<span class="sd">    &quot;a b c&quot;, Obj</span>
+<span class="sd">    .split(&#39; &#39;).Write.keys  # keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+<span class="sd">    .map(ord),  # [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
+<span class="sd">    lambda it: zip(Ref.keys, it),  # [(&#39;a&#39;, 97), (&#39;b&#39;, 98), (&#39;c&#39;, 99)]</span>
+<span class="sd">    dict   # {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99}</span>
+<span class="sd">)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Ref</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The reference name. Can be though a key in a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The value of the reference. Can be though a value in a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">optional</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Returns the value of the reference. Any number of arguments can be passed, they will all be ignored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">utils</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Trying to read Ref(&#39;{0}&#39;) before assignment&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Sets the value of the reference equal to the input argument `x`. Its also an identity function since it returns `x`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="k">return</span> <span class="n">x</span>
+
 <span class="k">class</span> <span class="nc">_ReadProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for _ReadProxy.&quot;&quot;&quot;</span>
 
@@ -1231,65 +1389,11 @@ table {
 
 <span class="k">class</span> <span class="nc">_RecordObject</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;docstring for DictObject.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+      <span class="nb">super</span><span class="p">(</span><span class="n">_RecordObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__getattr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
-
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">has_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__cmp__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span>
-
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">))</span>
 
 <span class="k">class</span> <span class="nc">_WithContextManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
@@ -1310,7 +1414,7 @@ table {
 
 
 
-<span class="k">class</span> <span class="nc">Expression</span><span class="p">(</span><span class="n">Lambda</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Expression</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">All elements of this language are callables (implement `__call__`) of arity 1.</span>
 
@@ -1324,6 +1428,42 @@ table {
 
 <span class="sd">    Pipe(x, f) == f(x)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_f</span> <span class="o">=</span> <span class="n">f</span>
+
+    <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s2">&quot;Monadic unit, also known as `return`&quot;</span>
+        <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">other</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">g</span><span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__x__</span><span class="p">,</span> <span class="o">*</span><span class="n">__return_state__</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">__x__</span>
+        <span class="n">return_state</span> <span class="o">=</span> <span class="n">__return_state__</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">return_state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">return_state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid return state condition, got {return_state}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">return_state</span><span class="o">=</span><span class="n">return_state</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="n">_StateContextManager</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">next_state</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">return_state</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">return_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">y</span>
+
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1490,7 +1630,7 @@ table {
             <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
 
 
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
             <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">_f</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nd">@utils.lift</span>
@@ -1632,7 +1772,7 @@ table {
 
 <span class="sd">1. The previous expression returns a list</span>
 <span class="sd">2. In general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`</span>
-<span class="sd">3. The class `Lambda` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
+<span class="sd">3. The class `Expression` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
 
 <span class="sd">    (P * 2) / (P + 1)</span>
 
@@ -1655,6 +1795,11 @@ table {
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">Tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
+
+    <span class="k">def</span> <span class="nf">Set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
 
     <span class="k">def</span> <span class="nf">Seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1804,7 +1949,7 @@ table {
 <span class="sd">        text = f.read()</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">context_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">context_manager</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+        <span class="n">context_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">context_manager</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
         <span class="n">body_f</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
 
         <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
@@ -2117,7 +2262,7 @@ table {
 
 <span class="sd">* ***args**: By design `Context` accepts any number of arguments and completely ignores them.</span>
 
-<span class="sd">This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:</span>
+<span class="sd">This is a classmethod and it doesnt return a `Builder`/`Expression` by design so it can be called directly:</span>
 
 <span class="sd">    from phi import P, Context, Obj</span>
 
@@ -2158,6 +2303,108 @@ table {
 
         <span class="k">return</span> <span class="n">_WithContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
 
+
+    <span class="c1">###############</span>
+    <span class="c1">## Operators</span>
+    <span class="c1">###############</span>
+
+    <span class="k">def</span> <span class="nf">__rshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__rrshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prev</span><span class="p">):</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">prev</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">)</span>
+
+    <span class="n">__rlshift__</span> <span class="o">=</span> <span class="n">__rshift__</span>
+    <span class="n">__lshift__</span> <span class="o">=</span> <span class="n">__rrshift__</span>
+
+
+    <span class="c1">## The Rest</span>
+
+    <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s2">&quot;Monadic unit, also known as `return`&quot;</span>
+        <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">other</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">g</span><span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1">## Override operators</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__x__</span><span class="p">,</span> <span class="o">*</span><span class="n">__return_state__</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">__x__</span>
+        <span class="n">return_state</span> <span class="o">=</span> <span class="n">__return_state__</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">return_state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">return_state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid return state condition, got {return_state}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">return_state</span><span class="o">=</span><span class="n">return_state</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="n">_StateContextManager</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">next_state</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">return_state</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">return_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">y</span>
+
+
+
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+
+
+    <span class="n">__add__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+    <span class="n">__mul__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
+    <span class="n">__sub__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+    <span class="n">__mod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
+    <span class="n">__pow__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
+
+    <span class="n">__and__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
+    <span class="n">__or__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
+    <span class="n">__xor__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
+
+    <span class="n">__div__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__divmod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
+    <span class="n">__floordiv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
+    <span class="n">__truediv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+
+    <span class="n">__contains__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">contains</span><span class="p">)</span>
+
+    <span class="n">__lt__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">lt</span><span class="p">)</span>
+    <span class="n">__le__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">le</span><span class="p">)</span>
+    <span class="n">__gt__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">)</span>
+    <span class="n">__ge__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ge</span><span class="p">)</span>
+    <span class="n">__eq__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">)</span>
+    <span class="n">__ne__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ne</span><span class="p">)</span>
+
+    <span class="n">__neg__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">neg</span><span class="p">)</span>
+    <span class="n">__pos__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+    <span class="n">__invert__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">invert</span><span class="p">)</span>
+
+    <span class="n">__radd__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+    <span class="n">__rmul__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
+    <span class="n">__rsub__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+    <span class="n">__rmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
+    <span class="n">__rpow__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
+    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__rdivmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
+    <span class="n">__rtruediv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__rfloordiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
+
+    <span class="n">__rand__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
+    <span class="n">__ror__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
+    <span class="n">__rxor__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
+
+    <span class="c1">###############</span>
+    <span class="c1">## End</span>
+    <span class="c1">###############</span>
+
 <span class="n">E</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">_add_else</span><span class="p">(</span><span class="n">ast</span><span class="p">,</span> <span class="n">next_else</span><span class="p">):</span>
@@ -2191,12 +2438,20 @@ table {
 <span class="c1">#######################</span>
 
 
-<span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
     <span class="c1">#if type(code) is tuple:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">code</span>
     <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isclass</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Expression</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="n">code</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Rec</span><span class="p">(</span><span class="o">**</span><span class="n">code</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Val</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 </pre></div>
@@ -2236,7 +2491,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Expression" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Expression</span><span class="p">(</span><span class="n">Lambda</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Expression</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">All elements of this language are callables (implement `__call__`) of arity 1.</span>
 
@@ -2250,6 +2505,42 @@ table {
 
 <span class="sd">    Pipe(x, f) == f(x)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_f</span> <span class="o">=</span> <span class="n">f</span>
+
+    <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s2">&quot;Monadic unit, also known as `return`&quot;</span>
+        <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">other</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">g</span><span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__x__</span><span class="p">,</span> <span class="o">*</span><span class="n">__return_state__</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">__x__</span>
+        <span class="n">return_state</span> <span class="o">=</span> <span class="n">__return_state__</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">return_state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">return_state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid return state condition, got {return_state}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">return_state</span><span class="o">=</span><span class="n">return_state</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="n">_StateContextManager</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">next_state</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">return_state</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">return_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">y</span>
+
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2416,7 +2707,7 @@ table {
             <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
 
 
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
             <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">_f</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nd">@utils.lift</span>
@@ -2558,7 +2849,7 @@ table {
 
 <span class="sd">1. The previous expression returns a list</span>
 <span class="sd">2. In general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`</span>
-<span class="sd">3. The class `Lambda` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
+<span class="sd">3. The class `Expression` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
 
 <span class="sd">    (P * 2) / (P + 1)</span>
 
@@ -2581,6 +2872,11 @@ table {
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">Tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
+
+    <span class="k">def</span> <span class="nf">Set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
 
     <span class="k">def</span> <span class="nf">Seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2730,7 +3026,7 @@ table {
 <span class="sd">        text = f.read()</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">context_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">context_manager</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+        <span class="n">context_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">context_manager</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
         <span class="n">body_f</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
 
         <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
@@ -3043,7 +3339,7 @@ table {
 
 <span class="sd">* ***args**: By design `Context` accepts any number of arguments and completely ignores them.</span>
 
-<span class="sd">This is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:</span>
+<span class="sd">This is a classmethod and it doesnt return a `Builder`/`Expression` by design so it can be called directly:</span>
 
 <span class="sd">    from phi import P, Context, Obj</span>
 
@@ -3083,6 +3379,104 @@ table {
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">_WithContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
+
+
+    <span class="c1">###############</span>
+    <span class="c1">## Operators</span>
+    <span class="c1">###############</span>
+
+    <span class="k">def</span> <span class="nf">__rshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__rrshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prev</span><span class="p">):</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">prev</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">)</span>
+
+    <span class="n">__rlshift__</span> <span class="o">=</span> <span class="n">__rshift__</span>
+    <span class="n">__lshift__</span> <span class="o">=</span> <span class="n">__rrshift__</span>
+
+
+    <span class="c1">## The Rest</span>
+
+    <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s2">&quot;Monadic unit, also known as `return`&quot;</span>
+        <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__then__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">other</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">g</span><span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unit__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1">## Override operators</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__x__</span><span class="p">,</span> <span class="o">*</span><span class="n">__return_state__</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">__x__</span>
+        <span class="n">return_state</span> <span class="o">=</span> <span class="n">__return_state__</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">return_state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">return_state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid return state condition, got {return_state}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">return_state</span><span class="o">=</span><span class="n">return_state</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="n">_StateContextManager</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">next_state</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">return_state</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">return_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">y</span>
+
+
+
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+
+
+    <span class="n">__add__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+    <span class="n">__mul__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
+    <span class="n">__sub__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+    <span class="n">__mod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
+    <span class="n">__pow__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
+
+    <span class="n">__and__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
+    <span class="n">__or__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
+    <span class="n">__xor__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
+
+    <span class="n">__div__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__divmod__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
+    <span class="n">__floordiv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
+    <span class="n">__truediv__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+
+    <span class="n">__contains__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">contains</span><span class="p">)</span>
+
+    <span class="n">__lt__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">lt</span><span class="p">)</span>
+    <span class="n">__le__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">le</span><span class="p">)</span>
+    <span class="n">__gt__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">)</span>
+    <span class="n">__ge__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ge</span><span class="p">)</span>
+    <span class="n">__eq__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">)</span>
+    <span class="n">__ne__</span> <span class="o">=</span> <span class="n">_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">ne</span><span class="p">)</span>
+
+    <span class="n">__neg__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">neg</span><span class="p">)</span>
+    <span class="n">__pos__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+    <span class="n">__invert__</span> <span class="o">=</span> <span class="n">_unary_fmap</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">invert</span><span class="p">)</span>
+
+    <span class="n">__radd__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+    <span class="n">__rmul__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">)</span>
+    <span class="n">__rsub__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+    <span class="n">__rmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mod</span><span class="p">)</span>
+    <span class="n">__rpow__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">pow</span><span class="p">)</span>
+    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__rdivmod__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="nb">divmod</span><span class="p">)</span>
+    <span class="n">__rtruediv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="n">__rfloordiv__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">floordiv</span><span class="p">)</span>
+
+    <span class="n">__rand__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">)</span>
+    <span class="n">__ror__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">)</span>
+    <span class="n">__rxor__</span> <span class="o">=</span> <span class="n">_fmap_flip</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">xor</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3093,7 +3487,6 @@ table {
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
           <li><a href="#phi.dsl.Expression">Expression</a></li>
-          <li>phi.lambdas.Lambda</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Static methods</h3>
@@ -3112,7 +3505,7 @@ table {
 <ul>
 <li><strong>*args</strong>: By design <code>Context</code> accepts any number of arguments and completely ignores them.</li>
 </ul>
-<p>This is a classmethod and it doesnt return a <code>Builder</code>/<code>Lambda</code> by design so it can be called directly:</p>
+<p>This is a classmethod and it doesnt return a <code>Builder</code>/<code>Expression</code> by design so it can be called directly:</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Obj</span>
 
 <span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
@@ -3159,7 +3552,7 @@ table {
 <span class="sd">rns the context object of the current `dsl.With` statemente.</span>
 <span class="sd">guments**</span>
 <span class="sd">*args**: By design `Context` accepts any number of arguments and completely ignores them.</span>
-<span class="sd"> is a classmethod and it doesnt return a `Builder`/`Lambda` by design so it can be called directly:</span>
+<span class="sd"> is a classmethod and it doesnt return a `Builder`/`Expression` by design so it can be called directly:</span>
 <span class="sd">from phi import P, Context, Obj</span>
 <span class="sd">def read_file(z):</span>
 <span class="sd">    f = Context()</span>
@@ -3410,7 +3803,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.dsl.Expression.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x00000000047AC978&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7f5087703668&gt;)</p>
     </div>
     
 
@@ -3531,7 +3924,7 @@ result = [
 <li>The previous expression returns a list</li>
 <li>In general the expression <code>P[x]</code> compiles to a function with the form <code>lambda obj: obj[x]</code></li>
 <li>
-<p>The class <code>Lambda</code> (the class from which the object <code>P</code> inherits) overrides most operators to create functions easily. For example, the expression</p>
+<p>The class <code>Expression</code> (the class from which the object <code>P</code> inherits) overrides most operators to create functions easily. For example, the expression</p>
 <p>(P * 2) / (P + 1)</p>
 </li>
 </ol>
@@ -3600,7 +3993,7 @@ result = [
 <span class="sd">s for a couple of reasons</span>
 <span class="sd">he previous expression returns a list</span>
 <span class="sd">n general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`</span>
-<span class="sd">he class `Lambda` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
+<span class="sd">he class `Expression` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
 <span class="sd">(P * 2) / (P + 1)</span>
 <span class="sd">ile to a function of the form</span>
 <span class="sd">lambda x: (x * 2) / (x + 1)</span>
@@ -4007,6 +4400,27 @@ result = [
   
             
   <div class="item">
+    <div class="name def" id="phi.dsl.Expression.Set">
+    <p>def <span class="ident">Set</span>(</p><p>self, *expressions, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.Set', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Expression.Set" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.dsl.Expression.Then">
     <p>def <span class="ident">Then</span>(</p><p>self, f, *args, **kwargs)</p>
     </div>
@@ -4374,7 +4788,7 @@ assert [5, 5, 5] == x
     <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
         <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">_f</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nd">@utils.lift</span>
@@ -4382,6 +4796,27 @@ assert [5, 5, 5] == x
             <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
             <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.Expression.Tuple">
+    <p>def <span class="ident">Tuple</span>(</p><p>self, *expressions, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.Tuple', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Expression.Tuple" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
 </pre></div>
 
   </div>
@@ -4506,7 +4941,7 @@ assert [5, 5, 5] == x
 <span class="sd">with open(&quot;text.txt&quot;) as f:</span>
 <span class="sd">    text = f.read()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">context_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">context_manager</span><span class="p">,</span> <span class="n">else_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+    <span class="n">context_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">context_manager</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
     <span class="n">body_f</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
     <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="n">context</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">context_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
@@ -4514,6 +4949,200 @@ assert [5, 5, 5] == x
             <span class="k">with</span> <span class="n">_WithContextManager</span><span class="p">(</span><span class="n">scope</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">body_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="phi.dsl.Ref" class="name">class <span class="ident">Ref</span></p>
+      
+  
+    <div class="desc"><p>Returns an object that helps you to inmediatly create and <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read">read</a> <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref">references</a>.</p>
+<p><strong>Creating Refences</strong></p>
+<p>You can manually create a <a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref">Ref</a> outside the DSL using <code>Ref</code> and then pass to as/to a <a href="#phi.dsl.Expression.Read"><code>Read</code></a> or <a href="#phi.dsl.Expression.Write"><code>Write</code></a> expression. Here is a contrived example</p>
+<p>from phi import P, Ref</p>
+<p>r = Ref('r')</p>
+<p>assert [600, 3, 6] == P.Pipe(
+    2,
+    P + 1, {'a'},  # a = 2 + 1 = 3
+    P * 2, {'b'},  # b = 3 * 2 = 6
+    P * 100, {'c', r },  # c = r = 6 * 100 = 600
+    ['c', 'a', 'b']
+)</p>
+<p>assert r() == 600</p>
+<p><strong>Reading Refences from the Current Context</strong></p>
+<p>While the expression <code>Read.a</code> with return a function that will discard its argument and return the value of the reference <code>x</code> in the current context, the expression <code>Ref.x</code> will return the value inmediatly, this is useful when using it inside pyton lambdas.</p>
+<p>Read.x(None) &lt;=&gt; Ref.x</p>
+<p>As an example</p>
+<p>from phi import P, Obj, Ref</p>
+<p>assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
+    "a b c", Obj
+    .split(' ').Write.keys  # keys = ['a', 'b', 'c']
+    .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
+    lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
+    dict   # {'a': 97, 'b': 98, 'c': 99}
+)</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Ref', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Ref" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Ref</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Returns an object that helps you to inmediatly create and [read](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Read) [references](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref).</span>
+
+<span class="sd">**Creating Refences**</span>
+
+<span class="sd">You can manually create a [Ref](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Ref) outside the DSL using `Ref` and then pass to as/to a `phi.dsl.Expression.Read` or `phi.dsl.Expression.Write` expression. Here is a contrived example</span>
+
+<span class="sd">from phi import P, Ref</span>
+
+<span class="sd">r = Ref(&#39;r&#39;)</span>
+
+<span class="sd">assert [600, 3, 6] == P.Pipe(</span>
+<span class="sd">    2,</span>
+<span class="sd">    P + 1, {&#39;a&#39;},  # a = 2 + 1 = 3</span>
+<span class="sd">    P * 2, {&#39;b&#39;},  # b = 3 * 2 = 6</span>
+<span class="sd">    P * 100, {&#39;c&#39;, r },  # c = r = 6 * 100 = 600</span>
+<span class="sd">    [&#39;c&#39;, &#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">)</span>
+
+<span class="sd">assert r() == 600</span>
+
+<span class="sd">**Reading Refences from the Current Context**</span>
+
+<span class="sd">While the expression `Read.a` with return a function that will discard its argument and return the value of the reference `x` in the current context, the expression `Ref.x` will return the value inmediatly, this is useful when using it inside pyton lambdas.</span>
+
+<span class="sd">Read.x(None) &lt;=&gt; Ref.x</span>
+
+<span class="sd">As an example</span>
+
+<span class="sd">from phi import P, Obj, Ref</span>
+
+<span class="sd">assert {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99} == P.Pipe(</span>
+<span class="sd">    &quot;a b c&quot;, Obj</span>
+<span class="sd">    .split(&#39; &#39;).Write.keys  # keys = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+<span class="sd">    .map(ord),  # [ord(&#39;a&#39;), ord(&#39;b&#39;), ord(&#39;c&#39;)] == [97, 98, 99]</span>
+<span class="sd">    lambda it: zip(Ref.keys, it),  # [(&#39;a&#39;, 97), (&#39;b&#39;, 98), (&#39;c&#39;, 99)]</span>
+<span class="sd">    dict   # {&#39;a&#39;: 97, &#39;b&#39;: 98, &#39;c&#39;: 99}</span>
+<span class="sd">)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Ref</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The reference name. Can be though a key in a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The value of the reference. Can be though a value in a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">optional</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Returns the value of the reference. Any number of arguments can be passed, they will all be ignored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">utils</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Trying to read Ref(&#39;{0}&#39;) before assignment&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Sets the value of the reference equal to the input argument `x`. Its also an identity function since it returns `x`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#phi.dsl.Ref">Ref</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="phi.dsl.Ref.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The reference name. Can be though a key in a dictionary.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="phi.dsl.Ref.value" class="name">var <span class="ident">value</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The value of the reference. Can be though a value in a dictionary.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.Ref.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, value=NoValue)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Ref.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Ref.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Ref</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">reference name. Can be though a key in a dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">value of the reference. Can be though a value in a dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.Ref.write">
+    <p>def <span class="ident">write</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Sets the value of the reference equal to the input argument <code>x</code>. Its also an identity function since it returns <code>x</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Ref.write', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Ref.write" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"> the value of the reference equal to the input argument `x`. Its also an identity function since it returns `x`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">x</span>
 </pre></div>
 
   </div>

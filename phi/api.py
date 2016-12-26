@@ -20,8 +20,10 @@ Rec = P.Rec
 Context = P.Context
 With = P.With
 Ref = P.Ref
+Dict = P.Dict
+F = P.F
 
-Branch = P.Branch
+List = P.List
 Seq = P.Seq
 
 # Directly imported from DSL

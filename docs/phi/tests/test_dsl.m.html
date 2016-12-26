@@ -1057,6 +1057,7 @@ table {
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_nested_compiles">test_nested_compiles</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_read">test_read</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_record_object">test_record_object</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_right_hand">test_right_hand</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_single_functions">test_single_functions</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_write">test_write</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_write_tree">test_write_tree</a></li>
@@ -1110,7 +1111,7 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">),</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span>
             <span class="n">Branch</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
         <span class="p">)</span>
 
@@ -1344,6 +1345,33 @@ table {
 
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">test_right_hand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">[</span> <span class="n">P</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">{</span> <span class="n">P</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">}</span>
+
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
 </pre></div>
 
   </div>
@@ -1387,7 +1415,7 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">),</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span>
             <span class="n">Branch</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
         <span class="p">)</span>
 
@@ -1621,6 +1649,33 @@ table {
 
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">test_right_hand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">[</span> <span class="n">P</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">{</span> <span class="n">P</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">}</span>
+
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
 </pre></div>
 
   </div>
@@ -2015,6 +2070,46 @@ table {
   
             
   <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_right_hand">
+    <p>def <span class="ident">test_right_hand</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_right_hand', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_right_hand" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_right_hand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">[</span> <span class="n">P</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">{</span> <span class="n">P</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">}</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.tests.test_dsl.TestDSL.test_single_functions">
     <p>def <span class="ident">test_single_functions</span>(</p><p>self)</p>
     </div>
@@ -2055,7 +2150,7 @@ table {
     <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">r</span> <span class="p">),</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span>
         <span class="n">Branch</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>

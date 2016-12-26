@@ -34,7 +34,7 @@ _NoLeadingUnderscore = lambda name: name[0] != "_"
 
 class Builder(dsl.Expression):
     """
-    All the public methods of the `Builder`, `Expression` and `Lambda` classes start with a capital letter on purpose to avoid name chashes with methods that you might register."""
+    All the public methods of the `Builder`, `Expression` and `Expression` classes start with a capital letter on purpose to avoid name chashes with methods that you might register."""
 
     @classmethod
     def _RegisterMethod(cls, f, library_path, alias=None, original_name=None, doc=None, wrapped=None, explanation="", method_type=utils.identity, explain=True):
@@ -420,9 +420,6 @@ The thing to notice is that with the `NumpyBuilder` we avoid the repetitive and 
 
 
 Builder.__core__ = [ name for name, f in inspect.getmembers(Builder, inspect.ismethod) ]
-
-
-
 
 
 

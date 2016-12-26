@@ -1,19 +1,172 @@
 """
-The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Seq` or applied to a value using `P.Pipe`.
+The Phi DSL is all about creating and combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. Its has two main functionalities
 
-Phi offers the following constructs, **try to read their documentation in order**:
+1. The lambdas capabilities which let quickly create readable functions.
+2. The `Expression` combinator methods that let you build up complex computations.
 
-* **`Functions`**: any function of arity 1 is an element of the language
-* **`Values`**: any value is transformed into a constant function using `phi.dsl.Expression.Val`
-* **`phi.dsl.Expression.Seq`**: allows to sequentially compose functions
-* **`phi.dsl.Expression.Branch`**: lets to create a branched computation that returns a list with the results of each branch
-* **`phi.dsl.Expression.Val`**: allows you to specify an input value, compiles to a (constant) function that returns the same value no matter the input
-* **`phi.dsl.Expression.With`**: lets you to specify a context manager for the expresion (uses the `with` statemente)
-* **`phi.dsl.Expression.Rec`**: lets to create a branched computation with named branches that returns a record-like structure with the results of each branch
-* **`phi.dsl.Expression.Read` & `phi.dsl.Expression.Write`**: allow you to create a reference to the value at some point and read it latter on.
-* **`phi.dsl.Expression.If`**: allows you to create conditional computation
+The DSL has very few rules but its important to know them
 
-Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.
+* **Functions** : all functions of arity 1 are members of the DSL. Any object that defines `__call__` is accepted but if its arity is not 1 there will be problems.
+* **Values** : any value e.g. `val` is part of the DSL but internally it will be compiled the constant function `lambda x: val`
+* **Expressions** : all `Expression`s are elements of the DSL. See `phi.dsl.Expression`.
+* **Containers** : the container types `list`, `tuple`, `set`, and `dict` are elements of the DSL and are translated into their counterparts `phi.dsl.Expression.List`, `phi.dsl.Expression.Tuple`, `phi.dsl.Expression.Set`, and `phi.dsl.Expression.Dict`.
+
+Any expresion can appear inside other expression in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.
+
+** Expressions **
+
+`Expression` overrides all operators plus the `__getitem__` and `__call__` methods, this allows you to create functions by just writting formulas. For example
+
+    from phi import P
+
+    f = (P * 2) / (P + 1)
+    assert f(1) == 1  #( 1 * 2 ) / ( 1 + 1) == 2 / 2 == 1
+
+the previous expression for `f` is equivalent to
+
+    lambda x: (x * 2) / (x + 1)
+
+As you see, it creates very math-like functions that are very readable. The overloading mechanism has the following rules:
+
+Let `g` be a Expression, `h` any expression of the DSL, and `$` any python operator, then
+
+    f = g $ h
+
+is equivalent to
+
+    lambda x: g(x) $ h(x)
+
+*__getitem__*
+
+The special method `__getitem__` is also implemented and enables you to define a lambda uses pythons access mechanism on its argument. The expression
+
+    P[x]
+
+is equivalent to
+
+    lambda obj: obj[x]
+
+** Examples **
+
+Add the first and last element of a list
+
+    from phi import P
+
+    f = P[0] + P[-1]
+    assert f([1, 2, 3, 4]) == 5  #1 + 4 == 5
+
+** State **
+
+You might see function like `phi.dsl.Expression.Read` and `phi.dsl.Expression.Write` that make the look as if you are doing stateful voodoo behind the scenes, dont worry, internally `Expression` is implemented using a pattern that passes state `dict` from lambda to lambda in a functional manner. All normal functions of the form
+
+    y = f(x)
+
+are lifted to
+
+    (y, new_state) = f(x, state)
+
+This way `phi.dsl.Expression.Read` and `phi.dsl.Expression.Write` can be implemented in such a way that they can read/write from/to the state being passed around, `Write` returns a new state with the updated values, all operations are immutable. Since Expressions internally return a tuple with a value and a dict, you might wonder why you only get the value when you call a Expression, see `__call__` next.
+
+** __call__ **
+
+    def __call__(self, x, *return_state, **state)
+
+*Arguments*
+
+* `x` : a value to apply the computation
+* `*return_state` : an optional boolean to determine whether the resulting internal state should be returned, defaults to `False`
+* `**state` : all keyword argument are interpreted as initial values from the state `dict` that will be passed through the computation, defaults to `{}`.
+
+Normally you call a `Expression` only passing the value
+
+    f = P + 1
+    f(1) == 2
+
+however if you pass an extra argument with `True` you can get the state back
+
+    f = P + 1
+    f(1, True) == (2, {})
+
+and if you pass keyword arguments you will se that the returned state includes them
+
+    f = P + 1
+    f(1, True, a=0) == (2, {"a": 0})
+
+Naturally this behaviour is only useful if you include expression that do something with the state, so lets do that
+
+    from phi import P, Read, Write, Seq
+
+    f = Seq(Read("a"), P + 5, Write("a"))
+    f(None, True, a=0) == (5, {"a": 5})
+
+Here we pass `None` to `f` but also set `a = 0` internally and then
+
+1. `Read("a")` dicards `None` and sets the value to `0` which is the current value of `a`
+2. `P + 5` adds `5` to `0`
+3. `Write("a")` sets the value `a` of the state to `5`
+
+The previous can also be written more compactly as
+
+    f = Read("a") + 5 >> Write("a")
+    f(None, True, a=0) == (5, {"a": 5})
+
+or even
+
+    f = Read.a + 5 >> Write.a
+    assert f(None, True, a=0) == (5, {"a": 5})
+
+** `>>` **
+
+The the operator `>>` is NOT a lambda for [bitwise right shift](https://www.tutorialspoint.com/python/bitwise_operators_example.htm), instead
+
+    f >> g
+
+represents functions composition in a sequential manner such that the previous is equivalent to
+
+    lambda x: g(f(x))
+
+See `phi.dsl.Expression.Seq`. As you see functions are executed in the order they appear which makes code more readable and easier to reason about.
+
+** << **
+
+This operator composes functions according to the mathematical definition, that is
+
+    f << g
+
+is equivalent to
+
+    lambda x: f(g(x))
+
+*Composition Comparison*
+
+* `f >> g` is equivalent to `lambda x: g(f(x))`. `f` is executed first then `g`. Reads left to right.
+* `f << g` is equivalent to `lambda x: f(g(x))`. `g` is executed first then `f`. Reads right to left.
+
+** fn.py **
+
+The operator overloading mechanism of `Expression` to create quick functions takes much of its inspiration and some code from [fn.py](https://github.com/fnpy/fn.py)'s '`_`' object, however it different in that it only creates functions of arity 1 to comply with the DSL. Where in fn.py expressions like
+
+    _ + _
+
+are equivalent to
+
+    lambda a, b: a + b
+
+That is, every time `_` appears in a compound expresion it creates a function of a higher arity. Instead in phi the expresion
+
+    P + P
+
+is interpreted as
+
+    lambda a: a + a
+
+In the context of the DSL this is more useful since it allows you to write expressions like
+
+    f = P.map(P ** 2) >> list >> P[0] + P[1] >> math.sqrt  #f = lambda x: math.sqrt( x[0] ** 2 + x[1] ** 2)
+
+    assert f([3, 4]) == 5
+
+where `P[0] + P[1]` creates the lambda of a single input argument `lambda x: x[0] + x[1]` that fits nice with the function composition.
 """
 
 from __future__ import absolute_import
@@ -29,7 +182,7 @@ import functools
 import operator
 
 ###############################
-# Lambda Helpers
+# Expression Helpers
 ###############################
 
 def _fmap(opt):
@@ -243,27 +396,13 @@ class _RecordProxy(object):
     def __init__(self, __builder__):
         self.__builder__ = __builder__
 
-    def __call__(self, **branches):
-        gs = { key : _parse(value)._f for key, value in branches.items() }
-
-        def h(x, state):
-            ys = {}
-
-            for key, g in gs.items():
-                y, state = g(x, state)
-                ys[key] = y
-
-            return _RecordObject(**ys), state
-
-        return self.__builder__.__then__(h)
+    def __call__(self, attr):
+        f = utils.lift(lambda x: getattr(x, attr))
+        return self.__builder__.__then__(f)
 
     def __getattr__ (self, attr):
-        f = lambda x: getattr(x, attr)
-        return self.__builder__.__then__(utils.lift(f))
-
-    def __getitem__(self, key):
-        f = lambda x: x[key]
-        return self.__builder__.__then__(utils.lift(f))
+        f = utils.lift(lambda x: getattr(x, attr))
+        return self.__builder__.__then__(f)
 
 
 
@@ -328,7 +467,7 @@ and piping through a function is just the same a applying the function
 
         return self.__unit__(h, **kwargs)
 
-    ## Override operators
+
     def __call__(self, __x__, *__return_state__, **state):
         x = __x__
         return_state = __return_state__
@@ -344,6 +483,10 @@ and piping through a function is just the same a applying the function
 
     def __hash__(self):
         return hash(self._f)
+
+
+    def F(self, expr):
+        return self >> expr
 
 
     def Pipe(self, *sequence, **kwargs):
@@ -510,14 +653,10 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
             _return_type = kwargs['_return_type']
             del kwargs['_return_type']
 
-
-        if n == 1 and isinstance(f, Expression):
-            g = f._f
-        else:
-            @utils.lift
-            def g(x):
-                new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
-                return f(*new_args, **kwargs)
+        @utils.lift
+        def g(x):
+            new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
+            return f(*new_args, **kwargs)
 
         return self.__then__(g, _return_type=_return_type)
 
@@ -563,13 +702,13 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
         args = (arg1, arg2, arg3, arg4) + args
         return self.ThenAt(5, f, *args, **kwargs)
 
-    def Branch(self, *branches, **kwargs):
+    def List(self, *branches, **kwargs):
         """
-While `Seq` is sequential, `Branch` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.
+While `Seq` is sequential, `phi.dsl.Expression.List` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.
 
 The expression
 
-    k = Branch(f, g)
+    k = List(f, g)
 
 is equivalent to
 
@@ -580,7 +719,7 @@ In general, the following rules apply after compilation:
 
 **General Branching**
 
-    Branch(f0, f1, ..., fn)
+    List(f0, f1, ..., fn)
 
 is equivalent to
 
@@ -591,13 +730,13 @@ is equivalent to
 
 It is interesting to see how braching interacts with composing. The expression
 
-    Seq(f, Branch(g, h))
+    Seq(f, List(g, h))
 
 is *almost* equivalent to
 
-    Branch( Seq(f, g), Seq(f, h) )
+    List( Seq(f, g), Seq(f, h) )
 
-As you see its as if `f` where distributed over the Branch. We say *almost* because their implementation is different
+As you see its as if `f` where distributed over the List. We say *almost* because their implementation is different
 
     def _lambda(x):
         x = f(x)
@@ -611,13 +750,13 @@ As you see `f` is only executed once in the first one. Both should yield the sam
 
 ### Examples
 
-    form phi import P, Branch
+    form phi import P, List
 
     avg_word_length = P.Pipe(
         "1 22 333",
         lambda s: s.split(' '), # ['1', '22', '333']
         lambda l: map(len, l), # [1, 2, 3]
-        Branch(
+        List(
             sum # 1 + 2 + 3 == 6
         ,
             len # len([1, 2, 3]) == 3
@@ -629,13 +768,13 @@ As you see `f` is only executed once in the first one. Both should yield the sam
 
 The previous could also be done more briefly like this
 
-    form phi import P, Obj, Branch
+    form phi import P, Obj, List
 
     avg_word_length = P.Pipe(
         "1 22 333", Obj
         .split(' ')  # ['1', '22', '333']
         .map(len)    # [1, 2, 3]
-        .Branch(
+        .List(
             sum  #sum([1, 2, 3]) == 6
         ,
             len  #len([1, 2, 3]) == 3
@@ -677,10 +816,10 @@ Check out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lamb
         return self.__then__(h, **kwargs)
 
     def Tuple(self, *expressions, **kwargs):
-        return E.Branch(*expressions) >> tuple
+        return self.List(*expressions) >> tuple
 
     def Set(self, *expressions, **kwargs):
-        return E.Branch(*expressions) >> set
+        return self.List(*expressions) >> set
 
     def Seq(self, *sequence, **kwargs):
         """
@@ -752,10 +891,25 @@ The previous example using `P.Pipe`
 
         return self.__then__(g, **kwargs)
 
+    def Dict(self, **branches):
+        gs = { key : _parse(value)._f for key, value in branches.items() }
+
+        def h(x, state):
+            ys = {}
+
+            for key, g in gs.items():
+                y, state = g(x, state)
+                ys[key] = y
+
+            return _RecordObject(**ys), state
+
+        return self.__then__(h)
+
+
     @property
     def Rec(self):
         """
-`Branch` provides you a way to branch the computation as a list, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. `Rec` branches provide a way to create named branches via `Rec(**kwargs)` where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.
+`phi.dsl.Expression.List` provides you a way to branch the computation as a list, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. `Rec` branches provide a way to create named branches via `Rec(**kwargs)` where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.
 
 A special object is returned by this expression when excecuted, this object derives from `dict` and fully emulates it so you can treat it as such, however it also implements the `__getattr__` method, this lets you access a value as if it where a field
 
@@ -869,13 +1023,13 @@ where the input is totally ignored and a hypothetical `read` function is given t
 ### Example
 Lets see a common situation where you would use this
 
-    from phi import P, Branch, Seq, Read, Write
+    from phi import P, List, Seq, Read, Write
 
     result = P.Pipe(
         input,
         f1, Write('ref')
         f2,
-        Branch(
+        List(
             f3
         ,
             Seq(
@@ -1320,18 +1474,19 @@ def _compile_if(ast):
 
 
 def _parse(code):
+
     #if type(code) is tuple:
     if isinstance(code, Expression):
         return code
     elif hasattr(code, '__call__') or isclass(code):
         return Expression(utils.lift(code))
     elif isinstance(code, list):
-        return E.Branch(*code)
+        return E.List(*code)
     elif isinstance(code, tuple):
-        return E.Branch(*code).Then(tuple)
+        return E.Tuple(*code)
     elif isinstance(code, set):
-        return E.Branch(*code).Then(set)
+        return E.Set(*code)
     elif isinstance(code, dict):
-        return E.Rec(**code)
+        return E.Dict(**code)
     else:
         return E.Val(code)

@@ -15,14 +15,14 @@ class TestNoDSL(object):
 
     def test_branch(self):
 
-        f = P.Branch(
+        f = P.List(
             P + 2,
             P * 2
         )
 
         assert [5, 6] == f(3)
 
-        f = P.Branch(
+        f = P.List(
             P + 2,
             P.Seq(
                 P + 1,

@@ -1,7 +1,7 @@
 from phi.api import *
 
-class TestLambdas(object):
-    """docstring for TestLambdas."""
+class TestExpressions(object):
+    """docstring for TestExpressions."""
 
     def test_ops(self):
 
@@ -9,6 +9,15 @@ class TestLambdas(object):
             1,
             P + 1
         )
+
+        #####################
+        #####################
+
+        f = P * [ P ]
+
+        assert f(0) == []
+        assert f(1) == [1]
+        assert f(3) == [3,3,3]
 
     def test_rshift(self):
 
@@ -46,12 +55,12 @@ class TestLambdas(object):
         f = lambda x: x * 3
         g = lambda x: x + 2
 
-        h = g << P.Seq(f)
+        h = g << Seq(f)
 
         assert 11 == h(3)
 
 
-        h = P.Seq(g) << f
+        h = Seq(g) << f
 
         assert 11 == h(3)
 
@@ -63,9 +72,9 @@ class TestLambdas(object):
 
     def test_lambda_opt_lambda(self):
 
-        assert 3 == P.Pipe(
+        assert 3 == Pipe(
             0,
-            Branch(
+            List(
                 P + 1
             ,
                 P + 2
@@ -74,7 +83,7 @@ class TestLambdas(object):
         )
 
         assert 3 == P.Pipe(
-            Rec(
+            Dict(
                 a = 1,
                 b = 2
             ),
@@ -82,7 +91,7 @@ class TestLambdas(object):
         )
 
         assert 5 == P.Pipe(
-            Rec(
+            Dict(
                 a = 10,
                 b = 2
             ),
