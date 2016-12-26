@@ -5,7 +5,7 @@
 
     <title>phi API documentation</title>
     <meta name="description" content="# Phi
-Phi library for [fluent](https://en.wikipedia.org/wiki/Fluent_interface) functional programmin..." />
+Phi library for functional programming in Python that intends to remove as much of the pain as..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1045,7 +1045,6 @@ table {
         <li class="mono"><a href="api.m.html">phi.api</a></li>
         <li class="mono"><a href="builder.m.html">phi.builder</a></li>
         <li class="mono"><a href="dsl.m.html">phi.dsl</a></li>
-        <li class="mono"><a href="lambdas.m.html">phi.lambdas</a></li>
         <li class="mono"><a href="python_builder.m.html">phi.python_builder</a></li>
         <li class="mono"><a href="tests/index.html">phi.tests</a></li>
         <li class="mono"><a href="utils.m.html">phi.utils</a></li>
@@ -1064,14 +1063,324 @@ table {
   <header id="section-intro">
   <h1 class="title"><span class="name">phi</span> module</h1>
   <h1>Phi</h1>
-<p>Phi library for <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent</a> functional programming in Python that intends to remove as much of the pain as possible from your functional programming experience in Python by providing the following modules</p>
-<ul>
-<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a>: a small DSL that helps you compose computations in various ways &amp; more.</li>
-<li><a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>: easy way to create quick lambdas with a mathematical flavor.</li>
-<li><a href="https://cgarciae.github.io/phi/builder.m.html">builder</a>: an extensible class that enables you to integrate other libraries into the DSL as a fluent API, to do it lets you <a href="https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder.RegisterMethod">register</a> functions as methods or even <a href="https://cgarciae.github.io/phi/builder.m.html#phi.builder.Builder.PatchAt">patch</a> an entire module with a few lines of code.</li>
-</ul>
-<h3>Libraries</h3>
-<p>Phi currently powers the following libraries:</p>
+<p>Phi library for functional programming in Python that intends to remove as much of the pain as possible from your functional programming experience in Python.</p>
+<h2>Import</h2>
+<p>For demonstration purposes we will import right now everything we will need for the rest of the exercises like this</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+
+
+<p>but you can also import just what you need from the <code>phi</code> module.</p>
+<h2>Math-like Lambdas</h2>
+<h4>Operators</h4>
+<p>Using the <code>P</code> object you can create quick lambdas using any operator. You can write things like</p>
+<div class="codehilite"><pre><span></span>f = (P * 6) / (P + 2)
+
+assert f(2) == 3  # (2 * 6) / (2 + 2) == 12 / 4 == 3
+</pre></div>
+
+
+<p>where the expression for <code>f</code> is equivalent to</p>
+<div class="codehilite"><pre><span></span>f = lambda x: (x * 6) / (x + 2)
+</pre></div>
+
+
+<h4>getitem</h4>
+<p>You can also use the <code>P</code> object to create lambdas that access the items of a collection</p>
+<div class="codehilite"><pre><span></span>f = P[0] + P[-1]  #add the first and last elements
+
+assert f([1,2,3,4]) == 5   #1 + 4 == 5
+</pre></div>
+
+
+<h4>field access</h4>
+<p>If you want create lambdas that access the field of some entity you can use the <code>Rec</code> (for Record) object an call that field on it</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="n">Point</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Point&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#add the x and y fields</span>
+
+<span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">==</span> <span class="mi">7</span>   <span class="c1">#point.x + point.y == 3 + 4 == 7</span>
+</pre></div>
+
+
+<h4>method calling</h4>
+<p>If you want to create a lambda that calls the method of an object you use the <code>Obj</code> object and call that method on it with the parameters</p>
+<div class="codehilite"><pre><span></span>f = Obj.upper() + &quot;, &quot; + Obj.lower()  #lambda s: s.upper() + &quot;, &quot; + s.lower()
+
+assert f(&quot;HEllo&quot;) == &quot;HELLO, hello&quot;   # &quot;HEllo&quot;.upper() + &quot;, &quot; + &quot;HEllo&quot;.lower() == &quot;HELLO&quot; + &quot;, &quot; + &quot;hello&quot; == &quot;HELLO, hello&quot;
+</pre></div>
+
+
+<p>Here no parameters where needed but in general</p>
+<div class="codehilite"><pre><span></span>f = Obj.some_method(arg1, arg2, ...) #lambda obj: obj.some_method(arg1, arg2, ...)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>f = lambda obj: obj.some_method(arg1, arg2, ...)
+</pre></div>
+
+
+<h2>Composition</h2>
+<h4>&gt;&gt; and &lt;&lt;</h4>
+<p>You can use the <code>&gt;&gt;</code> operator to <em>forward</em> compose expressions</p>
+<div class="codehilite"><pre><span></span>f = P + 7 &gt;&gt; math.sqrt  #executes left to right
+
+assert f(2) == 3  # math.sqrt(2 + 7) == math.sqrt(9) == 3
+</pre></div>
+
+
+<p>This is preferred because its more readable, but you can use the <code>&lt;&lt;</code> to compose them <em>backwards</em> just like the mathematical definition of function composition</p>
+<div class="codehilite"><pre><span></span>f =  math.sqrt &lt;&lt; P + 7 #executes right to left
+
+assert f(2) == 3  # math.sqrt(2 + 7) == math.sqrt(9) == 3
+</pre></div>
+
+
+<h4>Seq and Pipe</h4>
+<p>If you need to do a long or complex composition you can use <code>Seq</code> instead of many chained <code>&gt;&gt;</code></p>
+<div class="codehilite"><pre><span></span>f = Seq(
+  str,
+  P + &quot;00&quot;,
+  int,
+  math.sqrt
+)
+
+assert f(1) == 10  # sqrt(int(&quot;1&quot; + &quot;00&quot;)) == sqrt(100) == 10
+</pre></div>
+
+
+<p>If you want to create a composition and directly apply it to an initial value you can use <code>Pipe</code></p>
+<div class="codehilite"><pre><span></span>assert 10 == Pipe(
+  1,  #input
+  str,  # &quot;1&quot;
+  P + &quot;00&quot;,  # &quot;1&quot; + &quot;00&quot; == &quot;100&quot;
+  int,  # 100
+  math.sqrt  #sqrt(100) == 10
+)
+</pre></div>
+
+
+<h2>Combinators</h2>
+<h4>List, Tuple, Set, Dict</h4>
+<p>There are a couple of combinators like <code>List</code>, <code>Tuple</code>, <code>Set</code>, <code>Dict</code> that help you create compound functions that return the container types <code>list</code>, <code>tuple</code>, <code>set</code> and <code>dict</code> respectively. For example, you can pass <code>List</code> a couple of expression to get a function that returns a list with the values of these functions</p>
+<div class="codehilite"><pre><span></span>f = List( P + 1, P * 10 )  #lambda x: [ x +1, x * 10 ]
+
+assert f(3) == [ 4, 30 ]  # [ 3 + 1, 3 * 10 ] == [ 4, 30 ]
+</pre></div>
+
+
+<p>The same logic applies for <code>Tuple</code> and <code>Set</code>. With <code>Dict</code> you have to use keyword arguments</p>
+<div class="codehilite"><pre><span></span>f = Dict( x = P + 1, y = P * 10 )  #lambda x: [ x +1, x * 10 ]
+
+d = f(3)
+
+assert d == { &#39;x&#39;: 4, &#39;y&#39;: 30 }  # { &#39;x&#39;: 3 + 1, &#39;y&#39;: 3 * 10 } == { &#39;x&#39;: 4, &#39;y&#39;: 30 }
+assert d.x == 4   #access d[&#39;x&#39;] via field access as d.x
+assert d.y == 30  #access d[&#39;y&#39;] via field access as d.y
+</pre></div>
+
+
+<p>As you see, <code>Dict</code> returns a custom <code>dict</code> that also allows <em>field access</em>, this is useful because you can use it in combination with <code>Rec</code>.</p>
+<h4>State: Read and Write</h4>
+<p>Internally all these expressions are implemented in such a way that they not only pass their computed values but also pass a <strong>state</strong> dictionary between them in a functional manner, by reading from and writing to this state dictionary the <code>Read</code> and <code>Write</code> combinators can help you "save" the state of intermediate computations to read them latter</p>
+<div class="codehilite"><pre><span></span>assert [70, 30] == Pipe(
+  3,
+  P * 10,  #3 * 10 == 30
+  Write(&#39;s&#39;),  #s = 30
+  P + 5,  #30 + 5 == 35
+  List(
+    P * 2  # 35 * 2 == 70
+  ,
+    Read(&#39;s&#39;)  #s == 30
+  )
+)
+</pre></div>
+
+
+<h4>Then, Then2, ..., Then5, ThenAt</h4>
+<p>To create a partial expression from a function e.g.</p>
+<div class="codehilite"><pre><span></span>def repeat_word(word, times, upper=False):
+  if upper:
+    word = word.upper()
+
+  return [ word ] * times
+</pre></div>
+
+
+<p>use the <code>Then</code> combinator which accepts a function plus all but the <em>1rst</em> of its <code>*args</code> + <code>**kwargs</code></p>
+<div class="codehilite"><pre><span></span><span class="s s-Atom">f</span> <span class="o">=</span> <span class="nv">P</span><span class="p">[</span><span class="s s-Atom">::-</span><span class="mi">1</span><span class="p">]</span> <span class="s s-Atom">&gt;&gt;</span> <span class="nv">Then</span><span class="p">(</span><span class="s s-Atom">repeat_word</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="s s-Atom">g</span> <span class="o">=</span> <span class="nv">P</span><span class="p">[</span><span class="s s-Atom">::-</span><span class="mi">1</span><span class="p">]</span> <span class="s s-Atom">&gt;&gt;</span> <span class="nv">Then</span><span class="p">(</span><span class="s s-Atom">repeat_word</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s s-Atom">upper</span><span class="o">=</span><span class="nv">True</span><span class="p">)</span>
+
+<span class="s s-Atom">assert</span> <span class="nf">f</span><span class="p">(</span><span class="s2">&quot;ward&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;draw&quot;</span><span class="p">,</span> <span class="s2">&quot;draw&quot;</span><span class="p">,</span> <span class="s2">&quot;draw&quot;</span><span class="p">]</span>
+<span class="s s-Atom">assert</span> <span class="nf">g</span><span class="p">(</span><span class="s2">&quot;ward&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;DRAW&quot;</span><span class="p">,</span> <span class="s2">&quot;DRAW&quot;</span><span class="p">,</span> <span class="s2">&quot;DRAW&quot;</span><span class="p">]</span>
+</pre></div>
+
+
+<p>and assumes the <em>1rst</em> argument of the function will be applied last, e.g. <code>word</code> in the case of <code>repeat_word</code>. If you need the <em>2nd</em> argument to be applied last use <code>Then2</code>, and so on. In general you can use <code>ThenAt(n, f, *args, **kwargs)</code> where <code>n</code> is the position of the argument that will be applied last. Example</p>
+<div class="codehilite"><pre><span></span># since map and filter receive the iterable on their second argument, you have to use `Then2`
+f = Then2(filter, P % 2 == 0) &gt;&gt; Then2(map, P**2) &gt;&gt; list  #lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))
+
+assert f([1,2,3,4,5]) == [4, 16]  #[2**2, 4**2] == [4, 16]
+</pre></div>
+
+
+<p>Be aware that <code>P</code> already has the <code>map</code> and <code>filter</code> methods so you can write the previous more easily as</p>
+<div class="codehilite"><pre><span></span>f = P.filter(P % 2 == 0) &gt;&gt; P.map(P**2) &gt;&gt; list  #lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))
+
+assert f([1,2,3,4,5]) == [4, 16]  #[2**2, 4**2] == [4, 16]
+</pre></div>
+
+
+<h4>Val</h4>
+<p>If you need to create a constant function with a given value use <code>Val</code></p>
+<div class="codehilite"><pre><span></span>f = Val(42)  #lambda x: 42
+
+assert f(&quot;whatever&quot;) == 42
+</pre></div>
+
+
+<h4>Others</h4>
+<p>Check out the <code>With</code>, <code>If</code> and more, combinators on the documentation. The <code>P</code> object also offers some useful combinators as methods such as <code>Not</code>, <code>First</code>, <code>Last</code> plus <strong>almost all</strong> python built in functions as methods:</p>
+<div class="codehilite"><pre><span></span>f = Obj.split(&#39; &#39;) &gt;&gt; P.map(len) &gt;&gt; sum &gt;&gt; If( (P &lt; 15).Not(), &quot;Great! Got {0} letters!&quot;.format).Else(&quot;Too short, need at-least 15 letters&quot;)
+
+assert f(&quot;short frase&quot;) == &quot;Too short, need at-least 15 letters&quot;
+assert f(&quot;some longer frase&quot;) == &quot;Great! Got 15 letters!&quot;
+</pre></div>
+
+
+<h2>The DSL</h2>
+<p>Phi has a small omnipresent DSL that has these simple rules:</p>
+<ol>
+<li>Any element of the class <code>Expression</code> is an element of the DSL. <code>P</code> and all the combinators are of the <code>Expression</code> class.</li>
+<li>Any callable of arity 1 is an element of the DSL.</li>
+<li>The container types <code>list</code>, <code>tuple</code>, <code>set</code>, and <code>dict</code> are elements of the DSL. They are translated to their counterparts <code>List</code>, <code>Tuple</code>, <code>Set</code> and <code>Dict</code>, their internal elements are forwarded.</li>
+<li>Any value <code>x</code> that does not comply with any of the previous rules is also an element of the DSL and is translated to <code>Val(x)</code>.</li>
+</ol>
+<p>Because of this it is possible that the expression</p>
+<div class="codehilite"><pre><span></span>f = P**2 &gt;&gt; List( P, Val(3), Val(4) )  #lambda x: [ x**2]
+
+assert f(10) == [ 100, 3, 4 ]  # [ 10**2, 3, 4 ]  == [ 100, 3, 4 ]
+</pre></div>
+
+
+<p>can initially be rewritten as</p>
+<div class="codehilite"><pre><span></span>f = P**2 &gt;&gt; List( P, 3, 4 )
+
+assert f(10) == [ 100, 3, 4 ]  # [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]
+</pre></div>
+
+
+<p>because <code>3</code> and <code>4</code> are translated to <code>Val(3)</code> and <code>Val(4)</code> thanks to the <em>4th</em> rule. But you can further simplify it to</p>
+<div class="codehilite"><pre><span></span>f = P**2 &gt;&gt; [ P, 3, 4 ]
+
+assert f(10) == [ 100, 3, 4 ]  # [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]
+</pre></div>
+
+
+<p>thanks to the <em>3rd</em> rule. Since the DSL is omnipresent you can use it inside any core function, so the previous can be rewritten using <code>Pipe</code> as</p>
+<div class="codehilite"><pre><span></span>assert [ 100, 3, 4 ] == Pipe(
+  10,
+  P**2,  # 10**2 == 100
+  [ P, 3, 4 ]  #[ 100, 3, 4 ]
+)
+</pre></div>
+
+
+<h4>F</h4>
+<p>You can <em>compile</em> any element to an <code>Expression</code> using <code>F</code></p>
+<div class="codehilite"><pre><span></span>f = F((P + &quot;!!!&quot;, 42, Obj.upper()))  #Tuple(P + &quot;!!!&quot;, Val(42), Obj.upper())
+
+assert f(&quot;some tuple&quot;) == (&quot;some tuple!!!&quot;, 42, &quot;SOME TUPLE&quot;)
+</pre></div>
+
+
+<p>Other example</p>
+<div class="codehilite"><pre><span></span>f = F([ P + n for n in range(5) ])  &gt;&gt; [ len, sum ]  # lambda x: [ len([ x, x+1, x+2, x+3, x+4]), sum([ x, x+1, x+2, x+3, x+4]) ]
+
+assert f(10) == [ 5, 60 ]  # [ len([10, 11, 12, 13, 14]), sum([10, 11, 12, 13, 14])] == [ 5, (50 + 0 + 1 + 2 + 3 + 4) ] == [ 5, 60 ]
+</pre></div>
+
+
+<h2>Fluent Programming</h2>
+<p>All the functions you've seen are ultimately methods of the <code>PythonBuilder</code> class which inherits from the <code>Expression</code>, therefore you can also <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluently</a> chain methods instead of using the <code>&gt;&gt;</code> operator. For example</p>
+<div class="codehilite"><pre><span></span>f = Dict(
+  x = 2 * P,
+  y = P + 1
+).Tuple(
+  Rec.x + Rec.y,
+  Rec.y / Rec.x
+)
+
+assert f(1) == (4, 1)  # ( x + y, y / x) == ( 2 + 2, 2 / 2) == ( 4, 1 )
+</pre></div>
+
+
+<p>This more complicated previous example</p>
+<div class="codehilite"><pre><span></span>f = Obj.split(&#39; &#39;) &gt;&gt; P.map(len) &gt;&gt; sum &gt;&gt; If( (P &lt; 15).Not(), &quot;Great! Got {0} letters!&quot;.format).Else(&quot;Too short, need at-least 15 letters&quot;)
+
+assert f(&quot;short frase&quot;) == &quot;Too short, need at-least 15 letters&quot;
+assert f(&quot;some longer frase&quot;) == &quot;Great! Got 15 letters!&quot;
+</pre></div>
+
+
+<p>can be be rewritten as</p>
+<div class="codehilite"><pre><span></span>f = (
+  Obj.split(&#39; &#39;)
+  .map(len)
+  .sum()
+  .If( (P &lt; 15).Not(),
+    &quot;Great! Got 0.5.0 letters!&quot;.format
+  ).Else(
+    &quot;Too short, need at-least 15 letters&quot;
+  )
+)
+
+assert f(&quot;short frase&quot;) == &quot;Too short, need at-least 15 letters&quot;
+assert f(&quot;some longer frase&quot;) == &quot;Great! Got 15 letters!&quot;
+</pre></div>
+
+
+<h2>Integrability</h2>
+<h4>Register, Register2, ..., Register5, RegistarAt</h4>
+<p>If you want to have custom expression to deal with certain data types, you create a custom class that inherits from <code>Builder</code> or <code>PythonBuilder</code></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">PythonBuilder</span>
+
+<span class="k">class</span> <span class="nc">MyBuilder</span><span class="p">(</span><span class="n">PythonBuilder</span><span class="p">):</span>
+  <span class="k">pass</span>
+
+<span class="n">M</span> <span class="o">=</span> <span class="n">MyBuilder</span><span class="p">()</span>
+</pre></div>
+
+
+<p>and register your function in it using <code>Register</code> class method</p>
+<div class="codehilite"><pre><span></span>def remove_longer_than(some_list, n):
+  return [ elem from elem in some_list if len(elem) &lt;= n ]
+
+MyBuilder.Register(remove_longer_than, &quot;my.lib.&quot;)
+</pre></div>
+
+
+<p>Or better even use <code>Register</code> as a decorator</p>
+<div class="codehilite"><pre><span></span>@MyBuilder.Register(&quot;my.lib.&quot;)
+def remove_longer_than(some_list, n):
+  return [ elem for elem in some_list if len(elem) &lt;= n ]
+</pre></div>
+
+
+<p>Now the method <code>MyBuilder.remove_longer_than</code> exists on this class. You can then use it like this</p>
+<div class="codehilite"><pre><span></span>f = Obj.lower() &gt;&gt; Obj.split(&#39; &#39;) &gt;&gt; M.remove_longer_than(6)
+
+assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot;]
+</pre></div>
+
+
+<p>As you see the argument <code>n = 6</code> was partially applied to <code>remove_longer_than</code>, an expression which awaits the <code>some_list</code> argument is returned. Internally the <code>Registar*</code> method family use the <code>Then*</code> method family.</p>
+<h4>PatchAt</h4>
+<p>If you want to register a batch of functions from a module or class automatically you can use the <code>PatchAt</code> class method. Its an easy way to integrate an entire module to Phi's DSL. See <code>PatchAt</code>.</p>
+<h4>Libraries</h4>
+<p>Phi currently powers the following libraries that integrate with its DSL:</p>
 <ul>
 <li><a href="https://cgarciae.github.io/phi/python_builder.m.html">PythonBuilder</a> : helps you integrate Python's built-in functions and keywords into the phi DSL and it also includes a bunch of useful helpers for common stuff. <code>phi</code>'s global <code>P</code> object is an instance of this class. [Shipped with Phi]</li>
 <li><a href="https://github.com/cgarciae/tensorbuilder">TensorBuilder</a>: a TensorFlow library enables you to easily create complex deep neural networks by leveraging the phi DSL to help define their structure.</li>
@@ -1079,7 +1388,7 @@ table {
 </ul>
 <h2>Documentation</h2>
 <p>Check out the <a href="https://cgarciae.github.io/phi/">complete documentation</a>.</p>
-<h2>Getting Started</h2>
+<h2>More Examples</h2>
 <p>The global <code>phi.P</code> object exposes most of the API and preferably should be imported directly. The most simple thing the DSL does is function composition:</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
 
@@ -1336,7 +1645,7 @@ table {
 </pre></div>
 
 
-<h3>Other Examples</h3>
+<h3>Even More Examples</h3>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
 
 <span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -1384,7 +1693,7 @@ table {
 
 <h2>Status</h2>
 <ul>
-<li>Version: <strong>0.4.1</strong>.</li>
+<li>Version: <strong>0.5.0</strong>.</li>
 <li>Documentation coverage: 100%. Please create an issue if documentation is unclear, its of great priority for this library.</li>
 <li>Milestone: reach 1.0.0 after feedback from the community.</li>
 </ul>
@@ -1400,7 +1709,6 @@ table {
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">builder</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dsl</span>
-<span class="kn">import</span> <span class="nn">lambdas</span>
 
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">identity</span>
 
@@ -1468,17 +1776,11 @@ table {
       <p class="name"><a href="dsl.m.html">phi.dsl</a></p>
       
   
-    <div class="desc"><p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Seq</code> or applied to a value using <code>P.Pipe</code>.</p>
-<p>Phi offers the following con...</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="lambdas.m.html">phi.lambdas</a></p>
-      
-  
-    <div class="desc"><p>Phi's <code>Expression</code> class allows you to create quick lambdas that are much more readable and compact than Python's <code>lambda</code> keyword. The <code>P</code> object</p>
-<p><strong> Operations </strong></p>
-<p><code>Expression</code> overrides all operators plus the <code>__getitem__</code> and <code>__call__</code> special methods. Using operator overloading you can do thin...</p></div>
+    <div class="desc"><p>The Phi DSL is all about creating and combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. Its has two main functionalities</p>
+<ol>
+<li>The lambdas capabilities which let quickly create readable functions.</li>
+<li>The <code>Expression</code> com...</li>
+</ol></div>
 
       </div>
       <div class="item">

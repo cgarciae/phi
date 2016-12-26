@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>phi.dsl API documentation</title>
-    <meta name="description" content="The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that ca..." />
+    <meta name="description" content="The Phi DSL is all about creating and combining functions in useful ways, enabling a declarative app..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1054,10 +1054,12 @@ table {
   <ul>
     <li class="mono"><a href="#phi.dsl.Expression.Context">Context</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.__init__">__init__</a></li>
-    <li class="mono"><a href="#phi.dsl.Expression.Branch">Branch</a></li>
+    <li class="mono"><a href="#phi.dsl.Expression.Dict">Dict</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Elif">Elif</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Else">Else</a></li>
+    <li class="mono"><a href="#phi.dsl.Expression.F">F</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.If">If</a></li>
+    <li class="mono"><a href="#phi.dsl.Expression.List">List</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Pipe">Pipe</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Seq">Seq</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Set">Set</a></li>
@@ -1100,39 +1102,360 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">phi.dsl</span> module</h1>
-  <p>The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using <code>P.Seq</code> or applied to a value using <code>P.Pipe</code>.</p>
-<p>Phi offers the following constructs, <strong>try to read their documentation in order</strong>:</p>
+  <p>The Phi DSL is all about creating and combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. Its has two main functionalities</p>
+<ol>
+<li>The lambdas capabilities which let quickly create readable functions.</li>
+<li>The <code>Expression</code> combinator methods that let you build up complex computations.</li>
+</ol>
+<p>The DSL has very few rules but its important to know them</p>
 <ul>
-<li><strong><code>Functions</code></strong>: any function of arity 1 is an element of the language</li>
-<li><strong><code>Values</code></strong>: any value is transformed into a constant function using <a href="#phi.dsl.Expression.Val"><code>Val</code></a></li>
-<li><strong><a href="#phi.dsl.Expression.Seq"><code>Seq</code></a></strong>: allows to sequentially compose functions</li>
-<li><strong><a href="#phi.dsl.Expression.Branch"><code>Branch</code></a></strong>: lets to create a branched computation that returns a list with the results of each branch</li>
-<li><strong><a href="#phi.dsl.Expression.Val"><code>Val</code></a></strong>: allows you to specify an input value, compiles to a (constant) function that returns the same value no matter the input</li>
-<li><strong><a href="#phi.dsl.Expression.With"><code>With</code></a></strong>: lets you to specify a context manager for the expresion (uses the <code>with</code> statemente)</li>
-<li><strong><a href="#phi.dsl.Expression.Rec"><code>Rec</code></a></strong>: lets to create a branched computation with named branches that returns a record-like structure with the results of each branch</li>
-<li><strong><a href="#phi.dsl.Expression.Read"><code>Read</code></a> &amp; <a href="#phi.dsl.Expression.Write"><code>Write</code></a></strong>: allow you to create a reference to the value at some point and read it latter on.</li>
-<li><strong><a href="#phi.dsl.Expression.If"><code>If</code></a></strong>: allows you to create conditional computation</li>
+<li><strong>Functions</strong> : all functions of arity 1 are members of the DSL. Any object that defines <code>__call__</code> is accepted but if its arity is not 1 there will be problems.</li>
+<li><strong>Values</strong> : any value e.g. <code>val</code> is part of the DSL but internally it will be compiled the constant function <code>lambda x: val</code></li>
+<li><strong>Expressions</strong> : all <code>Expression</code>s are elements of the DSL. See <a href="#phi.dsl.Expression"><code>Expression</code></a>.</li>
+<li><strong>Containers</strong> : the container types <code>list</code>, <code>tuple</code>, <code>set</code>, and <code>dict</code> are elements of the DSL and are translated into their counterparts <a href="#phi.dsl.Expression.List"><code>List</code></a>, <a href="#phi.dsl.Expression.Tuple"><code>Tuple</code></a>, <a href="#phi.dsl.Expression.Set"><code>Set</code></a>, and <a href="#phi.dsl.Expression.Dict"><code>Dict</code></a>.</li>
 </ul>
-<p>Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.</p>
+<p>Any expresion can appear inside other expression in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion's point of view all of its elements are just functions.</p>
+<p><strong> Expressions </strong></p>
+<p><code>Expression</code> overrides all operators plus the <code>__getitem__</code> and <code>__call__</code> methods, this allows you to create functions by just writting formulas. For example</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>  <span class="c1">#( 1 * 2 ) / ( 1 + 1) == 2 / 2 == 1</span>
+</pre></div>
+
+
+<p>the previous expression for <code>f</code> is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: (x * 2) / (x + 1)
+</pre></div>
+
+
+<p>As you see, it creates very math-like functions that are very readable. The overloading mechanism has the following rules:</p>
+<p>Let <code>g</code> be a Expression, <code>h</code> any expression of the DSL, and <code>$</code> any python operator, then</p>
+<div class="codehilite"><pre><span></span>f = g $ h
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: g(x) $ h(x)
+</pre></div>
+
+
+<p><em><strong>getitem</strong></em></p>
+<p>The special method <code>__getitem__</code> is also implemented and enables you to define a lambda uses pythons access mechanism on its argument. The expression</p>
+<div class="codehilite"><pre><span></span>P[x]
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda obj: obj[x]
+</pre></div>
+
+
+<p><strong> Examples </strong></p>
+<p>Add the first and last element of a list</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span>  <span class="c1">#1 + 4 == 5</span>
+</pre></div>
+
+
+<p><strong> State </strong></p>
+<p>You might see function like <a href="#phi.dsl.Expression.Read"><code>Read</code></a> and <a href="#phi.dsl.Expression.Write"><code>Write</code></a> that make the look as if you are doing stateful voodoo behind the scenes, dont worry, internally <code>Expression</code> is implemented using a pattern that passes state <code>dict</code> from lambda to lambda in a functional manner. All normal functions of the form</p>
+<div class="codehilite"><pre><span></span>y = f(x)
+</pre></div>
+
+
+<p>are lifted to</p>
+<div class="codehilite"><pre><span></span>(y, new_state) = f(x, state)
+</pre></div>
+
+
+<p>This way <a href="#phi.dsl.Expression.Read"><code>Read</code></a> and <a href="#phi.dsl.Expression.Write"><code>Write</code></a> can be implemented in such a way that they can read/write from/to the state being passed around, <code>Write</code> returns a new state with the updated values, all operations are immutable. Since Expressions internally return a tuple with a value and a dict, you might wonder why you only get the value when you call a Expression, see <code>__call__</code> next.</p>
+<p><strong> __call__ </strong></p>
+<div class="codehilite"><pre><span></span>def __call__(self, x, *return_state, **state)
+</pre></div>
+
+
+<p><em>Arguments</em></p>
+<ul>
+<li><code>x</code> : a value to apply the computation</li>
+<li><code>*return_state</code> : an optional boolean to determine whether the resulting internal state should be returned, defaults to <code>False</code></li>
+<li><code>**state</code> : all keyword argument are interpreted as initial values from the state <code>dict</code> that will be passed through the computation, defaults to <code>{}</code>.</li>
+</ul>
+<p>Normally you call a <code>Expression</code> only passing the value</p>
+<div class="codehilite"><pre><span></span>f = P + 1
+f(1) == 2
+</pre></div>
+
+
+<p>however if you pass an extra argument with <code>True</code> you can get the state back</p>
+<div class="codehilite"><pre><span></span>f = P + 1
+f(1, True) == (2, {})
+</pre></div>
+
+
+<p>and if you pass keyword arguments you will se that the returned state includes them</p>
+<div class="codehilite"><pre><span></span>f = P + 1
+f(1, True, a=0) == (2, {&quot;a&quot;: 0})
+</pre></div>
+
+
+<p>Naturally this behaviour is only useful if you include expression that do something with the state, so lets do that</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Seq</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="n">Read</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">))</span>
+<span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+</pre></div>
+
+
+<p>Here we pass <code>None</code> to <code>f</code> but also set <code>a = 0</code> internally and then</p>
+<ol>
+<li><code>Read("a")</code> dicards <code>None</code> and sets the value to <code>0</code> which is the current value of <code>a</code></li>
+<li><code>P + 5</code> adds <code>5</code> to <code>0</code></li>
+<li><code>Write("a")</code> sets the value <code>a</code> of the state to <code>5</code></li>
+</ol>
+<p>The previous can also be written more compactly as</p>
+<div class="codehilite"><pre><span></span>f = Read(&quot;a&quot;) + 5 &gt;&gt; Write(&quot;a&quot;)
+f(None, True, a=0) == (5, {&quot;a&quot;: 5})
+</pre></div>
+
+
+<p>or even</p>
+<div class="codehilite"><pre><span></span>f = Read.a + 5 &gt;&gt; Write.a
+assert f(None, True, a=0) == (5, {&quot;a&quot;: 5})
+</pre></div>
+
+
+<p><strong> <code>&gt;&gt;</code> </strong></p>
+<p>The the operator <code>&gt;&gt;</code> is NOT a lambda for <a href="https://www.tutorialspoint.com/python/bitwise_operators_example.htm">bitwise right shift</a>, instead</p>
+<div class="codehilite"><pre><span></span>f &gt;&gt; g
+</pre></div>
+
+
+<p>represents functions composition in a sequential manner such that the previous is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: g(f(x))
+</pre></div>
+
+
+<p>See <a href="#phi.dsl.Expression.Seq"><code>Seq</code></a>. As you see functions are executed in the order they appear which makes code more readable and easier to reason about.</p>
+<p><strong> &lt;&lt; </strong></p>
+<p>This operator composes functions according to the mathematical definition, that is</p>
+<div class="codehilite"><pre><span></span>f &lt;&lt; g
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: f(g(x))
+</pre></div>
+
+
+<p><em>Composition Comparison</em></p>
+<ul>
+<li><code>f &gt;&gt; g</code> is equivalent to <code>lambda x: g(f(x))</code>. <code>f</code> is executed first then <code>g</code>. Reads left to right.</li>
+<li><code>f &lt;&lt; g</code> is equivalent to <code>lambda x: f(g(x))</code>. <code>g</code> is executed first then <code>f</code>. Reads right to left.</li>
+</ul>
+<p><strong> fn.py </strong></p>
+<p>The operator overloading mechanism of <code>Expression</code> to create quick functions takes much of its inspiration and some code from <a href="https://github.com/fnpy/fn.py">fn.py</a>'s '<code>_</code>' object, however it different in that it only creates functions of arity 1 to comply with the DSL. Where in fn.py expressions like</p>
+<div class="codehilite"><pre><span></span>_ + _
+</pre></div>
+
+
+<p>are equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda a, b: a + b
+</pre></div>
+
+
+<p>That is, every time <code>_</code> appears in a compound expresion it creates a function of a higher arity. Instead in phi the expresion</p>
+<div class="codehilite"><pre><span></span>P + P
+</pre></div>
+
+
+<p>is interpreted as</p>
+<div class="codehilite"><pre><span></span>lambda a: a + a
+</pre></div>
+
+
+<p>In the context of the DSL this is more useful since it allows you to write expressions like</p>
+<div class="codehilite"><pre><span></span>f = P.map(P ** 2) &gt;&gt; list &gt;&gt; P[0] + P[1] &gt;&gt; math.sqrt  #f = lambda x: math.sqrt( x[0] ** 2 + x[1] ** 2)
+
+assert f([3, 4]) == 5
+</pre></div>
+
+
+<p>where <code>P[0] + P[1]</code> creates the lambda of a single input argument <code>lambda x: x[0] + x[1]</code> that fits nice with the function composition.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl" class="source">
     <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The Phi DSL is all about combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. All valid expression of the DSL can be compiled to a function using `P.Seq` or applied to a value using `P.Pipe`.</span>
+<span class="sd">The Phi DSL is all about creating and combining functions in useful ways, enabling a declarative approach that can improve clarity, readability and lead to shorter code. Its has two main functionalities</span>
 
-<span class="sd">Phi offers the following constructs, **try to read their documentation in order**:</span>
+<span class="sd">1. The lambdas capabilities which let quickly create readable functions.</span>
+<span class="sd">2. The `Expression` combinator methods that let you build up complex computations.</span>
 
-<span class="sd">* **`Functions`**: any function of arity 1 is an element of the language</span>
-<span class="sd">* **`Values`**: any value is transformed into a constant function using `phi.dsl.Expression.Val`</span>
-<span class="sd">* **`phi.dsl.Expression.Seq`**: allows to sequentially compose functions</span>
-<span class="sd">* **`phi.dsl.Expression.Branch`**: lets to create a branched computation that returns a list with the results of each branch</span>
-<span class="sd">* **`phi.dsl.Expression.Val`**: allows you to specify an input value, compiles to a (constant) function that returns the same value no matter the input</span>
-<span class="sd">* **`phi.dsl.Expression.With`**: lets you to specify a context manager for the expresion (uses the `with` statemente)</span>
-<span class="sd">* **`phi.dsl.Expression.Rec`**: lets to create a branched computation with named branches that returns a record-like structure with the results of each branch</span>
-<span class="sd">* **`phi.dsl.Expression.Read` &amp; `phi.dsl.Expression.Write`**: allow you to create a reference to the value at some point and read it latter on.</span>
-<span class="sd">* **`phi.dsl.Expression.If`**: allows you to create conditional computation</span>
+<span class="sd">The DSL has very few rules but its important to know them</span>
 
-<span class="sd">Any expresion can appear inside any other expresion in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion&#39;s point of view all of its elements are just functions.</span>
+<span class="sd">* **Functions** : all functions of arity 1 are members of the DSL. Any object that defines `__call__` is accepted but if its arity is not 1 there will be problems.</span>
+<span class="sd">* **Values** : any value e.g. `val` is part of the DSL but internally it will be compiled the constant function `lambda x: val`</span>
+<span class="sd">* **Expressions** : all `Expression`s are elements of the DSL. See `phi.dsl.Expression`.</span>
+<span class="sd">* **Containers** : the container types `list`, `tuple`, `set`, and `dict` are elements of the DSL and are translated into their counterparts `phi.dsl.Expression.List`, `phi.dsl.Expression.Tuple`, `phi.dsl.Expression.Set`, and `phi.dsl.Expression.Dict`.</span>
+
+<span class="sd">Any expresion can appear inside other expression in a nested fasion. They correct way to think about this is that each sub-expression will be compiled to a function of arity 1, therefore from the parent expresion&#39;s point of view all of its elements are just functions.</span>
+
+<span class="sd">** Expressions **</span>
+
+<span class="sd">`Expression` overrides all operators plus the `__getitem__` and `__call__` methods, this allows you to create functions by just writting formulas. For example</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    f = (P * 2) / (P + 1)</span>
+<span class="sd">    assert f(1) == 1  #( 1 * 2 ) / ( 1 + 1) == 2 / 2 == 1</span>
+
+<span class="sd">the previous expression for `f` is equivalent to</span>
+
+<span class="sd">    lambda x: (x * 2) / (x + 1)</span>
+
+<span class="sd">As you see, it creates very math-like functions that are very readable. The overloading mechanism has the following rules:</span>
+
+<span class="sd">Let `g` be a Expression, `h` any expression of the DSL, and `$` any python operator, then</span>
+
+<span class="sd">    f = g $ h</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda x: g(x) $ h(x)</span>
+
+<span class="sd">*__getitem__*</span>
+
+<span class="sd">The special method `__getitem__` is also implemented and enables you to define a lambda uses pythons access mechanism on its argument. The expression</span>
+
+<span class="sd">    P[x]</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda obj: obj[x]</span>
+
+<span class="sd">** Examples **</span>
+
+<span class="sd">Add the first and last element of a list</span>
+
+<span class="sd">    from phi import P</span>
+
+<span class="sd">    f = P[0] + P[-1]</span>
+<span class="sd">    assert f([1, 2, 3, 4]) == 5  #1 + 4 == 5</span>
+
+<span class="sd">** State **</span>
+
+<span class="sd">You might see function like `phi.dsl.Expression.Read` and `phi.dsl.Expression.Write` that make the look as if you are doing stateful voodoo behind the scenes, dont worry, internally `Expression` is implemented using a pattern that passes state `dict` from lambda to lambda in a functional manner. All normal functions of the form</span>
+
+<span class="sd">    y = f(x)</span>
+
+<span class="sd">are lifted to</span>
+
+<span class="sd">    (y, new_state) = f(x, state)</span>
+
+<span class="sd">This way `phi.dsl.Expression.Read` and `phi.dsl.Expression.Write` can be implemented in such a way that they can read/write from/to the state being passed around, `Write` returns a new state with the updated values, all operations are immutable. Since Expressions internally return a tuple with a value and a dict, you might wonder why you only get the value when you call a Expression, see `__call__` next.</span>
+
+<span class="sd">** __call__ **</span>
+
+<span class="sd">    def __call__(self, x, *return_state, **state)</span>
+
+<span class="sd">*Arguments*</span>
+
+<span class="sd">* `x` : a value to apply the computation</span>
+<span class="sd">* `*return_state` : an optional boolean to determine whether the resulting internal state should be returned, defaults to `False`</span>
+<span class="sd">* `**state` : all keyword argument are interpreted as initial values from the state `dict` that will be passed through the computation, defaults to `{}`.</span>
+
+<span class="sd">Normally you call a `Expression` only passing the value</span>
+
+<span class="sd">    f = P + 1</span>
+<span class="sd">    f(1) == 2</span>
+
+<span class="sd">however if you pass an extra argument with `True` you can get the state back</span>
+
+<span class="sd">    f = P + 1</span>
+<span class="sd">    f(1, True) == (2, {})</span>
+
+<span class="sd">and if you pass keyword arguments you will se that the returned state includes them</span>
+
+<span class="sd">    f = P + 1</span>
+<span class="sd">    f(1, True, a=0) == (2, {&quot;a&quot;: 0})</span>
+
+<span class="sd">Naturally this behaviour is only useful if you include expression that do something with the state, so lets do that</span>
+
+<span class="sd">    from phi import P, Read, Write, Seq</span>
+
+<span class="sd">    f = Seq(Read(&quot;a&quot;), P + 5, Write(&quot;a&quot;))</span>
+<span class="sd">    f(None, True, a=0) == (5, {&quot;a&quot;: 5})</span>
+
+<span class="sd">Here we pass `None` to `f` but also set `a = 0` internally and then</span>
+
+<span class="sd">1. `Read(&quot;a&quot;)` dicards `None` and sets the value to `0` which is the current value of `a`</span>
+<span class="sd">2. `P + 5` adds `5` to `0`</span>
+<span class="sd">3. `Write(&quot;a&quot;)` sets the value `a` of the state to `5`</span>
+
+<span class="sd">The previous can also be written more compactly as</span>
+
+<span class="sd">    f = Read(&quot;a&quot;) + 5 &gt;&gt; Write(&quot;a&quot;)</span>
+<span class="sd">    f(None, True, a=0) == (5, {&quot;a&quot;: 5})</span>
+
+<span class="sd">or even</span>
+
+<span class="sd">    f = Read.a + 5 &gt;&gt; Write.a</span>
+<span class="sd">    assert f(None, True, a=0) == (5, {&quot;a&quot;: 5})</span>
+
+<span class="sd">** `&gt;&gt;` **</span>
+
+<span class="sd">The the operator `&gt;&gt;` is NOT a lambda for [bitwise right shift](https://www.tutorialspoint.com/python/bitwise_operators_example.htm), instead</span>
+
+<span class="sd">    f &gt;&gt; g</span>
+
+<span class="sd">represents functions composition in a sequential manner such that the previous is equivalent to</span>
+
+<span class="sd">    lambda x: g(f(x))</span>
+
+<span class="sd">See `phi.dsl.Expression.Seq`. As you see functions are executed in the order they appear which makes code more readable and easier to reason about.</span>
+
+<span class="sd">** &lt;&lt; **</span>
+
+<span class="sd">This operator composes functions according to the mathematical definition, that is</span>
+
+<span class="sd">    f &lt;&lt; g</span>
+
+<span class="sd">is equivalent to</span>
+
+<span class="sd">    lambda x: f(g(x))</span>
+
+<span class="sd">*Composition Comparison*</span>
+
+<span class="sd">* `f &gt;&gt; g` is equivalent to `lambda x: g(f(x))`. `f` is executed first then `g`. Reads left to right.</span>
+<span class="sd">* `f &lt;&lt; g` is equivalent to `lambda x: f(g(x))`. `g` is executed first then `f`. Reads right to left.</span>
+
+<span class="sd">** fn.py **</span>
+
+<span class="sd">The operator overloading mechanism of `Expression` to create quick functions takes much of its inspiration and some code from [fn.py](https://github.com/fnpy/fn.py)&#39;s &#39;`_`&#39; object, however it different in that it only creates functions of arity 1 to comply with the DSL. Where in fn.py expressions like</span>
+
+<span class="sd">    _ + _</span>
+
+<span class="sd">are equivalent to</span>
+
+<span class="sd">    lambda a, b: a + b</span>
+
+<span class="sd">That is, every time `_` appears in a compound expresion it creates a function of a higher arity. Instead in phi the expresion</span>
+
+<span class="sd">    P + P</span>
+
+<span class="sd">is interpreted as</span>
+
+<span class="sd">    lambda a: a + a</span>
+
+<span class="sd">In the context of the DSL this is more useful since it allows you to write expressions like</span>
+
+<span class="sd">    f = P.map(P ** 2) &gt;&gt; list &gt;&gt; P[0] + P[1] &gt;&gt; math.sqrt  #f = lambda x: math.sqrt( x[0] ** 2 + x[1] ** 2)</span>
+
+<span class="sd">    assert f([3, 4]) == 5</span>
+
+<span class="sd">where `P[0] + P[1]` creates the lambda of a single input argument `lambda x: x[0] + x[1]` that fits nice with the function composition.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
@@ -1362,27 +1685,13 @@ table {
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">branches</span><span class="p">):</span>
-        <span class="n">gs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span> <span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">branches</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
-
-        <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-            <span class="n">ys</span> <span class="o">=</span> <span class="p">{}</span>
-
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">y</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
-                <span class="n">ys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
-
-            <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="n">ys</span><span class="p">),</span> <span class="n">state</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__getattr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
 
 
@@ -1463,6 +1772,10 @@ table {
 
     <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">F</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">expr</span>
 
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1629,14 +1942,10 @@ table {
             <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
 
-
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
-            <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">_f</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nd">@utils.lift</span>
-            <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-                <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
-                <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nd">@utils.lift</span>
+        <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
+            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 
@@ -1682,13 +1991,13 @@ table {
         <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">,</span> <span class="n">arg4</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">Branch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">List</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">While `Seq` is sequential, `Branch` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.</span>
+<span class="sd">While `Seq` is sequential, `phi.dsl.Expression.List` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.</span>
 
 <span class="sd">The expression</span>
 
-<span class="sd">    k = Branch(f, g)</span>
+<span class="sd">    k = List(f, g)</span>
 
 <span class="sd">is equivalent to</span>
 
@@ -1699,7 +2008,7 @@ table {
 
 <span class="sd">**General Branching**</span>
 
-<span class="sd">    Branch(f0, f1, ..., fn)</span>
+<span class="sd">    List(f0, f1, ..., fn)</span>
 
 <span class="sd">is equivalent to</span>
 
@@ -1710,13 +2019,13 @@ table {
 
 <span class="sd">It is interesting to see how braching interacts with composing. The expression</span>
 
-<span class="sd">    Seq(f, Branch(g, h))</span>
+<span class="sd">    Seq(f, List(g, h))</span>
 
 <span class="sd">is *almost* equivalent to</span>
 
-<span class="sd">    Branch( Seq(f, g), Seq(f, h) )</span>
+<span class="sd">    List( Seq(f, g), Seq(f, h) )</span>
 
-<span class="sd">As you see its as if `f` where distributed over the Branch. We say *almost* because their implementation is different</span>
+<span class="sd">As you see its as if `f` where distributed over the List. We say *almost* because their implementation is different</span>
 
 <span class="sd">    def _lambda(x):</span>
 <span class="sd">        x = f(x)</span>
@@ -1730,13 +2039,13 @@ table {
 
 <span class="sd">### Examples</span>
 
-<span class="sd">    form phi import P, Branch</span>
+<span class="sd">    form phi import P, List</span>
 
 <span class="sd">    avg_word_length = P.Pipe(</span>
 <span class="sd">        &quot;1 22 333&quot;,</span>
 <span class="sd">        lambda s: s.split(&#39; &#39;), # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
 <span class="sd">        lambda l: map(len, l), # [1, 2, 3]</span>
-<span class="sd">        Branch(</span>
+<span class="sd">        List(</span>
 <span class="sd">            sum # 1 + 2 + 3 == 6</span>
 <span class="sd">        ,</span>
 <span class="sd">            len # len([1, 2, 3]) == 3</span>
@@ -1748,13 +2057,13 @@ table {
 
 <span class="sd">The previous could also be done more briefly like this</span>
 
-<span class="sd">    form phi import P, Obj, Branch</span>
+<span class="sd">    form phi import P, Obj, List</span>
 
 <span class="sd">    avg_word_length = P.Pipe(</span>
 <span class="sd">        &quot;1 22 333&quot;, Obj</span>
 <span class="sd">        .split(&#39; &#39;)  # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
 <span class="sd">        .map(len)    # [1, 2, 3]</span>
-<span class="sd">        .Branch(</span>
+<span class="sd">        .List(</span>
 <span class="sd">            sum  #sum([1, 2, 3]) == 6</span>
 <span class="sd">        ,</span>
 <span class="sd">            len  #len([1, 2, 3]) == 3</span>
@@ -1796,10 +2105,10 @@ table {
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
 
     <span class="k">def</span> <span class="nf">Set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
 
     <span class="k">def</span> <span class="nf">Seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1871,10 +2180,25 @@ table {
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">Dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">branches</span><span class="p">):</span>
+        <span class="n">gs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span> <span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">branches</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
+
+        <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">y</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+                <span class="n">ys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+
+            <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="n">ys</span><span class="p">),</span> <span class="n">state</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Rec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">`Branch` provides you a way to branch the computation as a list, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. `Rec` branches provide a way to create named branches via `Rec(**kwargs)` where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.</span>
+<span class="sd">`phi.dsl.Expression.List` provides you a way to branch the computation as a list, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. `Rec` branches provide a way to create named branches via `Rec(**kwargs)` where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.</span>
 
 <span class="sd">A special object is returned by this expression when excecuted, this object derives from `dict` and fully emulates it so you can treat it as such, however it also implements the `__getattr__` method, this lets you access a value as if it where a field</span>
 
@@ -1988,13 +2312,13 @@ table {
 <span class="sd">### Example</span>
 <span class="sd">Lets see a common situation where you would use this</span>
 
-<span class="sd">    from phi import P, Branch, Seq, Read, Write</span>
+<span class="sd">    from phi import P, List, Seq, Read, Write</span>
 
 <span class="sd">    result = P.Pipe(</span>
 <span class="sd">        input,</span>
 <span class="sd">        f1, Write(&#39;ref&#39;)</span>
 <span class="sd">        f2,</span>
-<span class="sd">        Branch(</span>
+<span class="sd">        List(</span>
 <span class="sd">            f3</span>
 <span class="sd">        ,</span>
 <span class="sd">            Seq(</span>
@@ -2439,19 +2763,20 @@ table {
 
 
 <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
+
     <span class="c1">#if type(code) is tuple:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">code</span>
     <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isclass</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Expression</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="n">code</span><span class="p">))</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="o">*</span><span class="n">code</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Rec</span><span class="p">(</span><span class="o">**</span><span class="n">code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="o">**</span><span class="n">code</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Val</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 </pre></div>
@@ -2540,6 +2865,10 @@ table {
 
     <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">F</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">expr</span>
 
 
     <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -2706,14 +3035,10 @@ table {
             <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
 
-
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
-            <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">_f</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nd">@utils.lift</span>
-            <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-                <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
-                <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nd">@utils.lift</span>
+        <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
+            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 
@@ -2759,13 +3084,13 @@ table {
         <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">,</span> <span class="n">arg4</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">Branch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">List</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">While `Seq` is sequential, `Branch` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.</span>
+<span class="sd">While `Seq` is sequential, `phi.dsl.Expression.List` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.</span>
 
 <span class="sd">The expression</span>
 
-<span class="sd">    k = Branch(f, g)</span>
+<span class="sd">    k = List(f, g)</span>
 
 <span class="sd">is equivalent to</span>
 
@@ -2776,7 +3101,7 @@ table {
 
 <span class="sd">**General Branching**</span>
 
-<span class="sd">    Branch(f0, f1, ..., fn)</span>
+<span class="sd">    List(f0, f1, ..., fn)</span>
 
 <span class="sd">is equivalent to</span>
 
@@ -2787,13 +3112,13 @@ table {
 
 <span class="sd">It is interesting to see how braching interacts with composing. The expression</span>
 
-<span class="sd">    Seq(f, Branch(g, h))</span>
+<span class="sd">    Seq(f, List(g, h))</span>
 
 <span class="sd">is *almost* equivalent to</span>
 
-<span class="sd">    Branch( Seq(f, g), Seq(f, h) )</span>
+<span class="sd">    List( Seq(f, g), Seq(f, h) )</span>
 
-<span class="sd">As you see its as if `f` where distributed over the Branch. We say *almost* because their implementation is different</span>
+<span class="sd">As you see its as if `f` where distributed over the List. We say *almost* because their implementation is different</span>
 
 <span class="sd">    def _lambda(x):</span>
 <span class="sd">        x = f(x)</span>
@@ -2807,13 +3132,13 @@ table {
 
 <span class="sd">### Examples</span>
 
-<span class="sd">    form phi import P, Branch</span>
+<span class="sd">    form phi import P, List</span>
 
 <span class="sd">    avg_word_length = P.Pipe(</span>
 <span class="sd">        &quot;1 22 333&quot;,</span>
 <span class="sd">        lambda s: s.split(&#39; &#39;), # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
 <span class="sd">        lambda l: map(len, l), # [1, 2, 3]</span>
-<span class="sd">        Branch(</span>
+<span class="sd">        List(</span>
 <span class="sd">            sum # 1 + 2 + 3 == 6</span>
 <span class="sd">        ,</span>
 <span class="sd">            len # len([1, 2, 3]) == 3</span>
@@ -2825,13 +3150,13 @@ table {
 
 <span class="sd">The previous could also be done more briefly like this</span>
 
-<span class="sd">    form phi import P, Obj, Branch</span>
+<span class="sd">    form phi import P, Obj, List</span>
 
 <span class="sd">    avg_word_length = P.Pipe(</span>
 <span class="sd">        &quot;1 22 333&quot;, Obj</span>
 <span class="sd">        .split(&#39; &#39;)  # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
 <span class="sd">        .map(len)    # [1, 2, 3]</span>
-<span class="sd">        .Branch(</span>
+<span class="sd">        .List(</span>
 <span class="sd">            sum  #sum([1, 2, 3]) == 6</span>
 <span class="sd">        ,</span>
 <span class="sd">            len  #len([1, 2, 3]) == 3</span>
@@ -2873,10 +3198,10 @@ table {
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
 
     <span class="k">def</span> <span class="nf">Set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
 
     <span class="k">def</span> <span class="nf">Seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2948,10 +3273,25 @@ table {
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">Dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">branches</span><span class="p">):</span>
+        <span class="n">gs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span> <span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">branches</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
+
+        <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">y</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+                <span class="n">ys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+
+            <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="n">ys</span><span class="p">),</span> <span class="n">state</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Rec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">`Branch` provides you a way to branch the computation as a list, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. `Rec` branches provide a way to create named branches via `Rec(**kwargs)` where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.</span>
+<span class="sd">`phi.dsl.Expression.List` provides you a way to branch the computation as a list, but access to the values of each branch are then done by index, this might be a little inconvenient because it reduces readability. `Rec` branches provide a way to create named branches via `Rec(**kwargs)` where the keys are the names of the branches and the values are valid expressions representing the computation of that branch.</span>
 
 <span class="sd">A special object is returned by this expression when excecuted, this object derives from `dict` and fully emulates it so you can treat it as such, however it also implements the `__getattr__` method, this lets you access a value as if it where a field</span>
 
@@ -3065,13 +3405,13 @@ table {
 <span class="sd">### Example</span>
 <span class="sd">Lets see a common situation where you would use this</span>
 
-<span class="sd">    from phi import P, Branch, Seq, Read, Write</span>
+<span class="sd">    from phi import P, List, Seq, Read, Write</span>
 
 <span class="sd">    result = P.Pipe(</span>
 <span class="sd">        input,</span>
 <span class="sd">        f1, Write(&#39;ref&#39;)</span>
 <span class="sd">        f2,</span>
-<span class="sd">        Branch(</span>
+<span class="sd">        List(</span>
 <span class="sd">            f3</span>
 <span class="sd">        ,</span>
 <span class="sd">            Seq(</span>
@@ -3660,13 +4000,13 @@ Read.x
 <code>Read</code> and <code>Write</code> only work property inside a <a href="#phi.dsl.Expression.Seq"><code>Seq</code></a> or <a href="#phi.dsl.Expression.Pipe"><code>Pipe</code></a> expression. This is done because <code>Ref</code>s need to be defined a specific context or else value might be leaked between different calls or even nested functions that might happen to be using Phi, therefore, Seq and Pipe a given the task to defined this context.</p>
 <h3>Example</h3>
 <p>Lets see a common situation where you would use this</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Branch</span><span class="p">,</span> <span class="n">Seq</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Seq</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="nb">input</span><span class="p">,</span>
     <span class="n">f1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">)</span>
     <span class="n">f2</span><span class="p">,</span>
-    <span class="n">Branch</span><span class="p">(</span>
+    <span class="n">List</span><span class="p">(</span>
         <span class="n">f3</span>
     <span class="p">,</span>
         <span class="n">Seq</span><span class="p">(</span>
@@ -3803,7 +4143,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.dsl.Expression.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7f5087703668&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7f93a96605f0&gt;)</p>
     </div>
     
 
@@ -3823,190 +4163,25 @@ result = [
   
             
   <div class="item">
-    <div class="name def" id="phi.dsl.Expression.Branch">
-    <p>def <span class="ident">Branch</span>(</p><p>self, *branches, **kwargs)</p>
+    <div class="name def" id="phi.dsl.Expression.Dict">
+    <p>def <span class="ident">Dict</span>(</p><p>self, **branches)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>While <code>Seq</code> is sequential, <code>Branch</code> allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements <code>__iter__</code>) that is not a tuple and yields a valid expresion.</p>
-<p>The expression</p>
-<div class="codehilite"><pre><span></span>k = Branch(f, g)
-</pre></div>
-
-
-<p>is equivalent to</p>
-<div class="codehilite"><pre><span></span>k = lambda x: [ f(x), g(x) ]
-</pre></div>
-
-
-<p>In general, the following rules apply after compilation:</p>
-<p><strong>General Branching</strong></p>
-<div class="codehilite"><pre><span></span>Branch(f0, f1, ..., fn)
-</pre></div>
-
-
-<p>is equivalent to</p>
-<div class="codehilite"><pre><span></span>lambda x: [ f0(x), f1(x), ..., fn(x) ]
-</pre></div>
-
-
-<p><strong>Composing &amp; Branching</strong></p>
-<p>It is interesting to see how braching interacts with composing. The expression</p>
-<div class="codehilite"><pre><span></span>Seq(f, Branch(g, h))
-</pre></div>
-
-
-<p>is <em>almost</em> equivalent to</p>
-<div class="codehilite"><pre><span></span>Branch( Seq(f, g), Seq(f, h) )
-</pre></div>
-
-
-<p>As you see its as if <code>f</code> where distributed over the Branch. We say <em>almost</em> because their implementation is different</p>
-<div class="codehilite"><pre><span></span>def _lambda(x):
-    x = f(x)
-    return [ g(x), h(x) ]
-</pre></div>
-
-
-<p>vs</p>
-<div class="codehilite"><pre><span></span>lambda x: [ g(f(x)), h(f(x)) ]
-</pre></div>
-
-
-<p>As you see <code>f</code> is only executed once in the first one. Both should yield the same result if <code>f</code> is a pure function.</p>
-<h3>Examples</h3>
-<div class="codehilite"><pre><span></span><span class="n">form</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">Branch</span>
-
-<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
-    <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
-    <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
-    <span class="n">Branch</span><span class="p">(</span>
-        <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
-    <span class="p">,</span>
-        <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
-    <span class="p">),</span>
-    <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># sum / len == 6 / 3 == 2</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
-</pre></div>
-
-
-<p>The previous could also be done more briefly like this</p>
-<div class="codehilite"><pre><span></span><span class="n">form</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">Obj</span><span class="o">,</span> <span class="nn">Branch</span>
-
-<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
-    <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span> <span class="n">Obj</span>
-    <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>  <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
-    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>    <span class="c1"># [1, 2, 3]</span>
-    <span class="o">.</span><span class="n">Branch</span><span class="p">(</span>
-        <span class="nb">sum</span>  <span class="c1">#sum([1, 2, 3]) == 6</span>
-    <span class="p">,</span>
-        <span class="nb">len</span>  <span class="c1">#len([1, 2, 3]) == 3</span>
-    <span class="p">),</span>
-    <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1">#6 / 3 == 2</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
-</pre></div>
-
-
-<p>In the example above the last expression</p>
-<div class="codehilite"><pre><span></span>P[0] / P[1]
-</pre></div>
-
-
-<p>works for a couple of reasons</p>
-<ol>
-<li>The previous expression returns a list</li>
-<li>In general the expression <code>P[x]</code> compiles to a function with the form <code>lambda obj: obj[x]</code></li>
-<li>
-<p>The class <code>Expression</code> (the class from which the object <code>P</code> inherits) overrides most operators to create functions easily. For example, the expression</p>
-<p>(P * 2) / (P + 1)</p>
-</li>
-</ol>
-<p>compile to a function of the form</p>
-<div class="codehilite"><pre><span></span>lambda x: (x * 2) / (x + 1)
-</pre></div>
-
-
-<p>Check out the documentatio for Phi <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.Branch', this);">Show source &equiv;</a></p>
-  <div id="source-phi.dsl.Expression.Branch" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Branch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">e `Seq` is sequential, `Branch` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.</span>
-<span class="sd">expression</span>
-<span class="sd">k = Branch(f, g)</span>
-<span class="sd">quivalent to</span>
-<span class="sd">k = lambda x: [ f(x), g(x) ]</span>
-<span class="sd">eneral, the following rules apply after compilation:</span>
-<span class="sd">neral Branching**</span>
-<span class="sd">Branch(f0, f1, ..., fn)</span>
-<span class="sd">quivalent to</span>
-<span class="sd">lambda x: [ f0(x), f1(x), ..., fn(x) ]</span>
-<span class="sd">mposing &amp; Branching**</span>
-<span class="sd">s interesting to see how braching interacts with composing. The expression</span>
-<span class="sd">Seq(f, Branch(g, h))</span>
-<span class="sd">almost* equivalent to</span>
-<span class="sd">Branch( Seq(f, g), Seq(f, h) )</span>
-<span class="sd">ou see its as if `f` where distributed over the Branch. We say *almost* because their implementation is different</span>
-<span class="sd">def _lambda(x):</span>
-<span class="sd">    x = f(x)</span>
-<span class="sd">    return [ g(x), h(x) ]</span>
-<span class="sd">lambda x: [ g(f(x)), h(f(x)) ]</span>
-<span class="sd">ou see `f` is only executed once in the first one. Both should yield the same result if `f` is a pure function.</span>
-<span class="sd">Examples</span>
-<span class="sd">form phi import P, Branch</span>
-<span class="sd">avg_word_length = P.Pipe(</span>
-<span class="sd">    &quot;1 22 333&quot;,</span>
-<span class="sd">    lambda s: s.split(&#39; &#39;), # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
-<span class="sd">    lambda l: map(len, l), # [1, 2, 3]</span>
-<span class="sd">    Branch(</span>
-<span class="sd">        sum # 1 + 2 + 3 == 6</span>
-<span class="sd">    ,</span>
-<span class="sd">        len # len([1, 2, 3]) == 3</span>
-<span class="sd">    ),</span>
-<span class="sd">    lambda l: l[0] / l[1] # sum / len == 6 / 3 == 2</span>
-<span class="sd">)</span>
-<span class="sd">assert avg_word_length == 2</span>
-<span class="sd">previous could also be done more briefly like this</span>
-<span class="sd">form phi import P, Obj, Branch</span>
-<span class="sd">avg_word_length = P.Pipe(</span>
-<span class="sd">    &quot;1 22 333&quot;, Obj</span>
-<span class="sd">    .split(&#39; &#39;)  # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
-<span class="sd">    .map(len)    # [1, 2, 3]</span>
-<span class="sd">    .Branch(</span>
-<span class="sd">        sum  #sum([1, 2, 3]) == 6</span>
-<span class="sd">    ,</span>
-<span class="sd">        len  #len([1, 2, 3]) == 3</span>
-<span class="sd">    ),</span>
-<span class="sd">    P[0] / P[1]  #6 / 3 == 2</span>
-<span class="sd">)</span>
-<span class="sd">assert avg_word_length == 2</span>
-<span class="sd">he example above the last expression</span>
-<span class="sd">P[0] / P[1]</span>
-<span class="sd">s for a couple of reasons</span>
-<span class="sd">he previous expression returns a list</span>
-<span class="sd">n general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`</span>
-<span class="sd">he class `Expression` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
-<span class="sd">(P * 2) / (P + 1)</span>
-<span class="sd">ile to a function of the form</span>
-<span class="sd">lambda x: (x * 2) / (x + 1)</span>
-<span class="sd">k out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">gs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">branches</span> <span class="p">]</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.Dict', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Expression.Dict" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">branches</span><span class="p">):</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span> <span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">branches</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
     <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="n">ys</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gs</span><span class="p">:</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">y</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
-            <span class="n">ys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">ys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="n">ys</span><span class="p">),</span> <span class="n">state</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4069,6 +4244,27 @@ result = [
     <span class="n">ast</span> <span class="o">=</span> <span class="n">_add_else</span><span class="p">(</span><span class="n">ast</span><span class="p">,</span> <span class="n">next_else</span><span class="p">)</span>
     <span class="n">g</span> <span class="o">=</span> <span class="n">_compile_if</span><span class="p">(</span><span class="n">ast</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">root</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.Expression.F">
+    <p>def <span class="ident">F</span>(</p><p>self, expr)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.F', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Expression.F" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">F</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">expr</span>
 </pre></div>
 
   </div>
@@ -4155,6 +4351,199 @@ result = [
     <span class="n">expr</span><span class="o">.</span><span class="n">_ast</span> <span class="o">=</span> <span class="n">ast</span>
     <span class="n">expr</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="bp">self</span>
     <span class="k">return</span> <span class="n">expr</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.Expression.List">
+    <p>def <span class="ident">List</span>(</p><p>self, *branches, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>While <code>Seq</code> is sequential, <a href="#phi.dsl.Expression.List"><code>List</code></a> allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements <code>__iter__</code>) that is not a tuple and yields a valid expresion.</p>
+<p>The expression</p>
+<div class="codehilite"><pre><span></span>k = List(f, g)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>k = lambda x: [ f(x), g(x) ]
+</pre></div>
+
+
+<p>In general, the following rules apply after compilation:</p>
+<p><strong>General Branching</strong></p>
+<div class="codehilite"><pre><span></span>List(f0, f1, ..., fn)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: [ f0(x), f1(x), ..., fn(x) ]
+</pre></div>
+
+
+<p><strong>Composing &amp; Branching</strong></p>
+<p>It is interesting to see how braching interacts with composing. The expression</p>
+<div class="codehilite"><pre><span></span>Seq(f, List(g, h))
+</pre></div>
+
+
+<p>is <em>almost</em> equivalent to</p>
+<div class="codehilite"><pre><span></span>List( Seq(f, g), Seq(f, h) )
+</pre></div>
+
+
+<p>As you see its as if <code>f</code> where distributed over the List. We say <em>almost</em> because their implementation is different</p>
+<div class="codehilite"><pre><span></span>def _lambda(x):
+    x = f(x)
+    return [ g(x), h(x) ]
+</pre></div>
+
+
+<p>vs</p>
+<div class="codehilite"><pre><span></span>lambda x: [ g(f(x)), h(f(x)) ]
+</pre></div>
+
+
+<p>As you see <code>f</code> is only executed once in the first one. Both should yield the same result if <code>f</code> is a pure function.</p>
+<h3>Examples</h3>
+<div class="codehilite"><pre><span></span><span class="n">form</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">List</span>
+
+<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
+    <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+    <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+    <span class="n">List</span><span class="p">(</span>
+        <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
+    <span class="p">,</span>
+        <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
+    <span class="p">),</span>
+    <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># sum / len == 6 / 3 == 2</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+
+<p>The previous could also be done more briefly like this</p>
+<div class="codehilite"><pre><span></span><span class="n">form</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">Obj</span><span class="o">,</span> <span class="nn">List</span>
+
+<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span> <span class="n">Obj</span>
+    <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>  <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>    <span class="c1"># [1, 2, 3]</span>
+    <span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="nb">sum</span>  <span class="c1">#sum([1, 2, 3]) == 6</span>
+    <span class="p">,</span>
+        <span class="nb">len</span>  <span class="c1">#len([1, 2, 3]) == 3</span>
+    <span class="p">),</span>
+    <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1">#6 / 3 == 2</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+
+<p>In the example above the last expression</p>
+<div class="codehilite"><pre><span></span>P[0] / P[1]
+</pre></div>
+
+
+<p>works for a couple of reasons</p>
+<ol>
+<li>The previous expression returns a list</li>
+<li>In general the expression <code>P[x]</code> compiles to a function with the form <code>lambda obj: obj[x]</code></li>
+<li>
+<p>The class <code>Expression</code> (the class from which the object <code>P</code> inherits) overrides most operators to create functions easily. For example, the expression</p>
+<p>(P * 2) / (P + 1)</p>
+</li>
+</ol>
+<p>compile to a function of the form</p>
+<div class="codehilite"><pre><span></span>lambda x: (x * 2) / (x + 1)
+</pre></div>
+
+
+<p>Check out the documentatio for Phi <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.List', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Expression.List" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">List</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">e `Seq` is sequential, `phi.dsl.Expression.List` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.</span>
+<span class="sd">expression</span>
+<span class="sd">k = List(f, g)</span>
+<span class="sd">quivalent to</span>
+<span class="sd">k = lambda x: [ f(x), g(x) ]</span>
+<span class="sd">eneral, the following rules apply after compilation:</span>
+<span class="sd">neral Branching**</span>
+<span class="sd">List(f0, f1, ..., fn)</span>
+<span class="sd">quivalent to</span>
+<span class="sd">lambda x: [ f0(x), f1(x), ..., fn(x) ]</span>
+<span class="sd">mposing &amp; Branching**</span>
+<span class="sd">s interesting to see how braching interacts with composing. The expression</span>
+<span class="sd">Seq(f, List(g, h))</span>
+<span class="sd">almost* equivalent to</span>
+<span class="sd">List( Seq(f, g), Seq(f, h) )</span>
+<span class="sd">ou see its as if `f` where distributed over the List. We say *almost* because their implementation is different</span>
+<span class="sd">def _lambda(x):</span>
+<span class="sd">    x = f(x)</span>
+<span class="sd">    return [ g(x), h(x) ]</span>
+<span class="sd">lambda x: [ g(f(x)), h(f(x)) ]</span>
+<span class="sd">ou see `f` is only executed once in the first one. Both should yield the same result if `f` is a pure function.</span>
+<span class="sd">Examples</span>
+<span class="sd">form phi import P, List</span>
+<span class="sd">avg_word_length = P.Pipe(</span>
+<span class="sd">    &quot;1 22 333&quot;,</span>
+<span class="sd">    lambda s: s.split(&#39; &#39;), # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+<span class="sd">    lambda l: map(len, l), # [1, 2, 3]</span>
+<span class="sd">    List(</span>
+<span class="sd">        sum # 1 + 2 + 3 == 6</span>
+<span class="sd">    ,</span>
+<span class="sd">        len # len([1, 2, 3]) == 3</span>
+<span class="sd">    ),</span>
+<span class="sd">    lambda l: l[0] / l[1] # sum / len == 6 / 3 == 2</span>
+<span class="sd">)</span>
+<span class="sd">assert avg_word_length == 2</span>
+<span class="sd">previous could also be done more briefly like this</span>
+<span class="sd">form phi import P, Obj, List</span>
+<span class="sd">avg_word_length = P.Pipe(</span>
+<span class="sd">    &quot;1 22 333&quot;, Obj</span>
+<span class="sd">    .split(&#39; &#39;)  # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+<span class="sd">    .map(len)    # [1, 2, 3]</span>
+<span class="sd">    .List(</span>
+<span class="sd">        sum  #sum([1, 2, 3]) == 6</span>
+<span class="sd">    ,</span>
+<span class="sd">        len  #len([1, 2, 3]) == 3</span>
+<span class="sd">    ),</span>
+<span class="sd">    P[0] / P[1]  #6 / 3 == 2</span>
+<span class="sd">)</span>
+<span class="sd">assert avg_word_length == 2</span>
+<span class="sd">he example above the last expression</span>
+<span class="sd">P[0] / P[1]</span>
+<span class="sd">s for a couple of reasons</span>
+<span class="sd">he previous expression returns a list</span>
+<span class="sd">n general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`</span>
+<span class="sd">he class `Expression` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
+<span class="sd">(P * 2) / (P + 1)</span>
+<span class="sd">ile to a function of the form</span>
+<span class="sd">lambda x: (x * 2) / (x + 1)</span>
+<span class="sd">k out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">branches</span> <span class="p">]</span>
+    <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gs</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+            <span class="n">ys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4411,7 +4800,7 @@ result = [
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.Set', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Expression.Set" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">set</span>
 </pre></div>
 
   </div>
@@ -4788,13 +5177,10 @@ assert [5, 5, 5] == x
     <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
-        <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">_f</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nd">@utils.lift</span>
-        <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
-            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="nd">@utils.lift</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>
 
@@ -4816,7 +5202,7 @@ assert [5, 5, 5] == x
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.Tuple', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Expression.Tuple" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">expressions</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">Branch</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="o">*</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">tuple</span>
 </pre></div>
 
   </div>
