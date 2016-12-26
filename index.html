@@ -1098,7 +1098,7 @@ assert f([1,2,3,4]) == 5   #1 + 4 == 5
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="n">Point</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Point&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#add the x and y fields</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#lambda p: p.x + p.y</span>
 
 <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">==</span> <span class="mi">7</span>   <span class="c1">#point.x + point.y == 3 + 4 == 7</span>
 </pre></div>
@@ -1258,28 +1258,21 @@ assert f(&quot;some longer frase&quot;) == &quot;Great! Got 15 letters!&quot;
 <li>The container types <code>list</code>, <code>tuple</code>, <code>set</code>, and <code>dict</code> are elements of the DSL. They are translated to their counterparts <code>List</code>, <code>Tuple</code>, <code>Set</code> and <code>Dict</code>, their internal elements are forwarded.</li>
 <li>Any value <code>x</code> that does not comply with any of the previous rules is also an element of the DSL and is translated to <code>Val(x)</code>.</li>
 </ol>
-<p>Because of this it is possible that the expression</p>
+<p>Using the DSL, the expression</p>
 <div class="codehilite"><pre><span></span>f = P**2 &gt;&gt; List( P, Val(3), Val(4) )  #lambda x: [ x**2]
 
 assert f(10) == [ 100, 3, 4 ]  # [ 10**2, 3, 4 ]  == [ 100, 3, 4 ]
 </pre></div>
 
 
-<p>can initially be rewritten as</p>
-<div class="codehilite"><pre><span></span>f = P**2 &gt;&gt; List( P, 3, 4 )
-
-assert f(10) == [ 100, 3, 4 ]  # [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]
-</pre></div>
-
-
-<p>because <code>3</code> and <code>4</code> are translated to <code>Val(3)</code> and <code>Val(4)</code> thanks to the <em>4th</em> rule. But you can further simplify it to</p>
+<p>can be rewritten as</p>
 <div class="codehilite"><pre><span></span>f = P**2 &gt;&gt; [ P, 3, 4 ]
 
 assert f(10) == [ 100, 3, 4 ]  # [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]
 </pre></div>
 
 
-<p>thanks to the <em>3rd</em> rule. Since the DSL is omnipresent you can use it inside any core function, so the previous can be rewritten using <code>Pipe</code> as</p>
+<p>Here the values <code>3</code> and <code>4</code> are translated to <code>Val(3)</code> and <code>Val(4)</code> thanks to the <em>4th</em> rule, and <code>[...]</code> is translated to <code>List(...)</code> thanks to the <em>3rd</em> rule. Since the DSL is omnipresent you can use it inside any core function, so the previous can be rewritten using <code>Pipe</code> as</p>
 <div class="codehilite"><pre><span></span>assert [ 100, 3, 4 ] == Pipe(
   10,
   P**2,  # 10**2 == 100
