@@ -1074,7 +1074,7 @@ table {
 <h2>Math-like Lambdas</h2>
 <h4>Operators</h4>
 <p>Using the <code>P</code> object you can create quick lambdas using any operator. You can write things like</p>
-<div class="codehilite"><pre><span></span>f = (P * 6) / (P + 2)
+<div class="codehilite"><pre><span></span>f = (P * 6) / (P + 2)  #lambda x: (x * 6) / (x + 2)
 
 assert f(2) == 3  # (2 * 6) / (2 + 2) == 12 / 4 == 3
 </pre></div>
@@ -1087,7 +1087,7 @@ assert f(2) == 3  # (2 * 6) / (2 + 2) == 12 / 4 == 3
 
 <h4>getitem</h4>
 <p>You can also use the <code>P</code> object to create lambdas that access the items of a collection</p>
-<div class="codehilite"><pre><span></span>f = P[0] + P[-1]  #add the first and last elements
+<div class="codehilite"><pre><span></span>f = P[0] + P[-1]  #lambda x: x[0] + x[-1]
 
 assert f([1,2,3,4]) == 5   #1 + 4 == 5
 </pre></div>
@@ -1139,7 +1139,7 @@ assert f(2) == 3  # math.sqrt(2 + 7) == math.sqrt(9) == 3
 
 
 <h4>Seq and Pipe</h4>
-<p>If you need to do a long or complex composition you can use <code>Seq</code> instead of many chained <code>&gt;&gt;</code></p>
+<p>If you need to do a long or complex composition you can use <code>Seq</code> (for 'Sequence') instead of many chained <code>&gt;&gt;</code></p>
 <div class="codehilite"><pre><span></span>f = Seq(
   str,
   P + &quot;00&quot;,
