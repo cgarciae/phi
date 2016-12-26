@@ -1041,15 +1041,15 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#phi.tests.test_lambdas.TestLambdas">TestLambdas</a></span>
+        <span class="class_name"><a href="#phi.tests.test_lambdas.TestExpressions">TestExpressions</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#phi.tests.test_lambdas.TestLambdas.test_lambda_opt_lambda">test_lambda_opt_lambda</a></li>
-    <li class="mono"><a href="#phi.tests.test_lambdas.TestLambdas.test_lshift">test_lshift</a></li>
-    <li class="mono"><a href="#phi.tests.test_lambdas.TestLambdas.test_ops">test_ops</a></li>
-    <li class="mono"><a href="#phi.tests.test_lambdas.TestLambdas.test_reverse">test_reverse</a></li>
-    <li class="mono"><a href="#phi.tests.test_lambdas.TestLambdas.test_rshift">test_rshift</a></li>
+    <li class="mono"><a href="#phi.tests.test_lambdas.TestExpressions.test_lambda_opt_lambda">test_lambda_opt_lambda</a></li>
+    <li class="mono"><a href="#phi.tests.test_lambdas.TestExpressions.test_lshift">test_lshift</a></li>
+    <li class="mono"><a href="#phi.tests.test_lambdas.TestExpressions.test_ops">test_ops</a></li>
+    <li class="mono"><a href="#phi.tests.test_lambdas.TestExpressions.test_reverse">test_reverse</a></li>
+    <li class="mono"><a href="#phi.tests.test_lambdas.TestExpressions.test_rshift">test_rshift</a></li>
   </ul>
 
         </li>
@@ -1072,10 +1072,10 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_lambdas" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Val</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="k">class</span> <span class="nc">TestLambdas</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for TestLambdas.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">TestExpressions</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for TestExpressions.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">test_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -1083,6 +1083,15 @@ table {
             <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">)</span>
+
+        <span class="c1">#####################</span>
+        <span class="c1">#####################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="p">[</span> <span class="n">P</span> <span class="p">]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">test_rshift</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -1094,12 +1103,12 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
         <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">g</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">g</span>
         <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
 
@@ -1120,12 +1129,12 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
         <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">g</span> <span class="o">&lt;&lt;</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">g</span> <span class="o">&lt;&lt;</span> <span class="n">Seq</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">f</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">f</span>
 
         <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
@@ -1137,28 +1146,28 @@ table {
 
     <span class="k">def</span> <span class="nf">test_lambda_opt_lambda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">0</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
-            <span class="p">],</span>
+            <span class="p">),</span>
             <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="p">),</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
         <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="p">),</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
         <span class="p">)</span>
@@ -1179,15 +1188,15 @@ table {
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="phi.tests.test_lambdas.TestLambdas" class="name">class <span class="ident">TestLambdas</span></p>
+      <p id="phi.tests.test_lambdas.TestExpressions" class="name">class <span class="ident">TestExpressions</span></p>
       
   
-    <div class="desc"><p>docstring for TestLambdas.</p></div>
+    <div class="desc"><p>docstring for TestExpressions.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestLambdas', this);">Show source &equiv;</a></p>
-  <div id="source-phi.tests.test_lambdas.TestLambdas" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestLambdas</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for TestLambdas.&quot;&quot;&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestExpressions', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_lambdas.TestExpressions" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestExpressions</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for TestExpressions.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">test_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -1195,6 +1204,15 @@ table {
             <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">)</span>
+
+        <span class="c1">#####################</span>
+        <span class="c1">#####################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="p">[</span> <span class="n">P</span> <span class="p">]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">test_rshift</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -1206,12 +1224,12 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
         <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">g</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">g</span>
         <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
 
@@ -1232,12 +1250,12 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
         <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">g</span> <span class="o">&lt;&lt;</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">g</span> <span class="o">&lt;&lt;</span> <span class="n">Seq</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">f</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">f</span>
 
         <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
@@ -1249,28 +1267,28 @@ table {
 
     <span class="k">def</span> <span class="nf">test_lambda_opt_lambda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">0</span><span class="p">,</span>
-            <span class="p">[</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
-            <span class="p">],</span>
+            <span class="p">),</span>
             <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="p">),</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
         <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="p">),</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
         <span class="p">)</span>
@@ -1288,13 +1306,13 @@ table {
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#phi.tests.test_lambdas.TestLambdas">TestLambdas</a></li>
+          <li><a href="#phi.tests.test_lambdas.TestExpressions">TestExpressions</a></li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="phi.tests.test_lambdas.TestLambdas.test_lambda_opt_lambda">
+    <div class="name def" id="phi.tests.test_lambdas.TestExpressions.test_lambda_opt_lambda">
     <p>def <span class="ident">test_lambda_opt_lambda</span>(</p><p>self)</p>
     </div>
     
@@ -1302,29 +1320,29 @@ table {
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestLambdas.test_lambda_opt_lambda', this);">Show source &equiv;</a></p>
-  <div id="source-phi.tests.test_lambdas.TestLambdas.test_lambda_opt_lambda" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestExpressions.test_lambda_opt_lambda', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_lambdas.TestExpressions.test_lambda_opt_lambda" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_lambda_opt_lambda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">0</span><span class="p">,</span>
-        <span class="p">[</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
-        <span class="p">],</span>
+        <span class="p">),</span>
         <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="p">)</span>
-    <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-        <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="p">),</span>
         <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
     <span class="p">)</span>
-    <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span>
-        <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="p">),</span>
         <span class="n">Rec</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">b</span>
     <span class="p">)</span>
@@ -1339,7 +1357,7 @@ table {
   
             
   <div class="item">
-    <div class="name def" id="phi.tests.test_lambdas.TestLambdas.test_lshift">
+    <div class="name def" id="phi.tests.test_lambdas.TestExpressions.test_lshift">
     <p>def <span class="ident">test_lshift</span>(</p><p>self)</p>
     </div>
     
@@ -1347,16 +1365,16 @@ table {
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestLambdas.test_lshift', this);">Show source &equiv;</a></p>
-  <div id="source-phi.tests.test_lambdas.TestLambdas.test_lshift" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestExpressions.test_lshift', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_lambdas.TestExpressions.test_lshift" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_lshift</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">&lt;&lt;</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="k">assert</span> <span class="mi">6</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
     <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">g</span> <span class="o">&lt;&lt;</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">g</span> <span class="o">&lt;&lt;</span> <span class="n">Seq</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">f</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">f</span>
     <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
@@ -1367,7 +1385,7 @@ table {
   
             
   <div class="item">
-    <div class="name def" id="phi.tests.test_lambdas.TestLambdas.test_ops">
+    <div class="name def" id="phi.tests.test_lambdas.TestExpressions.test_ops">
     <p>def <span class="ident">test_ops</span>(</p><p>self)</p>
     </div>
     
@@ -1375,13 +1393,19 @@ table {
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestLambdas.test_ops', this);">Show source &equiv;</a></p>
-  <div id="source-phi.tests.test_lambdas.TestLambdas.test_ops" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestExpressions.test_ops', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_lambdas.TestExpressions.test_ops" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">assert</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="p">)</span>
+    <span class="c1">#####################</span>
+    <span class="c1">#####################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="p">[</span> <span class="n">P</span> <span class="p">]</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">[]</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -1391,7 +1415,7 @@ table {
   
             
   <div class="item">
-    <div class="name def" id="phi.tests.test_lambdas.TestLambdas.test_reverse">
+    <div class="name def" id="phi.tests.test_lambdas.TestExpressions.test_reverse">
     <p>def <span class="ident">test_reverse</span>(</p><p>self)</p>
     </div>
     
@@ -1399,8 +1423,8 @@ table {
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestLambdas.test_reverse', this);">Show source &equiv;</a></p>
-  <div id="source-phi.tests.test_lambdas.TestLambdas.test_reverse" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestExpressions.test_reverse', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_lambdas.TestExpressions.test_reverse" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">/</span> <span class="n">P</span>
     <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
@@ -1413,7 +1437,7 @@ table {
   
             
   <div class="item">
-    <div class="name def" id="phi.tests.test_lambdas.TestLambdas.test_rshift">
+    <div class="name def" id="phi.tests.test_lambdas.TestExpressions.test_rshift">
     <p>def <span class="ident">test_rshift</span>(</p><p>self)</p>
     </div>
     
@@ -1421,16 +1445,16 @@ table {
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestLambdas.test_rshift', this);">Show source &equiv;</a></p>
-  <div id="source-phi.tests.test_lambdas.TestLambdas.test_rshift" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_lambdas.TestExpressions.test_rshift', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_lambdas.TestExpressions.test_rshift" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_rshift</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;&gt;</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
     <span class="k">assert</span> <span class="mi">6</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
     <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
     <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">g</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">g</span>
     <span class="k">assert</span> <span class="mi">11</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&gt;&gt;</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;&gt;</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
     <span class="k">assert</span> <span class="mi">4</span> <span class="o">==</span> <span class="n">y</span>
