@@ -1,7 +1,7 @@
-from phi import P, Rec, Obj, Val
+from phi.api import *
 
-class TestLambdas(object):
-    """docstring for TestLambdas."""
+class TestExpressions(object):
+    """docstring for TestExpressions."""
 
     def test_ops(self):
 
@@ -9,6 +9,15 @@ class TestLambdas(object):
             1,
             P + 1
         )
+
+        #####################
+        #####################
+
+        f = P * [ P ]
+
+        assert f(0) == []
+        assert f(1) == [1]
+        assert f(3) == [3,3,3]
 
     def test_rshift(self):
 
@@ -20,12 +29,12 @@ class TestLambdas(object):
         f = lambda x: x * 3
         g = lambda x: x + 2
 
-        h = f >> P.Make(g)
+        h = f >> P.Seq(g)
 
         assert 11 == h(3)
 
 
-        h = P.Make(f) >> g
+        h = P.Seq(f) >> g
         assert 11 == h(3)
 
 
@@ -46,12 +55,12 @@ class TestLambdas(object):
         f = lambda x: x * 3
         g = lambda x: x + 2
 
-        h = g << P.Make(f)
+        h = g << Seq(f)
 
         assert 11 == h(3)
 
 
-        h = P.Make(g) << f
+        h = Seq(g) << f
 
         assert 11 == h(3)
 
@@ -63,28 +72,28 @@ class TestLambdas(object):
 
     def test_lambda_opt_lambda(self):
 
-        assert 3 == P.Pipe(
+        assert 3 == Pipe(
             0,
-            [
+            List(
                 P + 1
             ,
                 P + 2
-            ],
+            ),
             P[0] + P[1]
         )
 
-        assert 3 == P.Run(
-            dict(
-                a = Val(1),
-                b = Val(2)
+        assert 3 == P.Pipe(
+            Dict(
+                a = 1,
+                b = 2
             ),
             Rec.a + Rec.b
         )
 
-        assert 5 == P.Run(
-            dict(
-                a = Val(10),
-                b = Val(2)
+        assert 5 == P.Pipe(
+            Dict(
+                a = 10,
+                b = 2
             ),
             Rec.a / Rec.b
         )

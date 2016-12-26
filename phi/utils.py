@@ -1,3 +1,6 @@
+"""
+"""
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -9,6 +12,9 @@ import inspect
 def identity(x):
     return x
 
+def state_identity(x, state):
+    return x, state
+
 def compose2(f, g):
     return lambda x: f(g(x))
 
@@ -18,6 +24,15 @@ def forward_compose2(f, g):
 def merge(dict_a, dict_b):
     return dict(dict_a, **dict_b)
 
+def lift(f):
+    return lambda x, state: (f(x), state)
+
+
+class _NoValue(object):
+    def __repr__(self):
+        return "NoValue"
+
+NO_VALUE = _NoValue()
 
 DefaultArgSpec = namedtuple('DefaultArgSpec', 'has_default default_value')
 

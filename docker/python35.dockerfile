@@ -9,3 +9,4 @@ RUN pip install markdown
 RUN pip install decorator>=4.0.9
 RUN pip install pytest
 RUN pip install pytest-sugar
+RUN pip install ipdb

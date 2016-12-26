@@ -1,0 +1,2376 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>phi.api API documentation</title>
+    <meta name="description" content="" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#phi.api.Obj">Obj</a></li>
+    <li class="mono"><a href="#phi.api.P">P</a></li>
+    <li class="mono"><a href="#phi.api.Read">Read</a></li>
+    <li class="mono"><a href="#phi.api.Rec">Rec</a></li>
+    <li class="mono"><a href="#phi.api.Ref">Ref</a></li>
+    <li class="mono"><a href="#phi.api.Write">Write</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#phi.api.Context">Context</a></li>
+    <li class="mono"><a href="#phi.api.Dict">Dict</a></li>
+    <li class="mono"><a href="#phi.api.F">F</a></li>
+    <li class="mono"><a href="#phi.api.If">If</a></li>
+    <li class="mono"><a href="#phi.api.List">List</a></li>
+    <li class="mono"><a href="#phi.api.Pipe">Pipe</a></li>
+    <li class="mono"><a href="#phi.api.Seq">Seq</a></li>
+    <li class="mono"><a href="#phi.api.Then">Then</a></li>
+    <li class="mono"><a href="#phi.api.Then0">Then0</a></li>
+    <li class="mono"><a href="#phi.api.Then1">Then1</a></li>
+    <li class="mono"><a href="#phi.api.Then2">Then2</a></li>
+    <li class="mono"><a href="#phi.api.Then3">Then3</a></li>
+    <li class="mono"><a href="#phi.api.Then4">Then4</a></li>
+    <li class="mono"><a href="#phi.api.Then5">Then5</a></li>
+    <li class="mono"><a href="#phi.api.ThenAt">ThenAt</a></li>
+    <li class="mono"><a href="#phi.api.Val">Val</a></li>
+    <li class="mono"><a href="#phi.api.With">With</a></li>
+  </ul>
+
+    </li>
+
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">phi.api</span> module</h1>
+  
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">.python_builder</span> <span class="kn">import</span> <span class="n">PythonBuilder</span> <span class="k">as</span> <span class="n">_PythonBuilder</span>
+
+<span class="n">P</span> <span class="o">=</span> <span class="n">_PythonBuilder</span><span class="p">()</span>
+
+<span class="c1"># shortcuts</span>
+<span class="n">Then0</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then0</span>
+<span class="n">Then</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then</span>
+<span class="n">Then1</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then1</span>
+<span class="n">Then2</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then2</span>
+<span class="n">Then3</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then3</span>
+<span class="n">Then4</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then4</span>
+<span class="n">Then5</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then5</span>
+<span class="n">ThenAt</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">ThenAt</span>
+<span class="n">Read</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Read</span>
+<span class="n">Write</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Write</span>
+<span class="n">Val</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Val</span>
+<span class="n">Pipe</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span>
+<span class="n">Obj</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Obj</span>
+<span class="n">Rec</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Rec</span>
+<span class="n">Context</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Context</span>
+<span class="n">With</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">With</span>
+<span class="n">Ref</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Ref</span>
+<span class="n">Dict</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Dict</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">F</span>
+
+<span class="n">List</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">List</span>
+<span class="n">Seq</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span>
+
+<span class="c1"># Directly imported from DSL</span>
+<span class="n">If</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">If</span>
+</pre></div>
+
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="phi.api.Obj" class="name">var <span class="ident">Obj</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="phi.api.P" class="name">var <span class="ident">P</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="phi.api.Read" class="name">var <span class="ident">Read</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="phi.api.Rec" class="name">var <span class="ident">Rec</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="phi.api.Ref" class="name">var <span class="ident">Ref</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="phi.api.Write" class="name">var <span class="ident">Write</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Context">
+    <p>def <span class="ident">Context</span>(</p><p>*args)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><strong>Builder Core</strong>. Also available as a global function as <code>phi.Context</code>.</p>
+<p>Returns the context object of the current <code>dsl.With</code> statemente.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>*args</strong>: By design <code>Context</code> accepts any number of arguments and completely ignores them.</li>
+</ul>
+<p>This is a classmethod and it doesnt return a <code>Builder</code>/<code>Expression</code> by design so it can be called directly:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Obj</span>
+
+<span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Context</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">lines</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;text.txt&quot;</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="nb">open</span><span class="p">,</span>
+        <span class="n">read_file</span><span class="p">,</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>Here we called <code>Context</code> with no arguments to get the context back, however, since you can also give this function an argument (which it will ignore) it can be passed to the DSL so we can rewrite the previous as:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Obj</span>
+
+<span class="n">lines</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;text.txt&quot;</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">With</span><span class="p">(</span> <span class="nb">open</span><span class="p">,</span>
+        <span class="n">Context</span><span class="p">,</span> <span class="c1"># f</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><code>Context</code> yields an exception when used outside of a <code>With</code> block.</p>
+<p><strong>Also see</strong></p>
+<ul>
+<li><code>phi.builder.Builder.Obj</code></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Context', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Context" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">Context</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ilder Core**. Also available as a global function as `phi.Context`.</span>
+<span class="sd">rns the context object of the current `dsl.With` statemente.</span>
+<span class="sd">guments**</span>
+<span class="sd">*args**: By design `Context` accepts any number of arguments and completely ignores them.</span>
+<span class="sd"> is a classmethod and it doesnt return a `Builder`/`Expression` by design so it can be called directly:</span>
+<span class="sd">from phi import P, Context, Obj</span>
+<span class="sd">def read_file(z):</span>
+<span class="sd">    f = Context()</span>
+<span class="sd">    return f.read()</span>
+<span class="sd">lines = P.Pipe(</span>
+<span class="sd">    &quot;text.txt&quot;,</span>
+<span class="sd">    P.With( open,</span>
+<span class="sd">        read_file,</span>
+<span class="sd">        Obj.split(&quot;\\n&quot;)</span>
+<span class="sd">    )</span>
+<span class="sd">)</span>
+<span class="sd"> we called `Context` with no arguments to get the context back, however, since you can also give this function an argument (which it will ignore) it can be passed to the DSL so we can rewrite the previous as:</span>
+<span class="sd">from phi import P, Context, Obj</span>
+<span class="sd">lines = P.Pipe(</span>
+<span class="sd">    &quot;text.txt&quot;,</span>
+<span class="sd">    P.With( open,</span>
+<span class="sd">        Context, # f</span>
+<span class="sd">        Obj.read()</span>
+<span class="sd">        Obj.split(&quot;\\n&quot;)</span>
+<span class="sd">    )</span>
+<span class="sd">)</span>
+<span class="sd">text` yields an exception when used outside of a `With` block.</span>
+<span class="sd">so see**</span>
+<span class="sd">hi.builder.Builder.Obj`</span>
+<span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_WithContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span> <span class="ow">is</span> <span class="n">utils</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use &#39;Context&#39; outside of a &#39;With&#39; block&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_WithContextManager</span><span class="o">.</span><span class="n">WITH_GLOBAL_CONTEXT</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Dict">
+    <p>def <span class="ident">Dict</span>(</p><p>self, **branches)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Dict', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Dict" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">branches</span><span class="p">):</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span> <span class="p">:</span> <span class="n">_parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">branches</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
+    <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+            <span class="n">ys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">return</span> <span class="n">_RecordObject</span><span class="p">(</span><span class="o">**</span><span class="n">ys</span><span class="p">),</span> <span class="n">state</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.F">
+    <p>def <span class="ident">F</span>(</p><p>self, expr)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.F', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.F" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">F</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">expr</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.If">
+    <p>def <span class="ident">If</span>(</p><p>self, condition, *then, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><strong>If</strong></p>
+<div class="codehilite"><pre><span></span>If(Predicate, *Then)
+</pre></div>
+
+
+<p>Having conditionals expressions a necesity in every language, Phi includes the <code>If</code> expression for such a purpose.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>Predicate</strong> : a predicate expression uses to determine if the <code>Then</code> or <code>Else</code> branches should be used.</li>
+<li><strong>*Then</strong> : an expression to be excecuted if the <code>Predicate</code> yields <code>True</code>, since this parameter is variadic you can stack expression and they will be interpreted as a tuple <code>phi.dsl.Seq</code>.</li>
+</ul>
+<p>This class also includes the <code>Elif</code> and <code>Else</code> methods which let you write branched conditionals in sequence, however the following rules apply</p>
+<ul>
+<li>If no branch is entered the whole expression behaves like the identity</li>
+<li><code>Elif</code> can only be used after an <code>If</code> or another <code>Elif</code> expression</li>
+<li>Many <code>Elif</code> expressions can be stacked sequentially</li>
+<li><code>Else</code> can only be used after an <code>If</code> or <code>Elif</code> expression</li>
+</ul>
+<p><strong> Examples </strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">If</span>
+
+<span class="k">assert</span> <span class="s2">&quot;Between 2 and 10&quot;</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">5</span><span class="p">,</span>
+    <span class="n">If</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;Greater than 10&quot;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">Elif</span><span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;Less than 2&quot;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+        <span class="s2">&quot;Between 2 and 10&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.If', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.If" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">If</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">*</span><span class="n">then</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**</span>
+<span class="sd">If(Predicate, *Then)</span>
+<span class="sd">ng conditionals expressions a necesity in every language, Phi includes the `If` expression for such a purpose.</span>
+<span class="sd">guments**</span>
+<span class="sd">Predicate** : a predicate expression uses to determine if the `Then` or `Else` branches should be used.</span>
+<span class="sd">*Then** : an expression to be excecuted if the `Predicate` yields `True`, since this parameter is variadic you can stack expression and they will be interpreted as a tuple `phi.dsl.Seq`.</span>
+<span class="sd"> class also includes the `Elif` and `Else` methods which let you write branched conditionals in sequence, however the following rules apply</span>
+<span class="sd"> no branch is entered the whole expression behaves like the identity</span>
+<span class="sd">lif` can only be used after an `If` or another `Elif` expression</span>
+<span class="sd">ny `Elif` expressions can be stacked sequentially</span>
+<span class="sd">lse` can only be used after an `If` or `Elif` expression</span>
+<span class="sd">xamples **</span>
+<span class="sd">from phi import P, If</span>
+<span class="sd">assert &quot;Between 2 and 10&quot; == P.Pipe(</span>
+<span class="sd">    5,</span>
+<span class="sd">    If(P &gt; 10,</span>
+<span class="sd">        &quot;Greater than 10&quot;</span>
+<span class="sd">    ).Elif(P &lt; 2,</span>
+<span class="sd">        &quot;Less than 2&quot;</span>
+<span class="sd">    ).Else(</span>
+<span class="sd">        &quot;Between 2 and 10&quot;</span>
+<span class="sd">    )</span>
+<span class="sd">)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cond_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+    <span class="n">then_f</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">then</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+    <span class="n">else_f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">state_identity</span>
+    <span class="n">ast</span> <span class="o">=</span> <span class="p">(</span><span class="n">cond_f</span><span class="p">,</span> <span class="n">then_f</span><span class="p">,</span> <span class="n">else_f</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">_compile_if</span><span class="p">(</span><span class="n">ast</span><span class="p">)</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">expr</span><span class="o">.</span><span class="n">_ast</span> <span class="o">=</span> <span class="n">ast</span>
+    <span class="n">expr</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="bp">self</span>
+    <span class="k">return</span> <span class="n">expr</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.List">
+    <p>def <span class="ident">List</span>(</p><p>self, *branches, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>While <code>Seq</code> is sequential, <code>phi.dsl.Expression.List</code> allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements <code>__iter__</code>) that is not a tuple and yields a valid expresion.</p>
+<p>The expression</p>
+<div class="codehilite"><pre><span></span>k = List(f, g)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>k = lambda x: [ f(x), g(x) ]
+</pre></div>
+
+
+<p>In general, the following rules apply after compilation:</p>
+<p><strong>General Branching</strong></p>
+<div class="codehilite"><pre><span></span>List(f0, f1, ..., fn)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: [ f0(x), f1(x), ..., fn(x) ]
+</pre></div>
+
+
+<p><strong>Composing &amp; Branching</strong></p>
+<p>It is interesting to see how braching interacts with composing. The expression</p>
+<div class="codehilite"><pre><span></span>Seq(f, List(g, h))
+</pre></div>
+
+
+<p>is <em>almost</em> equivalent to</p>
+<div class="codehilite"><pre><span></span>List( Seq(f, g), Seq(f, h) )
+</pre></div>
+
+
+<p>As you see its as if <code>f</code> where distributed over the List. We say <em>almost</em> because their implementation is different</p>
+<div class="codehilite"><pre><span></span>def _lambda(x):
+    x = f(x)
+    return [ g(x), h(x) ]
+</pre></div>
+
+
+<p>vs</p>
+<div class="codehilite"><pre><span></span>lambda x: [ g(f(x)), h(f(x)) ]
+</pre></div>
+
+
+<p>As you see <code>f</code> is only executed once in the first one. Both should yield the same result if <code>f</code> is a pure function.</p>
+<h3>Examples</h3>
+<div class="codehilite"><pre><span></span><span class="n">form</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">List</span>
+
+<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span>
+    <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+    <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
+    <span class="n">List</span><span class="p">(</span>
+        <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
+    <span class="p">,</span>
+        <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
+    <span class="p">),</span>
+    <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># sum / len == 6 / 3 == 2</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+
+<p>The previous could also be done more briefly like this</p>
+<div class="codehilite"><pre><span></span><span class="n">form</span> <span class="n">phi</span> <span class="kn">import</span> <span class="nn">P</span><span class="o">,</span> <span class="nn">Obj</span><span class="o">,</span> <span class="nn">List</span>
+
+<span class="n">avg_word_length</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;1 22 333&quot;</span><span class="p">,</span> <span class="n">Obj</span>
+    <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>  <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>    <span class="c1"># [1, 2, 3]</span>
+    <span class="o">.</span><span class="n">List</span><span class="p">(</span>
+        <span class="nb">sum</span>  <span class="c1">#sum([1, 2, 3]) == 6</span>
+    <span class="p">,</span>
+        <span class="nb">len</span>  <span class="c1">#len([1, 2, 3]) == 3</span>
+    <span class="p">),</span>
+    <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1">#6 / 3 == 2</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+
+<p>In the example above the last expression</p>
+<div class="codehilite"><pre><span></span>P[0] / P[1]
+</pre></div>
+
+
+<p>works for a couple of reasons</p>
+<ol>
+<li>The previous expression returns a list</li>
+<li>In general the expression <code>P[x]</code> compiles to a function with the form <code>lambda obj: obj[x]</code></li>
+<li>
+<p>The class <code>Expression</code> (the class from which the object <code>P</code> inherits) overrides most operators to create functions easily. For example, the expression</p>
+<p>(P * 2) / (P + 1)</p>
+</li>
+</ol>
+<p>compile to a function of the form</p>
+<div class="codehilite"><pre><span></span>lambda x: (x * 2) / (x + 1)
+</pre></div>
+
+
+<p>Check out the documentatio for Phi <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.List', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.List" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">List</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">e `Seq` is sequential, `phi.dsl.Expression.List` allows you to split the computation and get back a list with the result of each path. While the list literal should be the most incarnation of this expresion, it can actually be any iterable (implements `__iter__`) that is not a tuple and yields a valid expresion.</span>
+<span class="sd">expression</span>
+<span class="sd">k = List(f, g)</span>
+<span class="sd">quivalent to</span>
+<span class="sd">k = lambda x: [ f(x), g(x) ]</span>
+<span class="sd">eneral, the following rules apply after compilation:</span>
+<span class="sd">neral Branching**</span>
+<span class="sd">List(f0, f1, ..., fn)</span>
+<span class="sd">quivalent to</span>
+<span class="sd">lambda x: [ f0(x), f1(x), ..., fn(x) ]</span>
+<span class="sd">mposing &amp; Branching**</span>
+<span class="sd">s interesting to see how braching interacts with composing. The expression</span>
+<span class="sd">Seq(f, List(g, h))</span>
+<span class="sd">almost* equivalent to</span>
+<span class="sd">List( Seq(f, g), Seq(f, h) )</span>
+<span class="sd">ou see its as if `f` where distributed over the List. We say *almost* because their implementation is different</span>
+<span class="sd">def _lambda(x):</span>
+<span class="sd">    x = f(x)</span>
+<span class="sd">    return [ g(x), h(x) ]</span>
+<span class="sd">lambda x: [ g(f(x)), h(f(x)) ]</span>
+<span class="sd">ou see `f` is only executed once in the first one. Both should yield the same result if `f` is a pure function.</span>
+<span class="sd">Examples</span>
+<span class="sd">form phi import P, List</span>
+<span class="sd">avg_word_length = P.Pipe(</span>
+<span class="sd">    &quot;1 22 333&quot;,</span>
+<span class="sd">    lambda s: s.split(&#39; &#39;), # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+<span class="sd">    lambda l: map(len, l), # [1, 2, 3]</span>
+<span class="sd">    List(</span>
+<span class="sd">        sum # 1 + 2 + 3 == 6</span>
+<span class="sd">    ,</span>
+<span class="sd">        len # len([1, 2, 3]) == 3</span>
+<span class="sd">    ),</span>
+<span class="sd">    lambda l: l[0] / l[1] # sum / len == 6 / 3 == 2</span>
+<span class="sd">)</span>
+<span class="sd">assert avg_word_length == 2</span>
+<span class="sd">previous could also be done more briefly like this</span>
+<span class="sd">form phi import P, Obj, List</span>
+<span class="sd">avg_word_length = P.Pipe(</span>
+<span class="sd">    &quot;1 22 333&quot;, Obj</span>
+<span class="sd">    .split(&#39; &#39;)  # [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
+<span class="sd">    .map(len)    # [1, 2, 3]</span>
+<span class="sd">    .List(</span>
+<span class="sd">        sum  #sum([1, 2, 3]) == 6</span>
+<span class="sd">    ,</span>
+<span class="sd">        len  #len([1, 2, 3]) == 3</span>
+<span class="sd">    ),</span>
+<span class="sd">    P[0] / P[1]  #6 / 3 == 2</span>
+<span class="sd">)</span>
+<span class="sd">assert avg_word_length == 2</span>
+<span class="sd">he example above the last expression</span>
+<span class="sd">P[0] / P[1]</span>
+<span class="sd">s for a couple of reasons</span>
+<span class="sd">he previous expression returns a list</span>
+<span class="sd">n general the expression `P[x]` compiles to a function with the form `lambda obj: obj[x]`</span>
+<span class="sd">he class `Expression` (the class from which the object `P` inherits) overrides most operators to create functions easily. For example, the expression</span>
+<span class="sd">(P * 2) / (P + 1)</span>
+<span class="sd">ile to a function of the form</span>
+<span class="sd">lambda x: (x * 2) / (x + 1)</span>
+<span class="sd">k out the documentatio for Phi [lambdas](https://cgarciae.github.io/phi/lambdas.m.html).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">branches</span> <span class="p">]</span>
+    <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gs</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+            <span class="n">ys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Pipe">
+    <p>def <span class="ident">Pipe</span>(</p><p>self, *sequence, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>Pipe</code> runs any <code>phi.dsl.Expression</code>. Its highly inspired by Elixir's <a href="https://hexdocs.pm/elixir/Kernel.html#%7C%3E/2">|&gt; (pipe)</a> operator.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>*sequence</strong>: any variable amount of expressions. All expressions inside of <code>sequence</code> will be composed together using <code>phi.dsl.Expression.Seq</code>.</li>
+<li><strong>**kwargs</strong>: <code>Pipe</code> forwards all <code>kwargs</code> to <code>phi.builder.Builder.Seq</code>, visit its documentation for more info.</li>
+</ul>
+<p>The expression</p>
+<div class="codehilite"><pre><span></span>Pipe(*sequence, **kwargs)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>Seq(*sequence, **kwargs)(None)
+</pre></div>
+
+
+<p>Normally the first argument or <code>Pipe</code> is a value, that is reinterpreted as a <code>phi.dsl.Expression.Val</code>, therfore, the input <code>None</code> is discarded.</p>
+<p><strong>Examples</strong></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">def</span> <span class="nf">add1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="k">def</span> <span class="nf">mul3</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1">#input</span>
+    <span class="n">add1</span><span class="p">,</span>  <span class="c1">#1 + 1 == 2</span>
+    <span class="n">mul3</span>   <span class="c1">#2 * 3 == 6</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">6</span>
+</pre></div>
+
+
+<p>The previous using <a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a> to create the functions</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>      <span class="c1">#input</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1">#1 + 1 == 2</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>   <span class="c1">#2 * 3 == 6</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">6</span>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><code>phi.builder.Builder.Seq</code></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html">dsl</a></li>
+<li><a href="https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile">Compile</a></li>
+<li><a href="https://cgarciae.github.io/phi/lambdas.m.html">lambdas</a></li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Pipe', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Pipe" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">e` runs any `phi.dsl.Expression`. Its highly inspired by Elixir&#39;s [|&gt; (pipe)](https://hexdocs.pm/elixir/Kernel.html#%7C%3E/2) operator.</span>
+<span class="sd">guments**</span>
+<span class="sd">*sequence**: any variable amount of expressions. All expressions inside of `sequence` will be composed together using `phi.dsl.Expression.Seq`.</span>
+<span class="sd">**kwargs**: `Pipe` forwards all `kwargs` to `phi.builder.Builder.Seq`, visit its documentation for more info.</span>
+<span class="sd">expression</span>
+<span class="sd">Pipe(*sequence, **kwargs)</span>
+<span class="sd">quivalent to</span>
+<span class="sd">Seq(*sequence, **kwargs)(None)</span>
+<span class="sd">ally the first argument or `Pipe` is a value, that is reinterpreted as a `phi.dsl.Expression.Val`, therfore, the input `None` is discarded.</span>
+<span class="sd">amples**</span>
+<span class="sd">from phi import P</span>
+<span class="sd">def add1(x): return x + 1</span>
+<span class="sd">def mul3(x): return x * 3</span>
+<span class="sd">x = P.Pipe(</span>
+<span class="sd">    1,     #input</span>
+<span class="sd">    add1,  #1 + 1 == 2</span>
+<span class="sd">    mul3   #2 * 3 == 6</span>
+<span class="sd">)</span>
+<span class="sd">assert x == 6</span>
+<span class="sd">previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to create the functions</span>
+<span class="sd">from phi import P</span>
+<span class="sd">x = P.Pipe(</span>
+<span class="sd">    1,      #input</span>
+<span class="sd">    P + 1,  #1 + 1 == 2</span>
+<span class="sd">    P * 3   #2 * 3 == 6</span>
+<span class="sd">)</span>
+<span class="sd">assert x == 6</span>
+<span class="sd">so see**</span>
+<span class="sd">hi.builder.Builder.Seq`</span>
+<span class="sd">sl](https://cgarciae.github.io/phi/dsl.m.html)</span>
+<span class="sd">ompile](https://cgarciae.github.io/phi/dsl.m.html#phi.dsl.Compile)</span>
+<span class="sd">ambdas](https://cgarciae.github.io/phi/lambdas.m.html)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;refs&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Seq">
+    <p>def <span class="ident">Seq</span>(</p><p>self, *sequence, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>Seq</code> is used to express function composition. The expression</p>
+<div class="codehilite"><pre><span></span>Seq(f, g)
+</pre></div>
+
+
+<p>be equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: g(f(x))
+</pre></div>
+
+
+<p>As you see, its a little different from the mathematical definition. Excecution order flow from left to right, this makes reading and reasoning about code way more easy. This bahaviour is based upon the <code>|&gt;</code> (pipe) operator found in languages like F#, Elixir and Elm. You can pack as many expressions as you like and they will be applied in order to the data that is passed through them when compiled an excecuted.</p>
+<p>In general, the following rules apply for Seq:</p>
+<p><strong>General Sequence</strong></p>
+<div class="codehilite"><pre><span></span>Seq(f0, f1, ..., fn-1, fn)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: fn(fn-1(...(f1(f0(x)))))
+</pre></div>
+
+
+<p><strong>Single Function</strong></p>
+<div class="codehilite"><pre><span></span>Seq(f)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>f
+</pre></div>
+
+
+<p><strong>Identity</strong></p>
+<p>The empty Seq</p>
+<div class="codehilite"><pre><span></span>Seq()
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>lambda x: x
+</pre></div>
+
+
+<h3>Examples</h3>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Seq</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span> <span class="c1"># ((1 * 2) + 1) ** 2</span>
+</pre></div>
+
+
+<p>The previous example using <code>P.Pipe</code></p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">9</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
+    <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1">#2 + 1 == 3</span>
+    <span class="n">P</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1">#3 ** 2 == 9</span>
+<span class="p">)</span>
+</pre></div></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Seq', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Seq" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">` is used to express function composition. The expression</span>
+<span class="sd">Seq(f, g)</span>
+<span class="sd">quivalent to</span>
+<span class="sd">lambda x: g(f(x))</span>
+<span class="sd">ou see, its a little different from the mathematical definition. Excecution order flow from left to right, this makes reading and reasoning about code way more easy. This bahaviour is based upon the `|&gt;` (pipe) operator found in languages like F#, Elixir and Elm. You can pack as many expressions as you like and they will be applied in order to the data that is passed through them when compiled an excecuted.</span>
+<span class="sd">eneral, the following rules apply for Seq:</span>
+<span class="sd">neral Sequence**</span>
+<span class="sd">Seq(f0, f1, ..., fn-1, fn)</span>
+<span class="sd">quivalent to</span>
+<span class="sd">lambda x: fn(fn-1(...(f1(f0(x)))))</span>
+<span class="sd">ngle Function**</span>
+<span class="sd">Seq(f)</span>
+<span class="sd">quivalent to</span>
+<span class="sd">f</span>
+<span class="sd">entity**</span>
+<span class="sd">empty Seq</span>
+<span class="sd">Seq()</span>
+<span class="sd">quivalent to</span>
+<span class="sd">lambda x: x</span>
+<span class="sd">Examples</span>
+<span class="sd">from phi import P, Seq</span>
+<span class="sd">f = Seq(</span>
+<span class="sd">    P * 2,</span>
+<span class="sd">    P + 1,</span>
+<span class="sd">    P ** 2</span>
+<span class="sd">)</span>
+<span class="sd">assert f(1) == 9 # ((1 * 2) + 1) ** 2</span>
+<span class="sd">previous example using `P.Pipe`</span>
+<span class="sd">from phi import P</span>
+<span class="sd">assert 9 == P.Pipe(</span>
+<span class="sd">    1,</span>
+<span class="sd">    P * 2,  #1 * 2 == 2</span>
+<span class="sd">    P + 1,  #2 + 1 == 3</span>
+<span class="sd">    P ** 2  #3 ** 2 == 9</span>
+<span class="sd">)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">_parse</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">sequence</span> <span class="p">]</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">args</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">),</span> <span class="n">fs</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Then">
+    <p>def <span class="ident">Then</span>(</p><p>self, f, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>Then(f, ...)</code> is equivalent to <code>ThenAt(1, f, ...)</code>. Checkout <code>phi.builder.Builder.ThenAt</code> for more information.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Then', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Then" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">n(f, ...)` is equivalent to `ThenAt(1, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Then0">
+    <p>def <span class="ident">Then0</span>(</p><p>self, f, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>Then0(f, ...)</code> is equivalent to <code>ThenAt(0, f, ...)</code>. Checkout <code>phi.builder.Builder.ThenAt</code> for more information.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Then0', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Then0" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">n0(f, ...)` is equivalent to `ThenAt(0, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Then1">
+    <p>def <span class="ident">Then1</span>(</p><p>self, f, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>Then(f, ...)</code> is equivalent to <code>ThenAt(1, f, ...)</code>. Checkout <code>phi.builder.Builder.ThenAt</code> for more information.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Then1', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Then1" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">n(f, ...)` is equivalent to `ThenAt(1, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Then2">
+    <p>def <span class="ident">Then2</span>(</p><p>self, f, arg1, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>Then2(f, ...)</code> is equivalent to <code>ThenAt(2, f, ...)</code>. Checkout <code>phi.builder.Builder.ThenAt</code> for more information.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Then2', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Then2" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">n2(f, ...)` is equivalent to `ThenAt(2, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Then3">
+    <p>def <span class="ident">Then3</span>(</p><p>self, f, arg1, arg2, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>Then3(f, ...)</code> is equivalent to <code>ThenAt(3, f, ...)</code>. Checkout <code>phi.builder.Builder.ThenAt</code> for more information.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Then3', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Then3" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">n3(f, ...)` is equivalent to `ThenAt(3, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Then4">
+    <p>def <span class="ident">Then4</span>(</p><p>self, f, arg1, arg2, arg3, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>Then4(f, ...)</code> is equivalent to <code>ThenAt(4, f, ...)</code>. Checkout <code>phi.builder.Builder.ThenAt</code> for more information.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Then4', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Then4" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then4</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">n4(f, ...)` is equivalent to `ThenAt(4, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Then5">
+    <p>def <span class="ident">Then5</span>(</p><p>self, f, arg1, arg2, arg3, arg4, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>Then5(f, ...)</code> is equivalent to <code>ThenAt(5, f, ...)</code>. Checkout <code>phi.builder.Builder.ThenAt</code> for more information.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Then5', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Then5" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Then5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">,</span> <span class="n">arg4</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">n5(f, ...)` is equivalent to `ThenAt(5, f, ...)`. Checkout `phi.builder.Builder.ThenAt` for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">,</span> <span class="n">arg4</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.ThenAt">
+    <p>def <span class="ident">ThenAt</span>(</p><p>self, n, f, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><code>ThenAt</code> enables you to create a partially apply many arguments to a function, the returned partial expects a single arguments which will be applied at the <code>n</code>th position of the original function.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>n</strong>: position at which the created partial will apply its awaited argument on the original function.</li>
+<li><strong>f</strong>: function which the partial will be created.</li>
+<li><strong>args &amp; kwargs</strong>: all <code>*args</code> and <code>**kwargs</code> will be passed to the function <code>f</code>.</li>
+<li><code>_return_type = None</code>: type of the returned <code>builder</code>, if <code>None</code> it will return the same type of the current <code>builder</code>. This special kwarg will NOT be passed to <code>f</code>.</li>
+</ul>
+<p>You can think of <code>n</code> as the position that the value being piped down will pass through the <code>f</code>. Say you have the following expression</p>
+<div class="codehilite"><pre><span></span>D == fun(A, B, C)
+</pre></div>
+
+
+<p>all the following are equivalent</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Pipe</span><span class="p">,</span> <span class="n">ThenAt</span>
+
+<span class="n">D</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">ThenAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">))</span>
+<span class="n">D</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">ThenAt</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">C</span><span class="p">))</span>
+<span class="n">D</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">ThenAt</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span>
+</pre></div>
+
+
+<p>you could also use the shortcuts <code>Then</code>, <code>Then2</code>,..., <code>Then5</code>, which are more readable</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Pipe</span>
+
+<span class="n">D</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">))</span>
+<span class="n">D</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">C</span><span class="p">))</span>
+<span class="n">D</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">Then3</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span>
+</pre></div>
+
+
+<p>There is a special case not discussed above: <code>n = 0</code>. When this happens only the arguments given will be applied to <code>f</code>, this method it will return a partial that expects a single argument but completely ignores it</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">D</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">))</span>
+<span class="n">D</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">Then0</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">))</span>
+</pre></div>
+
+
+<p><strong>Examples</strong></p>
+<p>Max of 6 and the argument:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="mi">6</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="nb">max</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>Previous is equivalent to</p>
+<div class="codehilite"><pre><span></span>assert 6 == max(2, 6)
+</pre></div>
+
+
+<p>Open a file in read mode (<code>'r'</code>)</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;file.txt&quot;</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="nb">open</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>Previous is equivalent to</p>
+<div class="codehilite"><pre><span></span>f = open(&quot;file.txt&quot;, &#39;r&#39;)
+</pre></div>
+
+
+<p>Split a string by whitespace and then get the length of each word</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span>
+
+<span class="k">assert</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;Again hello world&quot;</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">len</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>Previous is equivalent to</p>
+<div class="codehilite"><pre><span></span>x = &quot;Again hello world&quot;
+
+x = str.split(x, &#39; &#39;)
+x = map(len, x)
+
+assert [5, 5, 5] == x
+</pre></div>
+
+
+<p>As you see, <code>Then2</code> was very useful because <code>map</code> accepts and <code>iterable</code> as its <code>2nd</code> parameter. You can rewrite the previous using the <a href="https://cgarciae.github.io/phi/python_builder.m.html">PythonBuilder</a> and the <code>phi.builder.Builder.Obj</code> object</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span>
+
+<span class="k">assert</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;Again hello world&quot;</span><span class="p">,</span>
+    <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><strong>Also see</strong></p>
+<ul>
+<li><code>phi.builder.Builder.Obj</code></li>
+<li><a href="https://cgarciae.github.io/phi/python_builder.m.html">PythonBuilder</a></li>
+<li><code>phi.builder.Builder.RegisterAt</code></li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.ThenAt', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.ThenAt" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ThenAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">nAt` enables you to create a partially apply many arguments to a function, the returned partial expects a single arguments which will be applied at the `n`th position of the original function.</span>
+<span class="sd">guments**</span>
+<span class="sd">n**: position at which the created partial will apply its awaited argument on the original function.</span>
+<span class="sd">f**: function which the partial will be created.</span>
+<span class="sd">args &amp; kwargs**: all `*args` and `**kwargs` will be passed to the function `f`.</span>
+<span class="sd">return_type = None`: type of the returned `builder`, if `None` it will return the same type of the current `builder`. This special kwarg will NOT be passed to `f`.</span>
+<span class="sd">can think of `n` as the position that the value being piped down will pass through the `f`. Say you have the following expression</span>
+<span class="sd">D == fun(A, B, C)</span>
+<span class="sd">the following are equivalent</span>
+<span class="sd">from phi import P, Pipe, ThenAt</span>
+<span class="sd">D == Pipe(A, ThenAt(1, fun, B, C))</span>
+<span class="sd">D == Pipe(B, ThenAt(2, fun, A, C))</span>
+<span class="sd">D == Pipe(C, ThenAt(3, fun, A, B))</span>
+<span class="sd">could also use the shortcuts `Then`, `Then2`,..., `Then5`, which are more readable</span>
+<span class="sd">from phi import P, Pipe</span>
+<span class="sd">D == Pipe(A, P.Then(fun, B, C))</span>
+<span class="sd">D == Pipe(B, P.Then2(fun, A, C))</span>
+<span class="sd">D == Pipe(C, P.Then3(fun, A, B))</span>
+<span class="sd">e is a special case not discussed above: `n = 0`. When this happens only the arguments given will be applied to `f`, this method it will return a partial that expects a single argument but completely ignores it</span>
+<span class="sd">from phi import P</span>
+<span class="sd">D == Pipe(None, P.ThenAt(0, fun, A, B, C))</span>
+<span class="sd">D == Pipe(None, P.Then0(fun, A, B, C))</span>
+<span class="sd">amples**</span>
+<span class="sd">of 6 and the argument:</span>
+<span class="sd">from phi import P</span>
+<span class="sd">assert 6 == P.Pipe(</span>
+<span class="sd">    2,</span>
+<span class="sd">    P.Then(max, 6)</span>
+<span class="sd">)</span>
+<span class="sd">ious is equivalent to</span>
+<span class="sd">assert 6 == max(2, 6)</span>
+<span class="sd"> a file in read mode (`&#39;r&#39;`)</span>
+<span class="sd">from phi import P</span>
+<span class="sd">f = P.Pipe(</span>
+<span class="sd">    &quot;file.txt&quot;,</span>
+<span class="sd">    P.Then(open, &#39;r&#39;)</span>
+<span class="sd">)</span>
+<span class="sd">ious is equivalent to</span>
+<span class="sd">f = open(&quot;file.txt&quot;, &#39;r&#39;)</span>
+<span class="sd">t a string by whitespace and then get the length of each word</span>
+<span class="sd">from phi import P</span>
+<span class="sd">assert [5, 5, 5] == P.Pipe(</span>
+<span class="sd">    &quot;Again hello world&quot;,</span>
+<span class="sd">    P.Then(str.split, &#39; &#39;)</span>
+<span class="sd">    .Then2(map, len)</span>
+<span class="sd">)</span>
+<span class="sd">ious is equivalent to</span>
+<span class="sd">x = &quot;Again hello world&quot;</span>
+<span class="sd">x = str.split(x, &#39; &#39;)</span>
+<span class="sd">x = map(len, x)</span>
+<span class="sd">assert [5, 5, 5] == x</span>
+<span class="sd">ou see, `Then2` was very useful because `map` accepts and `iterable` as its `2nd` parameter. You can rewrite the previous using the [PythonBuilder](https://cgarciae.github.io/phi/python_builder.m.html) and the `phi.builder.Builder.Obj` object</span>
+<span class="sd">from phi import P, Obj</span>
+<span class="sd">assert [5, 5, 5] == P.Pipe(</span>
+<span class="sd">    &quot;Again hello world&quot;,</span>
+<span class="sd">    Obj.split(&#39; &#39;),</span>
+<span class="sd">    P.map(len)</span>
+<span class="sd">)</span>
+<span class="sd">so see**</span>
+<span class="sd">hi.builder.Builder.Obj`</span>
+<span class="sd">ythonBuilder](https://cgarciae.github.io/phi/python_builder.m.html)</span>
+<span class="sd">hi.builder.Builder.RegisterAt`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_return_type</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
+    <span class="nd">@utils.lift</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.Val">
+    <p>def <span class="ident">Val</span>(</p><p>self, val, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>The expression</p>
+<div class="codehilite"><pre><span></span>Val(a)
+</pre></div>
+
+
+<p>is equivalent to the constant function</p>
+<div class="codehilite"><pre><span></span>lambda x: a
+</pre></div>
+
+
+<p>All expression in this module interprete values that are not functions as constant functions using <code>Val</code>, for example</p>
+<div class="codehilite"><pre><span></span>Seq(1, P + 1)
+</pre></div>
+
+
+<p>is equivalent to</p>
+<div class="codehilite"><pre><span></span>Seq(Val(1), P + 1)
+</pre></div>
+
+
+<p>The previous expression as a whole is a constant function since it will return <code>2</code> no matter what input you give it.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.Val', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.Val" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">expression</span>
+<span class="sd">Val(a)</span>
+<span class="sd">quivalent to the constant function</span>
+<span class="sd">lambda x: a</span>
+<span class="sd">expression in this module interprete values that are not functions as constant functions using `Val`, for example</span>
+<span class="sd">Seq(1, P + 1)</span>
+<span class="sd">quivalent to</span>
+<span class="sd">Seq(Val(1), P + 1)</span>
+<span class="sd">previous expression as a whole is a constant function since it will return `2` no matter what input you give it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">lift</span><span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">val</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.With">
+    <p>def <span class="ident">With</span>(</p><p>self, context_manager, *body, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><strong>With</strong></p>
+<div class="codehilite"><pre><span></span>def With(context_manager, *body):
+</pre></div>
+
+
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>context_manager</strong>: a <a href="https://docs.python.org/2/reference/datamodel.html#context-managers">context manager</a> object or valid expression from the DSL that returns a context manager.</li>
+<li><strong>*body</strong>: any valid expression of the DSL to be evaluated inside the context. <code>*body</code> is interpreted as a tuple so all expression contained are composed.</li>
+</ul>
+<p>As with normal python programs you sometimes might want to create a context for a block of code. You normally give a <a href="https://docs.python.org/2/reference/datamodel.html#context-managers">context manager</a> to the <a href="https://docs.python.org/2/reference/compound_stmts.html#the-with-statement">with</a> statemente, in Phi you use <code>P.With</code> or <code>phi.With</code></p>
+<p><strong>Context</strong></p>
+<p>Python's <code>with</code> statemente returns a context object through <code>as</code> keyword, in the DSL this object can be obtained using the <code>P.Context</code> method or the <code>phi.Context</code> function.</p>
+<h3>Examples</h3>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Obj</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">With</span><span class="p">,</span> <span class="n">Pipe</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
+    <span class="s2">&quot;text.txt&quot;</span><span class="p">,</span>
+    <span class="n">With</span><span class="p">(</span> <span class="nb">open</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span>
+        <span class="n">Obj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>The previous is equivalent to</p>
+<div class="codehilite"><pre><span></span>with open(&quot;text.txt&quot;) as f:
+    text = f.read()
+</pre></div></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.With', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.With" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">With</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_manager</span><span class="p">,</span> <span class="o">*</span><span class="n">body</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">th**</span>
+<span class="sd">def With(context_manager, *body):</span>
+<span class="sd">guments**</span>
+<span class="sd">context_manager**: a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) object or valid expression from the DSL that returns a context manager.</span>
+<span class="sd">*body**: any valid expression of the DSL to be evaluated inside the context. `*body` is interpreted as a tuple so all expression contained are composed.</span>
+<span class="sd">ith normal python programs you sometimes might want to create a context for a block of code. You normally give a [context manager](https://docs.python.org/2/reference/datamodel.html#context-managers) to the [with](https://docs.python.org/2/reference/compound_stmts.html#the-with-statement) statemente, in Phi you use `P.With` or `phi.With`</span>
+<span class="sd">ntext**</span>
+<span class="sd">on&#39;s `with` statemente returns a context object through `as` keyword, in the DSL this object can be obtained using the `P.Context` method or the `phi.Context` function.</span>
+<span class="sd">Examples</span>
+<span class="sd">from phi import P, Obj, Context, With, Pipe</span>
+<span class="sd">text = Pipe(</span>
+<span class="sd">    &quot;text.txt&quot;,</span>
+<span class="sd">    With( open, Context,</span>
+<span class="sd">        Obj.read()</span>
+<span class="sd">    )</span>
+<span class="sd">)</span>
+<span class="sd">previous is equivalent to</span>
+<span class="sd">with open(&quot;text.txt&quot;) as f:</span>
+<span class="sd">    text = f.read()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context_f</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">context_manager</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+    <span class="n">body_f</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">_f</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">context</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">context_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">context</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">_WithContextManager</span><span class="p">(</span><span class="n">scope</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">body_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>

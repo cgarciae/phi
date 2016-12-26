@@ -33,9 +33,6 @@ for _name, f in __builtins__.items():
         print(e)
 
 for _name, f in _functions_2:
-    # import ipdb
-    # ipdb.set_trace()  ######### Break Point ###########
-
     PythonBuilder.Register2(f, "")
 
 #custom methods
@@ -161,6 +158,11 @@ Returns a function which when executed returns the last element of the iterable 
     )
     """
     return list(a)[-1]
+
+@PythonBuilder.Register("phi.python_builder.", explain=False)
+def Flatten(a):
+    return utils.flatten(a)
+
 
 
 __all__ = ["PythonBuilder"]
