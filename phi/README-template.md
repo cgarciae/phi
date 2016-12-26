@@ -15,7 +15,7 @@ but you can also import just what you need from the `phi` module.
 Using the `P` object you can create quick lambdas using any operator. You can write things like
 
 ```python
-f = (P * 6) / (P + 2)
+f = (P * 6) / (P + 2)  #lambda x: (x * 6) / (x + 2)
 
 assert f(2) == 3  # (2 * 6) / (2 + 2) == 12 / 4 == 3
 ```
@@ -29,7 +29,7 @@ f = lambda x: (x * 6) / (x + 2)
 #### getitem
 You can also use the `P` object to create lambdas that access the items of a collection
 ```python
-f = P[0] + P[-1]  #add the first and last elements
+f = P[0] + P[-1]  #lambda x: x[0] + x[-1]
 
 assert f([1,2,3,4]) == 5   #1 + 4 == 5
 ```
@@ -77,7 +77,7 @@ assert f(2) == 3  # math.sqrt(2 + 7) == math.sqrt(9) == 3
 ```
 
 #### Seq and Pipe
-If you need to do a long or complex composition you can use `Seq` instead of many chained `>>`
+If you need to do a long or complex composition you can use `Seq` (for 'Sequence') instead of many chained `>>`
 
 ```python
 f = Seq(
