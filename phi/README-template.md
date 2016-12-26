@@ -266,7 +266,7 @@ f = (
   .map(len)
   .sum()
   .If( (P < 15).Not(),
-    "Great! Got {0} letters!".format
+    "Great! Got {{0}} letters!".format
   ).Else(
     "Too short, need at-least 15 letters"
   )
