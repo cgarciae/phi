@@ -1209,7 +1209,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
@@ -1224,7 +1224,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
@@ -1240,7 +1240,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
@@ -1307,7 +1307,7 @@ table {
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
@@ -1322,13 +1322,13 @@ table {
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
             <span class="p">,</span>
-                <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">List</span><span class="p">(</span>
                     <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">add2</span><span class="p">,</span>
                         <span class="n">mul3</span>
@@ -1337,7 +1337,7 @@ table {
                     <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">mul3</span><span class="p">,</span>
                         <span class="n">add2</span><span class="p">,</span>
-                        <span class="n">Branch</span><span class="p">(</span>
+                        <span class="n">List</span><span class="p">(</span>
                             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
                         <span class="p">)</span>
@@ -1350,13 +1350,13 @@ table {
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="n">get_list</span><span class="p">(</span><span class="bp">None</span><span class="p">)]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
             <span class="p">,</span>
-                <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">List</span><span class="p">(</span>
                     <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">add2</span><span class="p">,</span>
                         <span class="n">mul3</span>
@@ -1374,13 +1374,13 @@ table {
 
         <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
             <span class="p">,</span>
-                <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">List</span><span class="p">(</span>
                     <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">add2</span><span class="p">,</span>
                         <span class="n">mul3</span>
@@ -1444,7 +1444,7 @@ table {
             <span class="n">add2</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
             <span class="n">add2</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
             <span class="n">add2</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(),</span>
                 <span class="n">a</span><span class="p">,</span>
                 <span class="n">b</span>
@@ -1499,12 +1499,12 @@ table {
 
         <span class="k">assert</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">3</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
             <span class="p">,</span>
                 <span class="n">Seq</span><span class="p">()</span>
@@ -1836,7 +1836,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
@@ -1851,7 +1851,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
@@ -1867,7 +1867,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
@@ -1934,7 +1934,7 @@ table {
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
@@ -1949,13 +1949,13 @@ table {
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
             <span class="p">,</span>
-                <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">List</span><span class="p">(</span>
                     <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">add2</span><span class="p">,</span>
                         <span class="n">mul3</span>
@@ -1964,7 +1964,7 @@ table {
                     <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">mul3</span><span class="p">,</span>
                         <span class="n">add2</span><span class="p">,</span>
-                        <span class="n">Branch</span><span class="p">(</span>
+                        <span class="n">List</span><span class="p">(</span>
                             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
                         <span class="p">)</span>
@@ -1977,13 +1977,13 @@ table {
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="n">get_list</span><span class="p">(</span><span class="bp">None</span><span class="p">)]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
             <span class="p">,</span>
-                <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">List</span><span class="p">(</span>
                     <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">add2</span><span class="p">,</span>
                         <span class="n">mul3</span>
@@ -2001,13 +2001,13 @@ table {
 
         <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">4</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
                 <span class="p">)</span>
             <span class="p">,</span>
-                <span class="n">Branch</span><span class="p">(</span>
+                <span class="n">List</span><span class="p">(</span>
                     <span class="n">Seq</span><span class="p">(</span>
                         <span class="n">add2</span><span class="p">,</span>
                         <span class="n">mul3</span>
@@ -2071,7 +2071,7 @@ table {
             <span class="n">add2</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
             <span class="n">add2</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
             <span class="n">add2</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(),</span>
                 <span class="n">a</span><span class="p">,</span>
                 <span class="n">b</span>
@@ -2126,12 +2126,12 @@ table {
 
         <span class="k">assert</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">3</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
             <span class="p">,</span>
                 <span class="n">Seq</span><span class="p">()</span>
@@ -2374,7 +2374,7 @@ table {
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
@@ -2387,7 +2387,7 @@ table {
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
@@ -2420,7 +2420,7 @@ table {
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
@@ -2481,12 +2481,12 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">assert</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">3</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
         <span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span><span class="o">.</span><span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()</span> <span class="c1">#list only needed in Python 3</span>
         <span class="p">,</span>
             <span class="n">Seq</span><span class="p">()</span>
@@ -2553,7 +2553,7 @@ table {
     <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">add2</span><span class="p">,</span> <span class="n">mul3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">18</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">4</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Seq</span><span class="p">(</span>
                 <span class="n">add2</span><span class="p">,</span>
                 <span class="n">mul3</span>
@@ -2567,13 +2567,13 @@ table {
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">4</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Seq</span><span class="p">(</span>
                 <span class="n">add2</span><span class="p">,</span>
                 <span class="n">mul3</span>
             <span class="p">)</span>
         <span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
@@ -2582,7 +2582,7 @@ table {
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">mul3</span><span class="p">,</span>
                     <span class="n">add2</span><span class="p">,</span>
-                    <span class="n">Branch</span><span class="p">(</span>
+                    <span class="n">List</span><span class="p">(</span>
                         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                         <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
                     <span class="p">)</span>
@@ -2593,13 +2593,13 @@ table {
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="n">get_list</span><span class="p">(</span><span class="bp">None</span><span class="p">)]]</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">4</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Seq</span><span class="p">(</span>
                 <span class="n">add2</span><span class="p">,</span>
                 <span class="n">mul3</span>
             <span class="p">)</span>
         <span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
@@ -2616,13 +2616,13 @@ table {
     <span class="p">)</span>
     <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">4</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Seq</span><span class="p">(</span>
                 <span class="n">add2</span><span class="p">,</span>
                 <span class="n">mul3</span>
             <span class="p">)</span>
         <span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="n">add2</span><span class="p">,</span>
                     <span class="n">mul3</span>
@@ -2793,7 +2793,7 @@ table {
         <span class="n">add2</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
         <span class="n">add2</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
         <span class="n">add2</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Seq</span><span class="p">(),</span>
             <span class="n">a</span><span class="p">,</span>
             <span class="n">b</span>

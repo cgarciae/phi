@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 from . import utils
 from . import builder
 from . import dsl
-from . import lambdas
 
 from .utils import identity
 

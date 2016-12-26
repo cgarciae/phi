@@ -1045,16 +1045,32 @@ table {
         
           
   <ul>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_Register">test_Register</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_builder_MakeRefContext">test_builder_MakeRefContext</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_builder_NPipe">test_builder_NPipe</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_contains">test_contains</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_dsl">test_dsl</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_example_1">test_example_1</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_f">test_f</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_field_access">test_field_access</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_fluent">test_fluent</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_get_item">test_get_item</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_getting_started">test_getting_started</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_if">test_if</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_list_tuple_ect">test_list_tuple_ect</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_math">test_math</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_method_calling">test_method_calling</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_not">test_not</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_operators">test_operators</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_others">test_others</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_pipe_branch">test_pipe_branch</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_ref">test_ref</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_rshif_and_lshift">test_rshif_and_lshift</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_seq_and_pipe">test_seq_and_pipe</a></li>
     <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_state">test_state</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_state_read_write">test_state_read_write</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_thens">test_thens</a></li>
+    <li class="mono"><a href="#phi.tests.test_examples.TestExamples.test_val">test_val</a></li>
   </ul>
 
         </li>
@@ -1125,7 +1141,7 @@ table {
             <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
             <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
             <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
             <span class="p">,</span>
                 <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
@@ -1165,11 +1181,11 @@ table {
         <span class="c1">################</span>
         <span class="c1">################</span>
 
-        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Branch</span>
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">List</span>
 
         <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#1 + 1 == 2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#1 * 3 == 3</span>
@@ -1182,12 +1198,12 @@ table {
         <span class="c1">################</span>
         <span class="c1">################</span>
 
-        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Branch</span>
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">List</span>
 
         <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
@@ -1205,7 +1221,7 @@ table {
         <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
@@ -1223,7 +1239,7 @@ table {
         <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
@@ -1236,17 +1252,17 @@ table {
         <span class="c1">################</span>
         <span class="c1">################</span>
 
-        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Branch</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span>
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span>
 
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1">#load &#39;s&#39; == 2</span>
@@ -1259,17 +1275,17 @@ table {
         <span class="c1">################</span>
         <span class="c1">################</span>
 
-        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Branch</span>
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">List</span>
 
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1287,12 +1303,12 @@ table {
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1310,12 +1326,12 @@ table {
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1336,12 +1352,12 @@ table {
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1368,12 +1384,12 @@ table {
 
         <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span>
             <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1512,7 +1528,7 @@ table {
 
     <span class="k">def</span> <span class="nf">test_pipe_branch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">assert</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span> <span class="o">&gt;&gt;</span> <span class="n">Branch</span><span class="p">(</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span> <span class="o">&gt;&gt;</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">test_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1523,6 +1539,265 @@ table {
 
         <span class="n">f</span> <span class="o">=</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">&gt;&gt;</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+
+
+    <span class="k">def</span> <span class="nf">test_math</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">math</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">P</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">list</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span>
+
+
+    <span class="k">def</span> <span class="nf">test_operators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># (2 * 6) / (2 + 2) == 12 / 4 == 3</span>
+
+        <span class="c1">###########################</span>
+
+    <span class="k">def</span> <span class="nf">test_get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1">#add the first and last elements</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span>   <span class="c1">#1 + 4 == 5</span>
+
+        <span class="c1">##################</span>
+
+    <span class="k">def</span> <span class="nf">test_field_access</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+        <span class="n">Point</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Point&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#add the x and y fields</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">==</span> <span class="mi">7</span>   <span class="c1">#point.x + point.y == 3 + 4 == 7</span>
+
+    <span class="k">def</span> <span class="nf">test_method_calling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c1">#lambda s: s.upper() + &quot;, &quot; + s.lower()</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;HEllo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;HELLO, hello&quot;</span>   <span class="c1"># &quot;HEllo&quot;.upper() + &quot;, &quot; + &quot;HEllo&quot;.lower() == &quot;HELLO&quot; + &quot;, &quot; + &quot;hello&quot; == &quot;HELLO, hello&quot;</span>
+
+        <span class="c1">#############################</span>
+
+    <span class="k">def</span> <span class="nf">test_rshif_and_lshift</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">math</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">7</span> <span class="o">&gt;&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>  <span class="c1">#executes left to right</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># math.sqrt(2 + 7) == math.sqrt(9) == 3</span>
+
+        <span class="c1">################</span>
+
+        <span class="n">f</span> <span class="o">=</span>  <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span> <span class="o">&lt;&lt;</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">7</span> <span class="c1">#executes right to left</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># math.sqrt(2 + 7) == math.sqrt(9) == 3</span>
+
+        <span class="c1">#######################</span>
+
+    <span class="k">def</span> <span class="nf">test_seq_and_pipe</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">math</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+          <span class="nb">str</span><span class="p">,</span>
+          <span class="n">P</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span><span class="p">,</span>
+          <span class="nb">int</span><span class="p">,</span>
+          <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>  <span class="c1"># sqrt(int(&quot;1&quot; + &quot;00&quot;)) == sqrt(100) == 10</span>
+
+        <span class="c1">##################################</span>
+
+        <span class="k">assert</span> <span class="mi">10</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+          <span class="mi">1</span><span class="p">,</span>  <span class="c1">#input</span>
+          <span class="nb">str</span><span class="p">,</span>  <span class="c1"># &quot;1&quot;</span>
+          <span class="n">P</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span><span class="p">,</span>  <span class="c1"># &quot;1&quot; + &quot;00&quot; == &quot;100&quot;</span>
+          <span class="nb">int</span><span class="p">,</span>  <span class="c1"># 100</span>
+          <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>  <span class="c1">#sqrt(100) == 10</span>
+        <span class="p">)</span>
+
+        <span class="c1">######################################</span>
+
+
+    <span class="k">def</span> <span class="nf">test_list_tuple_ect</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span> <span class="p">)</span>  <span class="c1">#lambda x: [ x +1, x * 10 ]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">30</span> <span class="p">]</span>  <span class="c1"># [ 3 + 1, 3 * 10 ] == [ 4, 30 ]</span>
+
+
+        <span class="c1">##################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span> <span class="p">)</span>  <span class="c1">#lambda x: [ x +1, x * 10 ]</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">d</span> <span class="o">==</span> <span class="p">{</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">30</span> <span class="p">}</span>  <span class="c1"># { &#39;x&#39;: 3 + 1, &#39;y&#39;: 3 * 10 } == { &#39;x&#39;: 4, &#39;y&#39;: 30 }</span>
+        <span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">4</span>   <span class="c1">#access d[&#39;x&#39;] via field access as d.x</span>
+        <span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">30</span>  <span class="c1">#access d[&#39;y&#39;] via field access as d.y</span>
+
+        <span class="c1">#########################################</span>
+
+
+    <span class="k">def</span> <span class="nf">test_state_read_write</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">70</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+          <span class="mi">3</span><span class="p">,</span>
+          <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>  <span class="c1">#3 * 10 == 30</span>
+          <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#s = 30</span>
+          <span class="n">P</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1">#30 + 5 == 35</span>
+          <span class="n">List</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>  <span class="c1"># 35 * 2 == 70</span>
+          <span class="p">,</span>
+            <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1">#s == 30</span>
+          <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1">###########################</span>
+
+
+    <span class="k">def</span> <span class="nf">test_thens</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">repeat_word</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">upper</span><span class="p">:</span>
+                <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="p">[</span> <span class="n">word</span> <span class="p">]</span> <span class="o">*</span> <span class="n">times</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">Then</span><span class="p">(</span><span class="n">repeat_word</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">P</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">Then</span><span class="p">(</span><span class="n">repeat_word</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;ward&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;draw&quot;</span><span class="p">,</span> <span class="s2">&quot;draw&quot;</span><span class="p">,</span> <span class="s2">&quot;draw&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">g</span><span class="p">(</span><span class="s2">&quot;ward&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;DRAW&quot;</span><span class="p">,</span> <span class="s2">&quot;DRAW&quot;</span><span class="p">,</span> <span class="s2">&quot;DRAW&quot;</span><span class="p">]</span>
+
+        <span class="c1">###########################</span>
+
+        <span class="c1"># since map and filter receive the iterable on their second argument, you have to use `Then2`</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Then2</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">list</span>  <span class="c1">#lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>  <span class="c1">#[2**2, 4**2] == [4, 16]</span>
+
+
+        <span class="c1">######################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">P</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">list</span>  <span class="c1">#lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>  <span class="c1">#[2**2, 4**2] == [4, 16]</span>
+
+
+        <span class="c1">######################################</span>
+
+    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>  <span class="c1">#lambda x: 42</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;whatever&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">42</span>
+
+        <span class="c1">#####################################</span>
+
+    <span class="k">def</span> <span class="nf">test_others</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">sum</span> <span class="o">&gt;&gt;</span> <span class="n">If</span><span class="p">(</span> <span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span> <span class="s2">&quot;Great! Got {0} letters!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span><span class="s2">&quot;Too short, need at-least 15 letters&quot;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;short frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some longer frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Great! Got 15 letters!&quot;</span>
+
+        <span class="c1">###########################################</span>
+
+    <span class="k">def</span> <span class="nf">test_dsl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;&gt;</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">Val</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="p">)</span>  <span class="c1">#lambda x: [ x**2]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1"># [ 10**2, 3, 4 ]  == [ 100, 3, 4 ]</span>
+
+        <span class="c1">############################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;&gt;</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1"># [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]</span>
+
+
+        <span class="c1">###########################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;&gt;</span> <span class="p">[</span> <span class="n">P</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1"># [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]</span>
+
+
+        <span class="c1">############################################</span>
+
+        <span class="k">assert</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+          <span class="mi">10</span><span class="p">,</span>
+          <span class="n">P</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># 10**2 == 100</span>
+          <span class="p">[</span> <span class="n">P</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1">#[ 100, 3, 4 ]</span>
+        <span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">test_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">((</span><span class="n">P</span> <span class="o">+</span> <span class="s2">&quot;!!!&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">()))</span>  <span class="c1">#Tuple(P + &quot;!!!&quot;, Val(42), Obj.upper())</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some tuple&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;some tuple!!!&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">&quot;SOME TUPLE&quot;</span><span class="p">)</span>
+
+        <span class="c1">#############################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">([</span> <span class="n">P</span> <span class="o">+</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">])</span>  <span class="o">&gt;&gt;</span> <span class="p">[</span> <span class="nb">len</span><span class="p">,</span> <span class="nb">sum</span> <span class="p">]</span>  <span class="c1"># lambda x: [ len([ x, x+1, x+2, x+3, x+4]), sum([ x, x+1, x+2, x+3, x+4]) ]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">60</span> <span class="p">]</span>  <span class="c1"># [ len([10, 11, 12, 13, 14]), sum([10, 11, 12, 13, 14])] == [ 5, (50 + 0 + 1 + 2 + 3 + 4) ] == [ 5, 60 ]</span>
+
+    <span class="k">def</span> <span class="nf">test_fluent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span>
+          <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">P</span><span class="p">,</span>
+          <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span>
+          <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+          <span class="n">Rec</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">x</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># ( x + y, y / x) == ( 2 + 2, 2 / 2) == ( 4, 1 )</span>
+
+        <span class="c1">#################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">sum</span> <span class="o">&gt;&gt;</span> <span class="n">If</span><span class="p">(</span> <span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span> <span class="s2">&quot;Great! Got {0} letters!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span><span class="s2">&quot;Too short, need at-least 15 letters&quot;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;short frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some longer frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Great! Got 15 letters!&quot;</span>
+
+        <span class="c1">######################################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+          <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+          <span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+          <span class="o">.</span><span class="n">If</span><span class="p">(</span> <span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span>
+            <span class="s2">&quot;Great! Got {0} letters!&quot;</span><span class="o">.</span><span class="n">format</span>
+          <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+            <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+          <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;short frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some longer frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Great! Got 15 letters!&quot;</span>
+
+        <span class="c1">###########################################################</span>
+
+    <span class="k">def</span> <span class="nf">test_Register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">PythonBuilder</span>
+
+        <span class="k">class</span> <span class="nc">MyBuilder</span><span class="p">(</span><span class="n">PythonBuilder</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">M</span> <span class="o">=</span> <span class="n">MyBuilder</span><span class="p">()</span>
+
+        <span class="nd">@MyBuilder.Register</span><span class="p">(</span><span class="s2">&quot;my.lib.&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">remove_longer_than</span><span class="p">(</span><span class="n">some_list</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span> <span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">some_list</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">&gt;&gt;</span> <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">M</span><span class="o">.</span><span class="n">remove_longer_than</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;SoMe aRe LONGGGGGGGGG&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;some&quot;</span><span class="p">,</span> <span class="s2">&quot;are&quot;</span><span class="p">]</span>
+
+        <span class="c1">#######################################################</span>
 </pre></div>
 
   </div>
@@ -1588,7 +1863,7 @@ table {
             <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
             <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
             <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
             <span class="p">,</span>
                 <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
@@ -1628,11 +1903,11 @@ table {
         <span class="c1">################</span>
         <span class="c1">################</span>
 
-        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Branch</span>
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">List</span>
 
         <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#1 + 1 == 2</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#1 * 3 == 3</span>
@@ -1645,12 +1920,12 @@ table {
         <span class="c1">################</span>
         <span class="c1">################</span>
 
-        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Branch</span>
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">List</span>
 
         <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
@@ -1668,7 +1943,7 @@ table {
         <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
@@ -1686,7 +1961,7 @@ table {
         <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
@@ -1699,17 +1974,17 @@ table {
         <span class="c1">################</span>
         <span class="c1">################</span>
 
-        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Branch</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span>
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span>
 
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1">#load &#39;s&#39; == 2</span>
@@ -1722,17 +1997,17 @@ table {
         <span class="c1">################</span>
         <span class="c1">################</span>
 
-        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Branch</span>
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">List</span>
 
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1750,12 +2025,12 @@ table {
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1773,12 +2048,12 @@ table {
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1799,12 +2074,12 @@ table {
         <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
             <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1831,12 +2106,12 @@ table {
 
         <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span>
             <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
             <span class="p">,</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
             <span class="p">,</span>
                 <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -1975,7 +2250,7 @@ table {
 
     <span class="k">def</span> <span class="nf">test_pipe_branch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">assert</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span> <span class="o">&gt;&gt;</span> <span class="n">Branch</span><span class="p">(</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span> <span class="o">&gt;&gt;</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">test_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1986,6 +2261,263 @@ table {
 
         <span class="n">f</span> <span class="o">=</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">&gt;&gt;</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+
+
+    <span class="k">def</span> <span class="nf">test_math</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">math</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">P</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">list</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span>
+
+
+    <span class="k">def</span> <span class="nf">test_operators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># (2 * 6) / (2 + 2) == 12 / 4 == 3</span>
+
+        <span class="c1">###########################</span>
+
+    <span class="k">def</span> <span class="nf">test_get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1">#add the first and last elements</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span>   <span class="c1">#1 + 4 == 5</span>
+
+        <span class="c1">##################</span>
+
+    <span class="k">def</span> <span class="nf">test_field_access</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+        <span class="n">Point</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Point&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#add the x and y fields</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">==</span> <span class="mi">7</span>   <span class="c1">#point.x + point.y == 3 + 4 == 7</span>
+
+    <span class="k">def</span> <span class="nf">test_method_calling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c1">#lambda s: s.upper() + &quot;, &quot; + s.lower()</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;HEllo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;HELLO, hello&quot;</span>   <span class="c1"># &quot;HEllo&quot;.upper() + &quot;, &quot; + &quot;HEllo&quot;.lower() == &quot;HELLO&quot; + &quot;, &quot; + &quot;hello&quot; == &quot;HELLO, hello&quot;</span>
+
+        <span class="c1">#############################</span>
+
+    <span class="k">def</span> <span class="nf">test_rshif_and_lshift</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">math</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">7</span> <span class="o">&gt;&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>  <span class="c1">#executes left to right</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># math.sqrt(2 + 7) == math.sqrt(9) == 3</span>
+
+        <span class="c1">################</span>
+
+        <span class="n">f</span> <span class="o">=</span>  <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span> <span class="o">&lt;&lt;</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">7</span> <span class="c1">#executes right to left</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># math.sqrt(2 + 7) == math.sqrt(9) == 3</span>
+
+        <span class="c1">#######################</span>
+
+    <span class="k">def</span> <span class="nf">test_seq_and_pipe</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">math</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+          <span class="nb">str</span><span class="p">,</span>
+          <span class="n">P</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span><span class="p">,</span>
+          <span class="nb">int</span><span class="p">,</span>
+          <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>  <span class="c1"># sqrt(int(&quot;1&quot; + &quot;00&quot;)) == sqrt(100) == 10</span>
+
+        <span class="c1">##################################</span>
+
+        <span class="k">assert</span> <span class="mi">10</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+          <span class="mi">1</span><span class="p">,</span>  <span class="c1">#input</span>
+          <span class="nb">str</span><span class="p">,</span>  <span class="c1"># &quot;1&quot;</span>
+          <span class="n">P</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span><span class="p">,</span>  <span class="c1"># &quot;1&quot; + &quot;00&quot; == &quot;100&quot;</span>
+          <span class="nb">int</span><span class="p">,</span>  <span class="c1"># 100</span>
+          <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>  <span class="c1">#sqrt(100) == 10</span>
+        <span class="p">)</span>
+
+        <span class="c1">######################################</span>
+
+
+    <span class="k">def</span> <span class="nf">test_list_tuple_ect</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span> <span class="p">)</span>  <span class="c1">#lambda x: [ x +1, x * 10 ]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">30</span> <span class="p">]</span>  <span class="c1"># [ 3 + 1, 3 * 10 ] == [ 4, 30 ]</span>
+
+
+        <span class="c1">##################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span> <span class="p">)</span>  <span class="c1">#lambda x: [ x +1, x * 10 ]</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">d</span> <span class="o">==</span> <span class="p">{</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">30</span> <span class="p">}</span>  <span class="c1"># { &#39;x&#39;: 3 + 1, &#39;y&#39;: 3 * 10 } == { &#39;x&#39;: 4, &#39;y&#39;: 30 }</span>
+        <span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">4</span>   <span class="c1">#access d[&#39;x&#39;] via field access as d.x</span>
+        <span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">30</span>  <span class="c1">#access d[&#39;y&#39;] via field access as d.y</span>
+
+        <span class="c1">#########################################</span>
+
+
+    <span class="k">def</span> <span class="nf">test_state_read_write</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">70</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+          <span class="mi">3</span><span class="p">,</span>
+          <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>  <span class="c1">#3 * 10 == 30</span>
+          <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#s = 30</span>
+          <span class="n">P</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1">#30 + 5 == 35</span>
+          <span class="n">List</span><span class="p">(</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>  <span class="c1"># 35 * 2 == 70</span>
+          <span class="p">,</span>
+            <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1">#s == 30</span>
+          <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1">###########################</span>
+
+
+    <span class="k">def</span> <span class="nf">test_thens</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">repeat_word</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">upper</span><span class="p">:</span>
+                <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="p">[</span> <span class="n">word</span> <span class="p">]</span> <span class="o">*</span> <span class="n">times</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">Then</span><span class="p">(</span><span class="n">repeat_word</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">P</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">Then</span><span class="p">(</span><span class="n">repeat_word</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;ward&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;draw&quot;</span><span class="p">,</span> <span class="s2">&quot;draw&quot;</span><span class="p">,</span> <span class="s2">&quot;draw&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">g</span><span class="p">(</span><span class="s2">&quot;ward&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;DRAW&quot;</span><span class="p">,</span> <span class="s2">&quot;DRAW&quot;</span><span class="p">,</span> <span class="s2">&quot;DRAW&quot;</span><span class="p">]</span>
+
+        <span class="c1">###########################</span>
+
+        <span class="c1"># since map and filter receive the iterable on their second argument, you have to use `Then2`</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Then2</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">list</span>  <span class="c1">#lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>  <span class="c1">#[2**2, 4**2] == [4, 16]</span>
+
+
+        <span class="c1">######################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">P</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">list</span>  <span class="c1">#lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>  <span class="c1">#[2**2, 4**2] == [4, 16]</span>
+
+
+        <span class="c1">######################################</span>
+
+    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>  <span class="c1">#lambda x: 42</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;whatever&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">42</span>
+
+        <span class="c1">#####################################</span>
+
+    <span class="k">def</span> <span class="nf">test_others</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">sum</span> <span class="o">&gt;&gt;</span> <span class="n">If</span><span class="p">(</span> <span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span> <span class="s2">&quot;Great! Got {0} letters!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span><span class="s2">&quot;Too short, need at-least 15 letters&quot;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;short frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some longer frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Great! Got 15 letters!&quot;</span>
+
+        <span class="c1">###########################################</span>
+
+    <span class="k">def</span> <span class="nf">test_dsl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;&gt;</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">Val</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="p">)</span>  <span class="c1">#lambda x: [ x**2]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1"># [ 10**2, 3, 4 ]  == [ 100, 3, 4 ]</span>
+
+        <span class="c1">############################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;&gt;</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1"># [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]</span>
+
+
+        <span class="c1">###########################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;&gt;</span> <span class="p">[</span> <span class="n">P</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1"># [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]</span>
+
+
+        <span class="c1">############################################</span>
+
+        <span class="k">assert</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+          <span class="mi">10</span><span class="p">,</span>
+          <span class="n">P</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># 10**2 == 100</span>
+          <span class="p">[</span> <span class="n">P</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1">#[ 100, 3, 4 ]</span>
+        <span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">test_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">((</span><span class="n">P</span> <span class="o">+</span> <span class="s2">&quot;!!!&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">()))</span>  <span class="c1">#Tuple(P + &quot;!!!&quot;, Val(42), Obj.upper())</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some tuple&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;some tuple!!!&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">&quot;SOME TUPLE&quot;</span><span class="p">)</span>
+
+        <span class="c1">#############################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">([</span> <span class="n">P</span> <span class="o">+</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">])</span>  <span class="o">&gt;&gt;</span> <span class="p">[</span> <span class="nb">len</span><span class="p">,</span> <span class="nb">sum</span> <span class="p">]</span>  <span class="c1"># lambda x: [ len([ x, x+1, x+2, x+3, x+4]), sum([ x, x+1, x+2, x+3, x+4]) ]</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">60</span> <span class="p">]</span>  <span class="c1"># [ len([10, 11, 12, 13, 14]), sum([10, 11, 12, 13, 14])] == [ 5, (50 + 0 + 1 + 2 + 3 + 4) ] == [ 5, 60 ]</span>
+
+    <span class="k">def</span> <span class="nf">test_fluent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span>
+          <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">P</span><span class="p">,</span>
+          <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span>
+          <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+          <span class="n">Rec</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">x</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># ( x + y, y / x) == ( 2 + 2, 2 / 2) == ( 4, 1 )</span>
+
+        <span class="c1">#################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">sum</span> <span class="o">&gt;&gt;</span> <span class="n">If</span><span class="p">(</span> <span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span> <span class="s2">&quot;Great! Got {0} letters!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span><span class="s2">&quot;Too short, need at-least 15 letters&quot;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;short frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some longer frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Great! Got 15 letters!&quot;</span>
+
+        <span class="c1">######################################################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+          <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+          <span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+          <span class="o">.</span><span class="n">If</span><span class="p">(</span> <span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span>
+            <span class="s2">&quot;Great! Got {0} letters!&quot;</span><span class="o">.</span><span class="n">format</span>
+          <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+            <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+          <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;short frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some longer frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Great! Got 15 letters!&quot;</span>
+
+        <span class="c1">###########################################################</span>
+
+    <span class="k">def</span> <span class="nf">test_Register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">PythonBuilder</span>
+
+        <span class="k">class</span> <span class="nc">MyBuilder</span><span class="p">(</span><span class="n">PythonBuilder</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">M</span> <span class="o">=</span> <span class="n">MyBuilder</span><span class="p">()</span>
+
+        <span class="nd">@MyBuilder.Register</span><span class="p">(</span><span class="s2">&quot;my.lib.&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">remove_longer_than</span><span class="p">(</span><span class="n">some_list</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span> <span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">some_list</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">&gt;&gt;</span> <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">M</span><span class="o">.</span><span class="n">remove_longer_than</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;SoMe aRe LONGGGGGGGGG&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;some&quot;</span><span class="p">,</span> <span class="s2">&quot;are&quot;</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -1999,6 +2531,35 @@ table {
           <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_Register">
+    <p>def <span class="ident">test_Register</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_Register', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_Register" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_Register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">PythonBuilder</span>
+    <span class="k">class</span> <span class="nc">MyBuilder</span><span class="p">(</span><span class="n">PythonBuilder</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">MyBuilder</span><span class="p">()</span>
+    <span class="nd">@MyBuilder.Register</span><span class="p">(</span><span class="s2">&quot;my.lib.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">remove_longer_than</span><span class="p">(</span><span class="n">some_list</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span> <span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">some_list</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">&gt;&gt;</span> <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">M</span><span class="o">.</span><span class="n">remove_longer_than</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;SoMe aRe LONGGGGGGGGG&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;some&quot;</span><span class="p">,</span> <span class="s2">&quot;are&quot;</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="phi.tests.test_examples.TestExamples.test_builder_MakeRefContext">
@@ -2094,6 +2655,40 @@ table {
   
             
   <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_dsl">
+    <p>def <span class="ident">test_dsl</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_dsl', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_dsl" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_dsl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;&gt;</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="n">Val</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">Val</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="p">)</span>  <span class="c1">#lambda x: [ x**2]</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1"># [ 10**2, 3, 4 ]  == [ 100, 3, 4 ]</span>
+    <span class="c1">############################################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;&gt;</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1"># [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]</span>
+    <span class="c1">###########################################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;&gt;</span> <span class="p">[</span> <span class="n">P</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1"># [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]</span>
+    <span class="c1">############################################</span>
+    <span class="k">assert</span> <span class="p">[</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+      <span class="mi">10</span><span class="p">,</span>
+      <span class="n">P</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># 10**2 == 100</span>
+      <span class="p">[</span> <span class="n">P</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1">#[ 100, 3, 4 ]</span>
+    <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.tests.test_examples.TestExamples.test_example_1">
     <p>def <span class="ident">test_example_1</span>(</p><p>self)</p>
     </div>
@@ -2137,7 +2732,7 @@ table {
         <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="c1"># [&#39;1&#39;, &#39;22&#39;, &#39;333&#39;]</span>
         <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">),</span> <span class="c1"># [1, 2, 3]</span>
         <span class="nb">list</span><span class="p">,</span> <span class="c1"># python 3 only</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="nb">sum</span> <span class="c1"># 1 + 2 + 3 == 6</span>
         <span class="p">,</span>
             <span class="nb">len</span> <span class="c1"># len([1, 2, 3]) == 3</span>
@@ -2145,6 +2740,122 @@ table {
         <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># sum / len == 6 / 3 == 2</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="n">avg_word_length</span> <span class="o">==</span> <span class="mi">2</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_f">
+    <p>def <span class="ident">test_f</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_f', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_f" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">((</span><span class="n">P</span> <span class="o">+</span> <span class="s2">&quot;!!!&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">()))</span>  <span class="c1">#Tuple(P + &quot;!!!&quot;, Val(42), Obj.upper())</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some tuple&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;some tuple!!!&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">&quot;SOME TUPLE&quot;</span><span class="p">)</span>
+    <span class="c1">#############################################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">([</span> <span class="n">P</span> <span class="o">+</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">])</span>  <span class="o">&gt;&gt;</span> <span class="p">[</span> <span class="nb">len</span><span class="p">,</span> <span class="nb">sum</span> <span class="p">]</span>  <span class="c1"># lambda x: [ len([ x, x+1, x+2, x+3, x+4]), sum([ x, x+1, x+2, x+3, x+4]) ]</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">60</span> <span class="p">]</span>  <span class="c1"># [ len([10, 11, 12, 13, 14]), sum([10, 11, 12, 13, 14])] == [ 5, (50 + 0 + 1 + 2 + 3 + 4) ] == [ 5, 60 ]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_field_access">
+    <p>def <span class="ident">test_field_access</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_field_access', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_field_access" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_field_access</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+    <span class="n">Point</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Point&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#add the x and y fields</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">==</span> <span class="mi">7</span>   <span class="c1">#point.x + point.y == 3 + 4 == 7</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_fluent">
+    <p>def <span class="ident">test_fluent</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_fluent', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_fluent" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_fluent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">P</span><span class="p">,</span>
+      <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span>
+      <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+      <span class="n">Rec</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">x</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># ( x + y, y / x) == ( 2 + 2, 2 / 2) == ( 4, 1 )</span>
+    <span class="c1">#################################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">sum</span> <span class="o">&gt;&gt;</span> <span class="n">If</span><span class="p">(</span> <span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span> <span class="s2">&quot;Great! Got {0} letters!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span><span class="s2">&quot;Too short, need at-least 15 letters&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;short frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some longer frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Great! Got 15 letters!&quot;</span>
+    <span class="c1">######################################################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+      <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+      <span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+      <span class="o">.</span><span class="n">If</span><span class="p">(</span> <span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span>
+        <span class="s2">&quot;Great! Got {0} letters!&quot;</span><span class="o">.</span><span class="n">format</span>
+      <span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span>
+        <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+      <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;short frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some longer frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Great! Got 15 letters!&quot;</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_get_item">
+    <p>def <span class="ident">test_get_item</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_get_item', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_get_item" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1">#add the first and last elements</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span>   <span class="c1">#1 + 4 == 5</span>
 </pre></div>
 
   </div>
@@ -2185,10 +2896,10 @@ table {
     <span class="k">assert</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">6</span>
     <span class="c1">################</span>
     <span class="c1">################</span>
-    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Branch</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">List</span>
     <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#1 + 1 == 2</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#1 * 3 == 3</span>
@@ -2198,11 +2909,11 @@ table {
     <span class="k">assert</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">3</span>
     <span class="c1">################</span>
     <span class="c1">################</span>
-    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Branch</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">List</span>
     <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
@@ -2216,7 +2927,7 @@ table {
     <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
         <span class="p">,</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
@@ -2230,7 +2941,7 @@ table {
     <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1">#1 * 2 == 2</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
         <span class="p">,</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
@@ -2240,16 +2951,16 @@ table {
     <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">0.5</span>
     <span class="c1">################</span>
     <span class="c1">################</span>
-    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Branch</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span>
     <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
         <span class="p">,</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
         <span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
         <span class="p">,</span>
             <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1">#load &#39;s&#39; == 2</span>
@@ -2259,16 +2970,16 @@ table {
     <span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">2</span>
     <span class="c1">################</span>
     <span class="c1">################</span>
-    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Branch</span>
+    <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">List</span>
     <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
         <span class="p">,</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
         <span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
         <span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -2282,12 +2993,12 @@ table {
     <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
         <span class="p">,</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
         <span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
         <span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -2301,12 +3012,12 @@ table {
     <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#2 * 1 == 2, saved as &#39;s&#39;</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
         <span class="p">,</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
         <span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
         <span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -2323,12 +3034,12 @@ table {
     <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
         <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
         <span class="p">,</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
         <span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
         <span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -2350,12 +3061,12 @@ table {
     <span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">Rec</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span><span class="p">,</span> <span class="n">Val</span><span class="p">,</span> <span class="n">If</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span>
         <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>  <span class="c1">#4 / 2 == 2, saved as &#39;s&#39;</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
         <span class="p">,</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1">#2 * 3 == 6</span>
         <span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Rec</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">Rec</span><span class="o">.</span><span class="n">y</span>  <span class="c1">#3 / 6 == 0.5</span>
         <span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span>  <span class="c1"># 2 + 3 == 5</span>
@@ -2411,6 +3122,79 @@ table {
   
             
   <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_list_tuple_ect">
+    <p>def <span class="ident">test_list_tuple_ect</span>(</p><p>arg)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_list_tuple_ect', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_list_tuple_ect" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_list_tuple_ect</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span> <span class="p">)</span>  <span class="c1">#lambda x: [ x +1, x * 10 ]</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">30</span> <span class="p">]</span>  <span class="c1"># [ 3 + 1, 3 * 10 ] == [ 4, 30 ]</span>
+    <span class="c1">##################################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span> <span class="p">)</span>  <span class="c1">#lambda x: [ x +1, x * 10 ]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">d</span> <span class="o">==</span> <span class="p">{</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">30</span> <span class="p">}</span>  <span class="c1"># { &#39;x&#39;: 3 + 1, &#39;y&#39;: 3 * 10 } == { &#39;x&#39;: 4, &#39;y&#39;: 30 }</span>
+    <span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">4</span>   <span class="c1">#access d[&#39;x&#39;] via field access as d.x</span>
+    <span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">30</span>  <span class="c1">#access d[&#39;y&#39;] via field access as d.y</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_math">
+    <p>def <span class="ident">test_math</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_math', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_math" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_math</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">math</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">P</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">list</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_method_calling">
+    <p>def <span class="ident">test_method_calling</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_method_calling', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_method_calling" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_method_calling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c1">#lambda s: s.upper() + &quot;, &quot; + s.lower()</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;HEllo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;HELLO, hello&quot;</span>   <span class="c1"># &quot;HEllo&quot;.upper() + &quot;, &quot; + &quot;HEllo&quot;.lower() == &quot;HELLO&quot; + &quot;, &quot; + &quot;hello&quot; == &quot;HELLO, hello&quot;</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.tests.test_examples.TestExamples.test_not">
     <p>def <span class="ident">test_not</span>(</p><p>self)</p>
     </div>
@@ -2450,6 +3234,51 @@ table {
   
             
   <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_operators">
+    <p>def <span class="ident">test_operators</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_operators', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_operators" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_operators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># (2 * 6) / (2 + 2) == 12 / 4 == 3</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_others">
+    <p>def <span class="ident">test_others</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_others', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_others" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_others</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">sum</span> <span class="o">&gt;&gt;</span> <span class="n">If</span><span class="p">(</span> <span class="p">(</span><span class="n">P</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span> <span class="s2">&quot;Great! Got {0} letters!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span><span class="o">.</span><span class="n">Else</span><span class="p">(</span><span class="s2">&quot;Too short, need at-least 15 letters&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;short frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Too short, need at-least 15 letters&quot;</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;some longer frase&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Great! Got 15 letters!&quot;</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.tests.test_examples.TestExamples.test_pipe_branch">
     <p>def <span class="ident">test_pipe_branch</span>(</p><p>self)</p>
     </div>
@@ -2461,7 +3290,7 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_pipe_branch', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_examples.TestExamples.test_pipe_branch" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_pipe_branch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span> <span class="o">&gt;&gt;</span> <span class="n">Branch</span><span class="p">(</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span> <span class="o">&gt;&gt;</span> <span class="n">List</span><span class="p">(</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2499,6 +3328,68 @@ table {
   
             
   <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_rshif_and_lshift">
+    <p>def <span class="ident">test_rshif_and_lshift</span>(</p><p>arg)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_rshif_and_lshift', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_rshif_and_lshift" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_rshif_and_lshift</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">math</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">7</span> <span class="o">&gt;&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>  <span class="c1">#executes left to right</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># math.sqrt(2 + 7) == math.sqrt(9) == 3</span>
+    <span class="c1">################</span>
+    <span class="n">f</span> <span class="o">=</span>  <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span> <span class="o">&lt;&lt;</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">7</span> <span class="c1">#executes right to left</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># math.sqrt(2 + 7) == math.sqrt(9) == 3</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_seq_and_pipe">
+    <p>def <span class="ident">test_seq_and_pipe</span>(</p><p>arg)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_seq_and_pipe', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_seq_and_pipe" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_seq_and_pipe</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">math</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
+      <span class="nb">str</span><span class="p">,</span>
+      <span class="n">P</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span><span class="p">,</span>
+      <span class="nb">int</span><span class="p">,</span>
+      <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>  <span class="c1"># sqrt(int(&quot;1&quot; + &quot;00&quot;)) == sqrt(100) == 10</span>
+    <span class="c1">##################################</span>
+    <span class="k">assert</span> <span class="mi">10</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+      <span class="mi">1</span><span class="p">,</span>  <span class="c1">#input</span>
+      <span class="nb">str</span><span class="p">,</span>  <span class="c1"># &quot;1&quot;</span>
+      <span class="n">P</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span><span class="p">,</span>  <span class="c1"># &quot;1&quot; + &quot;00&quot; == &quot;100&quot;</span>
+      <span class="nb">int</span><span class="p">,</span>  <span class="c1"># 100</span>
+      <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span>  <span class="c1">#sqrt(100) == 10</span>
+    <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="phi.tests.test_examples.TestExamples.test_state">
     <p>def <span class="ident">test_state</span>(</p><p>self)</p>
     </div>
@@ -2514,6 +3405,94 @@ table {
     <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">&gt;&gt;</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span>
     <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_state_read_write">
+    <p>def <span class="ident">test_state_read_write</span>(</p><p>arg)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_state_read_write', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_state_read_write" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_state_read_write</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="mi">70</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+      <span class="mi">3</span><span class="p">,</span>
+      <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>  <span class="c1">#3 * 10 == 30</span>
+      <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#s = 30</span>
+      <span class="n">P</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1">#30 + 5 == 35</span>
+      <span class="n">List</span><span class="p">(</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>  <span class="c1"># 35 * 2 == 70</span>
+      <span class="p">,</span>
+        <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1">#s == 30</span>
+      <span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_thens">
+    <p>def <span class="ident">test_thens</span>(</p><p>arg)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_thens', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_thens" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_thens</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">repeat_word</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">upper</span><span class="p">:</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span> <span class="n">word</span> <span class="p">]</span> <span class="o">*</span> <span class="n">times</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">Then</span><span class="p">(</span><span class="n">repeat_word</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">P</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">Then</span><span class="p">(</span><span class="n">repeat_word</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;ward&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;draw&quot;</span><span class="p">,</span> <span class="s2">&quot;draw&quot;</span><span class="p">,</span> <span class="s2">&quot;draw&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">g</span><span class="p">(</span><span class="s2">&quot;ward&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;DRAW&quot;</span><span class="p">,</span> <span class="s2">&quot;DRAW&quot;</span><span class="p">,</span> <span class="s2">&quot;DRAW&quot;</span><span class="p">]</span>
+    <span class="c1">###########################</span>
+    <span class="c1"># since map and filter receive the iterable on their second argument, you have to use `Then2`</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Then2</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">Then2</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">P</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">list</span>  <span class="c1">#lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>  <span class="c1">#[2**2, 4**2] == [4, 16]</span>
+    <span class="c1">######################################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">P</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">P</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nb">list</span>  <span class="c1">#lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>  <span class="c1">#[2**2, 4**2] == [4, 16]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_examples.TestExamples.test_val">
+    <p>def <span class="ident">test_val</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_examples.TestExamples.test_val', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_examples.TestExamples.test_val" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Val</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>  <span class="c1">#lambda x: 42</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s2">&quot;whatever&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">42</span>
 </pre></div>
 
   </div>

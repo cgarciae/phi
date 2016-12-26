@@ -1112,7 +1112,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">List</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -1122,7 +1122,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="n">r</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">List</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -1133,7 +1133,7 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">-</span> <span class="mi">3</span>
@@ -1149,7 +1149,7 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span>
             <span class="p">,</span>
                 <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
@@ -1166,7 +1166,7 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
             <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="mi">10</span><span class="p">,</span>
                     <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
@@ -1182,18 +1182,18 @@ table {
 
     <span class="k">def</span> <span class="nf">test_identities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">f</span> <span class="o">=</span> <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span>
             <span class="n">Seq</span><span class="p">(),</span>
-            <span class="n">Branch</span><span class="p">()</span>
+            <span class="n">List</span><span class="p">()</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_single_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">f</span> <span class="o">=</span> <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">List</span><span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -1213,12 +1213,12 @@ table {
 
     <span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span>
                     <span class="nb">list</span>
@@ -1232,12 +1232,12 @@ table {
 
     <span class="k">def</span> <span class="nf">test_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">original</span> <span class="o">=</span> <span class="n">P</span><span class="p">,</span>
                 <span class="n">upper</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
                 <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span>
             <span class="p">,</span>
                 <span class="n">Seq</span><span class="p">(</span>
@@ -1265,7 +1265,7 @@ table {
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
             <span class="p">,</span>
                 <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
@@ -1282,7 +1282,7 @@ table {
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
             <span class="p">,</span>
                 <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
@@ -1416,7 +1416,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">List</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -1426,7 +1426,7 @@ table {
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="n">r</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">List</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -1437,7 +1437,7 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">-</span> <span class="mi">3</span>
@@ -1453,7 +1453,7 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span>
             <span class="p">,</span>
                 <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
@@ -1470,7 +1470,7 @@ table {
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
             <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="mi">10</span><span class="p">,</span>
                     <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
@@ -1486,18 +1486,18 @@ table {
 
     <span class="k">def</span> <span class="nf">test_identities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">f</span> <span class="o">=</span> <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span>
             <span class="n">Seq</span><span class="p">(),</span>
-            <span class="n">Branch</span><span class="p">()</span>
+            <span class="n">List</span><span class="p">()</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_single_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">f</span> <span class="o">=</span> <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">Branch</span><span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">List</span><span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -1517,12 +1517,12 @@ table {
 
     <span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">Seq</span><span class="p">(</span>
                     <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span>
                     <span class="nb">list</span>
@@ -1536,12 +1536,12 @@ table {
 
     <span class="k">def</span> <span class="nf">test_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="n">original</span> <span class="o">=</span> <span class="n">P</span><span class="p">,</span>
                 <span class="n">upper</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
                 <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
             <span class="p">),</span>
-            <span class="n">Branch</span><span class="p">(</span>
+            <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span>
             <span class="p">,</span>
                 <span class="n">Seq</span><span class="p">(</span>
@@ -1569,7 +1569,7 @@ table {
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
             <span class="p">,</span>
                 <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
@@ -1586,7 +1586,7 @@ table {
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
-            <span class="n">Rec</span><span class="p">(</span>
+            <span class="n">Dict</span><span class="p">(</span>
                 <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
             <span class="p">,</span>
                 <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
@@ -1754,7 +1754,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_compile_refs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
         <span class="p">,</span>
             <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
@@ -1807,12 +1807,12 @@ table {
   <div id="source-phi.tests.test_dsl.TestDSL.test_dict" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="n">original</span> <span class="o">=</span> <span class="n">P</span><span class="p">,</span>
             <span class="n">upper</span> <span class="o">=</span> <span class="n">Obj</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
             <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
         <span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span>
         <span class="p">,</span>
             <span class="n">Seq</span><span class="p">(</span>
@@ -1870,9 +1870,9 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_identities', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_dsl.TestDSL.test_identities" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_identities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">Branch</span><span class="p">(</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span>
         <span class="n">Seq</span><span class="p">(),</span>
-        <span class="n">Branch</span><span class="p">()</span>
+        <span class="n">List</span><span class="p">()</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
@@ -1927,7 +1927,7 @@ table {
     <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
         <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Seq</span><span class="p">(</span>
                 <span class="mi">10</span><span class="p">,</span>
                 <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
@@ -1960,12 +1960,12 @@ table {
   <div id="source-phi.tests.test_dsl.TestDSL.test_list" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span>
         <span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">Seq</span><span class="p">(</span>
                 <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span>
                 <span class="nb">list</span>
@@ -2051,7 +2051,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_record_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
-        <span class="n">Rec</span><span class="p">(</span>
+        <span class="n">Dict</span><span class="p">(</span>
             <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span>
         <span class="p">,</span>
             <span class="nb">len</span> <span class="o">=</span> <span class="nb">len</span>
@@ -2121,9 +2121,9 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_single_functions', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_dsl.TestDSL.test_single_functions" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_single_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">Branch</span><span class="p">(</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">List</span><span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
@@ -2151,7 +2151,7 @@ table {
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span>
-        <span class="n">Branch</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">List</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">Ref</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
@@ -2159,7 +2159,7 @@ table {
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="n">r</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">List</span><span class="p">(</span><span class="n">Read</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">Read</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">r</span><span class="p">()</span> <span class="o">==</span> <span class="mi">600</span>
@@ -2186,7 +2186,7 @@ table {
     <span class="n">f</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="n">Branch</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span>
         <span class="p">,</span>
             <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
