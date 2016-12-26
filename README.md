@@ -40,7 +40,7 @@ If you want create lambdas that access the field of some entity you can use the 
 from collections import namedtuple
 Point = namedtuple('Point', ['x', 'y'])
 
-f = Rec.x + Rec.y  #add the x and y fields
+f = Rec.x + Rec.y  #lambda p: p.x + p.y
 
 assert f(Point(3, 4)) == 7   #point.x + point.y == 3 + 4 == 7
 ```
@@ -196,26 +196,20 @@ Phi has a small omnipresent DSL that has these simple rules:
 3. The container types `list`, `tuple`, `set`, and `dict` are elements of the DSL. They are translated to their counterparts `List`, `Tuple`, `Set` and `Dict`, their internal elements are forwarded.
 4. Any value `x` that does not comply with any of the previous rules is also an element of the DSL and is translated to `Val(x)`.
 
-Because of this it is possible that the expression
+Using the DSL, the expression
 
 ```python
 f = P**2 >> List( P, Val(3), Val(4) )  #lambda x: [ x**2]
 
 assert f(10) == [ 100, 3, 4 ]  # [ 10**2, 3, 4 ]  == [ 100, 3, 4 ]
 ```
-can initially be rewritten as
-```python
-f = P**2 >> List( P, 3, 4 )
-
-assert f(10) == [ 100, 3, 4 ]  # [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]
-```
-because `3` and `4` are translated to `Val(3)` and `Val(4)` thanks to the *4th* rule. But you can further simplify it to
+can be rewritten as
 ```python
 f = P**2 >> [ P, 3, 4 ]
 
 assert f(10) == [ 100, 3, 4 ]  # [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]
 ```
-thanks to the *3rd* rule. Since the DSL is omnipresent you can use it inside any core function, so the previous can be rewritten using `Pipe` as
+Here the values `3` and `4` are translated to `Val(3)` and `Val(4)` thanks to the *4th* rule, and `[...]` is translated to `List(...)` thanks to the *3rd* rule. Since the DSL is omnipresent you can use it inside any core function, so the previous can be rewritten using `Pipe` as
 ```python
 assert [ 100, 3, 4 ] == Pipe(
   10,
