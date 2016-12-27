@@ -129,8 +129,7 @@ Internally all these expressions are implemented in such a way that they not onl
 ```python
 assert [70, 30] == Pipe(
   3,
-  P * 10,  #3 * 10 == 30
-  Write('s'),  #s = 30
+  Write(s = P * 10),  #s = 3 * 10 == 30
   P + 5,  #30 + 5 == 35
   List(
     P * 2  # 35 * 2 == 70
@@ -431,8 +430,7 @@ from phi.api import *
 
 [result, s] = Pipe(
     1.0,  #input 1
-    (P + 3) / (P + 1), #4 / 2 == 2
-    Write('s'),  #s = 2
+    Write(s = (P + 3) / (P + 1)), #s = 4 / 2 == 2
     dict(
         x = P + 1  #2 + 1 == 3
     ,
@@ -456,8 +454,7 @@ from phi.api import *
 
 [result, s] = Pipe(
     1.0,  #input 1
-    (P + 3) / (P + 1), #4 / 2 == 2
-    Write('s'),  #s = 2
+    Write(s = (P + 3) / (P + 1)), #s = 4 / 2 == 2
     dict(
         x = P + 1  #2 + 1 == 3
     ,

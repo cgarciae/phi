@@ -24,9 +24,9 @@ class TestDSL(object):
     def test_write(self):
         r = dsl.Ref('r')
         f = Seq(
-            P + 1, Write.a,
-            P * 2, Write.b,
-            P * 100, Write('c'),
+            Write(a = P + 1),
+            Write(b = P * 2),
+            Write(c = P * 100),
             List(Read.c, Read.a, Read.b)
         )
 
@@ -34,9 +34,9 @@ class TestDSL(object):
 
         r = Ref('r')
         f = Seq(
-            P + 1, Write.a,
-            P * 2, Write.b,
-            P * 100, Write('c'), r.write,
+            Write(a = P + 1),
+            Write(b = P * 2),
+            Write(c = P * 100), r.write,
             List(Read.c, Read.a, Read.b)
         )
 
@@ -49,7 +49,7 @@ class TestDSL(object):
             P + 1,
             P * 2,
             List(
-                (P * 100).Write("c")
+                Write(c = P * 100)
             ,
                 P - 3
             ,
@@ -67,7 +67,7 @@ class TestDSL(object):
             List(
                 P * 100
             ,
-                Write('c')
+                Write(c = P)
             ,
                 P - 3
             ,
@@ -79,7 +79,7 @@ class TestDSL(object):
 
     def test_input(self):
         f = Seq(
-            Write('a'),
+            Write(a = P),
             P + 1,
             List(
                 Seq(
@@ -227,7 +227,7 @@ class TestDSL(object):
 
         f = P.Seq(
             If( P > 2,
-                Write('s')
+                Write(s = P)
             ),
             Read('s')
         )
@@ -241,11 +241,11 @@ class TestDSL(object):
     def test_nested_compiles(self):
 
         assert 2 == P.Pipe(
-            1, Write('s'),
+            1, Write(s = P),
             Seq(
-                P + 1, Write('s')
+                Write(s = P + 1)
             ),
-            Write('s')
+            Write(s = P)
         )
 
     def test_if(self):
