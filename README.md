@@ -51,7 +51,7 @@ f = Obj.upper() + ", " + Obj.lower()  #lambda s: s.upper() + ", " + s.lower()
 
 assert f("HEllo") == "HELLO, hello"   # "HEllo".upper() + ", " + "HEllo".lower() == "HELLO" + ", " + "hello" == "HELLO, hello"
 ```
-Here no parameters where needed but in general
+Here no parameters were needed but in general
 ```python
 f = Obj.some_method(arg1, arg2, ...) #lambda obj: obj.some_method(arg1, arg2, ...)
 ```
