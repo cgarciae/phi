@@ -1207,7 +1207,7 @@ table {
     <span class="k">def</span> <span class="nf">test_compose_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
             <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
@@ -1225,7 +1225,7 @@ table {
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
             <span class="n">List</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+                <span class="n">Write</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
             <span class="p">,</span>
@@ -1489,8 +1489,7 @@ table {
 
         <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
         <span class="p">)</span>
@@ -1515,49 +1514,49 @@ table {
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span> <span class="n">P</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
@@ -1834,7 +1833,7 @@ table {
     <span class="k">def</span> <span class="nf">test_compose_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
             <span class="n">List</span><span class="p">(</span>
                 <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
@@ -1852,7 +1851,7 @@ table {
             <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
             <span class="n">List</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+                <span class="n">Write</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
             <span class="p">,</span>
                 <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
             <span class="p">,</span>
@@ -2116,8 +2115,7 @@ table {
 
         <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
         <span class="p">)</span>
@@ -2142,49 +2140,49 @@ table {
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span> <span class="n">P</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
             <span class="mi">1</span><span class="p">,</span>
-            <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">)</span>
@@ -2372,7 +2370,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_compose_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
+        <span class="n">Write</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">List</span><span class="p">(</span>
             <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span>
@@ -2388,7 +2386,7 @@ table {
         <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">List</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
         <span class="p">,</span>
             <span class="n">P</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="p">,</span>
@@ -2684,43 +2682,43 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_read_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span> <span class="n">P</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">Read</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
@@ -2761,8 +2759,7 @@ table {
     <span class="p">)</span>
     <span class="k">assert</span> <span class="mi">5</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
         <span class="mi">1</span><span class="p">,</span>
-        <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">P</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span>
         <span class="n">P</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">Read</span><span class="o">.</span><span class="n">y</span>
     <span class="p">)</span>

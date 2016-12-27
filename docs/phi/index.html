@@ -1187,8 +1187,7 @@ assert d.y == 30  #access d[&#39;y&#39;] via field access as d.y
 <p>Internally all these expressions are implemented in such a way that they not only pass their computed values but also pass a <strong>state</strong> dictionary between them in a functional manner, by reading from and writing to this state dictionary the <code>Read</code> and <code>Write</code> combinators can help you "save" the state of intermediate computations to read them latter</p>
 <div class="codehilite"><pre><span></span>assert [70, 30] == Pipe(
   3,
-  P * 10,  #3 * 10 == 30
-  Write(&#39;s&#39;),  #s = 30
+  Write(s = P * 10),  #s = 3 * 10 == 30
   P + 5,  #30 + 5 == 35
   List(
     P * 2  # 35 * 2 == 70
@@ -1487,8 +1486,7 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="c1">#4 / 2 == 2</span>
-    <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#s = 2</span>
+    <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="c1">#s = 4 / 2 == 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1511,8 +1509,7 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 <span class="p">[</span><span class="n">result</span><span class="p">,</span> <span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span>
     <span class="mf">1.0</span><span class="p">,</span>  <span class="c1">#input 1</span>
-    <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="c1">#4 / 2 == 2</span>
-    <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span>  <span class="c1">#s = 2</span>
+    <span class="n">Write</span><span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="c1">#s = 4 / 2 == 2</span>
     <span class="nb">dict</span><span class="p">(</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1">#2 + 1 == 3</span>
     <span class="p">,</span>
@@ -1689,7 +1686,7 @@ assert f(&quot;SoMe aRe LONGGGGGGGGG&quot;) == [&quot;some&quot;, &quot;are&quot
 
 <h2>Status</h2>
 <ul>
-<li>Version: <strong>0.5.0</strong>.</li>
+<li>Version: <strong>0.6.0</strong>.</li>
 <li>Documentation coverage: 100%. Please create an issue if documentation is unclear, its of great priority for this library.</li>
 <li>Milestone: reach 1.0.0 after feedback from the community.</li>
 </ul>
