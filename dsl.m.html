@@ -1074,6 +1074,7 @@ table {
     <li class="mono"><a href="#phi.dsl.Expression.Tuple">Tuple</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.Val">Val</a></li>
     <li class="mono"><a href="#phi.dsl.Expression.With">With</a></li>
+    <li class="mono"><a href="#phi.dsl.Expression.Write">Write</a></li>
   </ul>
 
         </li>
@@ -1639,30 +1640,6 @@ assert f([3, 4]) == 5
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_WriteProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for _WriteProxy.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__builder__</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span> <span class="o">=</span> <span class="n">__builder__</span>
-
-    <span class="k">def</span> <span class="nf">__getattr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__do__</span><span class="p">([</span><span class="n">ref</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">__call__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">refs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__do__</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__do__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
-
-        <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-            <span class="n">update</span> <span class="o">=</span> <span class="p">{</span><span class="n">ref</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">}</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span>
-
-            <span class="c1">#side effect for convenience</span>
-            <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__builder__</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_ObjectProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -2288,26 +2265,14 @@ assert f([3, 4]) == 5
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Giving names and saving parts of your computation to use then latter is useful to say the least. In Phi the expressions</span>
+<span class="sd">Giving names and saving parts of your computation to use then latter is useful to say the least. In Phi the expression</span>
 
-<span class="sd">    Write(&#39;x&#39;)</span>
-<span class="sd">    Write[&#39;x&#39;]</span>
-<span class="sd">    Write.x</span>
+<span class="sd">    Write(x = expr)</span>
 
-<span class="sd">all behave just like the indentity except that they also creates a reference to that value which you can call latter. Here `x` is the name of the reference. To read the previous you would use any of the following expressions</span>
+<span class="sd">creates a reference `x` given the value of `expr` which you can call latter. To read the previous you would use any of the following expressions</span>
 
 <span class="sd">    Read(&#39;x&#39;)</span>
-<span class="sd">    Read[&#39;x&#39;]</span>
 <span class="sd">    Read.x</span>
-
-<span class="sd">This is equivalent to a sort of function like this</span>
-
-<span class="sd">    lambda z: read(&#39;x&#39;)</span>
-
-<span class="sd">where the input is totally ignored and a hypothetical `read` function is given the reference name and it should return its stored value (internally its not implemented like this).</span>
-
-<span class="sd">** IMPORTANT **</span>
-<span class="sd">`Read` and `Write` only work property inside a `phi.dsl.Expression.Seq` or `phi.dsl.Expression.Pipe` expression. This is done because `Ref`s need to be defined a specific context or else value might be leaked between different calls or even nested functions that might happen to be using Phi, therefore, Seq and Pipe a given the task to defined this context.</span>
 
 <span class="sd">### Example</span>
 <span class="sd">Lets see a common situation where you would use this</span>
@@ -2316,7 +2281,7 @@ assert f([3, 4]) == 5
 
 <span class="sd">    result = P.Pipe(</span>
 <span class="sd">        input,</span>
-<span class="sd">        f1, Write(&#39;ref&#39;)</span>
+<span class="sd">        Write(ref = f1),</span>
 <span class="sd">        f2,</span>
 <span class="sd">        List(</span>
 <span class="sd">            f3</span>
@@ -2342,10 +2307,27 @@ assert f([3, 4]) == 5
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_ReadProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">state_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;See `phi.dsl.Expression.Read`&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_WriteProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include exactly 1 state variable, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
+
+        <span class="n">state_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">write_expr</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span>
+
+        <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">write_expr</span>
+
+        <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+            <span class="n">update</span> <span class="o">=</span> <span class="p">{</span> <span class="n">state_key</span><span class="p">:</span> <span class="n">x</span> <span class="p">}</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span>
+
+            <span class="c1">#side effect for convenience</span>
+            <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span>
+
+        <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Rec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -3381,26 +3363,14 @@ assert f([3, 4]) == 5
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Giving names and saving parts of your computation to use then latter is useful to say the least. In Phi the expressions</span>
+<span class="sd">Giving names and saving parts of your computation to use then latter is useful to say the least. In Phi the expression</span>
 
-<span class="sd">    Write(&#39;x&#39;)</span>
-<span class="sd">    Write[&#39;x&#39;]</span>
-<span class="sd">    Write.x</span>
+<span class="sd">    Write(x = expr)</span>
 
-<span class="sd">all behave just like the indentity except that they also creates a reference to that value which you can call latter. Here `x` is the name of the reference. To read the previous you would use any of the following expressions</span>
+<span class="sd">creates a reference `x` given the value of `expr` which you can call latter. To read the previous you would use any of the following expressions</span>
 
 <span class="sd">    Read(&#39;x&#39;)</span>
-<span class="sd">    Read[&#39;x&#39;]</span>
 <span class="sd">    Read.x</span>
-
-<span class="sd">This is equivalent to a sort of function like this</span>
-
-<span class="sd">    lambda z: read(&#39;x&#39;)</span>
-
-<span class="sd">where the input is totally ignored and a hypothetical `read` function is given the reference name and it should return its stored value (internally its not implemented like this).</span>
-
-<span class="sd">** IMPORTANT **</span>
-<span class="sd">`Read` and `Write` only work property inside a `phi.dsl.Expression.Seq` or `phi.dsl.Expression.Pipe` expression. This is done because `Ref`s need to be defined a specific context or else value might be leaked between different calls or even nested functions that might happen to be using Phi, therefore, Seq and Pipe a given the task to defined this context.</span>
 
 <span class="sd">### Example</span>
 <span class="sd">Lets see a common situation where you would use this</span>
@@ -3409,7 +3379,7 @@ assert f([3, 4]) == 5
 
 <span class="sd">    result = P.Pipe(</span>
 <span class="sd">        input,</span>
-<span class="sd">        f1, Write(&#39;ref&#39;)</span>
+<span class="sd">        Write(ref = f1),</span>
 <span class="sd">        f2,</span>
 <span class="sd">        List(</span>
 <span class="sd">            f3</span>
@@ -3435,10 +3405,27 @@ assert f([3, 4]) == 5
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_ReadProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">state_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;See `phi.dsl.Expression.Read`&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_WriteProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include exactly 1 state variable, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
+
+        <span class="n">state_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">write_expr</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span>
+
+        <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">write_expr</span>
+
+        <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+            <span class="n">update</span> <span class="o">=</span> <span class="p">{</span> <span class="n">state_key</span><span class="p">:</span> <span class="n">x</span> <span class="p">}</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span>
+
+            <span class="c1">#side effect for convenience</span>
+            <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span>
+
+        <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Rec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -3976,35 +3963,24 @@ assert f([3, 4]) == 5
 
             
   
-    <div class="desc"><p>Giving names and saving parts of your computation to use then latter is useful to say the least. In Phi the expressions</p>
-<div class="codehilite"><pre><span></span>Write(&#39;x&#39;)
-Write[&#39;x&#39;]
-Write.x
+    <div class="desc"><p>Giving names and saving parts of your computation to use then latter is useful to say the least. In Phi the expression</p>
+<div class="codehilite"><pre><span></span>Write(x = expr)
 </pre></div>
 
 
-<p>all behave just like the indentity except that they also creates a reference to that value which you can call latter. Here <code>x</code> is the name of the reference. To read the previous you would use any of the following expressions</p>
+<p>creates a reference <code>x</code> given the value of <code>expr</code> which you can call latter. To read the previous you would use any of the following expressions</p>
 <div class="codehilite"><pre><span></span>Read(&#39;x&#39;)
-Read[&#39;x&#39;]
 Read.x
 </pre></div>
 
 
-<p>This is equivalent to a sort of function like this</p>
-<div class="codehilite"><pre><span></span>lambda z: read(&#39;x&#39;)
-</pre></div>
-
-
-<p>where the input is totally ignored and a hypothetical <code>read</code> function is given the reference name and it should return its stored value (internally its not implemented like this).</p>
-<p><strong> IMPORTANT </strong>
-<code>Read</code> and <code>Write</code> only work property inside a <a href="#phi.dsl.Expression.Seq"><code>Seq</code></a> or <a href="#phi.dsl.Expression.Pipe"><code>Pipe</code></a> expression. This is done because <code>Ref</code>s need to be defined a specific context or else value might be leaked between different calls or even nested functions that might happen to be using Phi, therefore, Seq and Pipe a given the task to defined this context.</p>
 <h3>Example</h3>
 <p>Lets see a common situation where you would use this</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi</span> <span class="kn">import</span> <span class="n">P</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Seq</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Write</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
     <span class="nb">input</span><span class="p">,</span>
-    <span class="n">f1</span><span class="p">,</span> <span class="n">Write</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">)</span>
+    <span class="n">Write</span><span class="p">(</span><span class="n">ref</span> <span class="o">=</span> <span class="n">f1</span><span class="p">),</span>
     <span class="n">f2</span><span class="p">,</span>
     <span class="n">List</span><span class="p">(</span>
         <span class="n">f3</span>
@@ -4128,22 +4104,11 @@ result = [
 </div>
 
             </div>
-            <div class="item">
-            <p id="phi.dsl.Expression.Write" class="name">var <span class="ident">Write</span></p>
-            
-
-            
-  
-    <div class="desc"><p>See <a href="#phi.dsl.Expression.Read"><code>Read</code></a></p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
           <h3>Methods</h3>
             
   <div class="item">
     <div class="name def" id="phi.dsl.Expression.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7f33393495f0&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7f3d9a925410&gt;)</p>
     </div>
     
 
@@ -5335,6 +5300,40 @@ assert [5, 5, 5] == x
             <span class="k">with</span> <span class="n">_WithContextManager</span><span class="p">(</span><span class="n">scope</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">body_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.dsl.Expression.Write">
+    <p>def <span class="ident">Write</span>(</p><p>self, **state_dict)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>See <a href="#phi.dsl.Expression.Read"><code>Read</code></a></p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.Write', this);">Show source &equiv;</a></p>
+  <div id="source-phi.dsl.Expression.Write" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">state_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;See `phi.dsl.Expression.Read`&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include exactly 1 state variable, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
+    <span class="n">state_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="n">write_expr</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">write_expr</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">update</span> <span class="o">=</span> <span class="p">{</span> <span class="n">state_key</span><span class="p">:</span> <span class="n">x</span> <span class="p">}</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span>
+        <span class="c1">#side effect for convenience</span>
+        <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span>
+    <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 </pre></div>
 
   </div>
