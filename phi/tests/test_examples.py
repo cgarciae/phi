@@ -161,7 +161,7 @@ class TestExamples(object):
 
         [result, s] = P.Pipe(
             1.0,  #input 1
-            P * 2, Write('s'),  #2 * 1 == 2, saved as 's'
+            Write(s = P * 2),  #s = 2 * 1 == 2
             Dict(
                 x = P + 1  #2 + 1 == 3
             ,
@@ -184,7 +184,7 @@ class TestExamples(object):
 
         [result, s] = P.Pipe(
             1.0,  #input 1
-            P * 2, Write('s'),  #2 * 1 == 2, saved as 's'
+            Write(s = P * 2),  #s = 2 * 1 == 2
             Dict(
                 x = P + 1  #2 + 1 == 3
             ,
@@ -207,7 +207,7 @@ class TestExamples(object):
 
         [result, s] = P.Pipe(
             1.0,  #input 1
-            P * 2, Write.s,  #2 * 1 == 2, saved as 's'
+            Write(s = P * 2),  #s = 2 * 1 == 2
             Dict(
                 x = P + 1  #2 + 1 == 3
             ,
@@ -230,7 +230,7 @@ class TestExamples(object):
 
         [result, s, val] = P.Pipe(
             1.0,  #input 1
-            P * 2, Write.s,  #2 * 1 == 2, saved as 's'
+            Write(s = P * 2),  #s = 2 * 1 == 2
             Dict(
                 x = P + 1  #2 + 1 == 3
             ,
@@ -256,7 +256,7 @@ class TestExamples(object):
 
         [result, s, val] = P.Pipe(
             1.0,  #input 1
-            (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
+            Write(s = (P + 3) / (P + 1)), #s = 4 / 2 == 2
             Dict(
                 x = P + 1  #2 + 1 == 3
             ,
@@ -288,7 +288,7 @@ class TestExamples(object):
         from phi import P, Rec, Read, Write, Val, If
 
         f = P.Seq(
-            (P + 3) / (P + 1), Write.s,  #4 / 2 == 2, saved as 's'
+            Write(s = (P + 3) / (P + 1)), #s = 4 / 2 == 2
             Dict(
                 x = P + 1  #2 + 1 == 3
             ,
@@ -320,27 +320,12 @@ class TestExamples(object):
         from phi import P
 
         assert 2 == P.Pipe(
-            1, Write('s'),   #write s == 1, same context
+            Write(s = 1),   #s = 1
             P.Seq(
-                P + 1, Write('s'),   #write s == 2, same context
+                Write(s = P + 1),   #s = 2
             ),
-            Read('s')   # read s == 2, same context
+            Read('s')   # s == 2
         )
-
-
-        #############################
-        #############################
-
-        from phi import P
-
-        assert 2 == P.Pipe(
-            1, Write('s'),   #write s == 1, same context
-            Seq(
-                P + 1, Write('s')   #write s == 2, same context
-            ),
-            Read('s')   # read s == 2, same context
-        )
-
 
         ################################
         ################################
@@ -353,10 +338,10 @@ class TestExamples(object):
         from phi import P
 
         assert 1 == P.Pipe(
-            1, Write('s'), # write s == 1, outer context
+            Write(s = 1), # write s == 1, outer context
             lambda x: P.Pipe(
                 x,
-                P + 1, Write('s') # write s == 2, inner context
+                Write(s = P + 1) # write s == 2, inner context
             ),
             Read('s')  # read s == 1, outer context
         )
@@ -410,7 +395,8 @@ class TestExamples(object):
 
         assert {'a': 97, 'b': 98, 'c': 99} == P.Pipe(
             "a b c", Obj
-            .split(' ').Write('keys')  # keys = ['a', 'b', 'c']
+            .split(' ')  #['a', 'b', 'c']
+            .Write(keys = P)  # key = ['a', 'b', 'c']
             .map(ord),  # [ord('a'), ord('b'), ord('c')] == [97, 98, 99]
             lambda it: zip(Ref.keys, it),  # [('a', 97), ('b', 98), ('c', 99)]
             dict   # {'a': 97, 'b': 98, 'c': 99}
@@ -438,11 +424,11 @@ class TestExamples(object):
 
     def test_state(self):
 
-        f = Read("a") + 5 >> Write("a")
+        f = Read("a") + 5 >> Write(a = P)
         assert f(None, True, a=0) == (5, {"a": 5})
 
 
-        f = Read.a + 5 >> Write.a
+        f = Read.a + 5 >> Write(a = P)
         assert f(None, True, a=0) == (5, {"a": 5})
 
 
@@ -549,8 +535,7 @@ class TestExamples(object):
     def test_state_read_write(arg):
         assert [70, 30] == Pipe(
           3,
-          P * 10,  #3 * 10 == 30
-          Write('s'),  #s = 30
+          Write(s = P * 10),  #s = 3 * 10 == 30
           P + 5,  #30 + 5 == 35
           List(
             P * 2  # 35 * 2 == 70

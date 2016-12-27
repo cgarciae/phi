@@ -350,30 +350,6 @@ class _ReadProxy(object):
         return self.__builder__.__then__(g)
 
 
-class _WriteProxy(object):
-    """docstring for _WriteProxy."""
-
-    def __init__(self, __builder__):
-        self.__builder__ = __builder__
-
-    def __getattr__ (self, ref):
-        return self.__do__([ref])
-
-    def __call__ (self, *refs):
-        return self.__do__(refs)
-
-    def __do__(self, refs):
-
-        def g(x, state):
-            update = {ref: x for ref in refs}
-            state = utils.merge(state, update)
-
-            #side effect for convenience
-            _StateContextManager.REFS.update(state)
-
-            return x, state
-
-        return self.__builder__.__then__(g)
 
 
 class _ObjectProxy(object):
@@ -999,26 +975,14 @@ The previous is equivalent to
     @property
     def Read(self):
         """
-Giving names and saving parts of your computation to use then latter is useful to say the least. In Phi the expressions
+Giving names and saving parts of your computation to use then latter is useful to say the least. In Phi the expression
 
-    Write('x')
-    Write['x']
-    Write.x
+    Write(x = expr)
 
-all behave just like the indentity except that they also creates a reference to that value which you can call latter. Here `x` is the name of the reference. To read the previous you would use any of the following expressions
+creates a reference `x` given the value of `expr` which you can call latter. To read the previous you would use any of the following expressions
 
     Read('x')
-    Read['x']
     Read.x
-
-This is equivalent to a sort of function like this
-
-    lambda z: read('x')
-
-where the input is totally ignored and a hypothetical `read` function is given the reference name and it should return its stored value (internally its not implemented like this).
-
-** IMPORTANT **
-`Read` and `Write` only work property inside a `phi.dsl.Expression.Seq` or `phi.dsl.Expression.Pipe` expression. This is done because `Ref`s need to be defined a specific context or else value might be leaked between different calls or even nested functions that might happen to be using Phi, therefore, Seq and Pipe a given the task to defined this context.
 
 ### Example
 Lets see a common situation where you would use this
@@ -1027,7 +991,7 @@ Lets see a common situation where you would use this
 
     result = P.Pipe(
         input,
-        f1, Write('ref')
+        Write(ref = f1),
         f2,
         List(
             f3
@@ -1053,10 +1017,27 @@ Here you *save* the value outputed by `fun_1` and the load it as the initial val
         """
         return _ReadProxy(self)
 
-    @property
-    def Write(self):
+
+    def Write(self, **state_dict):
         """See `phi.dsl.Expression.Read`"""
-        return _WriteProxy(self)
+        if len(state_dict) != 1:
+            raise Exception("Please include exactly 1 state variable, got {0}".format(state_dict))
+
+        state_key = next(iter(state_dict.keys()))
+        write_expr = state_dict[state_key]
+
+        expr = self >> write_expr
+
+        def g(x, state):
+            update = { state_key: x }
+            state = utils.merge(state, update)
+
+            #side effect for convenience
+            _StateContextManager.REFS.update(state)
+
+            return x, state
+
+        return expr.__then__(g)
 
     @property
     def Rec(self):

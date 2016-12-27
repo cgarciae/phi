@@ -89,7 +89,7 @@ class TestBuilder(object):
     def test_compose_list(self):
         f = P.Seq(
             P + 1,
-            P * 2, Write('x'),
+            Write( x = P * 2),
             P + 4,
             List(
                 P + 2
@@ -107,7 +107,7 @@ class TestBuilder(object):
             P * 2,
             P + 4,
             List(
-                (P + 2).Write('x')
+                Write(x = P + 2)
             ,
                 P / 2
             ,
@@ -371,8 +371,7 @@ class TestBuilder(object):
 
         assert 5 == P.Pipe(
             1,
-            P + 4,
-            P.Write('y'),
+            Write(y = P + 4),
             P * 10,
             Read.y
         )
@@ -397,49 +396,49 @@ class TestBuilder(object):
 
         assert 1 == P.Pipe(
             1,
-            P + 1, Write('s'),
+            Write(s = P + 1),
             P * 100,
             Read('s'), P - 1
         )
 
         assert 1 == P.Pipe(
             1,
-            P + 1, Write('s'),
+            Write(s = P + 1),
             P * 100,
             Read('s') - 1
         )
 
         assert 1 == P.Pipe(
             1,
-            P + 1, Write.s,
+            Write(s = P + 1),
             P * 100,
             Read.s - 1
         )
 
         assert 1 == P.Pipe(
             1,
-            P + 1, Write.s,
+            Write(s = P + 1),
             P * 100,
             Read('s') - 1
         )
 
         assert 1 == P.Pipe(
             1,
-            P + 1, Write.s,
+            Write(s = P + 1),
             P * 100,
             Read.s - 1
         )
 
         assert 1 == P.Pipe(
             1,
-            P + 1, Write('s'),
+            Write(s = P + 1),
             P * 100,
             Read.s - 1
         )
 
         assert 1 == P.Pipe(
             1,
-            P + 1, Write('s'),
+            Write(s = P + 1),
             P * 100,
             Read.s - 1
         )
