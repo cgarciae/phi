@@ -180,6 +180,29 @@ class TestExamples(object):
         ################
         ################
 
+        from phi import P, Rec, List, Write, Read
+
+        [result, s] = P.Pipe(
+            1.0,  #input 1
+            P * 2, Write('s'),  #s = 2 * 1 == 2
+            Dict(
+                x = P + 1  #2 + 1 == 3
+            ,
+                y = P * 3  #2 * 3 == 6
+            ),
+            List(
+                Rec.x / Rec.y  #3 / 6 == 0.5
+            ,
+                Read('s')  #load 's' == 2
+            )
+        )
+
+        assert result == 0.5
+        assert s == 2
+
+        ################
+        ################
+
         from phi import P, Rec, Write, Read, List
 
         [result, s] = P.Pipe(
