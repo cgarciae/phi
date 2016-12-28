@@ -1017,6 +1017,14 @@ Here you *save* the value outputed by `fun_1` and the load it as the initial val
         """
         return _ReadProxy(self)
 
+    def ReadList(self, *branches, **kwargs):
+        """
+Same as `phi.dsl.Expression.List` but any string argument `x` is translated to `Read(x)`.
+        """
+        branches = map(lambda x: E.Read(x) if isinstance(x, str) else x, branches)
+
+        return self.List(*branches, **kwargs)
+
 
     def Write(self, *state_args, **state_dict):
         """See `phi.dsl.Expression.Read`"""

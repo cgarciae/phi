@@ -1,6 +1,4 @@
-from .python_builder import PythonBuilder as _PythonBuilder
-
-P = _PythonBuilder()
+from .python_builder import P
 
 # shortcuts
 Then0 = P.Then0
@@ -22,6 +20,7 @@ With = P.With
 Ref = P.Ref
 Dict = P.Dict
 F = P.F
+ReadList = P.ReadList
 
 List = P.List
 Seq = P.Seq

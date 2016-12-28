@@ -1062,6 +1062,7 @@ table {
     <li class="mono"><a href="#phi.builder.Builder.List">List</a></li>
     <li class="mono"><a href="#phi.builder.Builder.PatchAt">PatchAt</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Pipe">Pipe</a></li>
+    <li class="mono"><a href="#phi.builder.Builder.ReadList">ReadList</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Register">Register</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Register0">Register0</a></li>
     <li class="mono"><a href="#phi.builder.Builder.Register2">Register2</a></li>
@@ -1160,7 +1161,7 @@ table {
         <span class="n">name</span> <span class="o">=</span> <span class="n">alias</span> <span class="k">if</span> <span class="n">alias</span> <span class="k">else</span> <span class="n">f</span><span class="o">.</span><span class="n">__name__</span>
         <span class="n">original_name</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">__name__</span> <span class="k">if</span> <span class="n">wrapped</span> <span class="k">else</span> <span class="n">original_name</span> <span class="k">if</span> <span class="n">original_name</span> <span class="k">else</span> <span class="n">name</span>
 
-        <span class="n">f</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">doc</span> <span class="k">if</span> <span class="n">doc</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">THIS METHOD IS AUTOMATICALLY GENERATED</span>
 
@@ -1324,10 +1325,18 @@ table {
 
         <span class="n">_wrapped</span> <span class="o">=</span> <span class="n">wrapped</span> <span class="k">if</span> <span class="n">wrapped</span> <span class="k">else</span> <span class="n">f</span>
 
-        <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">ipdb</span>
+            <span class="n">ipdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+
+            <span class="n">_1</span> <span class="o">=</span> <span class="mi">1</span>
+            
+            <span class="k">raise</span>
 
         <span class="n">all_args</span><span class="p">,</span> <span class="n">previous_args</span><span class="p">,</span> <span class="n">last_arg</span> <span class="o">=</span> <span class="n">_make_args_strs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
@@ -1467,7 +1476,7 @@ table {
         <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">RegisterAt</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">PatchAt</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method_name_modifier</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">_False</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">_True</span><span class="p">,</span> <span class="n">return_type_predicate</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">PatchAt</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method_name_modifier</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">_False</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">_True</span><span class="p">,</span> <span class="n">return_type_predicate</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">,</span> <span class="n">admit_private</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This classmethod lets you easily patch all of functions/callables from a module or class as methods a Builder class.</span>
 
@@ -1527,7 +1536,7 @@ table {
 <span class="sd">The thing to notice is that with the `NumpyBuilder` we avoid the repetitive and needless passing and reassigment of the `z` variable, this removes a lot of noise from our code.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span>
-        <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">blacklist_predicate</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">whitelist_predicate</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
+        <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">blacklist_predicate</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">whitelist_predicate</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">,</span> <span class="n">admit_private</span><span class="o">=</span><span class="n">admit_private</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
             <span class="n">cls</span><span class="o">.</span><span class="n">RegisterAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">return_type_predicate</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">),</span> <span class="n">alias</span><span class="o">=</span><span class="n">method_name_modifier</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
@@ -1553,7 +1562,7 @@ table {
 
     <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_args</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]),</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">previous</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]),</span> <span class="n">last</span>
 
-<span class="k">def</span> <span class="nf">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">_NoLeadingUnderscore</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">_True</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_patch_members</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">_NoLeadingUnderscore</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">_True</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">,</span> <span class="n">admit_private</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">whitelist_predicate</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
         <span class="n">whitelist</span> <span class="o">=</span> <span class="n">whitelist_predicate</span>
@@ -1561,7 +1570,7 @@ table {
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">blacklist_predicate</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
         <span class="n">blacklist</span> <span class="o">=</span> <span class="n">blacklist_predicate</span>
-        <span class="n">blacklist_predicate</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">blacklist</span>
+        <span class="n">blacklist_predicate</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">blacklist</span> <span class="ow">or</span> <span class="s1">&#39;_&#39;</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">admit_private</span> <span class="k">else</span> <span class="bp">False</span>
 
     <span class="k">return</span> <span class="p">[</span>
         <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="p">)</span> <span class="k">if</span> <span class="n">whitelist_predicate</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">blacklist_predicate</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -1608,7 +1617,7 @@ table {
         <span class="n">name</span> <span class="o">=</span> <span class="n">alias</span> <span class="k">if</span> <span class="n">alias</span> <span class="k">else</span> <span class="n">f</span><span class="o">.</span><span class="n">__name__</span>
         <span class="n">original_name</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">__name__</span> <span class="k">if</span> <span class="n">wrapped</span> <span class="k">else</span> <span class="n">original_name</span> <span class="k">if</span> <span class="n">original_name</span> <span class="k">else</span> <span class="n">name</span>
 
-        <span class="n">f</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">doc</span> <span class="k">if</span> <span class="n">doc</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">THIS METHOD IS AUTOMATICALLY GENERATED</span>
 
@@ -1772,10 +1781,18 @@ table {
 
         <span class="n">_wrapped</span> <span class="o">=</span> <span class="n">wrapped</span> <span class="k">if</span> <span class="n">wrapped</span> <span class="k">else</span> <span class="n">f</span>
 
-        <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_return_type</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThenAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">ipdb</span>
+            <span class="n">ipdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+
+            <span class="n">_1</span> <span class="o">=</span> <span class="mi">1</span>
+            
+            <span class="k">raise</span>
 
         <span class="n">all_args</span><span class="p">,</span> <span class="n">previous_args</span><span class="p">,</span> <span class="n">last_arg</span> <span class="o">=</span> <span class="n">_make_args_strs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
@@ -1915,7 +1932,7 @@ table {
         <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">RegisterAt</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">PatchAt</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method_name_modifier</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">_False</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">_True</span><span class="p">,</span> <span class="n">return_type_predicate</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">PatchAt</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method_name_modifier</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">_False</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">_True</span><span class="p">,</span> <span class="n">return_type_predicate</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">,</span> <span class="n">admit_private</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This classmethod lets you easily patch all of functions/callables from a module or class as methods a Builder class.</span>
 
@@ -1975,7 +1992,7 @@ table {
 <span class="sd">The thing to notice is that with the `NumpyBuilder` we avoid the repetitive and needless passing and reassigment of the `z` variable, this removes a lot of noise from our code.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span>
-        <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">blacklist_predicate</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">whitelist_predicate</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
+        <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">blacklist_predicate</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">whitelist_predicate</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">,</span> <span class="n">admit_private</span><span class="o">=</span><span class="n">admit_private</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
             <span class="n">cls</span><span class="o">.</span><span class="n">RegisterAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">return_type_predicate</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">),</span> <span class="n">alias</span><span class="o">=</span><span class="n">method_name_modifier</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
@@ -2284,7 +2301,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7ffaa86a4410&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7fb9607a1398&gt;)</p>
     </div>
     
 
@@ -2695,7 +2712,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.builder.Builder.PatchAt">
-    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7ffaa86a76e0&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7ffaa86a7668&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7ffaa86a75f0&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7ffaa86a76e0&gt;, getmembers_predicate=&lt;function isfunction at 0x7ffaa9bc5488&gt;)</p>
+    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, module_alias=None, method_name_modifier=&lt;function &lt;lambda&gt; at 0x7fb9607a56e0&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7fb9607a5668&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7fb9607a55f0&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7fb9607a56e0&gt;, getmembers_predicate=&lt;function isfunction at 0x7fb961cc2488&gt;, admit_private=False)</p>
     </div>
     
 
@@ -2762,7 +2779,7 @@ result = [
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.PatchAt', this);">Show source &equiv;</a></p>
   <div id="source-phi.builder.Builder.PatchAt" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">PatchAt</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method_name_modifier</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">_False</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">_True</span><span class="p">,</span> <span class="n">return_type_predicate</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">PatchAt</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method_name_modifier</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">_False</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">_True</span><span class="p">,</span> <span class="n">return_type_predicate</span><span class="o">=</span><span class="n">_None</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">,</span> <span class="n">admit_private</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd"> classmethod lets you easily patch all of functions/callables from a module or class as methods a Builder class.</span>
 <span class="sd">guments**</span>
@@ -2805,7 +2822,7 @@ result = [
 <span class="sd">thing to notice is that with the `NumpyBuilder` we avoid the repetitive and needless passing and reassigment of the `z` variable, this removes a lot of noise from our code.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span>
-    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">blacklist_predicate</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">whitelist_predicate</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">)</span>
+    <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">blacklist_predicate</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">whitelist_predicate</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">,</span> <span class="n">admit_private</span><span class="o">=</span><span class="n">admit_private</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
         <span class="n">cls</span><span class="o">.</span><span class="n">RegisterAt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">return_type_predicate</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">),</span> <span class="n">alias</span><span class="o">=</span><span class="n">method_name_modifier</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
 </pre></div>
@@ -2917,6 +2934,32 @@ result = [
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;refs&quot;</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.builder.Builder.ReadList">
+    <p>def <span class="ident">ReadList</span>(</p><p>self, *branches, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Same as <code>phi.dsl.Expression.List</code> but any string argument <code>x</code> is translated to <code>Read(x)</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.builder.Builder.ReadList', this);">Show source &equiv;</a></p>
+  <div id="source-phi.builder.Builder.ReadList" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ReadList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"> as `phi.dsl.Expression.List` but any string argument `x` is translated to `Read(x)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">branches</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">E</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">,</span> <span class="n">branches</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
