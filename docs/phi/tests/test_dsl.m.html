@@ -1056,6 +1056,7 @@ table {
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_list">test_list</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_nested_compiles">test_nested_compiles</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_read">test_read</a></li>
+    <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_readlist">test_readlist</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_record_object">test_record_object</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_right_hand">test_right_hand</a></li>
     <li class="mono"><a href="#phi.tests.test_dsl.TestDSL.test_single_functions">test_single_functions</a></li>
@@ -1372,6 +1373,18 @@ table {
             <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
         <span class="p">)</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+
+
+    <span class="k">def</span> <span class="nf">test_readlist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">22</span><span class="p">]</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">a</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1">#a = 1 + 1 == 2</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">b</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1">#b = 2 * 2 == 4</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span>   <span class="c1"># 4 * 5 == 20</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span>   <span class="c1"># 20 + 2 == 22</span>
+            <span class="n">ReadList</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>  <span class="c1"># [a, b, 22] == [2, 4, 22]</span>
+        <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1676,6 +1689,18 @@ table {
             <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
         <span class="p">)</span>
         <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+
+
+    <span class="k">def</span> <span class="nf">test_readlist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">22</span><span class="p">]</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">a</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1">#a = 1 + 1 == 2</span>
+            <span class="n">Write</span><span class="p">(</span><span class="n">b</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1">#b = 2 * 2 == 4</span>
+            <span class="n">P</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span>   <span class="c1"># 4 * 5 == 20</span>
+            <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span>   <span class="c1"># 20 + 2 == 22</span>
+            <span class="n">ReadList</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>  <span class="c1"># [a, b, 22] == [2, 4, 22]</span>
+        <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2029,6 +2054,34 @@ table {
     <span class="n">y</span><span class="p">,</span> <span class="n">new_refs</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">refs</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">refs</span> <span class="o">==</span> <span class="n">new_refs</span> <span class="c1">#read doesnt modify</span>
     <span class="k">assert</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">10</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_dsl.TestDSL.test_readlist">
+    <p>def <span class="ident">test_readlist</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_dsl.TestDSL.test_readlist', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_dsl.TestDSL.test_readlist" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_readlist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">22</span><span class="p">]</span> <span class="o">==</span> <span class="n">Pipe</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">a</span> <span class="o">=</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1">#a = 1 + 1 == 2</span>
+        <span class="n">Write</span><span class="p">(</span><span class="n">b</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1">#b = 2 * 2 == 4</span>
+        <span class="n">P</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span>   <span class="c1"># 4 * 5 == 20</span>
+        <span class="n">P</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span>   <span class="c1"># 20 + 2 == 22</span>
+        <span class="n">ReadList</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>  <span class="c1"># [a, b, 22] == [2, 4, 22]</span>
+    <span class="p">)</span>
 </pre></div>
 
   </div>

@@ -1040,7 +1040,6 @@ table {
       
   <ul>
     <li class="mono"><a href="#phi.api.Obj">Obj</a></li>
-    <li class="mono"><a href="#phi.api.P">P</a></li>
     <li class="mono"><a href="#phi.api.Read">Read</a></li>
     <li class="mono"><a href="#phi.api.Rec">Rec</a></li>
     <li class="mono"><a href="#phi.api.Ref">Ref</a></li>
@@ -1057,6 +1056,7 @@ table {
     <li class="mono"><a href="#phi.api.If">If</a></li>
     <li class="mono"><a href="#phi.api.List">List</a></li>
     <li class="mono"><a href="#phi.api.Pipe">Pipe</a></li>
+    <li class="mono"><a href="#phi.api.ReadList">ReadList</a></li>
     <li class="mono"><a href="#phi.api.Seq">Seq</a></li>
     <li class="mono"><a href="#phi.api.Then">Then</a></li>
     <li class="mono"><a href="#phi.api.Then0">Then0</a></li>
@@ -1090,9 +1090,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api', this);">Show source &equiv;</a></p>
   <div id="source-phi.api" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">.python_builder</span> <span class="kn">import</span> <span class="n">PythonBuilder</span> <span class="k">as</span> <span class="n">_PythonBuilder</span>
-
-<span class="n">P</span> <span class="o">=</span> <span class="n">_PythonBuilder</span><span class="p">()</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">.python_builder</span> <span class="kn">import</span> <span class="n">P</span>
 
 <span class="c1"># shortcuts</span>
 <span class="n">Then0</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Then0</span>
@@ -1114,6 +1112,7 @@ table {
 <span class="n">Ref</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Ref</span>
 <span class="n">Dict</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Dict</span>
 <span class="n">F</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">F</span>
+<span class="n">ReadList</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">ReadList</span>
 
 <span class="n">List</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">List</span>
 <span class="n">Seq</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Seq</span>
@@ -1130,14 +1129,6 @@ table {
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
       <p id="phi.api.Obj" class="name">var <span class="ident">Obj</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="phi.api.P" class="name">var <span class="ident">P</span></p>
       
   
   <div class="source_cont">
@@ -1699,6 +1690,32 @@ table {
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;refs&quot;</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="phi.api.ReadList">
+    <p>def <span class="ident">ReadList</span>(</p><p>self, *branches, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Same as <code>phi.dsl.Expression.List</code> but any string argument <code>x</code> is translated to <code>Read(x)</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.api.ReadList', this);">Show source &equiv;</a></p>
+  <div id="source-phi.api.ReadList" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ReadList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"> as `phi.dsl.Expression.List` but any string argument `x` is translated to `Read(x)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">branches</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">E</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">,</span> <span class="n">branches</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="o">*</span><span class="n">branches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>

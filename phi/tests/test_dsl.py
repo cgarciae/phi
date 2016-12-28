@@ -289,3 +289,13 @@ class TestDSL(object):
         assert f(0) == {"a": 1, "b": 2, "c": 3 }
 
 
+    def test_readlist(self):
+
+        assert [2, 4, 22] == Pipe(
+            1,
+            Write(a = P + 1),  #a = 1 + 1 == 2
+            Write(b = P * 2),  #b = 2 * 2 == 4
+            P * 5,   # 4 * 5 == 20
+            P + 2,   # 20 + 2 == 22
+            ReadList('a', 'b', P)  # [a, b, 22] == [2, 4, 22]
+        )

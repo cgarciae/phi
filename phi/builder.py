@@ -46,7 +46,7 @@ class Builder(dsl.Expression):
         name = alias if alias else f.__name__
         original_name = f.__name__ if wrapped else original_name if original_name else name
 
-        f.__name__ = name
+        f.__name__ = str(name)
         f.__doc__ = doc if doc else ("""
 THIS METHOD IS AUTOMATICALLY GENERATED
 
@@ -210,10 +210,18 @@ Now the documentation for `MyBuilder.some_fun` will be a little bit nicer since 
 
         _wrapped = wrapped if wrapped else f
 
-        @functools.wraps(f)
-        def method(self, *args, **kwargs):
-            kwargs['_return_type'] = _return_type
-            return self.ThenAt(n, f, *args, **kwargs)
+        try:
+            @functools.wraps(f)
+            def method(self, *args, **kwargs):
+                kwargs['_return_type'] = _return_type
+                return self.ThenAt(n, f, *args, **kwargs)
+        except:
+            import ipdb
+            ipdb.set_trace()
+
+            _1 = 1
+            
+            raise
 
         all_args, previous_args, last_arg = _make_args_strs(n)
 
@@ -353,7 +361,7 @@ For this case you can just use `Register` which is a shortcut for `RegisterAt(1,
         return cls.RegisterAt(5, *args, **kwargs)
 
     @classmethod
-    def PatchAt(cls, n, module, module_alias=None, method_name_modifier=_None, blacklist_predicate=_False, whitelist_predicate=_True, return_type_predicate=_None, getmembers_predicate=inspect.isfunction):
+    def PatchAt(cls, n, module, module_alias=None, method_name_modifier=_None, blacklist_predicate=_False, whitelist_predicate=_True, return_type_predicate=_None, getmembers_predicate=inspect.isfunction, admit_private=False):
         """
 This classmethod lets you easily patch all of functions/callables from a module or class as methods a Builder class.
 
@@ -413,7 +421,7 @@ Which is strictly equivalent to
 The thing to notice is that with the `NumpyBuilder` we avoid the repetitive and needless passing and reassigment of the `z` variable, this removes a lot of noise from our code.
         """
         module_name = module_alias if module_alias else module.__name__ + '.'
-        patch_members = _get_patch_members(builder, module, blacklist_predicate=blacklist_predicate, whitelist_predicate=whitelist_predicate, getmembers_predicate=getmembers_predicate)
+        patch_members = _get_patch_members(module, blacklist_predicate=blacklist_predicate, whitelist_predicate=whitelist_predicate, getmembers_predicate=getmembers_predicate, admit_private=admit_private)
 
         for name, f in patch_members:
             cls.RegisterAt(n, f, module_name, _return_type=return_type_predicate(f.__name__), alias=method_name_modifier(f.__name__))
@@ -439,7 +447,7 @@ def _make_args_strs(n):
 
     return ", ".join(all_args + [""]), ", ".join(previous + [""]), last
 
-def _get_patch_members(builder, module, blacklist_predicate=_NoLeadingUnderscore, whitelist_predicate=_True, _return_type=None, getmembers_predicate=inspect.isfunction):
+def _get_patch_members(module, blacklist_predicate=_NoLeadingUnderscore, whitelist_predicate=_True, _return_type=None, getmembers_predicate=inspect.isfunction, admit_private=False):
 
     if type(whitelist_predicate) is list:
         whitelist = whitelist_predicate
@@ -447,7 +455,7 @@ def _get_patch_members(builder, module, blacklist_predicate=_NoLeadingUnderscore
 
     if type(blacklist_predicate) is list:
         blacklist = blacklist_predicate
-        blacklist_predicate = lambda x: x in blacklist
+        blacklist_predicate = lambda x: x in blacklist or '_' == x[0] if not admit_private else False
 
     return [
         (name, f) for (name, f) in inspect.getmembers(module, getmembers_predicate) if whitelist_predicate(name) and not blacklist_predicate(name)

@@ -20,6 +20,7 @@ This class has two types of methods:
 2. Methods that start with a capytal letter like `phi.python_builder.PythonBuilder.And`, `phi.python_builder.PythonBuilder.Not`, `phi.python_builder.PythonBuilder.Contains`, this is done because some mimimic keywords (`and`, `or`, `not`, etc) and its ilegal to give them these lowercase names, however, methods like `phi.python_builder.PythonBuilder.Contains` that could use lowercase are left capitalized to maintain uniformity.
     """
 
+P = PythonBuilder()
 
 # built in functions
 _function_2_names = ["map", "filter", "reduce"]
