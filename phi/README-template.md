@@ -51,7 +51,7 @@ f = Obj.upper() + ", " + Obj.lower()  #lambda s: s.upper() + ", " + s.lower()
 
 assert f("HEllo") == "HELLO, hello"   # "HEllo".upper() + ", " + "HEllo".lower() == "HELLO" + ", " + "hello" == "HELLO, hello"
 ```
-Here no parameters where needed but in general
+Here no parameters were needed but in general
 ```python
 f = Obj.some_method(arg1, arg2, ...) #lambda obj: obj.some_method(arg1, arg2, ...)
 ```
@@ -68,7 +68,7 @@ f = P + 7 >> math.sqrt  #executes left to right
 
 assert f(2) == 3  # math.sqrt(2 + 7) == math.sqrt(9) == 3
 ```
-This is preferred because its more readable, but you can use the `<<` to compose them *backwards* just like the mathematical definition of function composition
+This is preferred because it is more readable, but you can use the `<<` to compose them *backwards* just like the mathematical definition of function composition
 
 ```python
 f =  math.sqrt << P + 7 #executes right to left
@@ -103,7 +103,7 @@ assert 10 == Pipe(
 
 ## Combinators
 #### List, Tuple, Set, Dict
-There are a couple of combinators like `List`, `Tuple`, `Set`, `Dict` that help you create compound functions that return the container types `list`, `tuple`, `set` and `dict` respectively. For example, you can pass `List` a couple of expression to get a function that returns a list with the values of these functions
+There are a couple of combinators like `List`, `Tuple`, `Set`, `Dict` that help you create compound functions that return the container types `list`, `tuple`, `set` and `dict` respectively. For example, you can pass `List` a couple of expressions to get a function that returns a list with the values of these functions
 
 ```python
 f = List( P + 1, P * 10 )  #lambda x: [ x +1, x * 10 ]
@@ -124,7 +124,7 @@ assert d.y == 30  #access d['y'] via field access as d.y
 As you see, `Dict` returns a custom `dict` that also allows *field access*, this is useful because you can use it in combination with `Rec`.
 
 #### State: Read and Write
-Internally all these expressions are implemented in such a way that they not only pass their computed values but also pass a **state** dictionary between them in a functional manner, by reading from and writing to this state dictionary the `Read` and `Write` combinators can help you "save" the state of intermediate computations to read them latter
+Internally all these expressions are implemented in such a way that they not only pass their computed values but also pass a **state** dictionary between them in a functional manner. By reading from and writing to this state dictionary the `Read` and `Write` combinators can help you "save" the state of intermediate computations to read them later
 
 ```python
 assert [70, 30] == Pipe(
@@ -147,7 +147,7 @@ def repeat_word(word, times, upper=False):
 
   return [ word ] * times
 ```
-use the `Then` combinator which accepts a function plus all but the *1rst* of its `*args` + `**kwargs`
+use the `Then` combinator which accepts a function plus all but the *1st* of its `*args` + `**kwargs`
 ```python
 f = P[::-1] >> Then(repeat_word, 3)
 g = P[::-1] >> Then(repeat_word, 3, upper=True)
@@ -155,7 +155,7 @@ g = P[::-1] >> Then(repeat_word, 3, upper=True)
 assert f("ward") == ["draw", "draw", "draw"]
 assert g("ward") == ["DRAW", "DRAW", "DRAW"]
 ```
-and assumes the *1rst* argument of the function will be applied last, e.g. `word` in the case of `repeat_word`. If you need the *2nd* argument to be applied last use `Then2`, and so on. In general you can use `ThenAt(n, f, *args, **kwargs)` where `n` is the position of the argument that will be applied last. Example
+and assumes that the *1st* argument of the function will be applied last, e.g. `word` in the case of `repeat_word`. If you need the *2nd* argument to be applied last use `Then2`, and so on. In general you can use `ThenAt(n, f, *args, **kwargs)` where `n` is the position of the argument that will be applied last. Example
 ```python
 # since map and filter receive the iterable on their second argument, you have to use `Then2`
 f = Then2(filter, P % 2 == 0) >> Then2(map, P**2) >> list  #lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))
@@ -271,7 +271,7 @@ assert f("some longer frase") == "Great! Got 15 letters!"
 
 ## Integrability
 #### Register, Register2, ..., Register5, RegistarAt
-If you want to have custom expression to deal with certain data types, you create a custom class that inherits from `Builder` or `PythonBuilder`
+If you want to have custom expressions to deal with certain data types, you can create a custom class that inherits from `Builder` or `PythonBuilder`
 ```python
 from phi import PythonBuilder
 
@@ -280,7 +280,7 @@ class MyBuilder(PythonBuilder):
 
 M = MyBuilder()
 ```
-and register your function in it using `Register` class method
+and register your function in it using the `Register` class method
 
 ```python
 def remove_longer_than(some_list, n):
@@ -301,10 +301,10 @@ f = Obj.lower() >> Obj.split(' ') >> M.remove_longer_than(6)
 
 assert f("SoMe aRe LONGGGGGGGGG") == ["some", "are"]
 ```
-As you see the argument `n = 6` was partially applied to `remove_longer_than`, an expression which awaits the `some_list` argument is returned. Internally the `Registar*` method family use the `Then*` method family.
+As you see the argument `n = 6` was partially applied to `remove_longer_than`, an expression which waits for the `some_list` argument to be returned. Internally the `Registar*` method family uses the `Then*` method family.
 
 #### PatchAt
-If you want to register a batch of functions from a module or class automatically you can use the `PatchAt` class method. Its an easy way to integrate an entire module to Phi's DSL. See `PatchAt`.
+If you want to register a batch of functions from a module or class automatically you can use the `PatchAt` class method. It's an easy way to integrate an entire module to Phi's DSL. See `PatchAt`.
 
 #### Libraries
 Phi currently powers the following libraries that integrate with its DSL:
@@ -404,7 +404,7 @@ assert result.x == 3
 assert result.y == 6
 ```
 
-Divide the `x` by the `y`.
+Divide `x` by `y`.
 
 ```python
 from phi.api import *
@@ -633,5 +633,5 @@ assert {{'a': 97, 'b': 98, 'c': 99}} == Pipe(
 
 ## Status
 * Version: **{0}**.
-* Documentation coverage: 100%. Please create an issue if documentation is unclear, its of great priority for this library.
+* Documentation coverage: 100%. Please create an issue if documentation is unclear, it is a high priority of this library.
 * Milestone: reach 1.0.0 after feedback from the community.
