@@ -2308,24 +2308,36 @@ assert f([3, 4]) == 5
         <span class="k">return</span> <span class="n">_ReadProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">state_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">state_args</span><span class="p">,</span> <span class="o">**</span><span class="n">state_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;See `phi.dsl.Expression.Read`&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include exactly 1 state variable, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include at-least 1 state variable, got {0} and {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_args</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">))</span>
 
-        <span class="n">state_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-        <span class="n">write_expr</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include at-most 1 keyword argument expression, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
 
-        <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">write_expr</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">state_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="n">write_expr</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span>
+
+            <span class="n">state_args</span> <span class="o">+=</span> <span class="p">(</span><span class="n">state_key</span><span class="p">,)</span>
+
+            <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">write_expr</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span>
+
+
 
         <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-            <span class="n">update</span> <span class="o">=</span> <span class="p">{</span> <span class="n">state_key</span><span class="p">:</span> <span class="n">x</span> <span class="p">}</span>
+            <span class="n">update</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">state_args</span> <span class="p">}</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span>
 
             <span class="c1">#side effect for convenience</span>
             <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span>
+
 
         <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
@@ -3406,24 +3418,36 @@ assert f([3, 4]) == 5
         <span class="k">return</span> <span class="n">_ReadProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">state_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">state_args</span><span class="p">,</span> <span class="o">**</span><span class="n">state_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;See `phi.dsl.Expression.Read`&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include exactly 1 state variable, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include at-least 1 state variable, got {0} and {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_args</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">))</span>
 
-        <span class="n">state_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-        <span class="n">write_expr</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include at-most 1 keyword argument expression, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
 
-        <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">write_expr</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">state_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="n">write_expr</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span>
+
+            <span class="n">state_args</span> <span class="o">+=</span> <span class="p">(</span><span class="n">state_key</span><span class="p">,)</span>
+
+            <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">write_expr</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span>
+
+
 
         <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-            <span class="n">update</span> <span class="o">=</span> <span class="p">{</span> <span class="n">state_key</span><span class="p">:</span> <span class="n">x</span> <span class="p">}</span>
+            <span class="n">update</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">state_args</span> <span class="p">}</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span>
 
             <span class="c1">#side effect for convenience</span>
             <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span>
+
 
         <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
@@ -4108,7 +4132,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.dsl.Expression.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7f3d9a925410&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7ffaa86a4410&gt;)</p>
     </div>
     
 
@@ -5310,7 +5334,7 @@ assert [5, 5, 5] == x
             
   <div class="item">
     <div class="name def" id="phi.dsl.Expression.Write">
-    <p>def <span class="ident">Write</span>(</p><p>self, **state_dict)</p>
+    <p>def <span class="ident">Write</span>(</p><p>self, *state_args, **state_dict)</p>
     </div>
     
 
@@ -5320,15 +5344,21 @@ assert [5, 5, 5] == x
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.Write', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Expression.Write" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">state_dict</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">state_args</span><span class="p">,</span> <span class="o">**</span><span class="n">state_dict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;See `phi.dsl.Expression.Read`&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include exactly 1 state variable, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
-    <span class="n">state_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-    <span class="n">write_expr</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span>
-    <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">write_expr</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include at-least 1 state variable, got {0} and {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_args</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please include at-most 1 keyword argument expression, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">state_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">write_expr</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span>
+        <span class="n">state_args</span> <span class="o">+=</span> <span class="p">(</span><span class="n">state_key</span><span class="p">,)</span>
+        <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&gt;&gt;</span> <span class="n">write_expr</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span>
     <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="n">update</span> <span class="o">=</span> <span class="p">{</span> <span class="n">state_key</span><span class="p">:</span> <span class="n">x</span> <span class="p">}</span>
+        <span class="n">update</span> <span class="o">=</span> <span class="p">{</span> <span class="n">key</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">state_args</span> <span class="p">}</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span>
         <span class="c1">#side effect for convenience</span>
         <span class="n">_StateContextManager</span><span class="o">.</span><span class="n">REFS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
