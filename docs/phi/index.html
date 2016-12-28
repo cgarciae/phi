@@ -1198,6 +1198,22 @@ assert d.y == 30  #access d[&#39;y&#39;] via field access as d.y
 </pre></div>
 
 
+<p>If you need to perform many reads inside a list -usually for output- you can use <code>ReadList</code> instead</p>
+<div class="codehilite"><pre><span></span>assert [2, 4, 22] == Pipe(
+    1,
+    Write(a = P + 1),  #a = 1 + 1 == 2
+    Write(b = P * 2),  #b = 2 * 2 == 4
+    P * 5,   # 4 * 5 == 20
+    ReadList(&#39;a&#39;, &#39;b&#39;, P + 2)  # [a, b, 20 + 2] == [2, 4, 22]
+)
+</pre></div>
+
+
+<p><code>ReadList</code> interprets string elements as <code>Read</code>s, so the previous is translated to</p>
+<div class="codehilite"><pre><span></span>List(Read(&#39;a&#39;), Read(&#39;b&#39;), P + 2)
+</pre></div>
+
+
 <h4>Then, Then2, ..., Then5, ThenAt</h4>
 <p>To create a partial expression from a function e.g.</p>
 <div class="codehilite"><pre><span></span>def repeat_word(word, times, upper=False):

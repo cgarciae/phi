@@ -138,6 +138,21 @@ assert [70, 30] == Pipe(
   )
 )
 ```
+If you need to perform many reads inside a list -usually for output- you can use `ReadList` instead
+```python
+assert [2, 4, 22] == Pipe(
+    1,
+    Write(a = P + 1),  #a = 1 + 1 == 2
+    Write(b = P * 2),  #b = 2 * 2 == 4
+    P * 5,   # 4 * 5 == 20
+    ReadList('a', 'b', P + 2)  # [a, b, 20 + 2] == [2, 4, 22]
+)
+```
+`ReadList` interprets string elements as `Read`s, so the previous is translated to
+```python
+List(Read('a'), Read('b'), P + 2)
+```
+
 #### Then, Then2, ..., Then5, ThenAt
 To create a partial expression from a function e.g.
 ```python
