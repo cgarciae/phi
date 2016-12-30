@@ -1084,6 +1084,7 @@ table {
     <li class="mono"><a href="#phi.tests.test_builders.TestBuilder.test_context">test_context</a></li>
     <li class="mono"><a href="#phi.tests.test_builders.TestBuilder.test_list">test_list</a></li>
     <li class="mono"><a href="#phi.tests.test_builders.TestBuilder.test_methods">test_methods</a></li>
+    <li class="mono"><a href="#phi.tests.test_builders.TestBuilder.test_patch_at">test_patch_at</a></li>
     <li class="mono"><a href="#phi.tests.test_builders.TestBuilder.test_pipe">test_pipe</a></li>
     <li class="mono"><a href="#phi.tests.test_builders.TestBuilder.test_random">test_random</a></li>
     <li class="mono"><a href="#phi.tests.test_builders.TestBuilder.test_read_method">test_read_method</a></li>
@@ -1116,7 +1117,12 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_builders', this);">Show source &equiv;</a></p>
   <div id="source-phi.tests.test_builders" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">phi.api</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="c1"># from phi import tb</span>
@@ -1160,6 +1166,25 @@ table {
     <span class="k">def</span> <span class="nf">test_C_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="n">add2</span><span class="p">)(</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
         <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="n">add2</span><span class="p">)</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="n">mul3</span><span class="p">)(</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">18</span>
+
+
+    <span class="k">def</span> <span class="nf">test_patch_at</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">some_module</span>
+
+        <span class="n">P</span><span class="o">.</span><span class="n">PatchAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">some_module</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;some&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">PatchAt</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">some_module</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;other&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="c1">###################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">some_fun</span><span class="p">()</span> <span class="o">&gt;&gt;</span> <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span>
+
+        <span class="c1">########################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">other_fun</span><span class="p">(</span><span class="mf">6.0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
 
     <span class="k">def</span> <span class="nf">test_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -1786,6 +1811,25 @@ table {
     <span class="k">def</span> <span class="nf">test_C_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="n">add2</span><span class="p">)(</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
         <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="n">add2</span><span class="p">)</span><span class="o">.</span><span class="n">Then</span><span class="p">(</span><span class="n">mul3</span><span class="p">)(</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">18</span>
+
+
+    <span class="k">def</span> <span class="nf">test_patch_at</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">some_module</span>
+
+        <span class="n">P</span><span class="o">.</span><span class="n">PatchAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">some_module</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;some&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">PatchAt</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">some_module</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;other&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="c1">###################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">some_fun</span><span class="p">()</span> <span class="o">&gt;&gt;</span> <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span>
+
+        <span class="c1">########################</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">other_fun</span><span class="p">(</span><span class="mf">6.0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
 
     <span class="k">def</span> <span class="nf">test_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span>
@@ -2528,6 +2572,35 @@ table {
         <span class="n">A</span><span class="p">(),</span>
         <span class="n">P</span><span class="o">.</span><span class="n">Obj</span><span class="o">.</span><span class="n">something</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1">#used something</span>
     <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="phi.tests.test_builders.TestBuilder.test_patch_at">
+    <p>def <span class="ident">test_patch_at</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.tests.test_builders.TestBuilder.test_patch_at', this);">Show source &equiv;</a></p>
+  <div id="source-phi.tests.test_builders.TestBuilder.test_patch_at" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_patch_at</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">some_module</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">PatchAt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">some_module</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;some&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">PatchAt</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">some_module</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;other&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">)</span>
+    <span class="c1">###################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">some_fun</span><span class="p">()</span> <span class="o">&gt;&gt;</span> <span class="n">Obj</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span>
+    <span class="c1">########################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">other_fun</span><span class="p">(</span><span class="mf">6.0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">P</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
 </pre></div>
 
   </div>
