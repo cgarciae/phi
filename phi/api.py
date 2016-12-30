@@ -1,6 +1,5 @@
 from .python_builder import P
 
-# shortcuts
 Then0 = P.Then0
 Then = P.Then
 Then1 = P.Then1
@@ -21,9 +20,6 @@ Ref = P.Ref
 Dict = P.Dict
 F = P.F
 ReadList = P.ReadList
-
 List = P.List
 Seq = P.Seq
-
-# Directly imported from DSL
 If = P.If

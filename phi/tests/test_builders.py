@@ -1,3 +1,8 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from phi.api import *
 import math
 import pytest
@@ -42,6 +47,25 @@ class TestBuilder(object):
     def test_C_1(self):
         assert P.Then(add2)(4) == 6
         assert P.Then(add2).Then(mul3)(4) == 18
+
+
+    def test_patch_at(self):
+        from . import some_module
+
+        P.PatchAt(1, some_module, whitelist_predicate=lambda name: "some" in name)
+        P.PatchAt(2, some_module, whitelist_predicate=lambda name: "other" in name)
+
+        ###################
+
+        f = P.some_fun() >> Obj.lower()
+
+        assert f(None) == "yes"
+
+        ########################
+
+        f = P.other_fun(6.0) >> P + 1
+
+        assert f(2.0) == 4
 
     def test_methods(self):
         x = P.Pipe(

@@ -1716,7 +1716,7 @@ assert f([3, 4]) == 5
 <span class="sd">    Pipe(x, f) == f(x)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">state_identity</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_f</span> <span class="o">=</span> <span class="n">f</span>
 
     <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -1812,7 +1812,7 @@ assert f([3, 4]) == 5
         <span class="n">state</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;refs&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">ThenAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ThenAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">`ThenAt` enables you to create a partially apply many arguments to a function, the returned partial expects a single arguments which will be applied at the `n`th position of the original function.</span>
 
@@ -1820,7 +1820,7 @@ assert f([3, 4]) == 5
 
 <span class="sd">* **n**: position at which the created partial will apply its awaited argument on the original function.</span>
 <span class="sd">* **f**: function which the partial will be created.</span>
-<span class="sd">* **args &amp; kwargs**: all `*args` and `**kwargs` will be passed to the function `f`.</span>
+<span class="sd">* **_args &amp; kwargs**: all `*_args` and `**kwargs` will be passed to the function `f`.</span>
 <span class="sd">* `_return_type = None`: type of the returned `builder`, if `None` it will return the same type of the current `builder`. This special kwarg will NOT be passed to `f`.</span>
 
 <span class="sd">You can think of `n` as the position that the value being piped down will pass through the `f`. Say you have the following expression</span>
@@ -1914,7 +1914,7 @@ assert f([3, 4]) == 5
 <span class="sd">* `phi.builder.Builder.RegisterAt`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">n_args</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
@@ -1922,7 +1922,8 @@ assert f([3, 4]) == 5
 
         <span class="nd">@utils.lift</span>
         <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
+
+            <span class="n">new_args</span> <span class="o">=</span> <span class="n">_args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n_args</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">_args</span><span class="p">[</span><span class="n">n_args</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n_args</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">_args</span>
             <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
@@ -2651,7 +2652,7 @@ assert f([3, 4]) == 5
 
     <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="s2">&quot;Monadic unit, also known as `return`&quot;</span>
-        <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>            
             <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -2834,7 +2835,7 @@ assert f([3, 4]) == 5
 <span class="sd">    Pipe(x, f) == f(x)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">state_identity</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_f</span> <span class="o">=</span> <span class="n">f</span>
 
     <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -2930,7 +2931,7 @@ assert f([3, 4]) == 5
         <span class="n">state</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;refs&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Seq</span><span class="p">(</span><span class="o">*</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">ThenAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ThenAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">`ThenAt` enables you to create a partially apply many arguments to a function, the returned partial expects a single arguments which will be applied at the `n`th position of the original function.</span>
 
@@ -2938,7 +2939,7 @@ assert f([3, 4]) == 5
 
 <span class="sd">* **n**: position at which the created partial will apply its awaited argument on the original function.</span>
 <span class="sd">* **f**: function which the partial will be created.</span>
-<span class="sd">* **args &amp; kwargs**: all `*args` and `**kwargs` will be passed to the function `f`.</span>
+<span class="sd">* **_args &amp; kwargs**: all `*_args` and `**kwargs` will be passed to the function `f`.</span>
 <span class="sd">* `_return_type = None`: type of the returned `builder`, if `None` it will return the same type of the current `builder`. This special kwarg will NOT be passed to `f`.</span>
 
 <span class="sd">You can think of `n` as the position that the value being piped down will pass through the `f`. Say you have the following expression</span>
@@ -3032,7 +3033,7 @@ assert f([3, 4]) == 5
 <span class="sd">* `phi.builder.Builder.RegisterAt`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">n_args</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
@@ -3040,7 +3041,8 @@ assert f([3, 4]) == 5
 
         <span class="nd">@utils.lift</span>
         <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
+
+            <span class="n">new_args</span> <span class="o">=</span> <span class="n">_args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n_args</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">_args</span><span class="p">[</span><span class="n">n_args</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n_args</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">_args</span>
             <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
@@ -3769,7 +3771,7 @@ assert f([3, 4]) == 5
 
     <span class="k">def</span> <span class="nf">__unit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="s2">&quot;Monadic unit, also known as `return`&quot;</span>
-        <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_return_type</span><span class="p">:</span>            
             <span class="k">return</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -4149,7 +4151,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.dsl.Expression.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function &lt;lambda&gt; at 0x7f6f68d10398&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function state_identity at 0x7fea7e92eaa0&gt;)</p>
     </div>
     
 
@@ -4158,7 +4160,7 @@ result = [
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.__init__', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Expression.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">)):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">state_identity</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_f</span> <span class="o">=</span> <span class="n">f</span>
 </pre></div>
 
@@ -5022,7 +5024,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.dsl.Expression.ThenAt">
-    <p>def <span class="ident">ThenAt</span>(</p><p>self, n, f, *args, **kwargs)</p>
+    <p>def <span class="ident">ThenAt</span>(</p><p>self, n, f, *_args, **kwargs)</p>
     </div>
     
 
@@ -5033,7 +5035,7 @@ result = [
 <ul>
 <li><strong>n</strong>: position at which the created partial will apply its awaited argument on the original function.</li>
 <li><strong>f</strong>: function which the partial will be created.</li>
-<li><strong>args &amp; kwargs</strong>: all <code>*args</code> and <code>**kwargs</code> will be passed to the function <code>f</code>.</li>
+<li><strong>_args &amp; kwargs</strong>: all <code>*_args</code> and <code>**kwargs</code> will be passed to the function <code>f</code>.</li>
 <li><code>_return_type = None</code>: type of the returned <code>builder</code>, if <code>None</code> it will return the same type of the current <code>builder</code>. This special kwarg will NOT be passed to <code>f</code>.</li>
 </ul>
 <p>You can think of <code>n</code> as the position that the value being piped down will pass through the <code>f</code>. Say you have the following expression</p>
@@ -5139,13 +5141,13 @@ assert [5, 5, 5] == x
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-phi.dsl.Expression.ThenAt', this);">Show source &equiv;</a></p>
   <div id="source-phi.dsl.Expression.ThenAt" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ThenAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ThenAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">nAt` enables you to create a partially apply many arguments to a function, the returned partial expects a single arguments which will be applied at the `n`th position of the original function.</span>
 <span class="sd">guments**</span>
 <span class="sd">n**: position at which the created partial will apply its awaited argument on the original function.</span>
 <span class="sd">f**: function which the partial will be created.</span>
-<span class="sd">args &amp; kwargs**: all `*args` and `**kwargs` will be passed to the function `f`.</span>
+<span class="sd">_args &amp; kwargs**: all `*_args` and `**kwargs` will be passed to the function `f`.</span>
 <span class="sd">return_type = None`: type of the returned `builder`, if `None` it will return the same type of the current `builder`. This special kwarg will NOT be passed to `f`.</span>
 <span class="sd">can think of `n` as the position that the value being piped down will pass through the `f`. Say you have the following expression</span>
 <span class="sd">D == fun(A, B, C)</span>
@@ -5205,13 +5207,13 @@ assert [5, 5, 5] == x
 <span class="sd">hi.builder.Builder.RegisterAt`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_return_type</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="n">n_args</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="s1">&#39;_return_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">_return_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_return_type&#39;</span><span class="p">]</span>
     <span class="nd">@utils.lift</span>
     <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="n">new_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">args</span>
+        <span class="n">new_args</span> <span class="o">=</span> <span class="n">_args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n_args</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span> <span class="o">+</span> <span class="n">_args</span><span class="p">[</span><span class="n">n_args</span><span class="p">:]</span> <span class="k">if</span> <span class="n">n_args</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">_args</span>
         <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__then__</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">_return_type</span><span class="o">=</span><span class="n">_return_type</span><span class="p">)</span>
 </pre></div>

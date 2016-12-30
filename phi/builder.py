@@ -213,14 +213,10 @@ Now the documentation for `MyBuilder.some_fun` will be a little bit nicer since 
         try:
             @functools.wraps(f)
             def method(self, *args, **kwargs):
+
                 kwargs['_return_type'] = _return_type
                 return self.ThenAt(n, f, *args, **kwargs)
         except:
-            import ipdb
-            ipdb.set_trace()
-
-            _1 = 1
-            
             raise
 
         all_args, previous_args, last_arg = _make_args_strs(n)
@@ -361,7 +357,7 @@ For this case you can just use `Register` which is a shortcut for `RegisterAt(1,
         return cls.RegisterAt(5, *args, **kwargs)
 
     @classmethod
-    def PatchAt(cls, n, module, module_alias=None, method_name_modifier=_None, blacklist_predicate=_False, whitelist_predicate=_True, return_type_predicate=_None, getmembers_predicate=inspect.isfunction, admit_private=False):
+    def PatchAt(cls, n, module, method_wrapper=None, module_alias=None, method_name_modifier=utils.identity, blacklist_predicate=_False, whitelist_predicate=_True, return_type_predicate=_None, getmembers_predicate=inspect.isfunction, admit_private=False, explanation=""):
         """
 This classmethod lets you easily patch all of functions/callables from a module or class as methods a Builder class.
 
@@ -420,11 +416,26 @@ Which is strictly equivalent to
 
 The thing to notice is that with the `NumpyBuilder` we avoid the repetitive and needless passing and reassigment of the `z` variable, this removes a lot of noise from our code.
         """
+        _rtp = return_type_predicate
+
+        return_type_predicate = (lambda x: _rtp) if inspect.isclass(_rtp) and issubclass(_rtp, Builder) else _rtp
         module_name = module_alias if module_alias else module.__name__ + '.'
         patch_members = _get_patch_members(module, blacklist_predicate=blacklist_predicate, whitelist_predicate=whitelist_predicate, getmembers_predicate=getmembers_predicate, admit_private=admit_private)
 
+        if type(whitelist_predicate) is list and "convolution2d" in whitelist_predicate:
+            import ipdb
+            #ipdb.set_trace()
+
         for name, f in patch_members:
-            cls.RegisterAt(n, f, module_name, _return_type=return_type_predicate(f.__name__), alias=method_name_modifier(f.__name__))
+            wrapped = None
+
+            if method_wrapper:
+                g = method_wrapper(f)
+                wrapped = f
+            else:
+                g = f
+
+            cls.RegisterAt(n, g, module_name, wrapped=wrapped, _return_type=return_type_predicate(name), alias=method_name_modifier(name), explanation=explanation)
 
 
 Builder.__core__ = [ name for name, f in inspect.getmembers(Builder, inspect.ismethod) ]
