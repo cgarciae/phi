@@ -425,7 +425,7 @@ and piping through a function is just the same a applying the function
     Pipe(x, f) == f(x)
     """
 
-    def __init__(self, f=lambda x, state: (x, state)):
+    def __init__(self, f=utils.state_identity):
         self._f = f
 
     def __unit__(self, f, _return_type=None):
@@ -521,7 +521,7 @@ The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to c
         state = kwargs.pop("refs", {})
         return self.Seq(*sequence, **kwargs)(None, **state)
 
-    def ThenAt(self, n, f, *args, **kwargs):
+    def ThenAt(self, n, f, *_args, **kwargs):
         """
 `ThenAt` enables you to create a partially apply many arguments to a function, the returned partial expects a single arguments which will be applied at the `n`th position of the original function.
 
@@ -529,7 +529,7 @@ The previous using [lambdas](https://cgarciae.github.io/phi/lambdas.m.html) to c
 
 * **n**: position at which the created partial will apply its awaited argument on the original function.
 * **f**: function which the partial will be created.
-* **args & kwargs**: all `*args` and `**kwargs` will be passed to the function `f`.
+* **_args & kwargs**: all `*_args` and `**kwargs` will be passed to the function `f`.
 * `_return_type = None`: type of the returned `builder`, if `None` it will return the same type of the current `builder`. This special kwarg will NOT be passed to `f`.
 
 You can think of `n` as the position that the value being piped down will pass through the `f`. Say you have the following expression
@@ -623,7 +623,7 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
 * `phi.builder.Builder.RegisterAt`
         """
         _return_type = None
-        n -= 1
+        n_args = n - 1
 
         if '_return_type' in kwargs:
             _return_type = kwargs['_return_type']
@@ -631,7 +631,8 @@ As you see, `Then2` was very useful because `map` accepts and `iterable` as its 
 
         @utils.lift
         def g(x):
-            new_args = args[0:n] + (x,) + args[n:] if n >= 0 else args
+
+            new_args = _args[0:n_args] + (x,) + _args[n_args:] if n_args >= 0 else _args
             return f(*new_args, **kwargs)
 
         return self.__then__(g, _return_type=_return_type)
@@ -1360,7 +1361,7 @@ Here we called `Context` with no arguments to get the context back, however, sin
 
     def __unit__(self, f, _return_type=None):
         "Monadic unit, also known as `return`"
-        if _return_type:
+        if _return_type:            
             return _return_type(f)
         else:
             return self.__class__(f)
