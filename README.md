@@ -647,6 +647,6 @@ assert {'a': 97, 'b': 98, 'c': 99} == Pipe(
     pip install git+https://github.com/cgarciae/phi.git@develop
 
 ## Status
-* Version: **0.6.3**.
+* Version: **0.6.4**.
 * Documentation coverage: 100%. Please create an issue if documentation is unclear, it is a high priority of this library.
 * Milestone: reach 1.0.0 after feedback from the community.

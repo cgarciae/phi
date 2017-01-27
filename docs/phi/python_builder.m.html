@@ -1690,7 +1690,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.python_builder.PythonBuilder.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function state_identity at 0x7fea7e92eaa0&gt;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, f=&lt;function state_identity at 0x7faee2ff9aa0&gt;)</p>
     </div>
     
 
@@ -2334,7 +2334,7 @@ result = [
             
   <div class="item">
     <div class="name def" id="phi.python_builder.PythonBuilder.PatchAt">
-    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, method_wrapper=None, module_alias=None, method_name_modifier=&lt;function identity at 0x7fea7e92ea28&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7fea7e8e27d0&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7fea7e8e2758&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7fea7e8e2848&gt;, getmembers_predicate=&lt;function isfunction at 0x7fea7fdff488&gt;, admit_private=False, explanation=u&#39;&#39;)</p>
+    <p>def <span class="ident">PatchAt</span>(</p><p>cls, n, module, method_wrapper=None, module_alias=None, method_name_modifier=&lt;function identity at 0x7faee2ff9a28&gt;, blacklist_predicate=&lt;function &lt;lambda&gt; at 0x7faee2fac848&gt;, whitelist_predicate=&lt;function &lt;lambda&gt; at 0x7faee2fac7d0&gt;, return_type_predicate=&lt;function &lt;lambda&gt; at 0x7faee2fac8c0&gt;, getmembers_predicate=&lt;function isfunction at 0x7faee44ca488&gt;, admit_private=False, explanation=u&#39;&#39;)</p>
     </div>
     
 
@@ -2447,9 +2447,6 @@ result = [
     <span class="n">return_type_predicate</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">_rtp</span><span class="p">)</span> <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">_rtp</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">_rtp</span><span class="p">,</span> <span class="n">Builder</span><span class="p">)</span> <span class="k">else</span> <span class="n">_rtp</span>
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_alias</span> <span class="k">if</span> <span class="n">module_alias</span> <span class="k">else</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span>
     <span class="n">patch_members</span> <span class="o">=</span> <span class="n">_get_patch_members</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">blacklist_predicate</span><span class="o">=</span><span class="n">blacklist_predicate</span><span class="p">,</span> <span class="n">whitelist_predicate</span><span class="o">=</span><span class="n">whitelist_predicate</span><span class="p">,</span> <span class="n">getmembers_predicate</span><span class="o">=</span><span class="n">getmembers_predicate</span><span class="p">,</span> <span class="n">admit_private</span><span class="o">=</span><span class="n">admit_private</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">whitelist_predicate</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="ow">and</span> <span class="s2">&quot;convolution2d&quot;</span> <span class="ow">in</span> <span class="n">whitelist_predicate</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">ipdb</span>
-        <span class="c1">#ipdb.set_trace()</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">patch_members</span><span class="p">:</span>
         <span class="n">wrapped</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="n">method_wrapper</span><span class="p">:</span>

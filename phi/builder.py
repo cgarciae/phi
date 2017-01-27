@@ -422,10 +422,6 @@ The thing to notice is that with the `NumpyBuilder` we avoid the repetitive and 
         module_name = module_alias if module_alias else module.__name__ + '.'
         patch_members = _get_patch_members(module, blacklist_predicate=blacklist_predicate, whitelist_predicate=whitelist_predicate, getmembers_predicate=getmembers_predicate, admit_private=admit_private)
 
-        if type(whitelist_predicate) is list and "convolution2d" in whitelist_predicate:
-            import ipdb
-            #ipdb.set_trace()
-
         for name, f in patch_members:
             wrapped = None
 
