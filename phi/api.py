@@ -1,7 +1,5 @@
 from .python_builder import P
-
 F = P.F
-
 
 #constants
 Val = P.Val
