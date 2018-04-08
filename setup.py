@@ -1,9 +1,5 @@
 import os
 from setuptools import setup
-from pip.req import parse_requirements
-
-# parse requirements
-reqs = [str(r.req) for r in parse_requirements("requirements.txt", session=False)]
 
 
 # Utility function to read the README file.
@@ -36,5 +32,5 @@ setup(
     download_url = 'https://github.com/cgarciae/phi/tarball/{0}'.format(version),
     include_package_data = True,
     long_description = read('README.md'),
-    install_requires = reqs
+    install_requires = [],
 )
