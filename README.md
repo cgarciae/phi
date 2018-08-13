@@ -3,6 +3,7 @@ Phi library for functional programming in Python that intends to remove as much 
 
 ## Import
 For demonstration purposes we will import right now everything we will need for the rest of the exercises like this
+
 ```python
 from phi.api import *
 ```
@@ -15,7 +16,7 @@ but you can also import just what you need from the `phi` module.
 Using the `P` object you can create quick lambdas using any operator. You can write things like
 
 ```python
-f = (P * 6) / (P + 2)  #lambda x: (x * 6) / (x + 2)
+f = (P * 6) / (P + 2)  # lambda x: (x * 6) / (x + 2)
 
 assert f(2) == 3  # (2 * 6) / (2 + 2) == 12 / 4 == 3
 ```
@@ -28,8 +29,9 @@ f = lambda x: (x * 6) / (x + 2)
 
 #### getitem
 You can also use the `P` object to create lambdas that access the items of a collection
+
 ```python
-f = P[0] + P[-1]  #lambda x: x[0] + x[-1]
+f = P[0] + P[-1]  # lambda x: x[0] + x[-1]
 
 assert f([1,2,3,4]) == 5   #1 + 4 == 5
 ```
@@ -40,25 +42,31 @@ If you want create lambdas that access the field of some entity you can use the 
 from collections import namedtuple
 Point = namedtuple('Point', ['x', 'y'])
 
-f = Rec.x + Rec.y  #lambda p: p.x + p.y
+f = Rec.x + Rec.y  # lambda p: p.x + p.y
 
-assert f(Point(3, 4)) == 7   #point.x + point.y == 3 + 4 == 7
+assert f(Point(3, 4)) == 7   # point.x + point.y == 3 + 4 == 7
 ```
 #### method calling
 If you want to create a lambda that calls the method of an object you use the `Obj` object and call that method on it with the parameters
+
 ```python
-f = Obj.upper() + ", " + Obj.lower()  #lambda s: s.upper() + ", " + s.lower()
+f = Obj.upper() + ", " + Obj.lower()  # lambda s: s.upper() + ", " + s.lower()
 
 assert f("HEllo") == "HELLO, hello"   # "HEllo".upper() + ", " + "HEllo".lower() == "HELLO" + ", " + "hello" == "HELLO, hello"
 ```
+
 Here no parameters were needed but in general
+
 ```python
 f = Obj.some_method(arg1, arg2, ...) #lambda obj: obj.some_method(arg1, arg2, ...)
 ```
+
 is equivalent to
+
 ```python
 f = lambda obj: obj.some_method(arg1, arg2, ...)
 ```
+
 ## Composition
 #### >> and <<
 You can use the `>>` operator to *forward* compose expressions
@@ -68,6 +76,7 @@ f = P + 7 >> math.sqrt  #executes left to right
 
 assert f(2) == 3  # math.sqrt(2 + 7) == math.sqrt(9) == 3
 ```
+
 This is preferred because it is more readable, but you can use the `<<` to compose them *backwards* just like the mathematical definition of function composition
 
 ```python
@@ -89,6 +98,7 @@ f = Seq(
 
 assert f(1) == 10  # sqrt(int("1" + "00")) == sqrt(100) == 10
 ```
+
 If you want to create a composition and directly apply it to an initial value you can use `Pipe`
 
 ```python
@@ -110,6 +120,7 @@ f = List( P + 1, P * 10 )  #lambda x: [ x +1, x * 10 ]
 
 assert f(3) == [ 4, 30 ]  # [ 3 + 1, 3 * 10 ] == [ 4, 30 ]
 ```
+
 The same logic applies for `Tuple` and `Set`. With `Dict` you have to use keyword arguments
 
 ```python
@@ -121,6 +132,7 @@ assert d == { 'x': 4, 'y': 30 }  # { 'x': 3 + 1, 'y': 3 * 10 } == { 'x': 4, 'y':
 assert d.x == 4   #access d['x'] via field access as d.x
 assert d.y == 30  #access d['y'] via field access as d.y
 ```
+
 As you see, `Dict` returns a custom `dict` that also allows *field access*, this is useful because you can use it in combination with `Rec`.
 
 #### State: Read and Write
@@ -138,7 +150,9 @@ assert [70, 30] == Pipe(
   )
 )
 ```
+
 If you need to perform many reads inside a list -usually for output- you can use `ReadList` instead
+
 ```python
 assert [2, 4, 22] == Pipe(
     1,
@@ -155,6 +169,7 @@ List(Read('a'), Read('b'), P + 2)
 
 #### Then, Then2, ..., Then5, ThenAt
 To create a partial expression from a function e.g.
+
 ```python
 def repeat_word(word, times, upper=False):
   if upper:
@@ -162,7 +177,9 @@ def repeat_word(word, times, upper=False):
 
   return [ word ] * times
 ```
+
 use the `Then` combinator which accepts a function plus all but the *1st* of its `*args` + `**kwargs`
+
 ```python
 f = P[::-1] >> Then(repeat_word, 3)
 g = P[::-1] >> Then(repeat_word, 3, upper=True)
@@ -170,14 +187,18 @@ g = P[::-1] >> Then(repeat_word, 3, upper=True)
 assert f("ward") == ["draw", "draw", "draw"]
 assert g("ward") == ["DRAW", "DRAW", "DRAW"]
 ```
-and assumes that the *1st* argument of the function will be applied last, e.g. `word` in the case of `repeat_word`. If you need the *2nd* argument to be applied last use `Then2`, and so on. In general you can use `ThenAt(n, f, *args, **kwargs)` where `n` is the position of the argument that will be applied last. Example
+
+and assumes that the *1st* argument of the function will be applied last, e.g. `word` in the case of `repeat_word`. If you need the *2nd* argument to be applied last use `Then2`, and so on. In general you can use `ThenAt(n, f, *args, **kwargs)` where `n` is the position of the argument that will be applied last. For example
+
 ```python
 # since map and filter receive the iterable on their second argument, you have to use `Then2`
 f = Then2(filter, P % 2 == 0) >> Then2(map, P**2) >> list  #lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))
 
 assert f([1,2,3,4,5]) == [4, 16]  #[2**2, 4**2] == [4, 16]
 ```
+
 Be aware that `P` already has the `map` and `filter` methods so you can write the previous more easily as
+
 ```python
 f = P.filter(P % 2 == 0) >> P.map(P**2) >> list  #lambda x: map(lambda z: z**2, filter(lambda z: z % 2 == 0, x))
 
@@ -186,6 +207,7 @@ assert f([1,2,3,4,5]) == [4, 16]  #[2**2, 4**2] == [4, 16]
 
 #### Val
 If you need to create a constant function with a given value use `Val`
+
 ```python
 f = Val(42)  #lambda x: 42
 
@@ -217,13 +239,17 @@ f = P**2 >> List( P, Val(3), Val(4) )  #lambda x: [ x**2]
 
 assert f(10) == [ 100, 3, 4 ]  # [ 10**2, 3, 4 ]  == [ 100, 3, 4 ]
 ```
+
 can be rewritten as
+
 ```python
 f = P**2 >> [ P, 3, 4 ]
 
 assert f(10) == [ 100, 3, 4 ]  # [ 10 ** 2, 3, 4 ]  == [ 100, 3, 4 ]
 ```
+
 Here the values `3` and `4` are translated to `Val(3)` and `Val(4)` thanks to the *4th* rule, and `[...]` is translated to `List(...)` thanks to the *3rd* rule. Since the DSL is omnipresent you can use it inside any core function, so the previous can be rewritten using `Pipe` as
+
 ```python
 assert [ 100, 3, 4 ] == Pipe(
   10,
@@ -234,12 +260,15 @@ assert [ 100, 3, 4 ] == Pipe(
 
 #### F
 You can *compile* any element to an `Expression` using `F`
+
 ```python
 f = F((P + "!!!", 42, Obj.upper()))  #Tuple(P + "!!!", Val(42), Obj.upper())
 
 assert f("some tuple") == ("some tuple!!!", 42, "SOME TUPLE")
 ```
+
 Other example
+
 ```python
 f = F([ P + n for n in range(5) ])  >> [ len, sum ]  # lambda x: [ len([ x, x+1, x+2, x+3, x+4]), sum([ x, x+1, x+2, x+3, x+4]) ]
 
@@ -260,14 +289,18 @@ f = Dict(
 
 assert f(1) == (4, 1)  # ( x + y, y / x) == ( 2 + 2, 2 / 2) == ( 4, 1 )
 ```
+
 This more complicated previous example
+
 ```python
 f = Obj.split(' ') >> P.map(len) >> sum >> If( (P < 15).Not(), "Great! Got {0} letters!".format).Else("Too short, need at-least 15 letters")
 
 assert f("short frase") == "Too short, need at-least 15 letters"
 assert f("some longer frase") == "Great! Got 15 letters!"
 ```
+
 can be be rewritten as
+
 ```python
 f = (
   Obj.split(' ')
@@ -287,6 +320,7 @@ assert f("some longer frase") == "Great! Got 15 letters!"
 ## Integrability
 #### Register, Register2, ..., Register5, RegistarAt
 If you want to have custom expressions to deal with certain data types, you can create a custom class that inherits from `Builder` or `PythonBuilder`
+
 ```python
 from phi import PythonBuilder
 
@@ -295,6 +329,7 @@ class MyBuilder(PythonBuilder):
 
 M = MyBuilder()
 ```
+
 and register your function in it using the `Register` class method
 
 ```python
@@ -311,11 +346,13 @@ def remove_longer_than(some_list, n):
 ```
 
 Now the method `MyBuilder.remove_longer_than` exists on this class. You can then use it like this
+
 ```python
 f = Obj.lower() >> Obj.split(' ') >> M.remove_longer_than(6)
 
 assert f("SoMe aRe LONGGGGGGGGG") == ["some", "are"]
 ```
+
 As you see the argument `n = 6` was partially applied to `remove_longer_than`, an expression which waits for the `some_list` argument to be returned. Internally the `Registar*` method family uses the `Then*` method family.
 
 #### PatchAt
@@ -538,7 +575,7 @@ assert s == 5
 assert val == 10
 ```
 
-Do the previous only if `y > 7` else return `"Sorry, come back latter."`
+Do the previous only if `y > 7` else return `"Sorry, come back later."`
 
 ```python
 from phi.api import *
@@ -559,14 +596,14 @@ from phi.api import *
         If( Rec.y > 7,
             Val(9) + 1  #input 9 and add 1, gives 10    
         ).Else(
-            "Sorry, come back latter."
+            "Sorry, come back later."
         )
     ]
 )
 
 assert result == 0.5
 assert s == 5
-assert val == "Sorry, come back latter."
+assert val == "Sorry, come back later."
 ```
 
 Now, what you have to understand that everything you've done with these expression is to create and apply a single function. Using `Seq` we can get the standalone function and then use it to get the same values as before
@@ -589,7 +626,7 @@ f = Seq(
         If( Rec.y > 7,
             Val(9) + 1  #input 9 and add 1, gives 10    
         ).Else(
-            "Sorry, come back latter."
+            "Sorry, come back later."
         )
     ]
 )
@@ -598,8 +635,9 @@ f = Seq(
 
 assert result == 0.5
 assert s == 5
-assert val == "Sorry, come back latter."
+assert val == "Sorry, come back later."
 ```
+
 ### Even More Examples
 
 ```python
@@ -639,14 +677,17 @@ assert {'a': 97, 'b': 98, 'c': 99} == Pipe(
 
 ## Installation
 
-    pip install phi
+```sh
+pip install phi
+```
 
+#### Bleeding Edge Release
 
-#### Bleeding Edge
-
-    pip install git+https://github.com/cgarciae/phi.git@develop
+```sh
+pip install git+https://github.com/cgarciae/phi.git@develop
+```
 
 ## Status
-* Version: **0.6.4**.
+* Version: ![Latest Tagged Release Number](https://img.shields.io/github/tag/cgarciae/phi.svg?%3FlongCache=true&label=).
 * Documentation coverage: 100%. Please create an issue if documentation is unclear, it is a high priority of this library.
 * Milestone: reach 1.0.0 after feedback from the community.
